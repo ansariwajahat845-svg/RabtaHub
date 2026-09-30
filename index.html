@@ -1,1 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RabtaHub</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f6fb;
+  color:#222;
+  padding-bottom:75px;
+}
+
+.header{
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:white;
+  padding:17px 15px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 3px 12px rgba(0,0,0,.15);
+}
+
+.header-inner{
+  max-width:650px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+}
+
+.header-user{
+  font-size:13px;
+  opacity:.9;
+}
+
+.container{
+  width:100%;
+  max-width:650px;
+  margin:auto;
+  padding:15px;
+}
+
+/* POST BUTTON */
+
+.post-box{
+  background:white;
+  padding:15px;
+  border-radius:16px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  margin-bottom:18px;
+}
+
+.post-main-btn{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:12px;
+  background:#6c5ce7;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* POST MENU */
+
+.post-menu{
+  display:none;
+  margin-top:12px;
+  gap:10px;
+}
+
+.post-menu button{
+  flex:1;
+  padding:13px;
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:12px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.post-menu button:hover{
+  background:#f4f1ff;
+}
+
+/* COMPOSER */
+
+.composer{
+  display:none;
+  background:white;
+  padding:16px;
+  border-radius:16px;
+  margin-top:12px;
+}
+
+.composer h3{
+  margin:0 0 15px;
+}
+
+select,
+textarea,
+input[type="file"]{
+  width:100%;
+  margin-bottom:12px;
+}
+
+select{
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:white;
+}
+
+textarea{
+  min-height:110px;
+  resize:none;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-size:15px;
+  outline:none;
+}
+
+.preview{
+  width:100%;
+  max-height:300px;
+  object-fit:cover;
+  border-radius:12px;
+  display:none;
+  margin-bottom:12px;
+}
+
+.publish-btn{
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:11px;
+  background:#6c5ce7;
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.cancel-btn{
+  width:100%;
+  padding:11px;
+  border:0;
+  border-radius:11px;
+  background:#eee;
+  margin-top:8px;
+}
+
+/* FEED */
+
+.feed-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+
+.feed-title h2{
+  margin:0;
+  font-size:20px;
+}
+
+.refresh-btn{
+  border:0;
+  background:white;
+  padding:8px 12px;
+  border-radius:10px;
+}
+
+/* POST */
+
+.post{
+  background:white;
+  border-radius:16px;
+  padding:15px;
+  margin-bottom:14px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+
+.post-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  width:43px;
+  height:43px;
+  border-radius:50%;
+  background:#6c5ce7;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+}
+
+.user-info{
+  flex:1;
+}
+
+.username{
+  font-weight:bold;
+}
+
+.date{
+  color:#888;
+  font-size:12px;
+  margin-top:3px;
+}
+
+.category{
+  display:inline-block;
+  margin-top:10px;
+  padding:5px 9px;
+  background:#f0edff;
+  color:#6c5ce7;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.post-content{
+  margin-top:12px;
+  line-height:1.5;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.post-image{
+  width:100%;
+  max-height:450px;
+  object-fit:cover;
+  border-radius:13px;
+  margin-top:12px;
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid #eee;
+}
+
+.action-btn{
+  border:0;
+  background:#f4f5f9;
+  padding:8px 10px;
+  border-radius:9px;
+  font-size:13px;
+}
+
+.delete-btn{
+  color:#d63031;
+  margin-left:auto;
+}
+
+.loading,
+.empty{
+  text-align:center;
+  color:#777;
+  padding:30px 10px;
+}
+
+/* NOTICE */
+
+.notice{
+  position:fixed;
+  left:50%;
+  bottom:85px;
+  transform:translateX(-50%);
+  background:#222;
+  color:white;
+  padding:10px 16px;
+  border-radius:10px;
+  display:none;
+  z-index:500;
+  font-size:14px;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:68px;
+  background:white;
+  border-top:1px solid #ddd;
+  display:flex;
+  justify-content:center;
+  z-index:200;
+}
+
+.nav-inner{
+  width:100%;
+  max-width:650px;
+  display:flex;
+}
+
+.nav-btn{
+  flex:1;
+  border:0;
+  background:white;
+  color:#777;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-size:11px;
+}
+
+.nav-icon{
+  font-size:20px;
+}
+
+.nav-btn.active{
+  color:#6c5ce7;
+  font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header class="header">
+
+  <div class="header-inner">
+
+    <div class="logo">
+      RabtaHub
+    </div>
+
+    <div
+      class="header-user"
+      id="headerUser">
+      Loading...
+    </div>
+
+  </div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- POST AREA -->
+
+<section class="post-box">
+
+  <button
+    class="post-main-btn"
+    onclick="togglePostMenu()">
+    ➕ Create Post
+  </button>
+
+
+  <div
+    class="post-menu"
+    id="postMenu">
+
+    <button
+      onclick="openComposer('text')">
+      📝 Text Post
+    </button>
+
+    <button
+      onclick="openComposer('image')">
+      🖼️ Image Post
+    </button>
+
+  </div>
+
+
+  <!-- TEXT COMPOSER -->
+
+  <div
+    class="composer"
+    id="textComposer">
+
+    <h3>
+      📝 Text Post
+    </h3>
+
+    <select id="textCategory">
+
+      <option value="">
+        Select Category
+      </option>
+
+      <option>General</option>
+      <option>Funny</option>
+      <option>Love</option>
+      <option>Sad</option>
+      <option>News</option>
+      <option>Music</option>
+      <option>Entertainment</option>
+      <option>Islamic</option>
+      <option>Thoughts</option>
+      <option>Photography</option>
+
+    </select>
+
+
+    <textarea
+      id="textContent"
+      maxlength="2000"
+      placeholder="Write your post..."></textarea>
+
+
+    <button
+      class="publish-btn"
+      onclick="publishTextPost()">
+      Publish Post
+    </button>
+
+
+    <button
+      class="cancel-btn"
+      onclick="closeComposer()">
+      Cancel
+    </button>
+
+  </div>
+
+
+  <!-- IMAGE COMPOSER -->
+
+  <div
+    class="composer"
+    id="imageComposer">
+
+    <h3>
+      🖼️ Image Post
+    </h3>
+
+
+    <select id="imageCategory">
+
+      <option value="">
+        Select Category
+      </option>
+
+      <option>General</option>
+      <option>Funny</option>
+      <option>Love</option>
+      <option>Sad</option>
+      <option>News</option>
+      <option>Music</option>
+      <option>Entertainment</option>
+      <option>Islamic</option>
+      <option>Thoughts</option>
+      <option>Photography</option>
+
+    </select>
+
+
+    <input
+      type="file"
+      id="imageFile"
+      accept="image/*"
+      onchange="previewImage(this)">
+
+
+    <img
+      id="imagePreview"
+      class="preview">
+
+
+    <textarea
+      id="imageCaption"
+      maxlength="1000"
+      placeholder="Caption (optional)..."></textarea>
+
+
+    <button
+      class="publish-btn"
+      onclick="publishImagePost()">
+      Publish Image
+    </button>
+
+
+    <button
+      class="cancel-btn"
+      onclick="closeComposer()">
+      Cancel
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- FEED -->
+
+<div class="feed-title">
+
+  <h2>
+    Home Feed
+  </h2>
+
+  <button
+    class="refresh-btn"
+    onclick="loadFeed()">
+    🔄 Refresh
+  </button>
+
+</div>
+
+
+<section id="feed">
+
+  <div class="loading">
+    Loading feed...
+  </div>
+
+</section>
+
+
+</main>
+
+
+<div
+  id="notice"
+  class="notice">
+</div>
+
+
+<!-- NAVIGATION -->
+
+<nav class="bottom-nav">
+
+  <div class="nav-inner">
+
+    <button
+      class="nav-btn active"
+      onclick="goHome()">
+
+      <span class="nav-icon">🏠</span>
+      <span>Home</span>
+
+    </button>
+
+
+    <button
+      class="nav-btn"
+      onclick="goPrivate()">
+
+      <span class="nav-icon">💬</span>
+      <span>Private</span>
+
+    </button>
+
+
+    <button
+      class="nav-btn"
+      onclick="goProfile()">
+
+      <span class="nav-icon">👤</span>
+      <span>Profile</span>
+
+    </button>
+
+
+    <button
+      class="nav-btn"
+      onclick="goNotifications()">
+
+      <span class="nav-icon">🔔</span>
+      <span>Notifications</span>
+
+    </button>
+
+
+    <button
+      class="nav-btn"
+      onclick="goMore()">
+
+      <span class="nav-icon">☰</span>
+      <span>More</span>
+
+    </button>
+
+  </div>
+
+</nav>
+
+
+<script>
+
+const SUPABASE_URL =
+  "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+let currentUser = null;
+let currentProfile = null;
+
+
+/* INIT */
+
+async function init(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient.auth.getSession();
+
+
+  if(error || !data.session){
+
+    window.location.href =
+      "login.html";
+
+    return;
+  }
+
+
+  currentUser =
+    data.session.user;
+
+
+  await loadProfile();
+
+  await loadFeed();
+
+}
+
+
+/* PROFILE */
+
+async function loadProfile(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq(
+      "id",
+      currentUser.id
+    )
+    .maybeSingle();
+
+
+  if(error){
+
+    console.error(
+      "PROFILE ERROR:",
+      error
+    );
+
+    return;
+  }
+
+
+  currentProfile =
+    data;
+
+
+  const username =
+    data?.username ||
+    currentUser.email?.split("@")[0] ||
+    "User";
+
+
+  document
+    .getElementById("headerUser")
+    .textContent =
+    "@" + username;
+
+}
+
+
+/* POST MENU */
+
+function togglePostMenu(){
+
+  const menu =
+    document.getElementById("postMenu");
+
+  menu.style.display =
+    menu.style.display === "flex"
+      ? "none"
+      : "flex";
+
+}
+
+
+function openComposer(type){
+
+  document
+    .getElementById("postMenu")
+    .style.display =
+    "none";
+
+
+  document
+    .getElementById("textComposer")
+    .style.display =
+    "none";
+
+
+  document
+    .getElementById("imageComposer")
+    .style.display =
+    "none";
+
+
+  if(type === "text"){
+
+    document
+      .getElementById("textComposer")
+      .style.display =
+      "block";
+
+  }
+
+
+  if(type === "image"){
+
+    document
+      .getElementById("imageComposer")
+      .style.display =
+      "block";
+
+  }
+
+}
+
+
+function closeComposer(){
+
+  document
+    .getElementById("textComposer")
+    .style.display =
+    "none";
+
+
+  document
+    .getElementById("imageComposer")
+    .style.display =
+    "none";
+
+
+  document
+    .getElementById("postMenu")
+    .style.display =
+    "none";
+
+}
+
+
+/* TEXT POST */
+
+async function publishTextPost(){
+
+  const category =
+    document
+      .getElementById("textCategory")
+      .value;
+
+
+  const content =
+    document
+      .getElementById("textContent")
+      .value
+      .trim();
+
+
+  if(!category){
+
+    showNotice(
+      "Pehle category select karo."
+    );
+
+    return;
+  }
+
+
+  if(!content){
+
+    showNotice(
+      "Post likho."
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("posts")
+    .insert({
+
+      user_id:
+        currentUser.id,
+
+      content:
+        content,
+
+      post_type:
+        "text",
+
+      category:
+        category
+
+    });
+
+
+  if(error){
+
+    console.error(error);
+
+    showNotice(
+      "Post nahi hua: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  document
+    .getElementById("textContent")
+    .value = "";
+
+
+  document
+    .getElementById("textCategory")
+    .value = "";
+
+
+  closeComposer();
+
+  showNotice(
+    "Post published! ❤️"
+  );
+
+
+  await loadFeed();
+
+}
+
+
+/* IMAGE PREVIEW */
+
+function previewImage(input){
+
+  const preview =
+    document
+      .getElementById("imagePreview");
+
+
+  const file =
+    input.files[0];
+
+
+  if(!file){
+
+    preview.style.display =
+      "none";
+
+    return;
+  }
+
+
+  preview.src =
+    URL.createObjectURL(file);
+
+
+  preview.style.display =
+    "block";
+
+}
+
+
+/* IMAGE POST */
+
+async function publishImagePost(){
+
+  const category =
+    document
+      .getElementById("imageCategory")
+      .value;
+
+
+  const file =
+    document
+      .getElementById("imageFile")
+      .files[0];
+
+
+  const caption =
+    document
+      .getElementById("imageCaption")
+      .value
+      .trim();
+
+
+  if(!category){
+
+    showNotice(
+      "Pehle category select karo."
+    );
+
+    return;
+  }
+
+
+  if(!file){
+
+    showNotice(
+      "Image select karo."
+    );
+
+    return;
+  }
+
+
+  const extension =
+    file.name
+      .split(".")
+      .pop();
+
+
+  const fileName =
+    currentUser.id +
+    "/" +
+    Date.now() +
+    "." +
+    extension;
+
+
+  showNotice(
+    "Image uploading..."
+  );
+
+
+  const {
+    error: uploadError
+  } =
+  await supabaseClient
+    .storage
+    .from("post-images")
+    .upload(
+      fileName,
+      file
+    );
+
+
+  if(uploadError){
+
+    console.error(
+      uploadError
+    );
+
+    showNotice(
+      "Image upload nahi hui: " +
+      uploadError.message
+    );
+
+    return;
+  }
+
+
+  const {
+    data: publicData
+  } =
+  supabaseClient
+    .storage
+    .from("post-images")
+    .getPublicUrl(
+      fileName
+    );
+
+
+  const imageUrl =
+    publicData.publicUrl;
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("posts")
+    .insert({
+
+      user_id:
+        currentUser.id,
+
+      content:
+        caption,
+
+      post_type:
+        "image",
+
+      category:
+        category,
+
+      image_url:
+        imageUrl
+
+    });
+
+
+  if(error){
+
+    console.error(error);
+
+    showNotice(
+      "Image post save nahi hui: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  document
+    .getElementById("imageFile")
+    .value = "";
+
+
+  document
+    .getElementById("imageCaption")
+    .value = "";
+
+
+  document
+    .getElementById("imageCategory")
+    .value = "";
+
+
+  document
+    .getElementById("imagePreview")
+    .style.display =
+    "none";
+
+
+  closeComposer();
+
+
+  showNotice(
+    "Image post published! ❤️"
+  );
+
+
+  await loadFeed();
+
+}
+
+
+/* FEED */
+
+async function loadFeed(){
+
+  const feed =
+    document
+      .getElementById("feed");
+
+
+  feed.innerHTML =
+    '<div class="loading">Loading feed...</div>';
+
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("posts")
+    .select(`
+      id,
+      user_id,
+      content,
+      created_at,
+      post_type,
+      category,
+      image_url
+    `)
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+
+  if(error){
+
+    console.error(
+      "FEED ERROR:",
+      error
+    );
+
+    feed.innerHTML =
+      `<div class="empty">
+        Feed load nahi hua.<br>
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+  }
+
+
+  if(!data || data.length === 0){
+
+    feed.innerHTML =
+      `<div class="empty">
+        Abhi koi post nahi hai.<br>
+        Sabse pehli post aap karo! ❤️
+      </div>`;
+
+    return;
+  }
+
+
+  const userIds =
+    [
+      ...new Set(
+        data.map(
+          post => post.user_id
+        )
+      )
+    ];
+
+
+  let profiles = [];
+
+
+  if(userIds.length){
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,username,name,avatar_url"
+        )
+        .in(
+          "id",
+          userIds
+        );
+
+
+    if(!result.error){
+
+      profiles =
+        result.data || [];
+
+    }
+
+  }
+
+
+  feed.innerHTML = "";
+
+
+  for(const post of data){
+
+    const profile =
+      profiles.find(
+        p => p.id === post.user_id
+      );
+
+
+    await renderPost(
+      post,
+      profile
+    );
+
+  }
+
+}
+
+
+/* RENDER POST */
+
+async function renderPost(
+  post,
+  profile
+){
+
+  const feed =
+    document
+      .getElementById("feed");
+
+
+  const username =
+    profile?.username ||
+    "User";
+
+
+  const name =
+    profile?.name ||
+    username;
+
+
+  const firstLetter =
+    name
+      .charAt(0)
+      .toUpperCase();
+
+
+  const ownPost =
+    post.user_id === currentUser.id;
+
+
+  const {
+    count: likeCount
+  } =
+  await supabaseClient
+    .from("likes")
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "post_id",
+      post.id
+    );
+
+
+  const {
+    count: dislikeCount
+  } =
+  await supabaseClient
+    .from("dislikes")
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "post_id",
+      post.id
+    );
+
+
+  const {
+    count: commentCount
+  } =
+  await supabaseClient
+    .from("comments")
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "post_id",
+      post.id
+    );
+
+
+  const div =
+    document.createElement("article");
+
+
+  div.className =
+    "post";
+
+
+  let media = "";
+
+
+  if(
+    post.post_type === "image" &&
+    post.image_url
+  ){
+
+    media =
+      `<img
+        class="post-image"
+        src="${escapeAttribute(post.image_url)}"
+        alt="Post image">`;
+
+  }
+
+
+  div.innerHTML = `
+
+    <div class="post-header">
+
+      <div class="avatar">
+        ${escapeHtml(firstLetter)}
+      </div>
+
+      <div class="user-info">
+
+        <div class="username">
+          ${escapeHtml(username)}
+        </div>
+
+        <div class="date">
+          ${formatDate(post.created_at)}
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="category">
+      ${escapeHtml(post.category)}
+    </div>
+
+
+    ${
+      post.content
+      ?
+      `<div class="post-content">
+        ${escapeHtml(post.content)}
+      </div>`
+      :
+      ""
+    }
+
+
+    ${media}
+
+
+    <div class="actions">
+
+      <button
+        class="action-btn"
+        onclick="toggleLike(${post.id})">
+
+        ❤️ Like
+        <span id="like-${post.id}">
+          ${likeCount || 0}
+        </span>
+
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="toggleDislike(${post.id})">
+
+        👎 Dislike
+        <span id="dislike-${post.id}">
+          ${dislikeCount || 0}
+        </span>
+
+      </button>
+
+
+      <button
+        class="action-btn"
+        onclick="openComments(${post.id})">
+
+        💬 Comments
+        <span id="comment-${post.id}">
+          ${commentCount || 0}
+        </span>
+
+      </button>
+
+
+      ${
+        ownPost
+        ?
+        `<button
+          class="action-btn delete-btn"
+          onclick="deletePost(${post.id})">
+
+          🗑️ Delete
+
+        </button>`
+        :
+        ""
+      }
+
+    </div>
+
+  `;
+
+
+  feed.appendChild(div);
+
+}
+
+
+/* LIKE */
+
+async function toggleLike(postId){
+
+  const {
+    data: existing
+  } =
+  await supabaseClient
+    .from("likes")
+    .select("id")
+    .eq(
+      "post_id",
+      postId
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .maybeSingle();
+
+
+  if(existing){
+
+    await supabaseClient
+      .from("likes")
+      .delete()
+      .eq(
+        "id",
+        existing.id
+      );
+
+  }else{
+
+    await supabaseClient
+      .from("dislikes")
+      .delete()
+      .eq(
+        "post_id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+    await supabaseClient
+      .from("likes")
+      .insert({
+
+        post_id:
+          postId,
+
+        user_id:
+          currentUser.id
+
+      });
+
+  }
+
+
+  await loadFeed();
+
+}
+
+
+/* DISLIKE */
+
+async function toggleDislike(postId){
+
+  const {
+    data: existing
+  } =
+  await supabaseClient
+    .from("dislikes")
+    .select("id")
+    .eq(
+      "post_id",
+      postId
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .maybeSingle();
+
+
+  if(existing){
+
+    await supabaseClient
+      .from("dislikes")
+      .delete()
+      .eq(
+        "id",
+        existing.id
+      );
+
+  }else{
+
+    await supabaseClient
+      .from("likes")
+      .delete()
+      .eq(
+        "post_id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+    await supabaseClient
+      .from("dislikes")
+      .insert({
+
+        post_id:
+          postId,
+
+        user_id:
+          currentUser.id
+
+      });
+
+  }
+
+
+  await loadFeed();
+
+}
+
+
+/* COMMENTS */
+
+function openComments(postId){
+
+  showNotice(
+    "Comments system next step mein add karenge."
+  );
+
+}
+
+
+/* DELETE */
+
+async function deletePost(postId){
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("posts")
+    .delete()
+    .eq(
+      "id",
+      postId
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    );
+
+
+  if(error){
+
+    showNotice(
+      "Post delete nahi hua: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  showNotice(
+    "Post deleted."
+  );
+
+
+  await loadFeed();
+
+}
+
+
+/* HELPERS */
+
+function formatDate(date){
+
+  const now =
+    new Date();
+
+  const created =
+    new Date(date);
+
+  const seconds =
+    Math.floor(
+      (now - created) / 1000
+    );
+
+
+  if(seconds < 60)
+    return "Just now";
+
+
+  const minutes =
+    Math.floor(
+      seconds / 60
+    );
+
+
+  if(minutes < 60)
+    return minutes + "m ago
