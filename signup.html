@@ -166,6 +166,7 @@
 
   </div>
 
+
 <script>
 
 const SUPABASE_URL =
@@ -173,6 +174,7 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
 
 const supabaseClient =
   window.supabase.createClient(
@@ -183,134 +185,173 @@ const supabaseClient =
 
 document
   .getElementById("signupForm")
-  .addEventListener("submit", async function(e){
+  .addEventListener(
+    "submit",
+    async function(e){
 
-    e.preventDefault();
-
-    const name =
-      document.getElementById("name").value.trim();
-
-    const username =
-      document.getElementById("username").value.trim();
-
-    const email =
-      document.getElementById("email").value.trim();
-
-    const password =
-      document.getElementById("password").value;
-
-    const button =
-      document.getElementById("signupBtn");
-
-    const message =
-      document.getElementById("message");
-
-    button.disabled = true;
-    button.textContent = "Creating account...";
-
-    message.textContent = "";
-    message.style.color = "#666";
+      e.preventDefault();
 
 
-    try{
-
-      const { data, error } =
-        await supabaseClient.auth.signUp({
-
-          email: email,
-          password: password,
-
-          options: {
-            data: {
-              name: name,
-              username: username
-            }
-          }
-
-        });
+      const name =
+        document
+          .getElementById("name")
+          .value
+          .trim();
 
 
-      if(error){
-        throw error;
-      }
+      const username =
+        document
+          .getElementById("username")
+          .value
+          .trim();
 
 
-      if(!data.user){
-        throw new Error(
-          "Account create nahi ho saka."
+      const email =
+        document
+          .getElementById("email")
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById("password")
+          .value;
+
+
+      const button =
+        document.getElementById(
+          "signupBtn"
         );
-      }
 
 
-      const { error: profileError } =
-        await supabaseClient
-          .from("profiles")
-          .insert({
+      const message =
+        document.getElementById(
+          "message"
+        );
 
-            id: data.user.id,
-            username: username,
-            name: name
+
+      button.disabled = true;
+
+      button.textContent =
+        "Creating account...";
+
+
+      message.textContent = "";
+
+      message.style.color =
+        "#666";
+
+
+      try{
+
+        /*
+        ========================================
+        CREATE AUTH ACCOUNT
+        ========================================
+        */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signUp({
+
+            email: email,
+
+            password: password,
+
+            options: {
+
+              data: {
+
+                name: name,
+
+                username: username
+
+              }
+
+            }
 
           });
 
 
-      if(profileError){
+        if(error){
 
-        console.error(
-          "PROFILE ERROR:",
-          profileError
-        );
+          throw error;
 
-        message.style.color = "#d63031";
+        }
+
+
+        if(!data.user){
+
+          throw new Error(
+            "Account create nahi ho saka."
+          );
+
+        }
+
+
+        /*
+        ========================================
+        PROFILE AUTOMATICALLY CREATED
+        BY SUPABASE DATABASE TRIGGER
+        ========================================
+        */
+
+
+        message.style.color =
+          "#00a86b";
+
 
         message.textContent =
-          "Account bana hai, lekin profile save nahi hui: " +
-          profileError.message;
+          "Account successfully created!";
 
-        return;
+
+        document
+          .getElementById("signupForm")
+          .reset();
+
+
+        setTimeout(
+          function(){
+
+            window.location.href =
+              "login.html";
+
+          },
+          1500
+        );
+
+
+      }catch(error){
+
+        console.error(
+          "SIGNUP ERROR:",
+          error
+        );
+
+
+        message.style.color =
+          "#d63031";
+
+
+        message.textContent =
+          error.message ||
+          "Signup failed.";
+
+
+      }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+          "Create Account";
+
       }
 
-
-      message.style.color = "#00a86b";
-
-      message.textContent =
-        "Account successfully created!";
-
-
-      document
-        .getElementById("signupForm")
-        .reset();
-
-
-      setTimeout(function(){
-
-        window.location.href =
-          "login.html";
-
-      }, 1500);
-
-
-    }catch(error){
-
-      console.error(
-        "SIGNUP ERROR:",
-        error
-      );
-
-      message.style.color = "#d63031";
-
-      message.textContent =
-        error.message ||
-        "Signup failed.";
-
-    }finally{
-
-      button.disabled = false;
-      button.textContent = "Create Account";
-
     }
-
-  });
+  );
 
 </script>
 
