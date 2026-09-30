@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 
@@ -26,7 +27,7 @@ body{
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:17px 15px;
+  padding:14px 15px 12px;
   position:sticky;
   top:0;
   z-index:100;
@@ -36,6 +37,9 @@ body{
 .header-inner{
   max-width:650px;
   margin:auto;
+}
+
+.header-main{
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -49,6 +53,28 @@ body{
 .header-user{
   font-size:13px;
   opacity:.9;
+}
+
+.header-options{
+  display:flex;
+  gap:7px;
+  margin-top:12px;
+}
+
+.header-option{
+  flex:1;
+  border:0;
+  background:rgba(255,255,255,.16);
+  color:white;
+  padding:9px 5px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.header-option:active{
+  background:rgba(255,255,255,.28);
 }
 
 .container{
@@ -79,8 +105,6 @@ body{
   font-weight:bold;
   cursor:pointer;
 }
-
-/* POST MENU */
 
 .post-menu{
   display:none;
@@ -301,6 +325,8 @@ textarea{
   display:none;
   z-index:500;
   font-size:14px;
+  max-width:90%;
+  text-align:center;
 }
 
 /* BOTTOM NAV */
@@ -335,6 +361,7 @@ textarea{
   justify-content:center;
   gap:3px;
   font-size:11px;
+  cursor:pointer;
 }
 
 .nav-icon{
@@ -352,56 +379,83 @@ textarea{
 
 <body>
 
-
 <header class="header">
 
   <div class="header-inner">
 
-    <div class="logo">
-      RabtaHub
-    </div>
+```
+<div class="header-main">
 
-    <div
-      class="header-user"
-      id="headerUser">
-      Loading...
-    </div>
+  <div class="logo">
+    RabtaHub
+  </div>
+
+  <div
+    class="header-user"
+    id="headerUser">
+    Loading...
+  </div>
+
+</div>
+
+
+<!-- TOP OPTIONS -->
+
+<div class="header-options">
+
+  <button
+    class="header-option"
+    onclick="goNotifications()">
+    🔔 Notifications
+  </button>
+
+  <button
+    class="header-option"
+    onclick="goStars()">
+    ⭐ Stars
+  </button>
+
+  <button
+    class="header-option"
+    onclick="goTrending()">
+    🔥 Trending
+  </button>
+
+</div>
+```
 
   </div>
 
 </header>
 
-
 <main class="container">
-
 
 <!-- POST AREA -->
 
 <section class="post-box">
 
-  <button
-    class="post-main-btn"
-    onclick="togglePostMenu()">
-    ➕ Create Post
-  </button>
-
+<button
+ class="post-main-btn"
+ onclick="togglePostMenu()">
+➕ Create Post </button>
 
   <div
     class="post-menu"
     id="postMenu">
 
-    <button
-      onclick="openComposer('text')">
-      📝 Text Post
-    </button>
+```
+<button
+  onclick="openComposer('text')">
+  📝 Text Post
+</button>
 
-    <button
-      onclick="openComposer('image')">
-      🖼️ Image Post
-    </button>
+<button
+  onclick="openComposer('image')">
+  🖼️ Image Post
+</button>
+```
 
   </div>
-
 
   <!-- TEXT COMPOSER -->
 
@@ -409,51 +463,53 @@ textarea{
     class="composer"
     id="textComposer">
 
-    <h3>
-      📝 Text Post
-    </h3>
+```
+<h3>
+  📝 Text Post
+</h3>
 
-    <select id="textCategory">
+<select id="textCategory">
 
-      <option value="">
-        Select Category
-      </option>
+  <option value="">
+    Select Category
+  </option>
 
-      <option>General</option>
-      <option>Funny</option>
-      <option>Love</option>
-      <option>Sad</option>
-      <option>News</option>
-      <option>Music</option>
-      <option>Entertainment</option>
-      <option>Islamic</option>
-      <option>Thoughts</option>
-      <option>Photography</option>
+  <option>General</option>
+  <option>Funny</option>
+  <option>Love</option>
+  <option>Sad</option>
+  <option>News</option>
+  <option>Music</option>
+  <option>Entertainment</option>
+  <option>Islamic</option>
+  <option>Thoughts</option>
+  <option>Photography</option>
+  <option>Mehfil</option>
 
-    </select>
-
-
-    <textarea
-      id="textContent"
-      maxlength="2000"
-      placeholder="Write your post..."></textarea>
+</select>
 
 
-    <button
-      class="publish-btn"
-      onclick="publishTextPost()">
-      Publish Post
-    </button>
+<textarea
+  id="textContent"
+  maxlength="2000"
+  placeholder="Write your post..."></textarea>
 
 
-    <button
-      class="cancel-btn"
-      onclick="closeComposer()">
-      Cancel
-    </button>
+<button
+  class="publish-btn"
+  onclick="publishTextPost()">
+  Publish Post
+</button>
+
+
+<button
+  class="cancel-btn"
+  onclick="closeComposer()">
+  Cancel
+</button>
+```
 
   </div>
-
 
   <!-- IMAGE COMPOSER -->
 
@@ -461,66 +517,69 @@ textarea{
     class="composer"
     id="imageComposer">
 
-    <h3>
-      🖼️ Image Post
-    </h3>
+```
+<h3>
+  🖼️ Image Post
+</h3>
 
 
-    <select id="imageCategory">
+<select id="imageCategory">
 
-      <option value="">
-        Select Category
-      </option>
+  <option value="">
+    Select Category
+  </option>
 
-      <option>General</option>
-      <option>Funny</option>
-      <option>Love</option>
-      <option>Sad</option>
-      <option>News</option>
-      <option>Music</option>
-      <option>Entertainment</option>
-      <option>Islamic</option>
-      <option>Thoughts</option>
-      <option>Photography</option>
+  <option>General</option>
+  <option>Funny</option>
+  <option>Love</option>
+  <option>Sad</option>
+  <option>News</option>
+  <option>Music</option>
+  <option>Entertainment</option>
+  <option>Islamic</option>
+  <option>Thoughts</option>
+  <option>Photography</option>
+  <option>Mehfil</option>
 
-    </select>
-
-
-    <input
-      type="file"
-      id="imageFile"
-      accept="image/*"
-      onchange="previewImage(this)">
+</select>
 
 
-    <img
-      id="imagePreview"
-      class="preview">
+<input
+  type="file"
+  id="imageFile"
+  accept="image/*"
+  onchange="previewImage(this)">
 
 
-    <textarea
-      id="imageCaption"
-      maxlength="1000"
-      placeholder="Caption (optional)..."></textarea>
+<img
+  id="imagePreview"
+  class="preview"
+  alt="Preview">
 
 
-    <button
-      class="publish-btn"
-      onclick="publishImagePost()">
-      Publish Image
-    </button>
+<textarea
+  id="imageCaption"
+  maxlength="1000"
+  placeholder="Caption (optional)..."></textarea>
 
 
-    <button
-      class="cancel-btn"
-      onclick="closeComposer()">
-      Cancel
-    </button>
+<button
+  class="publish-btn"
+  onclick="publishImagePost()">
+  Publish Image
+</button>
+
+
+<button
+  class="cancel-btn"
+  onclick="closeComposer()">
+  Cancel
+</button>
+```
 
   </div>
 
 </section>
-
 
 <!-- FEED -->
 
@@ -530,14 +589,12 @@ textarea{
     Home Feed
   </h2>
 
-  <button
-    class="refresh-btn"
-    onclick="loadFeed()">
-    🔄 Refresh
-  </button>
+<button
+ class="refresh-btn"
+ onclick="loadFeed()">
+🔄 Refresh </button>
 
 </div>
-
 
 <section id="feed">
 
@@ -547,75 +604,73 @@ textarea{
 
 </section>
 
-
 </main>
-
 
 <div
   id="notice"
   class="notice">
 </div>
 
-
-<!-- NAVIGATION -->
+<!-- BOTTOM NAV -->
 
 <nav class="bottom-nav">
 
   <div class="nav-inner">
 
-    <button
-      class="nav-btn active"
-      onclick="goHome()">
+```
+<button
+  class="nav-btn active"
+  onclick="goHome()">
 
-      <span class="nav-icon">🏠</span>
-      <span>Home</span>
+  <span class="nav-icon">🏠</span>
+  <span>Home</span>
 
-    </button>
-
-
-    <button
-      class="nav-btn"
-      onclick="goPrivate()">
-
-      <span class="nav-icon">💬</span>
-      <span>Private</span>
-
-    </button>
+</button>
 
 
-    <button
-      class="nav-btn"
-      onclick="goProfile()">
+<button
+  class="nav-btn"
+  onclick="goPrivate()">
 
-      <span class="nav-icon">👤</span>
-      <span>Profile</span>
+  <span class="nav-icon">💬</span>
+  <span>Private</span>
 
-    </button>
-
-
-    <button
-      class="nav-btn"
-      onclick="goNotifications()">
-
-      <span class="nav-icon">🔔</span>
-      <span>Notifications</span>
-
-    </button>
+</button>
 
 
-    <button
-      class="nav-btn"
-      onclick="goMore()">
+<button
+  class="nav-btn"
+  onclick="goProfile()">
 
-      <span class="nav-icon">☰</span>
-      <span>More</span>
+  <span class="nav-icon">👤</span>
+  <span>Profile</span>
 
-    </button>
+</button>
+
+
+<button
+  class="nav-btn"
+  onclick="goMehfil()">
+
+  <span class="nav-icon">🏠</span>
+  <span>Mehfil</span>
+
+</button>
+
+
+<button
+  class="nav-btn"
+  onclick="goMore()">
+
+  <span class="nav-icon">☰</span>
+  <span>More</span>
+
+</button>
+```
 
   </div>
 
 </nav>
-
 
 <script>
 
@@ -1353,7 +1408,7 @@ async function renderPost(
 
 
     <div class="category">
-      ${escapeHtml(post.category)}
+      ${escapeHtml(post.category || "General")}
     </div>
 
 
@@ -1617,7 +1672,7 @@ async function deletePost(postId){
 }
 
 
-/* HELPERS */
+/* DATE */
 
 function formatDate(date){
 
@@ -1633,8 +1688,9 @@ function formatDate(date){
     );
 
 
-  if(seconds < 60)
+  if(seconds < 60){
     return "Just now";
+  }
 
 
   const minutes =
@@ -1643,5 +1699,173 @@ function formatDate(date){
     );
 
 
-  if(minutes < 60)
-    return minutes + "m ago
+  if(minutes < 60){
+    return minutes + "m ago";
+  }
+
+
+  const hours =
+    Math.floor(
+      minutes / 60
+    );
+
+
+  if(hours < 24){
+    return hours + "h ago";
+  }
+
+
+  const days =
+    Math.floor(
+      hours / 24
+    );
+
+
+  if(days < 7){
+    return days + "d ago";
+  }
+
+
+  return created.toLocaleDateString();
+
+}
+
+
+/* NOTICE */
+
+function showNotice(message){
+
+  const notice =
+    document.getElementById("notice");
+
+
+  notice.textContent =
+    message;
+
+
+  notice.style.display =
+    "block";
+
+
+  clearTimeout(
+    window.noticeTimer
+  );
+
+
+  window.noticeTimer =
+    setTimeout(
+      () => {
+
+        notice.style.display =
+          "none";
+
+      },
+      2500
+    );
+
+}
+
+
+/* ESCAPE HTML */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* ESCAPE ATTRIBUTE */
+
+function escapeAttribute(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/"/g,"&quot;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+
+}
+
+
+/* NAVIGATION */
+
+function goHome(){
+
+  window.location.href =
+    "index.html";
+
+}
+
+
+function goPrivate(){
+
+  window.location.href =
+    "private.html";
+
+}
+
+
+function goProfile(){
+
+  window.location.href =
+    "profile.html";
+
+}
+
+
+function goMehfil(){
+
+  window.location.href =
+    "mehfil.html";
+
+}
+
+
+function goNotifications(){
+
+  window.location.href =
+    "notifications.html";
+
+}
+
+
+function goStars(){
+
+  showNotice(
+    "Stars section next step mein banayenge ⭐"
+  );
+
+}
+
+
+function goTrending(){
+
+  showNotice(
+    "Trending Posts next step mein banayenge 🔥"
+  );
+
+}
+
+
+function goMore(){
+
+  window.location.href =
+    "more.html";
+
+}
+
+
+/* START */
+
+init();
+
+</script>
+
+</body>
+</html>
