@@ -543,8 +543,6 @@ textarea{
   </div>
 
 
-  <!-- SHARE OPTIONS -->
-
   <div
     class="share-menu"
     id="shareMenu">
@@ -564,8 +562,6 @@ textarea{
   </div>
 
 
-  <!-- TEXT POST -->
-
   <div
     class="composer"
     id="textComposer">
@@ -573,7 +569,6 @@ textarea{
     <h3>
       📝 Text Post
     </h3>
-
 
     <select id="textCategory">
 
@@ -617,8 +612,6 @@ textarea{
 
   </div>
 
-
-  <!-- IMAGE POST -->
 
   <div
     class="composer"
@@ -687,10 +680,6 @@ textarea{
 </section>
 
 
-<!-- =========================
-     FEED
-========================= -->
-
 <div class="feed-title">
 
   <h2>
@@ -723,10 +712,6 @@ textarea{
   class="notice">
 </div>
 
-
-<!-- =========================
-     BOTTOM NAV
-========================= -->
 
 <nav class="bottom-nav">
 
@@ -788,7 +773,6 @@ textarea{
 
 <script>
 
-
 /* =========================
    SUPABASE
 ========================= */
@@ -798,7 +782,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-
 
 const supabaseClient =
   window.supabase.createClient(
@@ -908,7 +891,6 @@ function toggleShareMenu(){
     document.getElementById(
       "shareMenu"
     );
-
 
   menu.style.display =
     menu.style.display === "flex"
@@ -1418,6 +1400,7 @@ async function publishImagePost(){
 
 /* =========================
    LOAD FEED
+   NEWEST FIRST
 ========================= */
 
 async function loadFeed(){
@@ -1428,12 +1411,17 @@ async function loadFeed(){
     );
 
 
+  if(!feed){
+    return;
+  }
+
+
   feed.innerHTML =
     '<div class="loading">Loading feed...</div>';
 
 
   const {
-    data,
+    data: posts,
     error
   } =
   await supabaseClient
@@ -1475,7 +1463,7 @@ async function loadFeed(){
   }
 
 
-  if(!data || data.length === 0){
+  if(!posts || posts.length === 0){
 
     feed.innerHTML =
       `<div class="empty">
@@ -1489,10 +1477,14 @@ async function loadFeed(){
   }
 
 
+  /* =========================
+     LOAD ALL PROFILES
+  ========================= */
+
   const userIds =
     [
       ...new Set(
-        data
+        posts
           .map(
             post =>
               post.user_id
@@ -1507,7 +1499,7 @@ async function loadFeed(){
 
   if(userIds.length){
 
-    const result =
+    const profileResult =
       await supabaseClient
         .from("profiles")
         .select(
@@ -1519,27 +1511,36 @@ async function loadFeed(){
         );
 
 
-    if(result.error){
+    if(profileResult.error){
 
       console.error(
         "PROFILE LIST ERROR:",
-        result.error
+        profileResult.error
       );
 
     }else{
 
       profiles =
-        result.data || [];
+        profileResult.data || [];
 
     }
 
   }
 
 
+  /* =========================
+     CLEAR OLD FEED
+  ========================= */
+
   feed.innerHTML = "";
 
 
-  for(const post of data){
+  /* =========================
+     RENDER ONE BY ONE
+     PRESERVE DATABASE ORDER
+  ========================= */
+
+  for(const post of posts){
 
     const profile =
       profiles.find(
@@ -1548,7 +1549,7 @@ async function loadFeed(){
       );
 
 
-    renderPost(
+    await renderPost(
       post,
       profile
     );
@@ -1576,6 +1577,7 @@ async function renderPost(
   const username =
     profile?.username ||
     profile?.name ||
+    currentUser?.user_metadata?.username ||
     "User";
 
 
@@ -1585,7 +1587,10 @@ async function renderPost(
 
 
   const firstLetter =
-    name
+    (
+      name ||
+      "U"
+    )
       .charAt(0)
       .toUpperCase();
 
@@ -1594,6 +1599,10 @@ async function renderPost(
     post.user_id ===
     currentUser.id;
 
+
+  /* =========================
+     LIKE COUNT
+  ========================= */
 
   const {
     count: likeCount
@@ -1613,6 +1622,10 @@ async function renderPost(
     );
 
 
+  /* =========================
+     DISLIKE COUNT
+  ========================= */
+
   const {
     count: dislikeCount
   } =
@@ -1630,6 +1643,10 @@ async function renderPost(
       post.id
     );
 
+
+  /* =========================
+     COMMENT COUNT
+  ========================= */
 
   const {
     count: commentCount
@@ -1659,17 +1676,25 @@ async function renderPost(
     "post";
 
 
+  /* =========================
+     AVATAR
+  ========================= */
+
   let avatarHtml = "";
 
 
-  if(profile?.avatar_url){
+  if(
+    profile?.avatar_url &&
+    profile.avatar_url.trim()
+  ){
 
     avatarHtml =
       `<img
         src="${escapeAttribute(
           profile.avatar_url
         )}"
-        alt="Avatar">`;
+        alt="Avatar"
+        onerror="this.style.display='none';this.parentElement.textContent='${escapeAttribute(firstLetter)}';">`;
 
   }else{
 
@@ -1680,6 +1705,10 @@ async function renderPost(
 
   }
 
+
+  /* =========================
+     IMAGE
+  ========================= */
 
   let media = "";
 
@@ -1700,13 +1729,23 @@ async function renderPost(
   }
 
 
+  /* =========================
+     MESSAGE LABEL
+  ========================= */
+
   const messageLabel =
     post.post_type === "message"
-      ? `<div class="message-label">
-           💬 Home Message
-         </div>`
-      : "";
+      ?
+      `<div class="message-label">
+        💬 Home Message
+      </div>`
+      :
+      "";
 
+
+  /* =========================
+     POST HTML
+  ========================= */
 
   div.innerHTML = `
 
@@ -1720,9 +1759,7 @@ async function renderPost(
       <div class="user-info">
 
         <div class="username">
-          ${escapeHtml(
-            username
-          )}
+          ${escapeHtml(username)}
         </div>
 
 
