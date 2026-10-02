@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,6 +85,7 @@ button{
 
 button:disabled{
   opacity:.6;
+  cursor:not-allowed;
 }
 
 #message{
@@ -91,6 +93,7 @@ button:disabled{
   margin-top:15px;
   font-size:14px;
   min-height:20px;
+  line-height:1.5;
 }
 
 .signup-link{
@@ -114,29 +117,43 @@ button:disabled{
 
 <div class="login-box">
 
-  <div class="logo">RabtaHub</div>
+  <div class="logo">
+    RabtaHub
+  </div>
 
   <div class="tagline">
     Connect. Share. Belong.
   </div>
 
-  <h2>Welcome Back</h2>
+  <h2>
+    Welcome Back
+  </h2>
+
 
   <form id="loginForm">
 
+    <!-- USERNAME -->
+
     <input
-      type="email"
-      id="email"
-      placeholder="Email"
+      type="text"
+      id="username"
+      placeholder="Username"
+      maxlength="20"
+      autocomplete="username"
       required
     >
+
+
+    <!-- PASSWORD -->
 
     <input
       type="password"
       id="password"
       placeholder="Password"
+      autocomplete="current-password"
       required
     >
+
 
     <button
       type="submit"
@@ -146,11 +163,18 @@ button:disabled{
 
   </form>
 
+
   <div id="message"></div>
 
+
   <div class="signup-link">
+
     Don't have an account?
-    <a href="signup.html">Create Account</a>
+
+    <a href="signup.html">
+      Create Account
+    </a>
+
   </div>
 
 </div>
@@ -158,11 +182,16 @@ button:disabled{
 
 <script>
 
+/* ========================================
+   SUPABASE
+======================================== */
+
 const SUPABASE_URL =
   "https://jhcpqjmxiovvqbghpxbf.supabase.co";
 
 const SUPABASE_KEY =
   "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
 
 const supabaseClient =
   window.supabase.createClient(
@@ -171,91 +200,249 @@ const supabaseClient =
   );
 
 
+/* ========================================
+   LOGIN
+======================================== */
+
 document
   .getElementById("loginForm")
-  .addEventListener("submit", async function(e){
+  .addEventListener(
+    "submit",
+    async function(e){
 
-    e.preventDefault();
-
-    const email =
-      document.getElementById("email").value.trim();
-
-    const password =
-      document.getElementById("password").value;
-
-    const button =
-      document.getElementById("loginBtn");
-
-    const message =
-      document.getElementById("message");
-
-    button.disabled = true;
-    button.textContent = "Logging in...";
-
-    message.textContent = "";
-    message.style.color = "#666";
+      e.preventDefault();
 
 
-    try{
-
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-
-          email: email,
-          password: password
-
-        });
+      let username =
+        document
+          .getElementById("username")
+          .value
+          .trim()
+          .toLowerCase();
 
 
-      if(error){
-        throw error;
-      }
+      const password =
+        document
+          .getElementById("password")
+          .value;
 
 
-      if(!data.session){
-        throw new Error(
-          "Login session create nahi hui."
+      const button =
+        document.getElementById(
+          "loginBtn"
         );
+
+
+      const message =
+        document.getElementById(
+          "message"
+        );
+
+
+      /* ========================================
+         RESET
+      ======================================== */
+
+      message.textContent = "";
+
+      message.style.color =
+        "#666";
+
+
+      /* ========================================
+         USERNAME VALIDATION
+      ======================================== */
+
+      if(
+        username.length < 4 ||
+        username.length > 20
+      ){
+
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Username 4 se 20 characters ka hona chahiye.";
+
+        return;
+
       }
 
 
-      message.style.color = "#00a86b";
+      if(
+        !/^[a-z0-9_]+$/.test(username)
+      ){
 
-      message.textContent =
-        "Login successful!";
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Username valid nahi hai.";
+
+        return;
+
+      }
 
 
-      setTimeout(function(){
+      if(!password){
 
-        window.location.href =
-          "index.html";
+        message.style.color =
+          "#d63031";
 
-      }, 800);
+        message.textContent =
+          "Password enter karein.";
+
+        return;
+
+      }
 
 
-    }catch(error){
+      button.disabled = true;
 
-      console.error(
-        "LOGIN ERROR:",
-        error
-      );
+      button.textContent =
+        "Logging in...";
 
-      message.style.color = "#d63031";
 
-      message.textContent =
-        error.message ||
-        "Login failed.";
+      try{
 
-    }finally{
 
-      button.disabled = false;
-      button.textContent = "Login";
+        /* ========================================
+           FIND USERNAME
+        ======================================== */
+
+        const {
+          data: profile,
+          error: profileError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select("id,username")
+            .eq(
+              "username",
+              username
+            )
+            .maybeSingle();
+
+
+        if(profileError){
+
+          throw new Error(
+            "Username check failed: " +
+            profileError.message
+          );
+
+        }
+
+
+        if(!profile){
+
+          throw new Error(
+            "Username ya password ghalat hai."
+          );
+
+        }
+
+
+        /* ========================================
+           HIDDEN SYSTEM EMAIL
+        ======================================== */
+
+        const systemEmail =
+          username +
+          "@rbtahub.local";
+
+
+        /* ========================================
+           SUPABASE LOGIN
+        ======================================== */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signInWithPassword({
+
+            email:
+              systemEmail,
+
+            password:
+              password
+
+          });
+
+
+        if(error){
+
+          throw new Error(
+            "Username ya password ghalat hai."
+          );
+
+        }
+
+
+        if(!data.session){
+
+          throw new Error(
+            "Login session create nahi hui."
+          );
+
+        }
+
+
+        /* ========================================
+           SUCCESS
+        ======================================== */
+
+        message.style.color =
+          "#00a86b";
+
+        message.textContent =
+          "Login successful!";
+
+
+        setTimeout(
+          function(){
+
+            window.location.href =
+              "index.html";
+
+          },
+          700
+        );
+
+
+      }catch(error){
+
+        console.error(
+          "LOGIN ERROR:",
+          error
+        );
+
+
+        message.style.color =
+          "#d63031";
+
+
+        message.textContent =
+          error.message ||
+          "Login failed.";
+
+
+      }finally{
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "Login";
+
+      }
 
     }
-
-  });
+  );
 
 </script>
 
 </body>
 </html>
+```
