@@ -1,6 +1,8 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,6 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+
     *{
       box-sizing:border-box;
     }
@@ -68,6 +71,14 @@
       border-color:#6c5ce7;
     }
 
+    .hint{
+      margin-top:-8px;
+      margin-bottom:14px;
+      font-size:12px;
+      color:#888;
+      line-height:1.4;
+    }
+
     button{
       width:100%;
       border:0;
@@ -82,6 +93,7 @@
 
     button:disabled{
       opacity:.6;
+      cursor:not-allowed;
     }
 
     #message{
@@ -89,6 +101,7 @@
       margin-top:15px;
       font-size:14px;
       min-height:20px;
+      line-height:1.5;
     }
 
     .login-link{
@@ -103,51 +116,84 @@
       font-weight:bold;
       text-decoration:none;
     }
+
   </style>
+
 </head>
 
 <body>
 
   <div class="signup-box">
 
-    <div class="logo">RabtaHub</div>
+    <div class="logo">
+      RabtaHub
+    </div>
 
     <div class="tagline">
       Connect. Share. Belong.
     </div>
 
-    <h2>Create Account</h2>
+    <h2>
+      Create Account
+    </h2>
+
 
     <form id="signupForm">
+
+      <!-- NAME -->
 
       <input
         type="text"
         id="name"
         placeholder="Full Name"
+        maxlength="50"
+        autocomplete="name"
         required
       >
+
+
+      <!-- USERNAME -->
 
       <input
         type="text"
         id="username"
         placeholder="Username"
+        maxlength="20"
+        autocomplete="username"
         required
       >
 
-      <input
-        type="email"
-        id="email"
-        placeholder="Email"
-        required
-      >
+      <div class="hint">
+        Username 4–20 characters ka ho.
+        Sirf letters, numbers aur _ allowed hain.
+      </div>
+
+
+      <!-- PASSWORD -->
 
       <input
         type="password"
         id="password"
         placeholder="Password"
         minlength="6"
+        maxlength="72"
+        autocomplete="new-password"
         required
       >
+
+
+      <!-- CONFIRM PASSWORD -->
+
+      <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm Password"
+        minlength="6"
+        maxlength="72"
+        autocomplete="new-password"
+        required
+      >
+
 
       <button
         type="submit"
@@ -157,17 +203,28 @@
 
     </form>
 
+
     <div id="message"></div>
 
+
     <div class="login-link">
+
       Already have an account?
-      <a href="login.html">Login</a>
+
+      <a href="login.html">
+        Login
+      </a>
+
     </div>
 
   </div>
 
 
 <script>
+
+/* ========================================
+   SUPABASE
+======================================== */
 
 const SUPABASE_URL =
   "https://jhcpqjmxiovvqbghpxbf.supabase.co";
@@ -182,6 +239,10 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
+
+/* ========================================
+   SIGNUP FORM
+======================================== */
 
 document
   .getElementById("signupForm")
@@ -199,23 +260,23 @@ document
           .trim();
 
 
-      const username =
+      let username =
         document
           .getElementById("username")
           .value
-          .trim();
-
-
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim();
+          .trim()
+          .toLowerCase();
 
 
       const password =
         document
           .getElementById("password")
+          .value;
+
+
+      const confirmPassword =
+        document
+          .getElementById("confirmPassword")
           .value;
 
 
@@ -231,11 +292,9 @@ document
         );
 
 
-      button.disabled = true;
-
-      button.textContent =
-        "Creating account...";
-
+      /* ========================================
+         RESET MESSAGE
+      ======================================== */
 
       message.textContent = "";
 
@@ -243,13 +302,179 @@ document
         "#666";
 
 
+      /* ========================================
+         NAME VALIDATION
+      ======================================== */
+
+      if(!name){
+
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Name enter karein.";
+
+        return;
+
+      }
+
+
+      if(name.length < 2){
+
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Name kam az kam 2 characters ka hona chahiye.";
+
+        return;
+
+      }
+
+
+      /* ========================================
+         USERNAME VALIDATION
+      ======================================== */
+
+      if(
+        username.length < 4 ||
+        username.length > 20
+      ){
+
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Username 4 se 20 characters ka hona chahiye.";
+
+        return;
+
+      }
+
+
+      const usernamePattern =
+        /^[a-z0-9_]+$/;
+
+
+      if(
+        !usernamePattern.test(username)
+      ){
+
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Username mein sirf letters, numbers aur _ use karein.";
+
+        return;
+
+      }
+
+
+      /* ========================================
+         PASSWORD VALIDATION
+      ======================================== */
+
+      if(password.length < 6){
+
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Password kam az kam 6 characters ka hona chahiye.";
+
+        return;
+
+      }
+
+
+      /* ========================================
+         CONFIRM PASSWORD
+      ======================================== */
+
+      if(
+        password !== confirmPassword
+      ){
+
+        message.style.color =
+          "#d63031";
+
+        message.textContent =
+          "Passwords match nahi kar rahe.";
+
+        return;
+
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Checking...";
+
+
       try{
 
-        /*
-        ========================================
-        CREATE AUTH ACCOUNT
-        ========================================
-        */
+
+        /* ========================================
+           CHECK USERNAME
+        ======================================== */
+
+        const {
+          data: existingProfile,
+          error: usernameError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select("id")
+            .eq(
+              "username",
+              username
+            )
+            .maybeSingle();
+
+
+        if(usernameError){
+
+          throw new Error(
+            "Username check failed: " +
+            usernameError.message
+          );
+
+        }
+
+
+        if(existingProfile){
+
+          message.style.color =
+            "#d63031";
+
+          message.textContent =
+            "Ye username already taken hai.";
+
+          return;
+
+        }
+
+
+        /* ========================================
+           CREATE HIDDEN SYSTEM EMAIL
+           
+           User ko email nahi dikhayi jayegi.
+        ======================================== */
+
+        const systemEmail =
+          username +
+          "@rbtahub.local";
+
+
+        button.textContent =
+          "Creating account...";
+
+
+        /* ========================================
+           CREATE SUPABASE ACCOUNT
+        ======================================== */
 
         const {
           data,
@@ -257,17 +482,21 @@ document
         } =
           await supabaseClient.auth.signUp({
 
-            email: email,
+            email:
+              systemEmail,
 
-            password: password,
+            password:
+              password,
 
             options: {
 
               data: {
 
-                name: name,
+                name:
+                  name,
 
-                username: username
+                username:
+                  username
 
               }
 
@@ -292,20 +521,15 @@ document
         }
 
 
-        /*
-        ========================================
-        PROFILE AUTOMATICALLY CREATED
-        BY SUPABASE DATABASE TRIGGER
-        ========================================
-        */
-
+        /* ========================================
+           SUCCESS
+        ======================================== */
 
         message.style.color =
           "#00a86b";
 
-
         message.textContent =
-          "Account successfully created!";
+          "Account successfully created! Login page open ho rahi hai...";
 
 
         document
@@ -336,14 +560,47 @@ document
           "#d63031";
 
 
-        message.textContent =
-          error.message ||
+        let errorMessage =
+          error?.message ||
           "Signup failed.";
+
+
+        /* ========================================
+           FRIENDLY ERRORS
+        ======================================== */
+
+        if(
+          errorMessage
+            .toLowerCase()
+            .includes("already registered")
+        ){
+
+          errorMessage =
+            "Ye username already registered hai.";
+
+        }
+
+
+        if(
+          errorMessage
+            .toLowerCase()
+            .includes("password")
+        ){
+
+          errorMessage =
+            "Password requirements puri nahi hain.";
+
+        }
+
+
+        message.textContent =
+          errorMessage;
 
 
       }finally{
 
-        button.disabled = false;
+        button.disabled =
+          false;
 
         button.textContent =
           "Create Account";
@@ -357,3 +614,4 @@ document
 
 </body>
 </html>
+```
