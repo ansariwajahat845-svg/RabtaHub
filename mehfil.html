@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -152,9 +152,7 @@ select:focus{
   color:#c0392b;
 }
 
-/* =========================
-   LIST
-========================= */
+/* LIST */
 
 .mehfil-list{
   overflow:hidden;
@@ -199,9 +197,7 @@ select:focus{
   margin-right:5px;
 }
 
-/* =========================
-   DETAIL
-========================= */
+/* DETAIL */
 
 .detail-head{
   display:flex;
@@ -246,9 +242,7 @@ select:focus{
   color:#c0392b;
 }
 
-/* =========================
-   COMPOSER
-========================= */
+/* COMPOSER */
 
 .reply-target{
   display:none;
@@ -312,9 +306,7 @@ select:focus{
   font-size:17px;
 }
 
-/* =========================
-   FEED
-========================= */
+/* FEED */
 
 .feed{
   margin-top:5px;
@@ -406,19 +398,7 @@ select:focus{
   background:#fff0f0;
 }
 
-.reply-reference{
-  margin:8px 0 0 49px;
-  padding:7px 9px;
-  border-left:3px solid #6c5ce7;
-  background:#f7f5ff;
-  color:#666;
-  font-size:12px;
-  border-radius:5px;
-}
-
-/* =========================
-   MEMBERS
-========================= */
+/* MEMBERS */
 
 .member-row{
   display:flex;
@@ -455,9 +435,7 @@ select:focus{
   margin-top:3px;
 }
 
-/* =========================
-   INVITE
-========================= */
+/* INVITE */
 
 .invite-box{
   background:#faf9ff;
@@ -480,6 +458,7 @@ select:focus{
 
 .invite-result-info{
   flex:1;
+  min-width:0;
 }
 
 .invite-result-name{
@@ -492,9 +471,7 @@ select:focus{
   font-size:11px;
 }
 
-/* =========================
-   EMPTY / LOADING
-========================= */
+/* EMPTY */
 
 .loading,
 .empty{
@@ -514,9 +491,7 @@ select:focus{
   word-break:break-word;
 }
 
-/* =========================
-   BOTTOM NAV
-========================= */
+/* BOTTOM NAV */
 
 .bottom-nav{
   position:fixed;
@@ -604,9 +579,7 @@ select:focus{
   </div>
 
 
-  <!-- =========================
-       MEHFIL LIST
-  ========================== -->
+  <!-- MEHFIL LIST -->
 
   <section id="listPage">
 
@@ -631,8 +604,9 @@ select:focus{
     </div>
 
 
-    <div id="createBox"
-         class="card hidden">
+    <div
+      id="createBox"
+      class="card hidden">
 
       <div class="section-title">
         Create New Mehfil
@@ -674,8 +648,9 @@ select:focus{
     </div>
 
 
-    <div id="mehfilList"
-         class="mehfil-list">
+    <div
+      id="mehfilList"
+      class="mehfil-list">
 
       <div class="loading">
         Mehfil load ho rahi hain...
@@ -686,9 +661,7 @@ select:focus{
   </section>
 
 
-  <!-- =========================
-       DETAIL PAGE
-  ========================== -->
+  <!-- DETAIL -->
 
   <section
     id="detailPage"
@@ -747,9 +720,7 @@ select:focus{
           placeholder="@username search karein"
           oninput="searchInviteUsers()">
 
-        <div
-          id="inviteResults">
-        </div>
+        <div id="inviteResults"></div>
 
       </div>
 
@@ -765,9 +736,11 @@ select:focus{
       </div>
 
       <div id="membersList">
+
         <div class="loading">
           Members load ho rahe hain...
         </div>
+
       </div>
 
     </div>
@@ -850,9 +823,7 @@ select:focus{
 </main>
 
 
-<!-- =========================
-     BOTTOM NAV
-========================== -->
+<!-- BOTTOM NAV -->
 
 <nav class="bottom-nav">
 
@@ -947,6 +918,10 @@ let replyToUser = null;
 
 let selectedImageFile = null;
 
+let inviteTimer = null;
+
+let noticeTimer = null;
+
 
 /* =====================================================
    INIT
@@ -970,9 +945,11 @@ async function initMehfil(){
         .auth
         .getUser();
 
+
     if(error){
       throw error;
     }
+
 
     currentUser =
       data?.user || null;
@@ -1026,6 +1003,7 @@ async function loadMehfils(){
     document.getElementById(
       "mehfilList"
     );
+
 
   list.innerHTML =
     '<div class="loading">Mehfil load ho rahi hain...</div>';
@@ -1100,11 +1078,6 @@ function renderMehfils(items){
     items
       .map(mehfil => {
 
-        const privacy =
-          getPrivacyText(
-            mehfil.privacy
-          );
-
         return `
 
           <div
@@ -1128,7 +1101,7 @@ function renderMehfils(items){
             <div class="mehfil-meta">
 
               <span class="privacy-badge">
-                ${privacy}
+                ${getPrivacyText(mehfil.privacy)}
               </span>
 
               Mehfil
@@ -1151,10 +1124,14 @@ function renderMehfils(items){
 
 function filterMehfils(){
 
+  const input =
+    document.getElementById(
+      "searchInput"
+    );
+
+
   const value =
-    document
-      .getElementById("searchInput")
-      .value
+    input.value
       .trim()
       .toLowerCase();
 
@@ -1271,8 +1248,6 @@ async function createMehfil(){
     }
 
 
-    /* Creator ko member bhi banayein */
-
     const memberResult =
       await supabaseClient
         .from("mehfil_members")
@@ -1294,7 +1269,7 @@ async function createMehfil(){
     if(memberResult.error){
 
       console.warn(
-        "Creator member insert:",
+        "CREATOR MEMBER INSERT:",
         memberResult.error
       );
 
@@ -1428,9 +1403,7 @@ async function openMehfil(id){
 
   await checkMembership();
 
-
   await loadMembers();
-
 
   await loadFeed();
 
@@ -1444,22 +1417,19 @@ async function openMehfil(id){
 async function checkMembership(){
 
   const actions =
-    document
-      .getElementById(
-        "detailActions"
-      );
+    document.getElementById(
+      "detailActions"
+    );
 
   const composer =
-    document
-      .getElementById(
-        "composerCard"
-      );
+    document.getElementById(
+      "composerCard"
+    );
 
   const inviteCard =
-    document
-      .getElementById(
-        "inviteCard"
-      );
+    document.getElementById(
+      "inviteCard"
+    );
 
 
   actions.innerHTML =
@@ -1476,16 +1446,13 @@ async function checkMembership(){
 
 
   if(!currentMehfil){
-
     return;
   }
 
 
-  /* Creator */
-
   const isCreator =
-    currentMehfil.creator_id ===
-    currentUser.id;
+    String(currentMehfil.creator_id) ===
+    String(currentUser.id);
 
 
   if(isCreator){
@@ -1545,6 +1512,7 @@ async function checkMembership(){
     composer.classList.remove(
       "hidden"
     );
+
 
     if(
       data.role === "admin" ||
@@ -1627,8 +1595,7 @@ function renderMemberActions(){
 function renderJoinActions(){
 
   let html = `
-    <button
-      onclick="joinMehfil()">
+    <button onclick="joinMehfil()">
       Join Mehfil
     </button>
   `;
@@ -1640,8 +1607,7 @@ function renderJoinActions(){
   ){
 
     html = `
-      <button
-        onclick="requestJoin()">
+      <button onclick="requestJoin()">
         🔒 Request Join
       </button>
     `;
@@ -1704,6 +1670,7 @@ async function joinMehfil(){
       .from("mehfil_members")
       .upsert(
         {
+
           mehfil_id:
             currentMehfil.id,
 
@@ -1713,6 +1680,7 @@ async function joinMehfil(){
           role:"member",
 
           status:"approved"
+
         },
         {
           onConflict:
@@ -1738,7 +1706,9 @@ async function joinMehfil(){
 
 
   await checkMembership();
+
   await loadMembers();
+
   await loadFeed();
 
 }
@@ -1817,8 +1787,8 @@ async function leaveMehfil(){
 
 
   if(
-    currentMehfil.creator_id ===
-    currentUser.id
+    String(currentMehfil.creator_id) ===
+    String(currentUser.id)
   ){
 
     showNotice(
@@ -1873,13 +1843,12 @@ async function leaveMehfil(){
 async function loadMembers(){
 
   const list =
-    document
-      .getElementById(
-        "membersList"
-      );
+    document.getElementById(
+      "membersList"
+    );
 
 
-  if(!currentMehfil){
+  if(!list || !currentMehfil){
     return;
   }
 
@@ -1924,12 +1893,26 @@ async function loadMembers(){
     data || [];
 
 
+  if(!currentMembers.length){
+
+    list.innerHTML =
+      '<div class="empty">Abhi members nahi hain.</div>';
+
+    return;
+  }
+
+
   const ids =
-    currentMembers
-      .map(
-        item => item.user_id
+    [
+      ...new Set(
+        currentMembers
+          .map(
+            item =>
+              String(item.user_id || "")
+          )
+          .filter(Boolean)
       )
-      .filter(Boolean);
+    ];
 
 
   let profiles = [];
@@ -1949,17 +1932,17 @@ async function loadMembers(){
         );
 
 
-    if(!result.error){
+    if(result.error){
 
-      profiles =
-        result.data || [];
+      console.error(
+        "MEMBER PROFILE ERROR:",
+        result.error
+      );
 
     }else{
 
-      console.warn(
-        "PROFILE LOAD:",
-        result.error
-      );
+      profiles =
+        result.data || [];
 
     }
 
@@ -1973,20 +1956,11 @@ async function loadMembers(){
     profile => {
 
       profileMap[
-        profile.id
+        String(profile.id)
       ] = profile;
 
     }
   );
-
-
-  if(!currentMembers.length){
-
-    list.innerHTML =
-      '<div class="empty">Abhi members nahi hain.</div>';
-
-    return;
-  }
 
 
   list.innerHTML =
@@ -1995,8 +1969,8 @@ async function loadMembers(){
 
         const profile =
           profileMap[
-            member.user_id
-          ];
+            String(member.user_id)
+          ] || null;
 
 
         const username =
@@ -2057,9 +2031,6 @@ async function loadMembers(){
    INVITE SEARCH
 ===================================================== */
 
-let inviteTimer = null;
-
-
 function searchInviteUsers(){
 
   clearTimeout(
@@ -2079,17 +2050,14 @@ function searchInviteUsers(){
 async function doInviteSearch(){
 
   const input =
-    document
-      .getElementById(
-        "inviteSearch"
-      );
-
+    document.getElementById(
+      "inviteSearch"
+    );
 
   const results =
-    document
-      .getElementById(
-        "inviteResults"
-      );
+    document.getElementById(
+      "inviteResults"
+    );
 
 
   const value =
@@ -2137,8 +2105,8 @@ async function doInviteSearch(){
     (data || [])
       .filter(
         user =>
-          user.id !==
-          currentUser.id
+          String(user.id) !==
+          String(currentUser.id)
       );
 
 
@@ -2188,7 +2156,7 @@ async function doInviteSearch(){
 
             <button
               class="secondary-btn"
-              onclick="sendInvite('${user.id}')">
+              onclick="sendInvite('${escapeJs(user.id)}')">
               Invite
             </button>
 
@@ -2259,24 +2227,21 @@ async function sendInvite(userId){
 function previewMehfilImage(){
 
   const input =
-    document
-      .getElementById(
-        "mehfilImage"
-      );
+    document.getElementById(
+      "mehfilImage"
+    );
 
 
   const preview =
-    document
-      .getElementById(
-        "imagePreview"
-      );
+    document.getElementById(
+      "imagePreview"
+    );
 
 
   const image =
-    document
-      .getElementById(
-        "previewImage"
-      );
+    document.getElementById(
+      "previewImage"
+    );
 
 
   const file =
@@ -2358,32 +2323,35 @@ function removeSelectedImage(){
 
 
   const input =
-    document
-      .getElementById(
-        "mehfilImage"
-      );
+    document.getElementById(
+      "mehfilImage"
+    );
 
 
   const preview =
-    document
-      .getElementById(
-        "imagePreview"
-      );
+    document.getElementById(
+      "imagePreview"
+    );
 
 
   const image =
-    document
-      .getElementById(
-        "previewImage"
-      );
+    document.getElementById(
+      "previewImage"
+    );
 
 
-  input.value = "";
+  if(input){
+    input.value = "";
+  }
 
-  image.src = "";
+  if(image){
+    image.src = "";
+  }
 
-  preview.style.display =
-    "none";
+  if(preview){
+    preview.style.display =
+      "none";
+  }
 
 }
 
@@ -2470,10 +2438,9 @@ async function publishActivity(){
 
 
   const input =
-    document
-      .getElementById(
-        "messageInput"
-      );
+    document.getElementById(
+      "messageInput"
+    );
 
 
   const content =
@@ -2587,10 +2554,9 @@ function startReply(username){
 
 
   const target =
-    document
-      .getElementById(
-        "replyTarget"
-      );
+    document.getElementById(
+      "replyTarget"
+    );
 
 
   target.textContent =
@@ -2619,10 +2585,14 @@ function clearReply(){
 
 
   const target =
-    document
-      .getElementById(
-        "replyTarget"
-      );
+    document.getElementById(
+      "replyTarget"
+    );
+
+
+  if(!target){
+    return;
+  }
 
 
   target.textContent = "";
@@ -2635,148 +2605,238 @@ function clearReply(){
 
 
 /* =====================================================
-   LOAD FEED
+   LOAD FEED - FIXED
 ===================================================== */
 
 async function loadFeed(){
 
   const feed =
-    document
-      .getElementById(
-        "feed"
-      );
+    document.getElementById(
+      "feed"
+    );
+
+
+  if(!feed){
+    return;
+  }
+
+
+  if(!currentMehfil){
+
+    feed.innerHTML =
+      '<div class="empty">Mehfil select nahi hui.</div>';
+
+    return;
+  }
 
 
   feed.innerHTML =
     '<div class="loading">Activity load ho rahi hai...</div>';
 
 
-  if(!currentMehfil){
-    return;
-  }
+  try{
 
+    /* =========================
+       POSTS
+    ========================= */
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .select("*")
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
-
-
-  if(error){
-
-    console.error(
-      "FEED ERROR:",
-      error
-    );
-
-    feed.innerHTML =
-      `<div class="error-box">
-        ${escapeHtml(error.message)}
-      </div>`;
-
-    return;
-  }
-
-
-  const posts =
-    data || [];
-
-
-  if(!posts.length){
-
-    feed.innerHTML =
-      `<div class="empty">
-        Abhi Mehfil mein koi activity nahi.
-      </div>`;
-
-    return;
-  }
-
-
-  const ids =
-    posts
-      .map(
-        post =>
-          post.user_id
-      )
-      .filter(Boolean);
-
-
-  let profiles = [];
-
-
-  if(ids.length){
-
-    const result =
+    const {
+      data: posts,
+      error: postsError
+    } =
       await supabaseClient
-        .from("profiles")
-        .select(
-          "id,username,name,avatar_url"
+        .from("mehfil_posts")
+        .select("*")
+        .eq(
+          "mehfil_id",
+          currentMehfil.id
         )
-        .in(
-          "id",
-          [
-            ...new Set(ids)
-          ]
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
         );
 
 
-    if(!result.error){
+    if(postsError){
+      throw postsError;
+    }
 
-      profiles =
-        result.data || [];
 
-    }else{
+    const postList =
+      posts || [];
 
-      console.warn(
-        "POST PROFILE ERROR:",
-        result.error
-      );
+
+    if(!postList.length){
+
+      feed.innerHTML =
+        `<div class="empty">
+          Abhi Mehfil mein koi activity nahi.
+        </div>`;
+
+      return;
+    }
+
+
+    /* =========================
+       UNIQUE USER IDS
+    ========================= */
+
+    const userIds =
+      [
+        ...new Set(
+          postList
+            .map(
+              post =>
+                String(
+                  post.user_id || ""
+                )
+            )
+            .filter(Boolean)
+        )
+      ];
+
+
+    /* =========================
+       PROFILES
+    ========================= */
+
+    let profileMap = {};
+
+
+    if(userIds.length){
+
+      const {
+        data: profileData,
+        error: profileError
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id,username,name,avatar_url"
+          )
+          .in(
+            "id",
+            userIds
+          );
+
+
+      if(profileError){
+
+        console.error(
+          "MEHFIL PROFILE ERROR:",
+          profileError
+        );
+
+      }else{
+
+        (profileData || [])
+          .forEach(profile => {
+
+            profileMap[
+              String(profile.id)
+            ] = profile;
+
+          });
+
+      }
 
     }
+
+
+    /* =========================
+       RENDER
+    ========================= */
+
+    feed.innerHTML =
+      postList
+        .map(post => {
+
+          const userId =
+            String(
+              post.user_id || ""
+            );
+
+
+          const profile =
+            profileMap[userId] ||
+            null;
+
+
+          let username =
+            getUsername(profile);
+
+
+          /*
+             CURRENT USER FALLBACK
+          */
+
+          if(
+            username === "User" &&
+            currentUser &&
+            userId ===
+            String(currentUser.id)
+          ){
+
+            username =
+              currentUser
+                ?.user_metadata
+                ?.username ||
+              currentUser
+                ?.user_metadata
+                ?.name ||
+              "User";
+
+          }
+
+
+          const renderProfile = {
+
+            id:
+              profile?.id ||
+              post.user_id,
+
+            username:
+              username,
+
+            name:
+              profile?.name ||
+              "",
+
+            avatar_url:
+              profile?.avatar_url ||
+              ""
+
+          };
+
+
+          return renderPost(
+            post,
+            renderProfile
+          );
+
+        })
+        .join("");
+
+
+  }catch(error){
+
+    console.error(
+      "MEHFIL LOAD FEED ERROR:",
+      error
+    );
+
+
+    feed.innerHTML =
+      `<div class="error-box">
+        ${escapeHtml(
+          error?.message ||
+          String(error)
+        )}
+      </div>`;
 
   }
-
-
-  const profileMap = {};
-
-
-  profiles.forEach(
-    profile => {
-
-      profileMap[
-        profile.id
-      ] = profile;
-
-    }
-  );
-
-
-  feed.innerHTML =
-    posts
-      .map(
-        post =>
-          renderPost(
-            post,
-            profileMap[
-              post.user_id
-            ]
-          )
-      )
-      .join("");
 
 }
 
@@ -2803,8 +2863,8 @@ function renderPost(
 
   const own =
     currentUser &&
-    post.user_id ===
-    currentUser.id;
+    String(post.user_id) ===
+    String(currentUser.id);
 
 
   const image =
@@ -2866,9 +2926,7 @@ function renderPost(
       <div class="activity-actions">
 
         <button
-          onclick="startReply(
-            '${escapeJs(username)}'
-          )">
+          onclick="startReply('${escapeJs(username)}')">
           Reply
         </button>
 
@@ -2949,12 +3007,25 @@ async function deletePost(
 
       if(path){
 
-        await supabaseClient
-          .storage
-          .from("mehfil-images")
-          .remove([
-            path
-          ]);
+        const {
+          error:storageError
+        } =
+          await supabaseClient
+            .storage
+            .from("mehfil-images")
+            .remove([
+              path
+            ]);
+
+
+        if(storageError){
+
+          console.warn(
+            "IMAGE DELETE ERROR:",
+            storageError
+          );
+
+        }
 
       }
 
@@ -2970,6 +3041,11 @@ async function deletePost(
 
 
   }catch(error){
+
+    console.error(
+      "DELETE ERROR:",
+      error
+    );
 
     showNotice(
       "Delete nahi hua: " +
@@ -2992,8 +3068,10 @@ function getStoragePath(url){
     const marker =
       "/storage/v1/object/public/mehfil-images/";
 
+
     const index =
-      url.indexOf(marker);
+      String(url)
+        .indexOf(marker);
 
 
     if(index === -1){
@@ -3002,9 +3080,11 @@ function getStoragePath(url){
 
 
     return decodeURIComponent(
-      url.slice(
-        index + marker.length
-      )
+      String(url)
+        .slice(
+          index +
+          marker.length
+        )
     );
 
   }catch(error){
@@ -3342,18 +3422,19 @@ function safeUrl(
    NOTICE
 ===================================================== */
 
-let noticeTimer = null;
-
-
 function showNotice(
   message
 ){
 
   const notice =
-    document
-      .getElementById(
-        "notice"
-      );
+    document.getElementById(
+      "notice"
+    );
+
+
+  if(!notice){
+    return;
+  }
 
 
   notice.textContent =
@@ -3394,10 +3475,14 @@ function showError(
 ){
 
   const notice =
-    document
-      .getElementById(
-        "notice"
-      );
+    document.getElementById(
+      "notice"
+    );
+
+
+  if(!notice){
+    return;
+  }
 
 
   notice.textContent =
@@ -3417,21 +3502,22 @@ function showError(
 
 function goBack(){
 
+  const detail =
+    document.getElementById(
+      "detailPage"
+    );
+
+
   if(
-    !document
-      .getElementById(
-        "detailPage"
-      )
-      .classList
-      .contains("hidden")
+    detail &&
+    !detail.classList.contains(
+      "hidden"
+    )
   ){
 
-    document
-      .getElementById(
-        "detailPage"
-      )
-      .classList
-      .add("hidden");
+    detail.classList.add(
+      "hidden"
+    );
 
 
     document
@@ -3453,6 +3539,7 @@ function goBack(){
     currentMehfil =
       null;
 
+
     return;
   }
 
@@ -3471,7 +3558,9 @@ async function refreshCurrent(){
   if(currentMehfil){
 
     await checkMembership();
+
     await loadMembers();
+
     await loadFeed();
 
     return;
@@ -3528,7 +3617,7 @@ function goMore(){
 
 
 /* =====================================================
-   GLOBAL JS ERROR PROTECTION
+   GLOBAL ERROR PROTECTION
 ===================================================== */
 
 window.addEventListener(
