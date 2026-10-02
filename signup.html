@@ -1,10 +1,13 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>RabtaHub - Sign Up</title>
 
@@ -24,7 +27,11 @@
       justify-content:center;
       padding:20px;
       font-family:Arial,sans-serif;
-      background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+      background:linear-gradient(
+        135deg,
+        #6c5ce7,
+        #8e44ad
+      );
     }
 
     .signup-box{
@@ -33,7 +40,8 @@
       background:#fff;
       padding:30px 22px;
       border-radius:20px;
-      box-shadow:0 15px 40px rgba(0,0,0,.18);
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.18);
     }
 
     .logo{
@@ -80,7 +88,7 @@
     }
 
     /* =========================
-       PASSWORD WRAP
+       PASSWORD
     ========================= */
 
     .password-wrap{
@@ -89,32 +97,36 @@
     }
 
     .password-wrap input{
-      padding-right:52px;
+      padding-right:55px;
     }
 
     .show-password{
       position:absolute;
-      right:5px;
+      right:4px;
       top:0;
-      width:45px;
+      width:46px;
       height:45px;
       padding:0;
       margin:0;
       border:0;
       background:transparent;
       color:#666;
-      font-size:19px;
+      font-size:20px;
       display:flex;
       align-items:center;
       justify-content:center;
       cursor:pointer;
+      z-index:5;
     }
 
-    .show-password:hover{
+    .show-password:hover,
+    .show-password:active,
+    .show-password:focus{
       background:transparent;
+      outline:none;
     }
 
-    button{
+    .create-btn{
       width:100%;
       border:0;
       padding:14px;
@@ -126,7 +138,7 @@
       cursor:pointer;
     }
 
-    button:disabled{
+    .create-btn:disabled{
       opacity:.6;
       cursor:not-allowed;
     }
@@ -175,7 +187,6 @@
 
     <form id="signupForm">
 
-
       <!-- NAME -->
 
       <input
@@ -222,14 +233,10 @@
         <button
           type="button"
           class="show-password"
-          onclick="togglePassword(
-            'password',
-            'passwordIcon'
-          )">
+          id="passwordToggle"
+          aria-label="Show password">
 
-          <span id="passwordIcon">
-            👁️
-          </span>
+          👁️
 
         </button>
 
@@ -253,14 +260,10 @@
         <button
           type="button"
           class="show-password"
-          onclick="togglePassword(
-            'confirmPassword',
-            'confirmPasswordIcon'
-          )">
+          id="confirmPasswordToggle"
+          aria-label="Show confirm password">
 
-          <span id="confirmPasswordIcon">
-            👁️
-          </span>
+          👁️
 
         </button>
 
@@ -271,6 +274,7 @@
 
       <button
         type="submit"
+        class="create-btn"
         id="signupBtn">
 
         Create Account
@@ -308,7 +312,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 
-
 const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
@@ -317,40 +320,78 @@ const supabaseClient =
 
 
 /* ========================================
-   SHOW / HIDE PASSWORD
+   PASSWORD SHOW / HIDE
 ======================================== */
 
-function togglePassword(
+function setupPasswordToggle(
   inputId,
-  iconId
+  buttonId
 ){
 
   const input =
     document.getElementById(inputId);
 
-  const icon =
-    document.getElementById(iconId);
+  const button =
+    document.getElementById(buttonId);
 
 
-  if(
-    input.type === "password"
-  ){
-
-    input.type = "text";
-
-    icon.textContent =
-      "🙈";
-
-  }else{
-
-    input.type = "password";
-
-    icon.textContent =
-      "👁️";
-
+  if(!input || !button){
+    return;
   }
 
+
+  button.addEventListener(
+    "click",
+    function(event){
+
+      event.preventDefault();
+
+      event.stopPropagation();
+
+
+      if(input.type === "password"){
+
+        input.type = "text";
+
+        button.textContent = "🙈";
+
+        button.setAttribute(
+          "aria-label",
+          "Hide password"
+        );
+
+      }else{
+
+        input.type = "password";
+
+        button.textContent = "👁️";
+
+        button.setAttribute(
+          "aria-label",
+          "Show password"
+        );
+
+      }
+
+    }
+  );
+
 }
+
+
+/* ========================================
+   START PASSWORD BUTTONS
+======================================== */
+
+setupPasswordToggle(
+  "password",
+  "passwordToggle"
+);
+
+setupPasswordToggle(
+  "confirmPassword",
+  "confirmPasswordToggle"
+);
 
 
 /* ========================================
@@ -405,19 +446,15 @@ document
         );
 
 
-      /* ========================================
-         RESET MESSAGE
-      ======================================== */
-
       message.textContent = "";
 
       message.style.color =
         "#666";
 
 
-      /* ========================================
-         NAME VALIDATION
-      ======================================== */
+      /* =========================
+         NAME
+      ========================= */
 
       if(!name){
 
@@ -445,9 +482,9 @@ document
       }
 
 
-      /* ========================================
-         USERNAME VALIDATION
-      ======================================== */
+      /* =========================
+         USERNAME
+      ========================= */
 
       if(
         username.length < 4 ||
@@ -484,9 +521,9 @@ document
       }
 
 
-      /* ========================================
-         PASSWORD VALIDATION
-      ======================================== */
+      /* =========================
+         PASSWORD
+      ========================= */
 
       if(password.length < 6){
 
@@ -501,9 +538,9 @@ document
       }
 
 
-      /* ========================================
+      /* =========================
          CONFIRM PASSWORD
-      ======================================== */
+      ========================= */
 
       if(
         password !== confirmPassword
@@ -529,9 +566,9 @@ document
       try{
 
 
-        /* ========================================
+        /* =========================
            CHECK USERNAME
-        ======================================== */
+        ========================= */
 
         const {
           data: existingProfile,
@@ -565,14 +602,19 @@ document
           message.textContent =
             "Ye username already taken hai.";
 
+          button.disabled = false;
+
+          button.textContent =
+            "Create Account";
+
           return;
 
         }
 
 
-        /* ========================================
+        /* =========================
            HIDDEN SYSTEM EMAIL
-        ======================================== */
+        ========================= */
 
         const systemEmail =
           username +
@@ -583,9 +625,9 @@ document
           "Creating account...";
 
 
-        /* ========================================
-           CREATE SUPABASE ACCOUNT
-        ======================================== */
+        /* =========================
+           CREATE ACCOUNT
+        ========================= */
 
         const {
           data,
@@ -594,5 +636,113 @@ document
           await supabaseClient.auth.signUp({
 
             email:
-              system
+              systemEmail,
+
+            password:
+              password,
+
+            options:{
+
+              data:{
+
+                name:
+                  name,
+
+                username:
+                  username
+
+              }
+
+            }
+
+          });
+
+
+        if(error){
+
+          throw new Error(
+            error.message
+          );
+
+        }
+
+
+        /* =========================
+           SUCCESS
+        ========================= */
+
+        message.style.color =
+          "#00a884";
+
+
+        message.textContent =
+          "Account successfully create ho gaya.";
+
+
+        button.textContent =
+          "Account Created";
+
+
+        /* =========================
+           GO LOGIN
+        ========================= */
+
+        setTimeout(
+          function(){
+
+            window.location.href =
+              "login.html";
+
+          },
+          1200
+        );
+
+
+      }catch(error){
+
+        console.error(
+          "SIGNUP ERROR:",
+          error
+        );
+
+
+        message.style.color =
+          "#d63031";
+
+
+        let errorText =
+          error?.message ||
+          "Account create nahi ho saka.";
+
+
+        if(
+          errorText
+            .toLowerCase()
+            .includes("rate limit")
+        ){
+
+          errorText =
+            "Signup temporarily limit ho gaya hai. Thori der baad dobara try karein.";
+
+        }
+
+
+        message.textContent =
+          errorText;
+
+
+        button.disabled = false;
+
+        button.textContent =
+          "Create Account";
+
+      }
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
 ```
