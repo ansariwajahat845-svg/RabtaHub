@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,10 +73,6 @@ body{
   box-shadow:0 2px 7px rgba(0,0,0,.06);
   font-size:13px;
 }
-
-/* =========================
-   BASIC
-========================= */
 
 .card{
   background:white;
@@ -194,21 +190,18 @@ select:focus{
 }
 
 /* =========================
-   MEHFIL DETAIL
+   DETAIL
 ========================= */
 
 .detail-header{
   padding:10px 4px 13px;
   border-bottom:1px solid #eee;
-  border-radius:0;
-  box-shadow:none;
   background:transparent;
 }
 
 .detail-name{
   font-size:21px;
   font-weight:bold;
-  text-align:left;
 }
 
 .detail-description{
@@ -231,7 +224,7 @@ select:focus{
 }
 
 /* =========================
-   MEHFIL COMPOSER
+   COMPOSER
 ========================= */
 
 .composer{
@@ -253,6 +246,69 @@ select:focus{
   margin-bottom:7px;
 }
 
+.photo-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.photo-label{
+  display:inline-block;
+  background:#f0edff;
+  color:#6c5ce7;
+  border-radius:8px;
+  padding:8px 11px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.photo-input{
+  display:none;
+}
+
+.photo-name{
+  flex:1;
+  color:#888;
+  font-size:11px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.image-preview{
+  display:none;
+  margin-bottom:9px;
+  position:relative;
+}
+
+.image-preview.show{
+  display:block;
+}
+
+.image-preview img{
+  width:100%;
+  max-height:300px;
+  object-fit:contain;
+  border-radius:9px;
+  background:#f5f5f5;
+}
+
+.remove-image{
+  position:absolute;
+  top:7px;
+  right:7px;
+  border:0;
+  background:rgba(0,0,0,.65);
+  color:white;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:15px;
+}
+
 .send-row{
   display:flex;
   justify-content:flex-end;
@@ -269,7 +325,7 @@ select:focus{
 }
 
 /* =========================
-   REPLY TARGET
+   REPLY
 ========================= */
 
 .reply-target{
@@ -341,7 +397,6 @@ select:focus{
 .activity-user{
   font-size:14px;
   font-weight:bold;
-  color:#222;
 }
 
 .activity-time{
@@ -359,30 +414,44 @@ select:focus{
   word-break:break-word;
 }
 
+.activity-image{
+  margin-left:47px;
+  margin-top:8px;
+  max-width:calc(100% - 47px);
+}
+
+.activity-image img{
+  width:100%;
+  max-height:420px;
+  object-fit:contain;
+  border-radius:9px;
+  background:#f5f5f5;
+  display:block;
+}
+
 .activity-actions{
   margin-left:47px;
   margin-top:7px;
   display:flex;
-  gap:7px;
+  gap:9px;
 }
 
-.reply-btn{
-  border:0;
-  background:none;
-  color:#6c5ce7;
-  padding:3px 0;
-  font-size:12px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
+.reply-btn,
 .delete-btn{
   border:0;
   background:none;
-  color:#c0392b;
   padding:3px 0;
   font-size:12px;
   cursor:pointer;
+}
+
+.reply-btn{
+  color:#6c5ce7;
+  font-weight:bold;
+}
+
+.delete-btn{
+  color:#c0392b;
 }
 
 /* =========================
@@ -649,13 +718,12 @@ select:focus{
 
 
   <!-- =========================
-       MEHFIL DETAIL
+       DETAIL
   ========================== -->
 
   <div
     id="detailPage"
     class="hidden">
-
 
     <div class="detail-header">
 
@@ -687,9 +755,7 @@ select:focus{
     </div>
 
 
-    <!-- =========================
-         INVITE
-    ========================== -->
+    <!-- INVITE -->
 
     <div
       id="inviteCard"
@@ -711,9 +777,7 @@ select:focus{
     </div>
 
 
-    <!-- =========================
-         MEMBERS
-    ========================== -->
+    <!-- MEMBERS -->
 
     <div
       id="membersCard"
@@ -736,9 +800,7 @@ select:focus{
     </div>
 
 
-    <!-- =========================
-         COMPOSER
-    ========================== -->
+    <!-- COMPOSER -->
 
     <div
       id="postComposer"
@@ -761,6 +823,55 @@ select:focus{
         placeholder="Message likhein..."></textarea>
 
 
+      <div class="photo-row">
+
+        <label
+          class="photo-label"
+          for="mehfilImage">
+
+          📷 Upload Photo
+
+        </label>
+
+        <input
+          id="mehfilImage"
+          class="photo-input"
+          type="file"
+          accept="image/*"
+          onchange="previewMehfilImage()">
+
+        <div
+          id="photoName"
+          class="photo-name">
+
+          No photo selected
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="imagePreview"
+        class="image-preview">
+
+        <button
+          class="remove-image"
+          type="button"
+          onclick="removeMehfilImage()">
+
+          ×
+
+        </button>
+
+        <img
+          id="imagePreviewImg"
+          src=""
+          alt="Preview">
+
+      </div>
+
+
       <div class="send-row">
 
         <button
@@ -776,9 +887,7 @@ select:focus{
     </div>
 
 
-    <!-- =========================
-         FEED
-    ========================== -->
+    <!-- FEED -->
 
     <div
       id="feedCard"
@@ -989,7 +1098,7 @@ async function loadMehfils(){
 
 
 /* =========================================
-   RENDER MEHFIL LIST
+   RENDER LIST
 ========================================= */
 
 function renderMehfilList(
@@ -1031,23 +1140,15 @@ function renderMehfilList(
             onclick="openMehfil(${mehfil.id})">
 
             <div class="mehfil-name">
-
-              💬 ${escapeHtml(
-                mehfil.name
-              )}
-
+              💬 ${escapeHtml(mehfil.name)}
             </div>
 
-
             <div class="mehfil-description">
-
               ${escapeHtml(
                 mehfil.description ||
                 "Apni community banayein aur baat karein."
               )}
-
             </div>
-
 
             <div class="mehfil-meta">
 
@@ -1068,7 +1169,7 @@ function renderMehfilList(
 
 
 /* =========================================
-   SEARCH MEHFILS
+   SEARCH
 ========================================= */
 
 function filterMehfils(){
@@ -1098,14 +1199,14 @@ function filterMehfils(){
         String(
           mehfil.name || ""
         )
-          .toLowerCase()
-          .includes(text)
+        .toLowerCase()
+        .includes(text)
         ||
         String(
           mehfil.description || ""
         )
-          .toLowerCase()
-          .includes(text)
+        .toLowerCase()
+        .includes(text)
     );
 
 
@@ -1178,11 +1279,6 @@ async function createMehfil(){
 
   if(error){
 
-    console.error(
-      "CREATE MEHFIL ERROR:",
-      error
-    );
-
     showNotice(
       "Mehfil create nahi hui: " +
       error.message
@@ -1216,11 +1312,6 @@ async function createMehfil(){
 
 
   if(memberError){
-
-    console.error(
-      "ADMIN MEMBER ERROR:",
-      memberError
-    );
 
     showNotice(
       "Mehfil bani lekin admin member add nahi hua."
@@ -1327,6 +1418,9 @@ async function openMehfil(
   clearReplyTarget();
 
 
+  removeMehfilImage();
+
+
   document.getElementById(
     "mehfilsPage"
   ).classList.add("hidden");
@@ -1413,9 +1507,7 @@ async function loadMemberCount(){
   meta.innerHTML = `
 
     <span class="member-badge">
-
       👥 ${count || 0} Members
-
     </span>
 
   `;
@@ -1434,24 +1526,20 @@ async function renderMehfilActions(){
       "detailActions"
     );
 
-
   const inviteCard =
     document.getElementById(
       "inviteCard"
     );
-
 
   const postComposer =
     document.getElementById(
       "postComposer"
     );
 
-
   const membersCard =
     document.getElementById(
       "membersCard"
     );
-
 
   const feedCard =
     document.getElementById(
@@ -1484,26 +1572,21 @@ async function renderMehfilActions(){
 
     `;
 
-
     inviteCard.classList.remove(
       "hidden"
     );
-
 
     postComposer.classList.remove(
       "hidden"
     );
 
-
     membersCard.classList.remove(
       "hidden"
     );
 
-
     feedCard.classList.remove(
       "hidden"
     );
-
 
     await loadMembers();
     await loadFeed();
@@ -1527,26 +1610,21 @@ async function renderMehfilActions(){
 
     `;
 
-
     inviteCard.classList.add(
       "hidden"
     );
-
 
     postComposer.classList.remove(
       "hidden"
     );
 
-
     membersCard.classList.remove(
       "hidden"
     );
 
-
     feedCard.classList.remove(
       "hidden"
     );
-
 
     await loadMembers();
     await loadFeed();
@@ -1559,7 +1637,6 @@ async function renderMehfilActions(){
   postComposer.classList.add(
     "hidden"
   );
-
 
   inviteCard.classList.add(
     "hidden"
@@ -1580,22 +1657,18 @@ async function renderMehfilActions(){
 
     `;
 
-
     membersCard.classList.remove(
       "hidden"
     );
-
 
     feedCard.classList.remove(
       "hidden"
     );
 
-
     document.getElementById(
       "memberList"
     ).innerHTML =
       '<div class="empty">Join Mehfil to view members.</div>';
-
 
     document.getElementById(
       "mehfilPosts"
@@ -1621,22 +1694,18 @@ async function renderMehfilActions(){
 
     `;
 
-
     membersCard.classList.remove(
       "hidden"
     );
-
 
     feedCard.classList.remove(
       "hidden"
     );
 
-
     document.getElementById(
       "memberList"
     ).innerHTML =
       '<div class="empty">Private Mehfil — approval required.</div>';
-
 
     document.getElementById(
       "mehfilPosts"
@@ -1668,22 +1737,18 @@ async function renderMehfilActions(){
 
   `;
 
-
   membersCard.classList.remove(
     "hidden"
   );
-
 
   feedCard.classList.remove(
     "hidden"
   );
 
-
   document.getElementById(
     "memberList"
   ).innerHTML =
     '<div class="empty">Invite accept karne ke baad members nazar aayenge.</div>';
-
 
   document.getElementById(
     "mehfilPosts"
@@ -1694,7 +1759,7 @@ async function renderMehfilActions(){
 
 
 /* =========================================
-   PUBLIC JOIN
+   JOIN
 ========================================= */
 
 async function joinPublicMehfil(){
@@ -1749,7 +1814,7 @@ async function joinPublicMehfil(){
 
 
 /* =========================================
-   PRIVATE JOIN
+   PRIVATE REQUEST
 ========================================= */
 
 async function requestPrivateJoin(){
@@ -2292,11 +2357,6 @@ async function sendInvite(
 
   if(error){
 
-    console.error(
-      "INVITE ERROR:",
-      error
-    );
-
     showNotice(
       "Invite nahi bheji ja saki: " +
       error.message
@@ -2310,6 +2370,246 @@ async function sendInvite(
   showNotice(
     "📩 Invite bhej di gayi."
   );
+
+}
+
+
+/* =========================================
+   IMAGE PREVIEW
+========================================= */
+
+function previewMehfilImage(){
+
+  const input =
+    document.getElementById(
+      "mehfilImage"
+    );
+
+
+  const preview =
+    document.getElementById(
+      "imagePreview"
+    );
+
+
+  const image =
+    document.getElementById(
+      "imagePreviewImg"
+    );
+
+
+  const name =
+    document.getElementById(
+      "photoName"
+    );
+
+
+  if(!input.files || !input.files[0]){
+
+    removeMehfilImage();
+
+    return;
+
+  }
+
+
+  const file =
+    input.files[0];
+
+
+  if(!file.type.startsWith("image/")){
+
+    showNotice(
+      "Sirf image select karein."
+    );
+
+    removeMehfilImage();
+
+    return;
+
+  }
+
+
+  if(file.size > 8 * 1024 * 1024){
+
+    showNotice(
+      "Image 8MB se choti honi chahiye."
+    );
+
+    removeMehfilImage();
+
+    return;
+
+  }
+
+
+  name.textContent =
+    file.name;
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload =
+    function(event){
+
+      image.src =
+        event.target.result;
+
+      preview.classList.add(
+        "show"
+      );
+
+    };
+
+
+  reader.readAsDataURL(
+    file
+  );
+
+}
+
+
+/* =========================================
+   REMOVE IMAGE
+========================================= */
+
+function removeMehfilImage(){
+
+  const input =
+    document.getElementById(
+      "mehfilImage"
+    );
+
+
+  const preview =
+    document.getElementById(
+      "imagePreview"
+    );
+
+
+  const image =
+    document.getElementById(
+      "imagePreviewImg"
+    );
+
+
+  const name =
+    document.getElementById(
+      "photoName"
+    );
+
+
+  if(input){
+
+    input.value = "";
+
+  }
+
+
+  if(image){
+
+    image.src = "";
+
+  }
+
+
+  if(preview){
+
+    preview.classList.remove(
+      "show"
+    );
+
+  }
+
+
+  if(name){
+
+    name.textContent =
+      "No photo selected";
+
+  }
+
+}
+
+
+/* =========================================
+   UPLOAD IMAGE
+========================================= */
+
+async function uploadMehfilImage(
+  file
+){
+
+  const extension =
+    file.name
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+
+  const safeExtension =
+    /^[a-z0-9]+$/.test(
+      extension
+    )
+      ? extension
+      : "jpg";
+
+
+  const fileName =
+    currentUser.id +
+    "_" +
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .substring(2,8) +
+    "." +
+    safeExtension;
+
+
+  const filePath =
+    currentMehfil.id +
+    "/" +
+    fileName;
+
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .storage
+      .from("mehfil-images")
+      .upload(
+        filePath,
+        file,
+        {
+          cacheControl:"3600",
+          upsert:false
+        }
+      );
+
+
+  if(error){
+
+    throw error;
+
+  }
+
+
+  const {
+    data
+  } =
+    supabaseClient
+      .storage
+      .from("mehfil-images")
+      .getPublicUrl(
+        filePath
+      );
+
+
+  return data.publicUrl;
 
 }
 
@@ -2345,17 +2645,17 @@ async function publishActivity(){
     input.value.trim();
 
 
-  if(!text){
-
-    showNotice(
-      replyTarget
-        ? "Reply likhein."
-        : "Message likhein."
+  const imageInput =
+    document.getElementById(
+      "mehfilImage"
     );
 
-    return;
 
-  }
+  const imageFile =
+    imageInput.files &&
+    imageInput.files[0]
+      ? imageInput.files[0]
+      : null;
 
 
   /* =========================
@@ -2364,6 +2664,28 @@ async function publishActivity(){
 
   if(replyTarget){
 
+    if(imageFile){
+
+      showNotice(
+        "Reply mein filhal sirf text bhejein."
+      );
+
+      return;
+
+    }
+
+
+    if(!text){
+
+      showNotice(
+        "Reply likhein."
+      );
+
+      return;
+
+    }
+
+
     const target =
       replyTarget;
 
@@ -2371,20 +2693,20 @@ async function publishActivity(){
     const {
       error
     } =
-      await supabaseClient
-        .from("mehfil_replies")
-        .insert({
+    await supabaseClient
+      .from("mehfil_replies")
+      .insert({
 
-          mehfil_post_id:
-            target.postId,
+        mehfil_post_id:
+          target.postId,
 
-          user_id:
-            currentUser.id,
+        user_id:
+          currentUser.id,
 
-          reply:
-            text
+        reply:
+          text
 
-        });
+      });
 
 
     if(error){
@@ -2401,15 +2723,13 @@ async function publishActivity(){
 
     input.value = "";
 
-
     clearReplyTarget();
 
-
-    replyTarget =
-      null;
+    replyTarget = null;
 
 
     await loadFeed();
+
 
     showNotice(
       "✅ Reply Mehfil ke top par aa gayi."
@@ -2421,10 +2741,54 @@ async function publishActivity(){
 
 
   /* =========================
-     NORMAL POST
+     TEXT / IMAGE POST
   ========================= */
 
+  if(!text && !imageFile){
+
+    showNotice(
+      "Message ya photo select karein."
+    );
+
+    return;
+
+  }
+
+
+  let imageUrl =
+    null;
+
+
+  if(imageFile){
+
+    try{
+
+      imageUrl =
+        await uploadMehfilImage(
+          imageFile
+        );
+
+    }catch(error){
+
+      console.error(
+        "MEHFIL IMAGE UPLOAD ERROR:",
+        error
+      );
+
+      showNotice(
+        "Photo upload nahi hui: " +
+        error.message
+      );
+
+      return;
+
+    }
+
+  }
+
+
   const {
+    data:newPost,
     error
   } =
     await supabaseClient
@@ -2438,9 +2802,14 @@ async function publishActivity(){
           currentUser.id,
 
         content:
-          text
+          text || "📷 Photo",
 
-      });
+        image_url:
+          imageUrl
+
+      })
+      .select()
+      .single();
 
 
   if(error){
@@ -2458,10 +2827,16 @@ async function publishActivity(){
   input.value = "";
 
 
+  removeMehfilImage();
+
+
   await loadFeed();
 
+
   showNotice(
-    "✅ Message Mehfil mein aa gaya."
+    imageUrl
+      ? "✅ Photo Mehfil mein aa gayi."
+      : "✅ Message Mehfil mein aa gaya."
   );
 
 }
@@ -2533,7 +2908,6 @@ function startReply(
 
 /* =========================================
    CLEAR REPLY
-   No close/cancel button
 ========================================= */
 
 function clearReplyTarget(){
@@ -2550,7 +2924,6 @@ function clearReplyTarget(){
 
 
   target.innerHTML = "";
-
 
   target.classList.remove(
     "show"
@@ -2643,14 +3016,7 @@ async function loadFeed(){
         );
 
 
-    if(error){
-
-      console.error(
-        "MEHFIL REPLIES ERROR:",
-        error
-      );
-
-    }else{
+    if(!error){
 
       replies =
         data || [];
@@ -2660,10 +3026,6 @@ async function loadFeed(){
   }
 
 
-  /* =========================
-     FEED ITEMS
-  ========================= */
-
   let feedItems = [];
 
 
@@ -2672,11 +3034,9 @@ async function loadFeed(){
 
       feedItems.push({
 
-        type:
-          "post",
+        type:"post",
 
-        data:
-          post
+        data:post
 
       });
 
@@ -2688,11 +3048,9 @@ async function loadFeed(){
 
       feedItems.push({
 
-        type:
-          "reply",
+        type:"reply",
 
-        data:
-          reply
+        data:reply
 
       });
 
@@ -2719,10 +3077,6 @@ async function loadFeed(){
 
   }
 
-
-  /* =========================
-     PROFILES
-  ========================= */
 
   const userIds =
     [
@@ -2763,10 +3117,6 @@ async function loadFeed(){
 
     });
 
-
-  /* =========================
-     ORIGINAL POSTS
-  ========================= */
 
   const postMap = {};
 
@@ -2828,7 +3178,7 @@ async function loadFeed(){
 
 
 /* =========================================
-   RENDER NORMAL MESSAGE
+   RENDER POST
 ========================================= */
 
 function renderPost(
@@ -2850,6 +3200,42 @@ function renderPost(
   const own =
     post.user_id ===
     currentUser.id;
+
+
+  const imageHtml =
+    post.image_url
+      ? `
+
+        <div class="activity-image">
+
+          <img
+            src="${escapeHtml(
+              post.image_url
+            )}"
+            alt="Mehfil Photo"
+            loading="lazy">
+
+        </div>
+
+      `
+      : "";
+
+
+  const textHtml =
+    post.content &&
+    post.content !== "📷 Photo"
+      ? `
+
+        <div class="activity-text">
+
+          ${escapeHtml(
+            post.content
+          )}
+
+        </div>
+
+      `
+      : "";
 
 
   return `
@@ -2890,13 +3276,10 @@ function renderPost(
       </div>
 
 
-      <div class="activity-text">
+      ${textHtml}
 
-        ${escapeHtml(
-          post.content
-        )}
 
-      </div>
+      ${imageHtml}
 
 
       <div class="activity-actions">
@@ -2925,7 +3308,10 @@ function renderPost(
                 class="delete-btn"
                 onclick="
                   deleteMehfilPost(
-                    ${post.id}
+                    ${post.id},
+                    '${escapeJs(
+                      post.image_url || ""
+                    )}'
                   )
                 ">
 
@@ -2947,7 +3333,7 @@ function renderPost(
 
 
 /* =========================================
-   RENDER REPLY AS TOP ACTIVITY
+   RENDER REPLY
 ========================================= */
 
 function renderReplyActivity(
@@ -3132,10 +3518,69 @@ async function deleteReplyActivity(
 
   await loadFeed();
 
-
   showNotice(
     "Reply delete ho gayi."
   );
+
+}
+
+
+/* =========================================
+   DELETE IMAGE FROM STORAGE
+========================================= */
+
+async function deleteMehfilImage(
+  imageUrl
+){
+
+  if(!imageUrl){
+
+    return;
+
+  }
+
+
+  try{
+
+    const marker =
+      "/storage/v1/object/public/mehfil-images/";
+
+    const index =
+      imageUrl.indexOf(
+        marker
+      );
+
+
+    if(index === -1){
+
+      return;
+
+    }
+
+
+    const path =
+      decodeURIComponent(
+        imageUrl.substring(
+          index + marker.length
+        )
+      );
+
+
+    await supabaseClient
+      .storage
+      .from("mehfil-images")
+      .remove([
+        path
+      ]);
+
+  }catch(error){
+
+    console.error(
+      "IMAGE DELETE ERROR:",
+      error
+    );
+
+  }
 
 }
 
@@ -3145,7 +3590,8 @@ async function deleteReplyActivity(
 ========================================= */
 
 async function deleteMehfilPost(
-  postId
+  postId,
+  imageUrl
 ){
 
   const {
@@ -3176,8 +3622,16 @@ async function deleteMehfilPost(
   }
 
 
-  await loadFeed();
+  if(imageUrl){
 
+    await deleteMehfilImage(
+      imageUrl
+    );
+
+  }
+
+
+  await loadFeed();
 
   showNotice(
     "Message delete ho gaya."
@@ -3218,65 +3672,14 @@ function formatDate(
   const d =
     new Date(date);
 
-  const now =
-    new Date();
 
-  const seconds =
-    Math.floor(
-      (now - d) / 1000
-    );
-
-
-  if(seconds < 60){
-
-    return "Just now";
-
-  }
-
-
-  const minutes =
-    Math.floor(
-      seconds / 60
-    );
-
-
-  if(minutes < 60){
-
-    return minutes +
-      " min ago";
-
-  }
-
-
-  const hours =
-    Math.floor(
-      minutes / 60
-    );
-
-
-  if(hours < 24){
-
-    return hours +
-      " hours ago";
-
-  }
-
-
-  const days =
-    Math.floor(
-      hours / 24
-    );
-
-
-  if(days < 7){
-
-    return days +
-      " days ago";
-
-  }
-
-
-  return d.toLocaleDateString();
+  return d.toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
 
 }
 
