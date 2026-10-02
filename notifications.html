@@ -1,1 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Notifications - RabtaHub</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f6fb;
+  color:#222;
+  padding-bottom:80px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+  background:linear-gradient(
+    135deg,
+    #6c5ce7,
+    #8e44ad
+  );
+  color:white;
+  padding:18px 16px;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.header-title{
+  font-size:21px;
+  font-weight:bold;
+}
+
+.back-btn{
+  border:0;
+  background:rgba(255,255,255,.15);
+  color:white;
+  border-radius:10px;
+  padding:9px 12px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.container{
+  max-width:650px;
+  margin:auto;
+  padding:15px;
+}
+
+.notice{
+  display:none;
+  background:white;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  text-align:center;
+}
+
+.loading,
+.empty{
+  background:white;
+  border-radius:14px;
+  padding:25px;
+  text-align:center;
+  color:#777;
+}
+
+
+/* =========================
+   NOTIFICATION
+========================= */
+
+.notification{
+  background:white;
+  border-radius:15px;
+  padding:14px;
+  margin-bottom:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  position:relative;
+}
+
+.notification.unread{
+  border-left:4px solid #6c5ce7;
+}
+
+.notification-top{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+
+.avatar{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eee;
+  flex-shrink:0;
+}
+
+.notification-body{
+  flex:1;
+  min-width:0;
+}
+
+.notification-message{
+  font-size:15px;
+  line-height:1.45;
+  padding-right:25px;
+}
+
+.notification-time{
+  margin-top:5px;
+  font-size:12px;
+  color:#999;
+}
+
+.delete-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  border:0;
+  background:none;
+  color:#999;
+  cursor:pointer;
+  font-size:16px;
+}
+
+
+/* =========================
+   MEHFIL INVITE
+========================= */
+
+.invite-box{
+  margin-top:12px;
+  padding:12px;
+  background:#f7f5ff;
+  border-radius:12px;
+}
+
+.invite-title{
+  font-weight:bold;
+  color:#6c5ce7;
+  margin-bottom:9px;
+}
+
+.invite-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.accept-btn,
+.decline-btn{
+  flex:1;
+  border:0;
+  padding:10px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.accept-btn{
+  background:#6c5ce7;
+  color:white;
+}
+
+.decline-btn{
+  background:#eee;
+  color:#444;
+}
+
+.accept-btn:disabled,
+.decline-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:68px;
+  background:white;
+  border-top:1px solid #ddd;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:20;
+}
+
+.nav-btn{
+  border:0;
+  background:none;
+  color:#666;
+  font-size:11px;
+  text-align:center;
+  cursor:pointer;
+  min-width:55px;
+}
+
+.nav-icon{
+  display:block;
+  font-size:20px;
+  margin-bottom:3px;
+}
+
+.nav-btn.active{
+  color:#6c5ce7;
+  font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+  <div class="header-row">
+
+    <button
+      class="back-btn"
+      onclick="goHome()">
+      ←
+    </button>
+
+    <div class="header-title">
+      🔔 Notifications
+    </div>
+
+    <div style="width:45px;"></div>
+
+  </div>
+
+</header>
+
+
+<!-- =========================
+     CONTENT
+========================= -->
+
+<main class="container">
+
+  <div
+    id="notice"
+    class="notice">
+  </div>
+
+  <div
+    id="notificationsList"
+    class="loading">
+
+    Loading notifications...
+
+  </div>
+
+</main>
+
+
+<!-- =========================
+     BOTTOM NAV
+========================= -->
+
+<nav class="bottom-nav">
+
+  <button
+    class="nav-btn"
+    onclick="goHome()">
+
+    <span class="nav-icon">🏠</span>
+    Home
+
+  </button>
+
+
+  <button
+    class="nav-btn"
+    onclick="goPrivate()">
+
+    <span class="nav-icon">💬</span>
+    Private
+
+  </button>
+
+
+  <button
+    class="nav-btn"
+    onclick="goProfile()">
+
+    <span class="nav-icon">👤</span>
+    Profile
+
+  </button>
+
+
+  <button
+    class="nav-btn"
+    onclick="goMehfil()">
+
+    <span class="nav-icon">🏠</span>
+    Mehfil
+
+  </button>
+
+
+  <button
+    class="nav-btn"
+    onclick="goMore()">
+
+    <span class="nav-icon">☰</span>
+    More
+
+  </button>
+
+</nav>
+
+
+<script>
+
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+  "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+let currentUser = null;
+
+
+/* =========================
+   INIT
+========================= */
+
+async function init(){
+
+  const {
+    data:{
+      session
+    }
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+  if(!session){
+
+    window.location.href =
+      "login.html";
+
+    return;
+
+  }
+
+  currentUser =
+    session.user;
+
+  await loadNotifications();
+
+}
+
+
+/* =========================
+   LOAD NOTIFICATIONS
+========================= */
+
+async function loadNotifications(){
+
+  const list =
+    document.getElementById(
+      "notificationsList"
+    );
+
+  list.innerHTML =
+    '<div class="loading">Loading notifications...</div>';
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("notifications")
+      .select("*")
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      "NOTIFICATION ERROR:",
+      error
+    );
+
+    list.innerHTML =
+      '<div class="empty">Notifications load nahi ho sakin.</div>';
+
+    return;
+
+  }
+
+
+  if(!data || data.length === 0){
+
+    list.innerHTML =
+      '<div class="empty">🔔 Abhi koi notification nahi hai.</div>';
+
+    return;
+
+  }
+
+
+  /* =========================
+     GET SENDERS
+  ========================= */
+
+  const senderIds =
+    [
+      ...new Set(
+        data
+          .map(n => n.sender_id)
+          .filter(Boolean)
+      )
+    ];
+
+
+  let profiles = [];
+
+
+  if(senderIds.length){
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,username,name,avatar_url"
+        )
+        .in(
+          "id",
+          senderIds
+        );
+
+
+    if(!result.error){
+
+      profiles =
+        result.data || [];
+
+    }
+
+  }
+
+
+  const profileMap = {};
+
+  profiles.forEach(profile => {
+
+    profileMap[
+      profile.id
+    ] = profile;
+
+  });
+
+
+  list.innerHTML =
+    data
+      .map(notification => {
+
+        return renderNotification(
+          notification,
+          profileMap[
+            notification.sender_id
+          ]
+        );
+
+      })
+      .join("");
+
+
+  /* Mark unread as read */
+
+  const unreadIds =
+    data
+      .filter(n => !n.is_read)
+      .map(n => n.id);
+
+
+  if(unreadIds.length){
+
+    await supabaseClient
+      .from("notifications")
+      .update({
+        is_read:true
+      })
+      .in(
+        "id",
+        unreadIds
+      );
+
+  }
+
+}
+
+
+/* =========================
+   RENDER NOTIFICATION
+========================= */
+
+function renderNotification(
+  notification,
+  profile
+){
+
+  const avatar =
+    profile?.avatar_url ||
+    "https://via.placeholder.com/100";
+
+  const username =
+    profile?.username ||
+    profile?.name ||
+    "User";
+
+
+  let extra = "";
+
+
+  /* =========================
+     MEHFIL INVITE
+  ========================= */
+
+  if(
+    notification.type ===
+    "mehfil_invite"
+  ){
+
+    extra = `
+
+      <div class="invite-box">
+
+        <div class="invite-title">
+          📩 Mehfil Invitation
+        </div>
+
+        <div class="invite-buttons">
+
+          <button
+            class="accept-btn"
+            onclick="
+              acceptMehfilInvite(
+                ${notification.id},
+                ${notification.mehfil_id}
+              )
+            ">
+
+            ✅ Accept
+
+          </button>
+
+
+          <button
+            class="decline-btn"
+            onclick="
+              declineMehfilInvite(
+                ${notification.id}
+              )
+            ">
+
+            ❌ Decline
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  return `
+
+    <div
+      class="notification
+      ${notification.is_read ? "" : "unread"}"
+      id="notification-${notification.id}">
+
+      <button
+        class="delete-btn"
+        onclick="
+          deleteNotification(
+            ${notification.id}
+          )
+        ">
+
+        🗑️
+
+      </button>
+
+
+      <div class="notification-top">
+
+        <img
+          class="avatar"
+          src="${escapeHtml(avatar)}"
+          alt="">
+
+
+        <div class="notification-body">
+
+          <div class="notification-message">
+
+            ${escapeHtml(
+              notification.message
+            )}
+
+          </div>
+
+          <div class="notification-time">
+
+            ${formatDate(
+              notification.created_at
+            )}
+
+          </div>
+
+          ${extra}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   ACCEPT MEHFIL INVITE
+========================= */
+
+async function acceptMehfilInvite(
+  notificationId,
+  mehfilId
+){
+
+  if(!mehfilId){
+
+    showNotice(
+      "Mehfil ID nahi mili."
+    );
+
+    return;
+
+  }
+
+
+  const {
+    data:invite,
+    error:inviteError
+  } =
+    await supabaseClient
+      .from("mehfil_invites")
+      .select("*")
+      .eq(
+        "id",
+        notificationId
+      )
+      .maybeSingle();
+
+
+  /*
+    Notification ID aur invite ID
+    zaroori nahi same hon.
+
+    Isliye actual invite ko
+    notification ke mehfil_id
+    aur current user se find karenge.
+  */
+
+
+  const {
+    data:invites,
+    error
+  } =
+    await supabaseClient
+      .from("mehfil_invites")
+      .select("*")
+      .eq(
+        "mehfil_id",
+        mehfilId
+      )
+      .eq(
+        "invitee_id",
+        currentUser.id
+      )
+      .eq(
+        "status",
+        "pending"
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .limit(1);
+
+
+  if(error){
+
+    console.error(
+      "INVITE ERROR:",
+      error
+    );
+
+    showNotice(
+      "Invite check nahi ho saka."
+    );
+
+    return;
+
+  }
+
+
+  const actualInvite =
+    invites?.[0];
+
+
+  if(!actualInvite){
+
+    showNotice(
+      "Invite nahi mili ya already process ho chuki hai."
+    );
+
+    return;
+
+  }
+
+
+  /* Accept invite */
+
+  const {
+    error:updateError
+  } =
+    await supabaseClient
+      .from("mehfil_invites")
+      .update({
+        status:"accepted"
+      })
+      .eq(
+        "id",
+        actualInvite.id
+      );
+
+
+  if(updateError){
+
+    console.error(
+      updateError
+    );
+
+    showNotice(
+      "Invite accept nahi hui."
+    );
+
+    return;
+
+  }
+
+
+  /* Add member */
+
+  const {
+    error:memberError
+  } =
+    await supabaseClient
+      .from("mehfil_members")
+      .upsert({
+
+        mehfil_id:
+          mehfilId,
+
+        user_id:
+          currentUser.id,
+
+        role:
+          "member",
+
+        status:
+          "approved"
+
+      },{
+        onConflict:
+          "mehfil_id,user_id"
+      });
+
+
+  if(memberError){
+
+    console.error(
+      memberError
+    );
+
+    showNotice(
+      "Mehfil member add nahi ho saka."
+    );
+
+    return;
+
+  }
+
+
+  /* Notification delete */
+
+  await supabaseClient
+    .from("notifications")
+    .delete()
+    .eq(
+      "id",
+      notificationId
+    );
+
+
+  showNotice(
+    "✅ Aap Mehfil ke member ban gaye."
+  );
+
+
+  await loadNotifications();
+
+}
+
+
+/* =========================
+   DECLINE INVITE
+========================= */
+
+async function declineMehfilInvite(
+  notificationId
+){
+
+  const {
+    data:notification,
+    error
+  } =
+    await supabaseClient
+      .from("notifications")
+      .select(
+        "mehfil_id"
+      )
+      .eq(
+        "id",
+        notificationId
+      )
+      .maybeSingle();
+
+
+  if(error){
+
+    showNotice(
+      "Notification check nahi ho saki."
+    );
+
+    return;
+
+  }
+
+
+  if(notification?.mehfil_id){
+
+    await supabaseClient
+      .from("mehfil_invites")
+      .update({
+        status:"declined"
+      })
+      .eq(
+        "mehfil_id",
+        notification.mehfil_id
+      )
+      .eq(
+        "invitee_id",
+        currentUser.id
+      )
+      .eq(
+        "status",
+        "pending"
+      );
+
+  }
+
+
+  await supabaseClient
+    .from("notifications")
+    .delete()
+    .eq(
+      "id",
+      notificationId
+    );
+
+
+  showNotice(
+    "Invite decline kar di gayi."
+  );
+
+
+  await loadNotifications();
+
+}
+
+
+/* =========================
+   DELETE NOTIFICATION
+========================= */
+
+async function deleteNotification(
+  id
+){
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("notifications")
+      .delete()
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    showNotice(
+      "Notification delete nahi hui."
+    );
+
+    return;
+
+  }
+
+
+  const element =
+    document.getElementById(
+      "notification-" + id
+    );
+
+  if(element){
+
+    element.remove();
+
+  }
+
+}
+
+
+/* =========================
+   DATE
+========================= */
+
+function formatDate(date){
+
+  const d =
+    new Date(date);
+
+  const now =
+    new Date();
+
+  const seconds =
+    Math.floor(
+      (now - d) / 1000
+    );
+
+
+  if(seconds < 60){
+
+    return "Just now";
+
+  }
+
+
+  const minutes =
+    Math.floor(
+      seconds / 60
+    );
+
+
+  if(minutes < 60){
+
+    return minutes +
+      " min ago";
+
+  }
+
+
+  const hours =
+    Math.floor(
+      minutes / 60
+    );
+
+
+  if(hours < 24){
+
+    return hours +
+      " hours ago";
+
+  }
+
+
+  const days =
+    Math.floor(
+      hours / 24
+    );
+
+
+  if(days < 7){
+
+    return days +
+      " days ago";
+
+  }
+
+
+  return d.toLocaleDateString();
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+/* =========================
+   NOTICE
+========================= */
+
+function showNotice(
+  message
+){
+
+  const notice =
+    document.getElementById(
+      "notice"
+    );
+
+  notice.textContent =
+    message;
+
+  notice.style.display =
+    "block";
+
+
+  setTimeout(() => {
+
+    notice.style.display =
+      "none";
+
+  },3000);
+
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function goHome(){
+
+  window.location.href =
+    "index.html";
+
+}
+
+function goPrivate(){
+
+  window.location.href =
+    "private.html";
+
+}
+
+function goProfile(){
+
+  window.location.href =
+    "profile.html";
+
+}
+
+function goMehfil(){
+
+  window.location.href =
+    "mehfil.html";
+
+}
+
+function goMore(){
+
+  window.location.href =
+    "more.html";
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+init();
+
+</script>
+
+</body>
+</html>
