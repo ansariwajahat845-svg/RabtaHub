@@ -3007,13 +3007,13 @@ async function loadFeed(){
       data,
       error
     } =
-      await supabaseClient
-        .from("mehfil_replies")
-        .select("*")
-        .in(
-          "mehfil_post_id",
-          postIds
-        );
+    await supabaseClient
+      .from("mehfil_replies")
+      .select("*")
+      .in(
+        "mehfil_post_id",
+        postIds
+      );
 
 
     if(!error){
@@ -3179,6 +3179,7 @@ async function loadFeed(){
 
 /* =========================================
    RENDER POST
+   NAME WILL SHOW, NOT USERNAME
 ========================================= */
 
 function renderPost(
@@ -3192,8 +3193,8 @@ function renderPost(
 
 
   const username =
-    profile?.username ||
     profile?.name ||
+    profile?.username ||
     "User";
 
 
@@ -3334,6 +3335,7 @@ function renderPost(
 
 /* =========================================
    RENDER REPLY
+   NAME WILL SHOW, NOT USERNAME
 ========================================= */
 
 function renderReplyActivity(
@@ -3349,14 +3351,14 @@ function renderReplyActivity(
 
 
   const username =
-    profile?.username ||
     profile?.name ||
+    profile?.username ||
     "User";
 
 
   const originalUsername =
-    originalProfile?.username ||
     originalProfile?.name ||
+    originalProfile?.username ||
     "User";
 
 
