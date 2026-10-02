@@ -5147,4 +5147,1139 @@ async function removeAfsar(
 
 async function deleteCurrentMehfil(){
 
-  if(!currentMehfil
+  if(!currentMehfil){
+    showNotice("Mehfil select nahi hai.");
+    return;
+  }
+
+  if(currentMehfil.creator_id !== currentUser?.id){
+    showNotice("Sirf Creator Mehfil delete kar sakta hai.");
+    return;
+  }
+
+  const ok =
+    confirm(
+      "Kya aap waqai is Mehfil ko delete karna chahte hain?"
+    );
+
+  if(!ok){
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("mehfils")
+      .delete()
+      .eq("id", currentMehfil.id)
+      .eq("creator_id", currentUser.id);
+
+  if(error){
+
+    console.error(
+      "DELETE MEHFIL ERROR:",
+      error
+    );
+
+    showNotice(
+      "Mehfil delete nahi hui: " +
+      error.message
+    );
+
+    return;
+  }
+
+  showNotice("Mehfil delete ho gayi.");
+
+  currentMehfil = null;
+
+  hideAllSubPages();
+
+  const detail =
+    document.getElementById("detailPage");
+
+  const list =
+    document.getElementById("listPage");
+
+  if(detail){
+    detail.classList.remove("active");
+  }
+
+  if(list){
+    list.classList.add("active");
+  }
+
+  await loadMehfils();
+}
+
+
+/* ========================================
+   PUBLISH ACTIVITY
+======================================== */
+
+async function publishActivity(){
+
+  if(!currentMehfil || !currentUser){
+    showNotice("Pehle Mehfil open karein.");
+    return;
+  }
+
+  const input =
+    document.getElementById("activityInput");
+
+  if(!input){
+    return;
+  }
+
+  const content =
+    input.value.trim();
+
+  if(!content){
+    showNotice("Activity likhein.");
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("mehfil_posts")
+      .insert({
+        mehfil_id: currentMehfil.id,
+        user_id: currentUser.id,
+        content: content
+      });
+
+  if(error){
+
+    console.error(
+      "MEHFIL POST ERROR:",
+      error
+    );
+
+    showNotice(
+      "Activity post nahi hui: " +
+      error.message
+    );
+
+    return;
+  }
+
+  input.value = "";
+
+  await loadFeed();
+
+  showNotice("Activity post ho gayi.");
+}
+
+
+/* ========================================
+   LOAD FEED
+======================================== */
+
+async function loadFeed(){
+
+  if(!currentMehfil){
+    return;
+  }
+
+  const feed =
+    document.getElementById("mehfilFeed");
+
+  if(!feed){
+    return;
+  }
+
+  feed.innerHTML =
+    '<div class="loading">Loading activities...</div>';
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("mehfil_posts")
+        .select("*")
+        .eq(
+          "mehfil_id",
+          currentMehfil.id
+        )
+        .order(
+          "created_at",
+          { ascending:false }
+        );
+
+    if(result.error){
+      throw result.error;
+    }
+
+    const posts =
+      result.data || [];
+
+    if(posts.length === 0){
+
+      feed.innerHTML =
+        '<div class="empty">Abhi koi activity nahi hai.</div>';
+
+      return;
+    }
+
+    const userIds =
+      [
+        ...new Set(
+          posts
+            .map(
+              post =>
+                post.user_id
+            )
+            .filter(Boolean)
+        )
+      ];
+
+    let profileMap = {};
+
+    if(userIds.length){
+
+      const profileResult =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id,username,name,avatar_url"
+          )
+          .in(
+            "id",
+            userIds
+          );
+
+      if(profileResult.error){
+        throw profileResult.error;
+      }
+
+      (profileResult.data || [])
+        .forEach(profile => {
+
+          profileMap[
+            profile.id
+          ] = profile;
+
+        });
+    }
+
+    feed.innerHTML =
+      posts
+        .map(post => {
+
+          const profile =
+            profileMap[
+              post.user_id
+            ];
+
+          const username =
+            profile?.username ||
+            profile?.name ||
+            "User";
+
+          const avatar =
+            profile?.avatar_url ||
+            defaultAvatar();
+
+          const own =
+            currentUser &&
+            post.user_id === currentUser.id;
+
+          return `
+
+            <div class="activity-card">
+
+              <div class="activity-top">
+
+                <img
+                  class="activity-avatar"
+                  src="${safeUrl(avatar)}"
+                  alt=""
+                >
+
+                <div class="activity-user">
+
+                  <strong>
+                    ${escapeHtml(username)}
+                  </strong>
+
+                  <span class="activity-time">
+                    ${formatDate(post.created_at)}
+                  </span>
+
+                </div>
+
+              </div>
+
+              <div class="activity-content">
+                ${escapeHtml(post.content)}
+              </div>
+
+              <div class="activity-actions">
+
+                <button
+                  type="button"
+                  class="action-btn"
+                  onclick="replyToActivity(${post.id})">
+                  💬 Reply
+                </button>
+
+                ${
+                  own
+                  ? `
+                    <button
+                      type="button"
+                      class="action-btn"
+                      onclick="deleteActivity(${post.id})">
+                      🗑️ Delete
+                    </button>
+                  `
+                  : `
+                    <button
+                      type="button"
+                      class="action-btn"
+                      onclick="openPrivateChat('${escapeJs(post.user_id)}')">
+                      💬 1on1
+                    </button>
+                  `
+                }
+
+              </div>
+
+              <div
+                id="replies-${post.id}"
+                class="activity-replies">
+              </div>
+
+            </div>
+
+          `;
+
+        })
+        .join("");
+
+  }catch(error){
+
+    console.error(
+      "MEHFIL FEED ERROR:",
+      error
+    );
+
+    feed.innerHTML = `
+
+      <div class="empty"
+        style="
+          color:#c0392b;
+          word-break:break-word;
+        ">
+
+        Feed load nahi ho saki.
+
+        <br><br>
+
+        ${escapeHtml(
+          error?.message ||
+          String(error)
+        )}
+
+      </div>
+
+    `;
+
+  }
+}
+
+
+/* ========================================
+   REPLY TO ACTIVITY
+======================================== */
+
+async function replyToActivity(postId){
+
+  if(!currentUser){
+    showNotice("Login required.");
+    return;
+  }
+
+  const reply =
+    prompt("Apna reply likhein:");
+
+  if(reply === null){
+    return;
+  }
+
+  const text =
+    reply.trim();
+
+  if(!text){
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("mehfil_replies")
+      .insert({
+        mehfil_post_id: postId,
+        user_id: currentUser.id,
+        reply: text
+      });
+
+  if(error){
+
+    console.error(
+      "REPLY ERROR:",
+      error
+    );
+
+    showNotice(
+      "Reply nahi hua: " +
+      error.message
+    );
+
+    return;
+  }
+
+  await loadFeed();
+
+  showNotice("Reply add ho gaya.");
+}
+
+
+/* ========================================
+   DELETE ACTIVITY
+======================================== */
+
+async function deleteActivity(postId){
+
+  if(!currentUser){
+    return;
+  }
+
+  const ok =
+    confirm(
+      "Kya aap is activity ko delete karna chahte hain?"
+    );
+
+  if(!ok){
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("mehfil_posts")
+      .delete()
+      .eq("id", postId)
+      .eq("user_id", currentUser.id);
+
+  if(error){
+
+    console.error(
+      "ACTIVITY DELETE ERROR:",
+      error
+    );
+
+    showNotice(
+      "Activity delete nahi hui: " +
+      error.message
+    );
+
+    return;
+  }
+
+  await loadFeed();
+
+  showNotice("Activity delete ho gayi.");
+}
+
+
+/* ========================================
+   IMAGE PREVIEW
+======================================== */
+
+function previewMehfilImage(){
+
+  const input =
+    document.getElementById("mehfilImage");
+
+  const preview =
+    document.getElementById("mehfilImagePreview");
+
+  if(!input || !preview){
+    return;
+  }
+
+  const file =
+    input.files?.[0];
+
+  if(!file){
+    preview.innerHTML = "";
+    return;
+  }
+
+  if(!file.type.startsWith("image/")){
+    input.value = "";
+    preview.innerHTML = "";
+    showNotice("Sirf image upload karein.");
+    return;
+  }
+
+  const reader =
+    new FileReader();
+
+  reader.onload =
+    function(){
+
+      preview.innerHTML = `
+
+        <div class="image-preview-box">
+
+          <img
+            src="${reader.result}"
+            alt="Preview"
+          >
+
+          <button
+            type="button"
+            onclick="removeSelectedImage()">
+            ✕
+          </button>
+
+        </div>
+
+      `;
+
+    };
+
+  reader.readAsDataURL(file);
+}
+
+
+/* ========================================
+   REMOVE SELECTED IMAGE
+======================================== */
+
+function removeSelectedImage(){
+
+  const input =
+    document.getElementById("mehfilImage");
+
+  const preview =
+    document.getElementById("mehfilImagePreview");
+
+  if(input){
+    input.value = "";
+  }
+
+  if(preview){
+    preview.innerHTML = "";
+  }
+}
+
+
+/* ========================================
+   SEARCH INVITE USERS
+======================================== */
+
+async function searchInviteUsers(){
+
+  const input =
+    document.getElementById("inviteSearch");
+
+  if(!input){
+    return;
+  }
+
+  const value =
+    input.value.trim();
+
+  if(value.length < 2){
+    await loadInviteUsers("");
+    return;
+  }
+
+  await loadInviteUsers(value);
+}
+
+
+/* ========================================
+   LOAD INVITE USERS
+======================================== */
+
+async function loadInviteUsers(searchText = ""){
+
+  const list =
+    document.getElementById("inviteUsers");
+
+  if(!list || !currentMehfil){
+    return;
+  }
+
+  let query =
+    supabaseClient
+      .from("profiles")
+      .select(
+        "id,username,name,avatar_url"
+      )
+      .neq(
+        "id",
+        currentUser.id
+      )
+      .limit(30);
+
+  if(searchText){
+
+    query =
+      query.or(
+        "username.ilike.%" +
+        searchText +
+        "%,name.ilike.%" +
+        searchText +
+        "%"
+      );
+
+  }
+
+  const { data, error } =
+    await query;
+
+  if(error){
+
+    console.error(
+      "INVITE USERS ERROR:",
+      error
+    );
+
+    list.innerHTML =
+      '<div class="empty">Users load nahi hue.</div>';
+
+    return;
+  }
+
+  const users =
+    data || [];
+
+  if(users.length === 0){
+
+    list.innerHTML =
+      '<div class="empty">Koi user nahi mila.</div>';
+
+    return;
+  }
+
+  list.innerHTML =
+    users
+      .map(user => `
+
+        <div class="invite-user">
+
+          <img
+            class="invite-avatar"
+            src="${safeUrl(
+              user.avatar_url ||
+              defaultAvatar()
+            )}"
+            alt=""
+          >
+
+          <div class="invite-user-info">
+
+            <strong>
+              ${escapeHtml(
+                user.username ||
+                user.name ||
+                "User"
+              )}
+            </strong>
+
+            ${
+              user.name
+              ? `
+                <span>
+                  ${escapeHtml(user.name)}
+                </span>
+              `
+              : ""
+            }
+
+          </div>
+
+          <button
+            type="button"
+            class="invite-btn"
+            onclick="inviteUser('${escapeJs(user.id)}')">
+            Invite
+          </button>
+
+        </div>
+
+      `)
+      .join("");
+}
+
+
+/* ========================================
+   INVITE USER
+======================================== */
+
+async function inviteUser(userId){
+
+  if(!currentMehfil || !currentUser){
+    return;
+  }
+
+  if(userId === currentUser.id){
+    return;
+  }
+
+  const { data: existing } =
+    await supabaseClient
+      .from("mehfil_invites")
+      .select("id,status")
+      .eq(
+        "mehfil_id",
+        currentMehfil.id
+      )
+      .eq(
+        "invitee_id",
+        userId
+      )
+      .maybeSingle();
+
+  if(existing){
+
+    showNotice(
+      "Is user ko pehle hi invite kiya gaya hai."
+    );
+
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("mehfil_invites")
+      .insert({
+        mehfil_id: currentMehfil.id,
+        inviter_id: currentUser.id,
+        invitee_id: userId,
+        status: "pending"
+      });
+
+  if(error){
+
+    console.error(
+      "INVITE ERROR:",
+      error
+    );
+
+    showNotice(
+      "Invite nahi bheja gaya: " +
+      error.message
+    );
+
+    return;
+  }
+
+  showNotice("Invite bhej diya gaya.");
+}
+
+
+/* ========================================
+   REFRESH CURRENT
+======================================== */
+
+async function refreshCurrent(){
+
+  if(currentMehfil){
+
+    await loadMembers();
+    await loadFeed();
+
+    showNotice("Refresh ho gaya.");
+
+    return;
+  }
+
+  await loadMehfils();
+
+  showNotice("Refresh ho gaya.");
+}
+
+
+/* ========================================
+   RESTORE MAIN HEADER
+======================================== */
+
+function restoreMainHeader(){
+
+  const title =
+    document.getElementById("pageTitle");
+
+  if(title){
+    title.textContent = "Mehfil";
+  }
+}
+
+
+/* ========================================
+   RESTORE MEHFIL HEADER
+======================================== */
+
+function restoreMehfilHeader(){
+
+  if(!currentMehfil){
+    return;
+  }
+
+  const title =
+    document.getElementById("detailTitle");
+
+  if(title){
+    title.textContent =
+      currentMehfil.name || "Mehfil";
+  }
+}
+
+
+/* ========================================
+   GO BACK
+======================================== */
+
+function goBack(){
+
+  if(
+    document.getElementById("membersPage")?.classList.contains("active") ||
+    document.getElementById("settingsPage")?.classList.contains("active") ||
+    document.getElementById("kickPage")?.classList.contains("active") ||
+    document.getElementById("afsarApplicationsPage")?.classList.contains("active") ||
+    document.getElementById("afsarManagementPage")?.classList.contains("active")
+  ){
+
+    hideAllSubPages();
+
+    if(currentMehfil){
+      restoreMehfilHeader();
+    }
+
+    return;
+  }
+
+  const detail =
+    document.getElementById("detailPage");
+
+  const list =
+    document.getElementById("listPage");
+
+  if(
+    detail &&
+    detail.classList.contains("active")
+  ){
+
+    detail.classList.remove("active");
+
+    if(list){
+      list.classList.add("active");
+    }
+
+    currentMehfil = null;
+
+    restoreMainHeader();
+
+    return;
+  }
+
+  goHome();
+}
+
+
+/* ========================================
+   GO HOME
+======================================== */
+
+function goHome(){
+
+  window.location.href =
+    "index.html";
+}
+
+
+/* ========================================
+   GO PRIVATE
+======================================== */
+
+function goPrivate(){
+
+  window.location.href =
+    "private.html";
+}
+
+
+/* ========================================
+   GO PROFILE
+======================================== */
+
+function goProfile(){
+
+  window.location.href =
+    "profile.html";
+}
+
+
+/* ========================================
+   GO MEHFIL
+======================================== */
+
+function goMehfil(){
+
+  window.location.href =
+    "mehfil.html";
+}
+
+
+/* ========================================
+   GO MORE
+======================================== */
+
+function goMore(){
+
+  window.location.href =
+    "more.html";
+}
+
+
+/* ========================================
+   OPEN PRIVATE CHAT
+======================================== */
+
+function openPrivateChat(userId){
+
+  if(!userId){
+    return;
+  }
+
+  window.location.href =
+    "private-chat.html?user=" +
+    encodeURIComponent(userId);
+}
+
+
+/* ========================================
+   PRIVACY TEXT
+======================================== */
+
+function getPrivacyText(privacy){
+
+  if(privacy === "private"){
+    return "🔒 Private";
+  }
+
+  if(privacy === "invite"){
+    return "✉️ Invite Only";
+  }
+
+  return "🌐 Public";
+}
+
+
+/* ========================================
+   FORMAT DATE
+======================================== */
+
+function formatDate(value){
+
+  if(!value){
+    return "";
+  }
+
+  const date =
+    new Date(value);
+
+  if(Number.isNaN(date.getTime())){
+    return "";
+  }
+
+  const now =
+    new Date();
+
+  const diff =
+    Math.floor(
+      (now - date) / 1000
+    );
+
+  if(diff < 60){
+    return "Just now";
+  }
+
+  if(diff < 3600){
+
+    return (
+      Math.floor(diff / 60) +
+      " min ago"
+    );
+
+  }
+
+  if(diff < 86400){
+
+    return (
+      Math.floor(diff / 3600) +
+      " hr ago"
+    );
+
+  }
+
+  if(diff < 604800){
+
+    return (
+      Math.floor(diff / 86400) +
+      " day ago"
+    );
+
+  }
+
+  return date.toLocaleDateString(
+    "en-PK",
+    {
+      day:"numeric",
+      month:"short",
+      year:"numeric"
+    }
+  );
+}
+
+
+/* ========================================
+   DEFAULT AVATAR
+======================================== */
+
+function defaultAvatar(){
+
+  return (
+    "data:image/svg+xml," +
+    encodeURIComponent(`
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="100"
+        height="100">
+
+        <rect
+          width="100"
+          height="100"
+          rx="50"
+          fill="#eeeeee"/>
+
+        <circle
+          cx="50"
+          cy="38"
+          r="18"
+          fill="#aaaaaa"/>
+
+        <path
+          d="M20 88
+             C24 64 76 64 80 88"
+          fill="#aaaaaa"/>
+
+      </svg>
+
+    `)
+  );
+}
+
+
+/* ========================================
+   SAFE URL
+======================================== */
+
+function safeUrl(url){
+
+  if(!url){
+    return defaultAvatar();
+  }
+
+  const value =
+    String(url).trim();
+
+  if(
+    value.startsWith("https://") ||
+    value.startsWith("http://") ||
+    value.startsWith("data:image/")
+  ){
+
+    return value;
+  }
+
+  return defaultAvatar();
+}
+
+
+/* ========================================
+   ESCAPE HTML
+======================================== */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+/* ========================================
+   ESCAPE JS
+======================================== */
+
+function escapeJs(value){
+
+  return String(
+    value ?? ""
+  )
+    .replace(/\\/g,"\\\\")
+    .replace(/'/g,"\\'")
+    .replace(/"/g,'\\"')
+    .replace(/\r/g,"\\r")
+    .replace(/\n/g,"\\n");
+}
+
+
+/* ========================================
+   SHOW NOTICE
+======================================== */
+
+function showNotice(message){
+
+  const notice =
+    document.getElementById("notice");
+
+  if(!notice){
+    return;
+  }
+
+  clearTimeout(noticeTimer);
+
+  notice.textContent =
+    message || "";
+
+  notice.classList.add("show");
+
+  noticeTimer =
+    setTimeout(() => {
+      notice.classList.remove("show");
+    }, 3000);
+}
+
+
+/* ========================================
+   START
+======================================== */
+
+console.log(
+  "RabtaHub Mehfil JS loaded successfully."
+);
+
+</script>
+
+</body>
+</html>
