@@ -71,7 +71,48 @@ input:focus{
   border-color:#6c5ce7;
 }
 
-button{
+
+/* =========================
+   PASSWORD
+========================= */
+
+.password-wrap{
+  position:relative;
+  width:100%;
+}
+
+.password-wrap input{
+  padding-right:52px;
+}
+
+.show-password{
+  position:absolute;
+  right:5px;
+  top:0;
+  width:45px;
+  height:45px;
+  padding:0;
+  margin:0;
+  border:0;
+  background:transparent;
+  color:#666;
+  font-size:19px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+.show-password:hover{
+  background:transparent;
+}
+
+
+/* =========================
+   LOGIN BUTTON
+========================= */
+
+.login-button{
   width:100%;
   border:0;
   padding:14px;
@@ -83,10 +124,11 @@ button{
   cursor:pointer;
 }
 
-button:disabled{
+.login-button:disabled{
   opacity:.6;
   cursor:not-allowed;
 }
+
 
 #message{
   text-align:center;
@@ -132,6 +174,7 @@ button:disabled{
 
   <form id="loginForm">
 
+
     <!-- USERNAME -->
 
     <input
@@ -146,19 +189,39 @@ button:disabled{
 
     <!-- PASSWORD -->
 
-    <input
-      type="password"
-      id="password"
-      placeholder="Password"
-      autocomplete="current-password"
-      required
-    >
+    <div class="password-wrap">
 
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button
+        type="button"
+        class="show-password"
+        onclick="togglePassword()">
+
+        <span id="passwordIcon">
+          👁️
+        </span>
+
+      </button>
+
+    </div>
+
+
+    <!-- LOGIN -->
 
     <button
       type="submit"
-      id="loginBtn">
+      id="loginBtn"
+      class="login-button">
+
       Login
+
     </button>
 
   </form>
@@ -201,6 +264,44 @@ const supabaseClient =
 
 
 /* ========================================
+   SHOW / HIDE PASSWORD
+======================================== */
+
+function togglePassword(){
+
+  const input =
+    document.getElementById(
+      "password"
+    );
+
+  const icon =
+    document.getElementById(
+      "passwordIcon"
+    );
+
+
+  if(
+    input.type === "password"
+  ){
+
+    input.type = "text";
+
+    icon.textContent =
+      "🙈";
+
+  }else{
+
+    input.type = "password";
+
+    icon.textContent =
+      "👁️";
+
+  }
+
+}
+
+
+/* ========================================
    LOGIN
 ======================================== */
 
@@ -238,10 +339,6 @@ document
           "message"
         );
 
-
-      /* ========================================
-         RESET
-      ======================================== */
 
       message.textContent = "";
 
@@ -353,7 +450,7 @@ document
 
 
         /* ========================================
-           SUPABASE LOGIN
+           LOGIN
         ======================================== */
 
         const {
@@ -422,11 +519,9 @@ document
         message.style.color =
           "#d63031";
 
-
         message.textContent =
           error.message ||
           "Login failed.";
-
 
       }finally{
 
