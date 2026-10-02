@@ -79,6 +79,41 @@
       line-height:1.4;
     }
 
+    /* =========================
+       PASSWORD WRAP
+    ========================= */
+
+    .password-wrap{
+      position:relative;
+      width:100%;
+    }
+
+    .password-wrap input{
+      padding-right:52px;
+    }
+
+    .show-password{
+      position:absolute;
+      right:5px;
+      top:0;
+      width:45px;
+      height:45px;
+      padding:0;
+      margin:0;
+      border:0;
+      background:transparent;
+      color:#666;
+      font-size:19px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+
+    .show-password:hover{
+      background:transparent;
+    }
+
     button{
       width:100%;
       border:0;
@@ -140,6 +175,7 @@
 
     <form id="signupForm">
 
+
       <!-- NAME -->
 
       <input
@@ -171,34 +207,74 @@
 
       <!-- PASSWORD -->
 
-      <input
-        type="password"
-        id="password"
-        placeholder="Password"
-        minlength="6"
-        maxlength="72"
-        autocomplete="new-password"
-        required
-      >
+      <div class="password-wrap">
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          minlength="6"
+          maxlength="72"
+          autocomplete="new-password"
+          required
+        >
+
+        <button
+          type="button"
+          class="show-password"
+          onclick="togglePassword(
+            'password',
+            'passwordIcon'
+          )">
+
+          <span id="passwordIcon">
+            👁️
+          </span>
+
+        </button>
+
+      </div>
 
 
       <!-- CONFIRM PASSWORD -->
 
-      <input
-        type="password"
-        id="confirmPassword"
-        placeholder="Confirm Password"
-        minlength="6"
-        maxlength="72"
-        autocomplete="new-password"
-        required
-      >
+      <div class="password-wrap">
 
+        <input
+          type="password"
+          id="confirmPassword"
+          placeholder="Confirm Password"
+          minlength="6"
+          maxlength="72"
+          autocomplete="new-password"
+          required
+        >
+
+        <button
+          type="button"
+          class="show-password"
+          onclick="togglePassword(
+            'confirmPassword',
+            'confirmPasswordIcon'
+          )">
+
+          <span id="confirmPasswordIcon">
+            👁️
+          </span>
+
+        </button>
+
+      </div>
+
+
+      <!-- CREATE ACCOUNT -->
 
       <button
         type="submit"
         id="signupBtn">
+
         Create Account
+
       </button>
 
     </form>
@@ -238,6 +314,43 @@ const supabaseClient =
     SUPABASE_URL,
     SUPABASE_KEY
   );
+
+
+/* ========================================
+   SHOW / HIDE PASSWORD
+======================================== */
+
+function togglePassword(
+  inputId,
+  iconId
+){
+
+  const input =
+    document.getElementById(inputId);
+
+  const icon =
+    document.getElementById(iconId);
+
+
+  if(
+    input.type === "password"
+  ){
+
+    input.type = "text";
+
+    icon.textContent =
+      "🙈";
+
+  }else{
+
+    input.type = "password";
+
+    icon.textContent =
+      "👁️";
+
+  }
+
+}
 
 
 /* ========================================
@@ -458,9 +571,7 @@ document
 
 
         /* ========================================
-           CREATE HIDDEN SYSTEM EMAIL
-           
-           User ko email nahi dikhayi jayegi.
+           HIDDEN SYSTEM EMAIL
         ======================================== */
 
         const systemEmail =
@@ -483,135 +594,5 @@ document
           await supabaseClient.auth.signUp({
 
             email:
-              systemEmail,
-
-            password:
-              password,
-
-            options: {
-
-              data: {
-
-                name:
-                  name,
-
-                username:
-                  username
-
-              }
-
-            }
-
-          });
-
-
-        if(error){
-
-          throw error;
-
-        }
-
-
-        if(!data.user){
-
-          throw new Error(
-            "Account create nahi ho saka."
-          );
-
-        }
-
-
-        /* ========================================
-           SUCCESS
-        ======================================== */
-
-        message.style.color =
-          "#00a86b";
-
-        message.textContent =
-          "Account successfully created! Login page open ho rahi hai...";
-
-
-        document
-          .getElementById("signupForm")
-          .reset();
-
-
-        setTimeout(
-          function(){
-
-            window.location.href =
-              "login.html";
-
-          },
-          1500
-        );
-
-
-      }catch(error){
-
-        console.error(
-          "SIGNUP ERROR:",
-          error
-        );
-
-
-        message.style.color =
-          "#d63031";
-
-
-        let errorMessage =
-          error?.message ||
-          "Signup failed.";
-
-
-        /* ========================================
-           FRIENDLY ERRORS
-        ======================================== */
-
-        if(
-          errorMessage
-            .toLowerCase()
-            .includes("already registered")
-        ){
-
-          errorMessage =
-            "Ye username already registered hai.";
-
-        }
-
-
-        if(
-          errorMessage
-            .toLowerCase()
-            .includes("password")
-        ){
-
-          errorMessage =
-            "Password requirements puri nahi hain.";
-
-        }
-
-
-        message.textContent =
-          errorMessage;
-
-
-      }finally{
-
-        button.disabled =
-          false;
-
-        button.textContent =
-          "Create Account";
-
-      }
-
-    }
-  );
-
-</script>
-
-</body>
-</html>
+              system
 ```
