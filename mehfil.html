@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,13 +21,13 @@ body{
   font-family:Arial,sans-serif;
   background:#f4f6fb;
   color:#222;
-  padding-bottom:80px;
+  padding-bottom:75px;
 }
 
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:16px;
+  padding:13px 15px;
   position:sticky;
   top:0;
   z-index:20;
@@ -42,7 +42,7 @@ body{
 }
 
 .header-title{
-  font-size:21px;
+  font-size:20px;
   font-weight:bold;
 }
 
@@ -51,44 +51,45 @@ body{
   border:0;
   background:rgba(255,255,255,.16);
   color:white;
-  border-radius:10px;
-  padding:9px 12px;
-  font-size:16px;
+  border-radius:9px;
+  padding:8px 12px;
+  font-size:17px;
   cursor:pointer;
 }
 
 .container{
   max-width:650px;
   margin:auto;
-  padding:15px;
+  padding:10px;
 }
 
 .notice{
   display:none;
-  background:#fff;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:12px;
+  background:white;
+  padding:11px;
+  border-radius:10px;
+  margin-bottom:10px;
   text-align:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  box-shadow:0 2px 7px rgba(0,0,0,.06);
+  font-size:13px;
 }
 
 /* =========================
-   CARDS
+   BASIC
 ========================= */
 
 .card{
   background:white;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:13px;
-  box-shadow:0 2px 9px rgba(0,0,0,.06);
+  border-radius:12px;
+  padding:13px;
+  margin-bottom:10px;
+  box-shadow:0 1px 5px rgba(0,0,0,.05);
 }
 
 .section-title{
-  font-size:18px;
+  font-size:16px;
   font-weight:bold;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 
 input,
@@ -96,16 +97,16 @@ textarea,
 select{
   width:100%;
   border:1px solid #ddd;
-  border-radius:11px;
-  padding:11px;
-  margin-bottom:10px;
+  border-radius:9px;
+  padding:10px;
+  margin-bottom:9px;
   font-size:14px;
   outline:none;
 }
 
 textarea{
   resize:vertical;
-  min-height:80px;
+  min-height:75px;
 }
 
 input:focus,
@@ -117,8 +118,8 @@ select:focus{
 .primary-btn{
   width:100%;
   border:0;
-  border-radius:11px;
-  padding:11px;
+  border-radius:9px;
+  padding:10px;
   background:#6c5ce7;
   color:white;
   font-weight:bold;
@@ -127,8 +128,8 @@ select:focus{
 
 .secondary-btn{
   border:0;
-  border-radius:9px;
-  padding:9px 12px;
+  border-radius:8px;
+  padding:8px 11px;
   background:#eee;
   color:#333;
   cursor:pointer;
@@ -136,19 +137,11 @@ select:focus{
 
 .danger-btn{
   border:0;
-  border-radius:9px;
-  padding:9px 12px;
+  border-radius:8px;
+  padding:8px 11px;
   background:#ffecec;
   color:#c0392b;
   cursor:pointer;
-}
-
-/* =========================
-   SEARCH
-========================= */
-
-.mehfil-search{
-  margin-bottom:13px;
 }
 
 /* =========================
@@ -156,94 +149,81 @@ select:focus{
 ========================= */
 
 .mehfil-item{
-  background:#fff;
-  border:1px solid #eee;
-  border-radius:15px;
-  padding:15px;
-  margin-bottom:10px;
+  background:white;
+  border-bottom:1px solid #eee;
+  padding:13px 4px;
   cursor:pointer;
-  transition:.15s;
 }
 
-.mehfil-item:active{
-  transform:scale(.99);
-}
-
-.mehfil-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+.mehfil-item:last-child{
+  border-bottom:0;
 }
 
 .mehfil-name{
   font-weight:bold;
-  font-size:17px;
-  color:#222;
+  font-size:16px;
 }
 
 .mehfil-description{
   color:#777;
   font-size:13px;
-  margin-top:7px;
+  margin-top:5px;
   line-height:1.4;
-  word-break:break-word;
 }
 
 .mehfil-meta{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:10px;
+  margin-top:7px;
 }
 
-.privacy-badge,
-.member-badge{
+.privacy-badge{
   display:inline-block;
-  padding:5px 8px;
-  border-radius:8px;
+  padding:4px 7px;
+  border-radius:7px;
   background:#f0edff;
   color:#6c5ce7;
   font-size:11px;
 }
 
 .member-badge{
-  background:#f4f4f4;
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:7px;
+  background:#f3f3f3;
   color:#666;
+  font-size:11px;
 }
 
 /* =========================
-   DETAIL
+   MEHFIL DETAIL
 ========================= */
 
 .detail-header{
-  text-align:center;
+  padding:10px 4px 13px;
+  border-bottom:1px solid #eee;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
 }
 
 .detail-name{
-  font-size:23px;
+  font-size:21px;
   font-weight:bold;
+  text-align:left;
 }
 
 .detail-description{
   color:#777;
-  margin:8px 0;
-  line-height:1.45;
-  word-break:break-word;
+  font-size:13px;
+  margin:5px 0 8px;
 }
 
 .detail-meta{
-  display:flex;
-  justify-content:center;
-  gap:7px;
-  flex-wrap:wrap;
-  margin-top:10px;
+  margin-bottom:8px;
 }
 
 .action-row{
   display:flex;
-  gap:8px;
-  margin-top:14px;
+  gap:7px;
 }
 
 .action-row button{
@@ -251,17 +231,60 @@ select:focus{
 }
 
 /* =========================
-   REPLY TARGET BAR
+   MEHFIL COMPOSER
+========================= */
+
+.composer{
+  background:white;
+  border-radius:10px;
+  padding:11px;
+  margin-bottom:10px;
+  border:1px solid #eee;
+}
+
+.composer-label{
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:7px;
+}
+
+.composer textarea{
+  min-height:60px;
+  margin-bottom:7px;
+}
+
+.send-row{
+  display:flex;
+  justify-content:flex-end;
+}
+
+.send-btn{
+  border:0;
+  background:#6c5ce7;
+  color:white;
+  border-radius:8px;
+  padding:8px 18px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* =========================
+   REPLY TARGET
 ========================= */
 
 .reply-target{
+  display:none;
   background:#f0edff;
-  border-left:4px solid #6c5ce7;
-  border-radius:10px;
-  padding:9px 11px;
-  margin-bottom:9px;
-  font-size:13px;
+  border-left:3px solid #6c5ce7;
+  border-radius:7px;
+  padding:7px 9px;
+  margin-bottom:7px;
   color:#555;
+  font-size:12px;
+}
+
+.reply-target.show{
+  display:block;
 }
 
 .reply-target strong{
@@ -269,85 +292,115 @@ select:focus{
 }
 
 /* =========================
-   POSTS / FEED
+   FEED
 ========================= */
 
-.post-box{
-  padding:14px;
-  border:1px solid #eee;
-  border-radius:14px;
-  margin-bottom:10px;
-  background:#fff;
+.feed{
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
 }
 
-.post-top{
+.feed-title{
+  padding:11px 12px;
+  border-bottom:1px solid #eee;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.activity{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  background:white;
+}
+
+.activity:last-child{
+  border-bottom:0;
+}
+
+.activity-head{
   display:flex;
   align-items:center;
   gap:9px;
 }
 
-.post-avatar{
-  width:40px;
-  height:40px;
+.activity-avatar{
+  width:38px;
+  height:38px;
   border-radius:50%;
   object-fit:cover;
   background:#eee;
+  flex-shrink:0;
 }
 
-.post-user{
-  font-weight:bold;
+.activity-info{
+  min-width:0;
+  flex:1;
+}
+
+.activity-user{
   font-size:14px;
+  font-weight:bold;
+  color:#222;
 }
 
-.post-time{
+.activity-time{
   color:#999;
   font-size:11px;
-  margin-top:3px;
+  margin-top:2px;
 }
 
-.post-content{
-  margin-top:10px;
+.activity-text{
+  margin-left:47px;
+  margin-top:7px;
+  font-size:14px;
   line-height:1.5;
   white-space:pre-wrap;
   word-break:break-word;
 }
 
-.post-actions{
+.activity-actions{
+  margin-left:47px;
+  margin-top:7px;
   display:flex;
-  gap:8px;
-  margin-top:11px;
+  gap:7px;
 }
 
 .reply-btn{
   border:0;
-  border-radius:9px;
-  padding:8px 11px;
-  background:#f0edff;
+  background:none;
   color:#6c5ce7;
+  padding:3px 0;
+  font-size:12px;
   font-weight:bold;
   cursor:pointer;
 }
 
-.post-delete{
-  margin-left:auto;
+.delete-btn{
+  border:0;
+  background:none;
+  color:#c0392b;
+  padding:3px 0;
+  font-size:12px;
+  cursor:pointer;
 }
 
 /* =========================
-   TOP REPLY ACTIVITY
+   REPLY ACTIVITY
 ========================= */
 
-.activity-reply{
-  border-left:4px solid #6c5ce7;
+.reply-activity{
   background:#faf9ff;
 }
 
 .reply-reference{
+  margin-left:47px;
+  margin-top:6px;
+  padding:6px 8px;
+  background:#f1efff;
+  border-radius:7px;
   color:#777;
-  font-size:12px;
-  margin-top:7px;
-  padding:7px 9px;
-  background:#f4f2ff;
-  border-radius:8px;
+  font-size:11px;
 }
 
 .reply-reference strong{
@@ -359,15 +412,16 @@ select:focus{
 ========================= */
 
 .member-list{
-  max-height:250px;
-  overflow:auto;
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
 }
 
 .member{
   display:flex;
   align-items:center;
-  gap:10px;
-  padding:9px 0;
+  gap:9px;
+  padding:9px 10px;
   border-bottom:1px solid #eee;
 }
 
@@ -376,8 +430,8 @@ select:focus{
 }
 
 .member-avatar{
-  width:38px;
-  height:38px;
+  width:35px;
+  height:35px;
   border-radius:50%;
   object-fit:cover;
   background:#eee;
@@ -385,13 +439,19 @@ select:focus{
 
 .member-name{
   flex:1;
-  font-size:14px;
+  font-size:13px;
+}
+
+.member-username{
+  color:#999;
+  font-size:10px;
+  margin-top:2px;
 }
 
 .role{
-  font-size:11px;
-  padding:4px 7px;
-  border-radius:7px;
+  font-size:10px;
+  padding:4px 6px;
+  border-radius:6px;
   background:#f0edff;
   color:#6c5ce7;
 }
@@ -403,23 +463,21 @@ select:focus{
 .invite-result{
   display:flex;
   align-items:center;
-  gap:9px;
-  padding:8px;
-  border:1px solid #eee;
-  border-radius:9px;
-  margin-bottom:6px;
+  gap:8px;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
 }
 
 .invite-result img{
-  width:36px;
-  height:36px;
+  width:35px;
+  height:35px;
   border-radius:50%;
   object-fit:cover;
 }
 
 .invite-result-name{
   flex:1;
-  font-size:14px;
+  font-size:13px;
 }
 
 /* =========================
@@ -431,6 +489,7 @@ select:focus{
   text-align:center;
   color:#777;
   padding:20px;
+  font-size:13px;
 }
 
 .hidden{
@@ -446,7 +505,7 @@ select:focus{
   bottom:0;
   left:0;
   right:0;
-  height:68px;
+  height:66px;
   background:white;
   border-top:1px solid #ddd;
   display:flex;
@@ -459,15 +518,15 @@ select:focus{
   border:0;
   background:none;
   color:#666;
-  font-size:11px;
+  font-size:10px;
   text-align:center;
   cursor:pointer;
 }
 
 .nav-icon{
   display:block;
-  font-size:20px;
-  margin-bottom:3px;
+  font-size:19px;
+  margin-bottom:2px;
 }
 
 .nav-btn.active{
@@ -518,8 +577,7 @@ select:focus{
        MEHFIL LIST
   ========================== -->
 
-  <div
-    id="mehfilsPage">
+  <div id="mehfilsPage">
 
     <div class="card">
 
@@ -541,7 +599,7 @@ select:focus{
       <select id="newMehfilPrivacy">
 
         <option value="public">
-          🌐 Public Mehfil
+          🌍 Public Mehfil
         </option>
 
         <option value="private">
@@ -568,12 +626,11 @@ select:focus{
     <div class="card">
 
       <div class="section-title">
-        🔥 Explore Mehfils
+        💬 Mehfils
       </div>
 
       <input
         id="mehfilSearch"
-        class="mehfil-search"
         type="text"
         placeholder="🔎 Search Mehfil..."
         oninput="filterMehfils()">
@@ -592,7 +649,7 @@ select:focus{
 
 
   <!-- =========================
-       DETAIL
+       MEHFIL DETAIL
   ========================== -->
 
   <div
@@ -600,7 +657,7 @@ select:focus{
     class="hidden">
 
 
-    <div class="card detail-header">
+    <div class="detail-header">
 
       <div
         id="detailName"
@@ -608,13 +665,13 @@ select:focus{
       </div>
 
       <div
-        id="detailPrivacy"
-        class="privacy-badge">
+        id="detailDescription"
+        class="detail-description">
       </div>
 
       <div
-        id="detailDescription"
-        class="detail-description">
+        id="detailPrivacy"
+        class="privacy-badge">
       </div>
 
       <div
@@ -658,7 +715,9 @@ select:focus{
          MEMBERS
     ========================== -->
 
-    <div class="card">
+    <div
+      id="membersCard"
+      class="card">
 
       <div class="section-title">
         👥 Members
@@ -678,39 +737,41 @@ select:focus{
 
 
     <!-- =========================
-         CREATE POST / REPLY
+         COMPOSER
     ========================== -->
 
     <div
       id="postComposer"
-      class="card hidden">
+      class="composer hidden">
 
-      <div class="section-title">
-        💬 Mehfil mein likhein
+      <div class="composer-label">
+        Message likhein:
       </div>
 
 
-      <!-- REPLY TARGET -->
-
       <div
         id="replyTarget"
-        class="reply-target hidden">
+        class="reply-target">
       </div>
 
 
       <textarea
         id="mehfilPostText"
         maxlength="2000"
-        placeholder="Apni baat share karein..."></textarea>
+        placeholder="Message likhein..."></textarea>
 
 
-      <button
-        class="primary-btn"
-        onclick="publishActivity()">
+      <div class="send-row">
 
-        Send
+        <button
+          class="send-btn"
+          onclick="publishActivity()">
 
-      </button>
+          OK
+
+        </button>
+
+      </div>
 
     </div>
 
@@ -719,10 +780,12 @@ select:focus{
          FEED
     ========================== -->
 
-    <div class="card">
+    <div
+      id="feedCard"
+      class="feed">
 
-      <div class="section-title">
-        ✨ Mehfil Feed
+      <div class="feed-title">
+        💬 Mehfil
       </div>
 
       <div id="mehfilPosts">
@@ -820,6 +883,8 @@ let allMehfils = [];
 
 let replyTarget = null;
 
+let searchTimer = null;
+
 
 /* =========================================
    INIT
@@ -899,7 +964,10 @@ async function loadMehfils(){
 
   if(error){
 
-    console.error(error);
+    console.error(
+      "MEHFIL LOAD ERROR:",
+      error
+    );
 
     list.innerHTML =
       '<div class="empty">Mehfils load nahi ho sakin.</div>';
@@ -921,7 +989,7 @@ async function loadMehfils(){
 
 
 /* =========================================
-   RENDER LIST
+   RENDER MEHFIL LIST
 ========================================= */
 
 function renderMehfilList(
@@ -950,7 +1018,7 @@ function renderMehfilList(
 
         const privacy =
           mehfil.privacy === "public"
-            ? "🌐 Public"
+            ? "🌍 Public"
             : mehfil.privacy === "private"
               ? "🔒 Private"
               : "📩 Invite Only";
@@ -962,15 +1030,11 @@ function renderMehfilList(
             class="mehfil-item"
             onclick="openMehfil(${mehfil.id})">
 
-            <div class="mehfil-top">
+            <div class="mehfil-name">
 
-              <div class="mehfil-name">
-                💬 ${escapeHtml(mehfil.name)}
-              </div>
-
-              <span class="privacy-badge">
-                ${privacy}
-              </span>
+              💬 ${escapeHtml(
+                mehfil.name
+              )}
 
             </div>
 
@@ -987,12 +1051,8 @@ function renderMehfilList(
 
             <div class="mehfil-meta">
 
-              <span class="member-badge">
-                👥 Mehfil
-              </span>
-
-              <span class="member-badge">
-                ✨ Community
+              <span class="privacy-badge">
+                ${privacy}
               </span>
 
             </div>
@@ -1118,7 +1178,10 @@ async function createMehfil(){
 
   if(error){
 
-    console.error(error);
+    console.error(
+      "CREATE MEHFIL ERROR:",
+      error
+    );
 
     showNotice(
       "Mehfil create nahi hui: " +
@@ -1154,7 +1217,10 @@ async function createMehfil(){
 
   if(memberError){
 
-    console.error(memberError);
+    console.error(
+      "ADMIN MEMBER ERROR:",
+      memberError
+    );
 
     showNotice(
       "Mehfil bani lekin admin member add nahi hua."
@@ -1223,7 +1289,8 @@ async function openMehfil(
 
 
   const {
-    data:membership
+    data:membership,
+    error:membershipError
   } =
     await supabaseClient
       .from("mehfil_members")
@@ -1237,6 +1304,16 @@ async function openMehfil(
         currentUser.id
       )
       .maybeSingle();
+
+
+  if(membershipError){
+
+    console.error(
+      "MEMBERSHIP ERROR:",
+      membershipError
+    );
+
+  }
 
 
   currentMembership =
@@ -1263,28 +1340,26 @@ async function openMehfil(
   document.getElementById(
     "detailName"
   ).textContent =
-    "💬 " + mehfil.name;
+    mehfil.name;
 
 
   document.getElementById(
     "detailDescription"
   ).textContent =
-    mehfil.description ||
-    "";
+    mehfil.description || "";
 
 
   document.getElementById(
     "detailPrivacy"
   ).textContent =
     mehfil.privacy === "public"
-      ? "🌐 Public"
+      ? "🌍 Public"
       : mehfil.privacy === "private"
         ? "🔒 Private"
         : "📩 Invite Only";
 
 
   await loadMemberCount();
-
 
   await renderMehfilActions();
 
@@ -1328,8 +1403,7 @@ async function loadMemberCount(){
 
   if(error){
 
-    meta.innerHTML =
-      '<span class="member-badge">👥 Members</span>';
+    meta.innerHTML = "";
 
     return;
 
@@ -1339,7 +1413,9 @@ async function loadMemberCount(){
   meta.innerHTML = `
 
     <span class="member-badge">
+
       👥 ${count || 0} Members
+
     </span>
 
   `;
@@ -1371,6 +1447,18 @@ async function renderMehfilActions(){
     );
 
 
+  const membersCard =
+    document.getElementById(
+      "membersCard"
+    );
+
+
+  const feedCard =
+    document.getElementById(
+      "feedCard"
+    );
+
+
   const isCreator =
     currentMehfil.creator_id ===
     currentUser.id;
@@ -1390,17 +1478,29 @@ async function renderMehfilActions(){
         class="primary-btn"
         onclick="showInviteCard()">
 
-        📩 Invite User
+        📩 Invite
 
       </button>
 
     `;
 
+
     inviteCard.classList.remove(
       "hidden"
     );
 
+
     postComposer.classList.remove(
+      "hidden"
+    );
+
+
+    membersCard.classList.remove(
+      "hidden"
+    );
+
+
+    feedCard.classList.remove(
       "hidden"
     );
 
@@ -1427,11 +1527,23 @@ async function renderMehfilActions(){
 
     `;
 
+
     inviteCard.classList.add(
       "hidden"
     );
 
+
     postComposer.classList.remove(
+      "hidden"
+    );
+
+
+    membersCard.classList.remove(
+      "hidden"
+    );
+
+
+    feedCard.classList.remove(
       "hidden"
     );
 
@@ -1468,10 +1580,22 @@ async function renderMehfilActions(){
 
     `;
 
+
+    membersCard.classList.remove(
+      "hidden"
+    );
+
+
+    feedCard.classList.remove(
+      "hidden"
+    );
+
+
     document.getElementById(
       "memberList"
     ).innerHTML =
       '<div class="empty">Join Mehfil to view members.</div>';
+
 
     document.getElementById(
       "mehfilPosts"
@@ -1497,10 +1621,22 @@ async function renderMehfilActions(){
 
     `;
 
+
+    membersCard.classList.remove(
+      "hidden"
+    );
+
+
+    feedCard.classList.remove(
+      "hidden"
+    );
+
+
     document.getElementById(
       "memberList"
     ).innerHTML =
       '<div class="empty">Private Mehfil — approval required.</div>';
+
 
     document.getElementById(
       "mehfilPosts"
@@ -1519,6 +1655,7 @@ async function renderMehfilActions(){
       text-align:center;
       color:#777;
       padding:8px;
+      font-size:13px;
     ">
 
       📩 Invite Only Mehfil
@@ -1532,10 +1669,21 @@ async function renderMehfilActions(){
   `;
 
 
+  membersCard.classList.remove(
+    "hidden"
+  );
+
+
+  feedCard.classList.remove(
+    "hidden"
+  );
+
+
   document.getElementById(
     "memberList"
   ).innerHTML =
-    '<div class="empty">Invite accept karne ke baad members aur posts nazar aayenge.</div>';
+    '<div class="empty">Invite accept karne ke baad members nazar aayenge.</div>';
+
 
   document.getElementById(
     "mehfilPosts"
@@ -1686,7 +1834,8 @@ async function leaveMehfil(){
   if(error){
 
     showNotice(
-      "Leave nahi ho saka."
+      "Leave nahi ho saka: " +
+      error.message
     );
 
     return;
@@ -1813,27 +1962,21 @@ async function loadMembers(){
 
             <img
               class="member-avatar"
-              src="${
-                escapeHtml(
-                  profile?.avatar_url ||
-                  "https://via.placeholder.com/100"
-                )
-              }">
+              src="${escapeHtml(
+                profile?.avatar_url ||
+                "https://via.placeholder.com/100"
+              )}"
+              alt="">
 
             <div class="member-name">
 
-              ${
-                escapeHtml(
-                  profile?.name ||
-                  profile?.username ||
-                  "User"
-                )
-              }
+              ${escapeHtml(
+                profile?.name ||
+                profile?.username ||
+                "User"
+              )}
 
-              <div style="
-                color:#999;
-                font-size:11px;
-              ">
+              <div class="member-username">
 
                 @${escapeHtml(
                   profile?.username ||
@@ -1893,9 +2036,6 @@ function showInviteCard(){
 /* =========================================
    SEARCH USERS
 ========================================= */
-
-let searchTimer = null;
-
 
 function searchUsers(){
 
@@ -1994,12 +2134,11 @@ async function doUserSearch(){
           <div class="invite-result">
 
             <img
-              src="${
-                escapeHtml(
-                  profile.avatar_url ||
-                  "https://via.placeholder.com/100"
-                )
-              }">
+              src="${escapeHtml(
+                profile.avatar_url ||
+                "https://via.placeholder.com/100"
+              )}"
+              alt="">
 
             <div class="invite-result-name">
 
@@ -2011,7 +2150,8 @@ async function doUserSearch(){
 
               <div style="
                 color:#999;
-                font-size:11px;
+                font-size:10px;
+                margin-top:2px;
               ">
 
                 @${escapeHtml(
@@ -2175,7 +2315,7 @@ async function sendInvite(
 
 
 /* =========================================
-   PUBLISH POST / REPLY
+   PUBLISH ACTIVITY
 ========================================= */
 
 async function publishActivity(){
@@ -2210,7 +2350,7 @@ async function publishActivity(){
     showNotice(
       replyTarget
         ? "Reply likhein."
-        : "Post likhein."
+        : "Message likhein."
     );
 
     return;
@@ -2306,7 +2446,7 @@ async function publishActivity(){
   if(error){
 
     showNotice(
-      "Post publish nahi hui: " +
+      "Message publish nahi hua: " +
       error.message
     );
 
@@ -2321,14 +2461,14 @@ async function publishActivity(){
   await loadFeed();
 
   showNotice(
-    "✅ Mehfil post publish ho gayi."
+    "✅ Message Mehfil mein aa gaya."
   );
 
 }
 
 
 /* =========================================
-   REPLY TO POST
+   START REPLY
 ========================================= */
 
 function startReply(
@@ -2357,14 +2497,16 @@ function startReply(
 
     ↩️ Reply to
     <strong>
-      @${escapeHtml(username)}
+      @${escapeHtml(
+        username
+      )}
     </strong>
 
   `;
 
 
-  target.classList.remove(
-    "hidden"
+  target.classList.add(
+    "show"
   );
 
 
@@ -2390,7 +2532,7 @@ function startReply(
 
 
 /* =========================================
-   CLEAR REPLY TARGET
+   CLEAR REPLY
    No close/cancel button
 ========================================= */
 
@@ -2410,8 +2552,8 @@ function clearReplyTarget(){
   target.innerHTML = "";
 
 
-  target.classList.add(
-    "hidden"
+  target.classList.remove(
+    "show"
   );
 
 
@@ -2424,7 +2566,7 @@ function clearReplyTarget(){
   if(input){
 
     input.placeholder =
-      "Apni baat share karein...";
+      "Message likhein...";
 
   }
 
@@ -2447,10 +2589,6 @@ async function loadFeed(){
     '<div class="loading">Loading...</div>';
 
 
-  /* =========================
-     LOAD POSTS
-  ========================= */
-
   const {
     data:posts,
     error:postError
@@ -2466,19 +2604,18 @@ async function loadFeed(){
 
   if(postError){
 
-    console.error(postError);
+    console.error(
+      "MEHFIL POSTS ERROR:",
+      postError
+    );
 
     list.innerHTML =
-      '<div class="empty">Posts load nahi ho sakin.</div>';
+      '<div class="empty">Messages load nahi ho sake.</div>';
 
     return;
 
   }
 
-
-  /* =========================
-     LOAD REPLIES
-  ========================= */
 
   const postIds =
     (posts || [])
@@ -2508,7 +2645,10 @@ async function loadFeed(){
 
     if(error){
 
-      console.error(error);
+      console.error(
+        "MEHFIL REPLIES ERROR:",
+        error
+      );
 
     }else{
 
@@ -2521,7 +2661,7 @@ async function loadFeed(){
 
 
   /* =========================
-     CREATE FEED ITEMS
+     FEED ITEMS
   ========================= */
 
   let feedItems = [];
@@ -2559,10 +2699,6 @@ async function loadFeed(){
     });
 
 
-  /* =========================
-     SORT NEWEST FIRST
-  ========================= */
-
   feedItems.sort(
     (a,b) =>
       new Date(
@@ -2585,7 +2721,7 @@ async function loadFeed(){
 
 
   /* =========================
-     LOAD PROFILES
+     PROFILES
   ========================= */
 
   const userIds =
@@ -2596,6 +2732,7 @@ async function loadFeed(){
             item =>
               item.data.user_id
           )
+          .filter(Boolean)
       )
     ];
 
@@ -2628,7 +2765,7 @@ async function loadFeed(){
 
 
   /* =========================
-     ORIGINAL POST MAP
+     ORIGINAL POSTS
   ========================= */
 
   const postMap = {};
@@ -2663,19 +2800,25 @@ async function loadFeed(){
         }
 
 
+        const originalPost =
+          postMap[
+            item.data.mehfil_post_id
+          ];
+
+
+        const originalProfile =
+          profileMap[
+            originalPost?.user_id
+          ];
+
+
         return renderReplyActivity(
           item.data,
           profileMap[
             item.data.user_id
           ],
-          postMap[
-            item.data.mehfil_post_id
-          ],
-          profileMap[
-            postMap[
-              item.data.mehfil_post_id
-            ]?.user_id
-          ]
+          originalPost,
+          originalProfile
         );
 
       })
@@ -2685,7 +2828,7 @@ async function loadFeed(){
 
 
 /* =========================================
-   RENDER POST
+   RENDER NORMAL MESSAGE
 ========================================= */
 
 function renderPost(
@@ -2712,25 +2855,29 @@ function renderPost(
   return `
 
     <div
-      class="post-box"
+      class="activity"
       id="mehfil-post-${post.id}">
 
-      <div class="post-top">
+      <div class="activity-head">
 
         <img
-          class="post-avatar"
-          src="${escapeHtml(avatar)}"
+          class="activity-avatar"
+          src="${escapeHtml(
+            avatar
+          )}"
           alt="">
 
-        <div>
+        <div class="activity-info">
 
-          <div class="post-user">
+          <div class="activity-user">
 
-            ${escapeHtml(username)}
+            ${escapeHtml(
+              username
+            )}
 
           </div>
 
-          <div class="post-time">
+          <div class="activity-time">
 
             ${formatDate(
               post.created_at
@@ -2743,7 +2890,7 @@ function renderPost(
       </div>
 
 
-      <div class="post-content">
+      <div class="activity-text">
 
         ${escapeHtml(
           post.content
@@ -2752,18 +2899,20 @@ function renderPost(
       </div>
 
 
-      <div class="post-actions">
+      <div class="activity-actions">
 
         <button
           class="reply-btn"
           onclick="
             startReply(
               ${post.id},
-              '${escapeJs(username)}'
+              '${escapeJs(
+                username
+              )}'
             )
           ">
 
-          💬 Reply
+          Reply
 
         </button>
 
@@ -2773,14 +2922,14 @@ function renderPost(
             ? `
 
               <button
-                class="danger-btn post-delete"
+                class="delete-btn"
                 onclick="
                   deleteMehfilPost(
                     ${post.id}
                   )
                 ">
 
-                🗑️ Delete
+                Delete
 
               </button>
 
@@ -2798,7 +2947,7 @@ function renderPost(
 
 
 /* =========================================
-   RENDER REPLY AT TOP FEED
+   RENDER REPLY AS TOP ACTIVITY
 ========================================= */
 
 function renderReplyActivity(
@@ -2833,25 +2982,29 @@ function renderReplyActivity(
   return `
 
     <div
-      class="post-box activity-reply"
+      class="activity reply-activity"
       id="mehfil-reply-${reply.id}">
 
-      <div class="post-top">
+      <div class="activity-head">
 
         <img
-          class="post-avatar"
-          src="${escapeHtml(avatar)}"
+          class="activity-avatar"
+          src="${escapeHtml(
+            avatar
+          )}"
           alt="">
 
-        <div>
+        <div class="activity-info">
 
-          <div class="post-user">
+          <div class="activity-user">
 
-            ${escapeHtml(username)}
+            ${escapeHtml(
+              username
+            )}
 
           </div>
 
-          <div class="post-time">
+          <div class="activity-time">
 
             ${formatDate(
               reply.created_at
@@ -2877,7 +3030,7 @@ function renderReplyActivity(
       </div>
 
 
-      <div class="post-content">
+      <div class="activity-text">
 
         ${escapeHtml(
           reply.reply
@@ -2886,26 +3039,30 @@ function renderReplyActivity(
       </div>
 
 
-      <div class="post-actions">
+      <div class="activity-actions">
 
-        <button
-          class="reply-btn"
-          onclick="
-            startReply(
-              ${
-                originalPost
-                  ? originalPost.id
-                  : 0
-              },
-              '${escapeJs(
-                originalUsername
-              )}'
-            )
-          ">
+        ${
+          originalPost
+            ? `
 
-          💬 Reply
+              <button
+                class="reply-btn"
+                onclick="
+                  startReply(
+                    ${originalPost.id},
+                    '${escapeJs(
+                      originalUsername
+                    )}'
+                  )
+                ">
 
-        </button>
+                Reply
+
+              </button>
+
+            `
+            : ""
+        }
 
 
         ${
@@ -2913,14 +3070,14 @@ function renderReplyActivity(
             ? `
 
               <button
-                class="danger-btn post-delete"
+                class="delete-btn"
                 onclick="
                   deleteReplyActivity(
                     ${reply.id}
                   )
                 ">
 
-                🗑️ Delete
+                Delete
 
               </button>
 
@@ -2938,7 +3095,7 @@ function renderReplyActivity(
 
 
 /* =========================================
-   DELETE REPLY ACTIVITY
+   DELETE REPLY
 ========================================= */
 
 async function deleteReplyActivity(
@@ -2964,7 +3121,8 @@ async function deleteReplyActivity(
   if(error){
 
     showNotice(
-      "Reply delete nahi hui."
+      "Reply delete nahi hui: " +
+      error.message
     );
 
     return;
@@ -3009,7 +3167,8 @@ async function deleteMehfilPost(
   if(error){
 
     showNotice(
-      "Post delete nahi hui."
+      "Message delete nahi hua: " +
+      error.message
     );
 
     return;
@@ -3021,7 +3180,7 @@ async function deleteMehfilPost(
 
 
   showNotice(
-    "Post delete ho gayi."
+    "Message delete ho gaya."
   );
 
 }
