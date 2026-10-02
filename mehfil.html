@@ -1,10 +1,13 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
 <title>Mehfil - RabtaHub</title>
 
@@ -19,9 +22,9 @@
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f4f6fb;
+  background:#f5f3fb;
   color:#222;
-  padding-bottom:75px;
+  padding-bottom:78px;
 }
 
 button,
@@ -35,74 +38,111 @@ button{
   cursor:pointer;
 }
 
+
+/* ========================================
+   HEADER
+======================================== */
+
 .header{
-  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
-  color:#fff;
-  padding:12px 14px;
   position:sticky;
   top:0;
   z-index:50;
+  color:#fff;
+  background:
+    linear-gradient(
+      135deg,
+      #6c5ce7,
+      #8e44ad
+    );
+  box-shadow:
+    0 3px 14px rgba(76,45,130,.22);
 }
 
 .header-row{
-  max-width:650px;
+  width:100%;
+  max-width:680px;
   margin:auto;
+  min-height:62px;
+  padding:9px 12px;
   display:flex;
   align-items:center;
-  gap:10px;
-}
-
-.header-title{
-  flex:1;
-  font-size:20px;
-  font-weight:bold;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
+  gap:9px;
 }
 
 .header-btn{
+  width:40px;
+  height:40px;
   border:0;
-  background:rgba(255,255,255,.16);
+  border-radius:12px;
+  background:rgba(255,255,255,.15);
   color:#fff;
-  border-radius:9px;
-  padding:8px 11px;
-  font-size:16px;
+  font-size:19px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
+.header-info{
+  flex:1;
+  min-width:0;
+}
+
+.header-title{
+  font-size:17px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.header-sub{
+  margin-top:2px;
+  font-size:11px;
+  opacity:.85;
+}
+
+
+/* ========================================
+   MAIN
+======================================== */
+
 .container{
-  max-width:650px;
+  width:100%;
+  max-width:680px;
   margin:auto;
   padding:10px;
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:10px;
+  box-shadow:
+    0 3px 12px rgba(55,35,100,.06);
 }
 
 .notice{
   display:none;
   background:#fff;
-  padding:11px;
-  border-radius:10px;
+  color:#333;
+  padding:11px 13px;
+  border-radius:12px;
   margin-bottom:10px;
   text-align:center;
-  box-shadow:0 2px 7px rgba(0,0,0,.06);
   font-size:13px;
+  box-shadow:
+    0 3px 12px rgba(0,0,0,.07);
 }
 
 .notice.show{
   display:block;
 }
 
-.card{
-  background:#fff;
-  border-radius:12px;
-  padding:13px;
-  margin-bottom:10px;
-  box-shadow:0 1px 5px rgba(0,0,0,.05);
-}
-
 .section-title{
   font-size:16px;
-  font-weight:bold;
-  margin-bottom:10px;
+  font-weight:800;
+  margin-bottom:11px;
 }
 
 input,
@@ -110,177 +150,424 @@ textarea,
 select{
   width:100%;
   border:1px solid #ddd;
-  border-radius:9px;
-  padding:10px;
-  margin-bottom:9px;
-  font-size:14px;
-  outline:none;
+  border-radius:11px;
+  padding:12px;
+  margin-bottom:10px;
   background:#fff;
-}
-
-textarea{
-  min-height:75px;
-  resize:vertical;
+  outline:none;
+  font-size:14px;
 }
 
 input:focus,
 textarea:focus,
 select:focus{
   border-color:#6c5ce7;
+  box-shadow:
+    0 0 0 3px rgba(108,92,231,.08);
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical;
 }
 
 .primary-btn{
   width:100%;
   border:0;
-  border-radius:9px;
-  padding:10px;
-  background:#6c5ce7;
+  border-radius:11px;
+  padding:12px;
+  background:
+    linear-gradient(
+      135deg,
+      #6c5ce7,
+      #8e44ad
+    );
   color:#fff;
-  font-weight:bold;
+  font-weight:800;
+  font-size:14px;
 }
 
 .secondary-btn{
   border:0;
-  border-radius:8px;
+  border-radius:9px;
   padding:8px 11px;
-  background:#eee;
-  color:#333;
+  background:#f0eef8;
+  color:#555;
+  font-weight:700;
 }
 
 .danger-btn{
   border:0;
-  border-radius:8px;
-  padding:7px 10px;
-  background:#ffecec;
+  border-radius:9px;
+  padding:8px 11px;
+  background:#fff0f0;
   color:#c0392b;
+  font-weight:700;
 }
 
 .hidden{
   display:none !important;
 }
 
-/* LIST */
+
+/* ========================================
+   CREATE MEHFIL
+======================================== */
+
+.create-intro{
+  background:
+    linear-gradient(
+      135deg,
+      #f0edff,
+      #fff
+    );
+  border:1px solid #e6e0ff;
+  border-radius:14px;
+  padding:13px;
+  margin-bottom:12px;
+}
+
+.create-intro-title{
+  font-weight:800;
+  color:#5d4bd8;
+}
+
+.create-intro-text{
+  color:#777;
+  font-size:12px;
+  margin-top:4px;
+  line-height:1.4;
+}
+
+.category-preview{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  background:#faf9ff;
+  border:1px solid #ebe7ff;
+  border-radius:11px;
+  padding:9px 10px;
+  margin-bottom:10px;
+}
+
+.category-preview-icon{
+  font-size:25px;
+}
+
+.category-preview-info{
+  min-width:0;
+}
+
+.category-preview-name{
+  font-size:13px;
+  font-weight:800;
+}
+
+.category-preview-topic{
+  color:#888;
+  font-size:11px;
+  margin-top:2px;
+}
+
+
+/* ========================================
+   MEHFIL LIST
+======================================== */
 
 .mehfil-list{
-  overflow:hidden;
-  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
 }
 
 .mehfil-item{
   background:#fff;
-  padding:13px;
-  border-bottom:1px solid #eee;
+  border-radius:15px;
+  padding:14px;
+  box-shadow:
+    0 3px 12px rgba(55,35,100,.06);
   cursor:pointer;
+  transition:.15s;
 }
 
-.mehfil-item:last-child{
-  border-bottom:0;
+.mehfil-item:active{
+  transform:scale(.99);
 }
 
-.mehfil-name{
-  font-size:16px;
-  font-weight:bold;
+.mehfil-top{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
 }
 
-.mehfil-description{
-  color:#777;
-  font-size:13px;
-  line-height:1.4;
-  margin-top:5px;
-}
-
-.mehfil-meta{
-  margin-top:7px;
-  font-size:12px;
-  color:#777;
-}
-
-.privacy-badge{
-  display:inline-block;
-  background:#f0edff;
-  color:#6c5ce7;
-  padding:4px 7px;
-  border-radius:7px;
-  margin-right:5px;
-}
-
-/* DETAIL */
-
-.detail-head{
+.mehfil-icon{
+  width:47px;
+  height:47px;
+  flex-shrink:0;
+  border-radius:14px;
   display:flex;
   align-items:center;
-  gap:10px;
+  justify-content:center;
+  background:#f0edff;
+  font-size:25px;
 }
 
-.detail-info{
+.mehfil-info{
   flex:1;
   min-width:0;
 }
 
-.detail-name{
-  font-size:19px;
-  font-weight:bold;
+.mehfil-name{
+  font-size:16px;
+  font-weight:800;
   word-break:break-word;
 }
 
-.detail-description{
+.mehfil-topic{
+  margin-top:4px;
+  color:#6c5ce7;
+  font-size:12px;
+  font-weight:700;
+}
+
+.mehfil-description{
+  margin-top:7px;
   color:#777;
   font-size:13px;
-  margin-top:4px;
   line-height:1.4;
 }
+
+.mehfil-bottom{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:10px;
+}
+
+.mini-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:#f4f2fb;
+  color:#666;
+  padding:5px 8px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:700;
+}
+
+
+/* ========================================
+   DETAIL HERO
+======================================== */
+
+.mehfil-hero{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(
+      135deg,
+      #6c5ce7,
+      #8e44ad
+    );
+  color:#fff;
+  border-radius:18px;
+  padding:18px 15px;
+  margin-bottom:10px;
+  box-shadow:
+    0 8px 25px rgba(108,92,231,.22);
+}
+
+.mehfil-hero::after{
+  content:"";
+  position:absolute;
+  width:130px;
+  height:130px;
+  right:-45px;
+  top:-45px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+}
+
+.hero-row{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.hero-icon{
+  width:55px;
+  height:55px;
+  flex-shrink:0;
+  border-radius:17px;
+  background:rgba(255,255,255,.17);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:29px;
+}
+
+.hero-info{
+  flex:1;
+  min-width:0;
+}
+
+.hero-name{
+  font-size:20px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+.hero-topic{
+  margin-top:4px;
+  font-size:12px;
+  opacity:.9;
+}
+
+.hero-stats{
+  position:relative;
+  z-index:2;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:13px;
+}
+
+.hero-stat{
+  background:rgba(255,255,255,.14);
+  padding:6px 9px;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:700;
+}
+
+.hero-description{
+  position:relative;
+  z-index:2;
+  margin-top:11px;
+  font-size:12px;
+  line-height:1.45;
+  opacity:.92;
+}
+
+
+/* ========================================
+   DETAIL ACTIONS
+======================================== */
 
 .detail-actions{
   display:flex;
   gap:7px;
   flex-wrap:wrap;
-  margin-top:12px;
+  margin-bottom:10px;
 }
 
 .detail-actions button{
   border:0;
-  border-radius:8px;
-  padding:8px 10px;
-  background:#eee;
+  border-radius:10px;
+  padding:9px 11px;
+  background:#fff;
+  color:#555;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.06);
 }
 
 .detail-actions .leave{
-  background:#ffecec;
+  background:#fff0f0;
   color:#c0392b;
 }
 
-/* COMPOSER */
+
+/* ========================================
+   COMPOSER
+======================================== */
+
+.composer-card{
+  background:#fff;
+  border-radius:16px;
+  padding:12px;
+  margin-bottom:10px;
+  box-shadow:
+    0 3px 12px rgba(55,35,100,.06);
+}
 
 .reply-target{
   display:none;
+  align-items:center;
+  gap:8px;
   background:#f0edff;
-  color:#6c5ce7;
-  padding:9px;
-  border-radius:8px;
-  margin-bottom:8px;
-  font-size:13px;
-  font-weight:bold;
+  color:#5b4bd6;
+  border:1px solid #e5dfff;
+  border-radius:10px;
+  padding:9px 10px;
+  margin-bottom:9px;
+  font-size:12px;
+  font-weight:800;
 }
 
 .reply-target.show{
-  display:block;
+  display:flex;
 }
 
-.photo-row{
+.reply-icon{
+  font-size:16px;
+}
+
+.composer-row{
   display:flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:9px;
+  align-items:flex-end;
+  gap:7px;
+}
+
+.composer-text{
+  flex:1;
+  margin:0;
+  min-height:46px;
+  max-height:130px;
+  resize:none;
+  border-radius:13px;
+  padding:12px;
+}
+
+.send-btn{
+  width:45px;
+  height:45px;
+  flex-shrink:0;
+  border:0;
+  border-radius:13px;
+  background:
+    linear-gradient(
+      135deg,
+      #6c5ce7,
+      #8e44ad
+    );
+  color:#fff;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.composer-tools{
+  display:flex;
+  gap:7px;
+  margin-top:8px;
 }
 
 .photo-label{
-  display:inline-block;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
   background:#f0edff;
-  color:#6c5ce7;
-  padding:8px 11px;
-  border-radius:8px;
-  font-size:13px;
-  font-weight:bold;
+  color:#5c4bd5;
+  padding:8px 10px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
 }
 
 .photo-input{
@@ -290,47 +577,55 @@ select:focus{
 .image-preview{
   display:none;
   position:relative;
-  margin-bottom:9px;
+  margin:9px 0;
 }
 
 .image-preview img{
   width:100%;
   max-height:300px;
   object-fit:cover;
-  border-radius:10px;
+  border-radius:12px;
 }
 
 .remove-photo{
   position:absolute;
   top:8px;
   right:8px;
+  width:31px;
+  height:31px;
   border:0;
   border-radius:50%;
-  width:30px;
-  height:30px;
   background:rgba(0,0,0,.7);
   color:#fff;
-  font-size:17px;
+  font-size:18px;
 }
 
-/* FEED */
 
-.feed{
-  margin-top:5px;
+/* ========================================
+   FEED
+======================================== */
+
+.feed-label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin:13px 2px 8px;
+  font-size:14px;
+  font-weight:900;
+  color:#444;
+}
+
+.feed-label span{
+  color:#6c5ce7;
 }
 
 .activity{
   background:#fff;
-  padding:13px 12px;
-  border-bottom:1px solid #eee;
-}
-
-.activity:first-child{
-  border-radius:12px 12px 0 0;
-}
-
-.activity:last-child{
-  border-radius:0 0 12px 12px;
+  border-radius:16px;
+  padding:13px;
+  margin-bottom:9px;
+  box-shadow:
+    0 3px 12px rgba(55,35,100,.06);
 }
 
 .activity-head{
@@ -340,12 +635,12 @@ select:focus{
 }
 
 .avatar{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  background:#eee;
-  object-fit:cover;
+  width:42px;
+  height:42px;
   flex-shrink:0;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eee;
 }
 
 .activity-user{
@@ -354,39 +649,49 @@ select:focus{
 }
 
 .activity-username{
-  font-weight:bold;
   font-size:14px;
+  font-weight:900;
   word-break:break-word;
 }
 
 .activity-time{
+  margin-top:3px;
   color:#999;
   font-size:11px;
-  margin-top:3px;
 }
 
 .activity-message{
-  margin:10px 0 8px 49px;
+  margin:11px 0 9px 51px;
   font-size:14px;
-  line-height:1.5;
+  line-height:1.55;
   white-space:pre-wrap;
   word-break:break-word;
 }
 
+.reply-reference{
+  margin:9px 0 7px 51px;
+  padding:8px 10px;
+  border-left:3px solid #6c5ce7;
+  background:#f8f7fc;
+  color:#666;
+  border-radius:0 9px 9px 0;
+  font-size:12px;
+}
+
 .activity-image{
-  margin:8px 0 8px 49px;
+  margin:8px 0 10px 51px;
 }
 
 .activity-image img{
   width:100%;
-  max-height:380px;
+  max-height:390px;
   object-fit:cover;
-  border-radius:10px;
+  border-radius:13px;
   display:block;
 }
 
 .activity-actions{
-  margin-left:49px;
+  margin-left:51px;
   display:flex;
   gap:7px;
   flex-wrap:wrap;
@@ -394,10 +699,22 @@ select:focus{
 
 .activity-actions button{
   border:0;
-  background:#f2f2f2;
-  border-radius:7px;
-  padding:6px 9px;
+  border-radius:9px;
+  padding:7px 10px;
+  background:#f3f2f7;
+  color:#555;
   font-size:12px;
+  font-weight:800;
+}
+
+.activity-actions .reply-btn{
+  color:#5b4bd6;
+  background:#f0edff;
+}
+
+.activity-actions .one-btn{
+  color:#9a4f91;
+  background:#fbeefa;
 }
 
 .activity-actions .delete{
@@ -405,7 +722,14 @@ select:focus{
   background:#fff0f0;
 }
 
-/* MEMBERS */
+
+/* ========================================
+   MEMBERS
+======================================== */
+
+.members-card{
+  margin-top:10px;
+}
 
 .member-row{
   display:flex;
@@ -425,36 +749,39 @@ select:focus{
 }
 
 .member-name{
-  font-size:14px;
-  font-weight:bold;
-  word-break:break-word;
+  font-size:13px;
+  font-weight:800;
 }
 
 .member-username{
   color:#888;
-  font-size:12px;
+  font-size:11px;
   margin-top:2px;
 }
 
 .member-role{
-  font-size:11px;
   color:#6c5ce7;
+  font-size:10px;
   margin-top:3px;
+  font-weight:700;
 }
 
-/* INVITE */
+
+/* ========================================
+   INVITE
+======================================== */
 
 .invite-box{
   background:#faf9ff;
-  border:1px solid #e8e3ff;
-  border-radius:10px;
+  border:1px solid #e7e2ff;
+  border-radius:12px;
   padding:10px;
 }
 
 .invite-result{
   display:flex;
   align-items:center;
-  gap:9px;
+  gap:8px;
   padding:8px 0;
   border-bottom:1px solid #eee;
 }
@@ -463,60 +790,69 @@ select:focus{
   border-bottom:0;
 }
 
-.invite-result-info{
+.invite-info{
   flex:1;
   min-width:0;
 }
 
-.invite-result-name{
-  font-weight:bold;
+.invite-name{
   font-size:13px;
+  font-weight:800;
 }
 
-.invite-result-username{
+.invite-username{
   color:#888;
   font-size:11px;
+  margin-top:2px;
 }
 
-/* EMPTY */
+
+/* ========================================
+   STATES
+======================================== */
 
 .loading,
 .empty{
   background:#fff;
-  border-radius:12px;
-  padding:25px 15px;
+  border-radius:15px;
+  padding:28px 15px;
   text-align:center;
   color:#777;
+  font-size:13px;
 }
 
 .error-box{
   background:#fff0f0;
   color:#c0392b;
-  border-radius:10px;
-  padding:12px;
+  border-radius:12px;
+  padding:13px;
   font-size:13px;
   word-break:break-word;
 }
 
-/* BOTTOM NAV */
+
+/* ========================================
+   BOTTOM NAV
+======================================== */
 
 .bottom-nav{
   position:fixed;
   left:0;
   right:0;
   bottom:0;
-  height:65px;
+  height:67px;
   background:#fff;
   border-top:1px solid #ddd;
-  display:flex;
-  justify-content:center;
   z-index:100;
-  box-shadow:0 -2px 8px rgba(0,0,0,.06);
+  box-shadow:
+    0 -3px 12px rgba(0,0,0,.06);
 }
 
 .bottom-inner{
   width:100%;
-  max-width:650px;
+  max-width:680px;
+  height:100%;
+  margin:auto;
   display:flex;
 }
 
@@ -524,22 +860,46 @@ select:focus{
   flex:1;
   border:0;
   background:#fff;
-  color:#777;
-  font-size:11px;
+  color:#888;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:3px;
+  gap:2px;
+  font-size:10px;
+  font-weight:700;
 }
 
 .nav-btn.active{
   color:#6c5ce7;
-  font-weight:bold;
 }
 
 .nav-icon{
   font-size:20px;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media(max-width:430px){
+
+  .container{
+    padding:8px;
+  }
+
+  .activity-message,
+  .activity-image,
+  .activity-actions,
+  .reply-reference{
+    margin-left:0;
+  }
+
+  .hero-name{
+    font-size:18px;
+  }
+
 }
 
 </style>
@@ -547,24 +907,37 @@ select:focus{
 
 <body>
 
+
 <header class="header">
 
   <div class="header-row">
 
     <button
       class="header-btn"
+      type="button"
       onclick="goBack()">
       ←
     </button>
 
-    <div
-      class="header-title"
-      id="headerTitle">
-      💬 Mehfil
+    <div class="header-info">
+
+      <div
+        class="header-title"
+        id="headerTitle">
+        💬 Mehfil
+      </div>
+
+      <div
+        class="header-sub"
+        id="headerSub">
+        Connect • Share • Enjoy
+      </div>
+
     </div>
 
     <button
       class="header-btn"
+      type="button"
       onclick="refreshCurrent()">
       ↻
     </button>
@@ -576,266 +949,402 @@ select:focus{
 
 <main class="container">
 
-  <div
-    id="notice"
-    class="notice">
+
+<div
+  id="notice"
+  class="notice">
+</div>
+
+
+<!-- =====================================
+     MEHFIL LIST
+===================================== -->
+
+<section id="listPage">
+
+
+  <div class="card">
+
+    <div class="section-title">
+      💬 Discover Mehfils
+    </div>
+
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="🔎 Mehfil search karein..."
+      oninput="filterMehfils()"
+    >
+
+    <button
+      class="primary-btn"
+      type="button"
+      onclick="showCreateMehfil()">
+
+      ＋ Create New Mehfil
+
+    </button>
+
   </div>
 
 
-  <!-- =========================
-       MEHFIL LIST
-  ========================== -->
+  <!-- CREATE -->
 
-  <section id="listPage">
+  <div
+    id="createBox"
+    class="card"
+    style="display:none;">
 
-    <div class="card">
+    <div class="create-intro">
 
-      <div class="section-title">
-        💬 Mehfil
+      <div class="create-intro-title">
+        ✨ Apni Mehfil banayein
       </div>
 
-      <input
-        id="searchInput"
-        type="text"
-        placeholder="Mehfil search karein..."
-        oninput="filterMehfils()">
+      <div class="create-intro-text">
+        Category select karein aur uske mutabiq
+        interesting topic choose karein.
+      </div>
 
-      <button
-        class="primary-btn"
-        onclick="showCreateMehfil()">
-        ＋ New Mehfil
-      </button>
+    </div>
+
+
+    <input
+      id="newMehfilName"
+      type="text"
+      maxlength="80"
+      placeholder="Mehfil name"
+    >
+
+
+    <!-- CATEGORY -->
+
+    <select
+      id="newMehfilCategory"
+      onchange="updateTopicOptions()">
+
+      <option value="">
+        🏷️ Category select karein
+      </option>
+
+    </select>
+
+
+    <!-- TOPIC -->
+
+    <select
+      id="newMehfilTopic">
+
+      <option value="">
+        💭 Topic select karein
+      </option>
+
+    </select>
+
+
+    <div
+      id="categoryPreview"
+      class="category-preview">
+
+      <div
+        id="categoryPreviewIcon"
+        class="category-preview-icon">
+        💬
+      </div>
+
+      <div class="category-preview-info">
+
+        <div
+          id="categoryPreviewName"
+          class="category-preview-name">
+          Category
+        </div>
+
+        <div
+          id="categoryPreviewTopic"
+          class="category-preview-topic">
+          Topic select karein
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <textarea
+      id="newMehfilDescription"
+      maxlength="300"
+      placeholder="Mehfil description (optional)">
+    </textarea>
+
+
+    <select
+      id="newMehfilPrivacy">
+
+      <option value="public">
+        🌐 Public
+      </option>
+
+      <option value="private">
+        🔒 Private
+      </option>
+
+      <option value="invite">
+        📩 Invite Only
+      </option>
+
+    </select>
+
+
+    <button
+      class="primary-btn"
+      type="button"
+      onclick="createMehfil()">
+
+      ✨ Create Mehfil
+
+    </button>
+
+  </div>
+
+
+  <div
+    id="mehfilList"
+    class="mehfil-list">
+
+    <div class="loading">
+      Mehfil load ho rahi hain...
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================
+     DETAIL
+===================================== -->
+
+<section
+  id="detailPage"
+  style="display:none;">
+
+
+  <!-- HERO -->
+
+  <div class="mehfil-hero">
+
+    <div class="hero-row">
+
+      <div
+        id="detailIcon"
+        class="hero-icon">
+        💬
+      </div>
+
+      <div class="hero-info">
+
+        <div
+          id="detailName"
+          class="hero-name">
+        </div>
+
+        <div
+          id="detailTopic"
+          class="hero-topic">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="hero-stats">
+
+      <div
+        id="detailMembers"
+        class="hero-stat">
+        👥 0 Members
+      </div>
+
+      <div
+        id="detailPrivacy"
+        class="hero-stat">
+        🌐 Public
+      </div>
 
     </div>
 
 
     <div
-      id="createBox"
-      class="card"
-      style="display:none;">
+      id="detailDescription"
+      class="hero-description">
+    </div>
 
-      <div class="section-title">
-        Create New Mehfil
-      </div>
+  </div>
+
+
+  <!-- ACTIONS -->
+
+  <div
+    id="detailActions"
+    class="detail-actions">
+  </div>
+
+
+  <!-- INVITE -->
+
+  <div
+    id="inviteCard"
+    class="card"
+    style="display:none;">
+
+    <div class="section-title">
+      📩 Invite User
+    </div>
+
+    <div class="invite-box">
 
       <input
-        id="newMehfilName"
+        id="inviteSearch"
         type="text"
-        maxlength="80"
-        placeholder="Mehfil name">
+        placeholder="@username search karein"
+        oninput="searchInviteUsers()"
+      >
 
-      <textarea
-        id="newMehfilDescription"
-        maxlength="300"
-        placeholder="Mehfil description"></textarea>
-
-      <select id="newMehfilPrivacy">
-
-        <option value="public">
-          🌐 Public
-        </option>
-
-        <option value="private">
-          🔒 Private
-        </option>
-
-        <option value="invite">
-          📩 Invite Only
-        </option>
-
-      </select>
-
-      <button
-        class="primary-btn"
-        onclick="createMehfil()">
-        Create Mehfil
-      </button>
+      <div id="inviteResults"></div>
 
     </div>
 
-
-    <div
-      id="mehfilList"
-      class="mehfil-list">
-
-      <div class="loading">
-        Mehfil load ho rahi hain...
-      </div>
-
-    </div>
-
-  </section>
+  </div>
 
 
-  <!-- =========================
-       MEHFIL DETAIL
-  ========================== -->
+  <!-- COMPOSER -->
 
-  <section
-    id="detailPage"
+  <div
+    id="composerCard"
+    class="composer-card"
     style="display:none;">
 
 
-    <div class="card">
+    <div
+      id="replyTarget"
+      class="reply-target">
 
-      <div class="detail-head">
+      <span class="reply-icon">
+        ↩️
+      </span>
 
-        <div class="detail-info">
-
-          <div
-            id="detailName"
-            class="detail-name">
-          </div>
-
-          <div
-            id="detailDescription"
-            class="detail-description">
-          </div>
-
-          <div
-            id="detailMeta"
-            class="mehfil-meta">
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div
-        id="detailActions"
-        class="detail-actions">
-      </div>
+      <span id="replyTargetText">
+      </span>
 
     </div>
 
-
-    <!-- INVITE -->
 
     <div
-      id="inviteCard"
-      class="card"
-      style="display:none;">
+      id="imagePreview"
+      class="image-preview">
 
-      <div class="section-title">
-        📩 Invite User
-      </div>
-
-      <div class="invite-box">
-
-        <input
-          id="inviteSearch"
-          type="text"
-          placeholder="@username search karein"
-          oninput="searchInviteUsers()">
-
-        <div id="inviteResults"></div>
-
-      </div>
-
-    </div>
-
-
-    <!-- MEMBERS -->
-
-    <div class="card">
-
-      <div class="section-title">
-        👥 Members
-      </div>
-
-      <div id="membersList">
-
-        <div class="loading">
-          Members load ho rahe hain...
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- COMPOSER -->
-
-    <div
-      id="composerCard"
-      class="card"
-      style="display:none;">
-
-      <div
-        id="replyTarget"
-        class="reply-target">
-      </div>
-
-      <textarea
-        id="messageInput"
-        maxlength="5000"
-        placeholder="Message likhein...">
-      </textarea>
-
-
-      <div
-        id="imagePreview"
-        class="image-preview">
-
-        <img id="previewImage">
-
-        <button
-          class="remove-photo"
-          onclick="removeSelectedImage()">
-          ×
-        </button>
-
-      </div>
-
-
-      <div class="photo-row">
-
-        <label
-          class="photo-label"
-          for="mehfilImage">
-          🖼️ Upload Photo
-        </label>
-
-        <input
-          id="mehfilImage"
-          class="photo-input"
-          type="file"
-          accept="image/*"
-          onchange="previewMehfilImage()">
-
-      </div>
-
+      <img
+        id="previewImage"
+        alt="Preview">
 
       <button
-        class="primary-btn"
-        onclick="publishActivity()">
-        OK
+        class="remove-photo"
+        type="button"
+        onclick="removeSelectedImage()">
+        ×
       </button>
 
     </div>
 
 
-    <!-- FEED -->
+    <div class="composer-row">
 
-    <div
-      id="feed"
-      class="feed">
+      <textarea
+        id="messageInput"
+        class="composer-text"
+        maxlength="5000"
+        placeholder="💬 Kuch kehna hai...?">
+      </textarea>
+
+      <button
+        class="send-btn"
+        type="button"
+        onclick="publishActivity()">
+        ➤
+      </button>
+
+    </div>
+
+
+    <div class="composer-tools">
+
+      <label
+        class="photo-label"
+        for="mehfilImage">
+
+        🖼️ Photo
+
+      </label>
+
+      <input
+        id="mehfilImage"
+        class="photo-input"
+        type="file"
+        accept="image/*"
+        onchange="previewMehfilImage()"
+      >
+
+    </div>
+
+  </div>
+
+
+  <!-- FEED -->
+
+  <div class="feed-label">
+    ✨ <span>Latest Activity</span>
+  </div>
+
+  <div
+    id="feed"
+    class="feed">
+
+    <div class="loading">
+      Activity load ho rahi hai...
+    </div>
+
+  </div>
+
+
+  <!-- MEMBERS -->
+
+  <div class="card members-card">
+
+    <div class="section-title">
+      👥 Members
+    </div>
+
+    <div id="membersList">
 
       <div class="loading">
-        Mehfil activity load ho rahi hai...
+        Members load ho rahe hain...
       </div>
 
     </div>
 
-  </section>
+  </div>
+
+
+</section>
 
 </main>
 
 
-<!-- =========================
-     BOTTOM NAV
-========================== -->
+<!-- =====================================
+     NAV
+===================================== -->
 
 <nav class="bottom-nav">
 
@@ -843,6 +1352,7 @@ select:focus{
 
     <button
       class="nav-btn"
+      type="button"
       onclick="goHome()">
 
       <span class="nav-icon">🏠</span>
@@ -853,6 +1363,7 @@ select:focus{
 
     <button
       class="nav-btn"
+      type="button"
       onclick="goPrivate()">
 
       <span class="nav-icon">💬</span>
@@ -863,6 +1374,7 @@ select:focus{
 
     <button
       class="nav-btn"
+      type="button"
       onclick="goProfile()">
 
       <span class="nav-icon">👤</span>
@@ -873,6 +1385,7 @@ select:focus{
 
     <button
       class="nav-btn active"
+      type="button"
       onclick="goMehfil()">
 
       <span class="nav-icon">💬</span>
@@ -883,6 +1396,7 @@ select:focus{
 
     <button
       class="nav-btn"
+      type="button"
       onclick="goMore()">
 
       <span class="nav-icon">☰</span>
@@ -897,9 +1411,9 @@ select:focus{
 
 <script>
 
-/* =====================================================
+/* ========================================
    SUPABASE
-===================================================== */
+======================================== */
 
 const SUPABASE_URL =
   "https://jhcpqjmxiovvqbghpxbf.supabase.co";
@@ -914,23 +1428,154 @@ const supabaseClient =
   );
 
 
-/* =====================================================
+/* ========================================
    GLOBALS
-===================================================== */
+======================================== */
 
 let currentUser = null;
 let allMehfils = [];
 let currentMehfil = null;
 let currentMembers = [];
 let replyToUser = null;
+let replyToPostId = null;
 let selectedImageFile = null;
 let inviteTimer = null;
 let noticeTimer = null;
 
 
-/* =====================================================
+/* ========================================
+   CATEGORY DATA
+======================================== */
+
+const categoryData = {
+
+  Funny:{
+    icon:"😂",
+    topics:[
+      "Jokes",
+      "Memes",
+      "Funny Talks",
+      "Masti",
+      "Funny Videos"
+    ]
+  },
+
+  Love:{
+    icon:"❤️",
+    topics:[
+      "Love Stories",
+      "Feelings",
+      "Romantic Poetry",
+      "Relationship Talk",
+      "Love Advice"
+    ]
+  },
+
+  Sad:{
+    icon:"😢",
+    topics:[
+      "Sad Poetry",
+      "Broken Heart",
+      "Feelings",
+      "Life Problems",
+      "Emotional Talks"
+    ]
+  },
+
+  News:{
+    icon:"📰",
+    topics:[
+      "Pakistan News",
+      "World News",
+      "Local News",
+      "Current Affairs",
+      "Discussion"
+    ]
+  },
+
+  Music:{
+    icon:"🎵",
+    topics:[
+      "Songs",
+      "Singers",
+      "Music Talk",
+      "Naat",
+      "Qawwali"
+    ]
+  },
+
+  Islamic:{
+    icon:"🌙",
+    topics:[
+      "Islamic Knowledge",
+      "Naat",
+      "Seerat",
+      "Dua",
+      "Islamic Discussion"
+    ]
+  },
+
+  Thoughts:{
+    icon:"💭",
+    topics:[
+      "Life",
+      "Motivation",
+      "Deep Thoughts",
+      "Quotes",
+      "Advice"
+    ]
+  },
+
+  Entertainment:{
+    icon:"🎬",
+    topics:[
+      "Movies",
+      "Dramas",
+      "Celebrities",
+      "Web Series",
+      "Entertainment Talk"
+    ]
+  },
+
+  Photography:{
+    icon:"📸",
+    topics:[
+      "Nature",
+      "Mobile Photography",
+      "Portraits",
+      "Editing",
+      "Photography Talk"
+    ]
+  },
+
+  General:{
+    icon:"💬",
+    topics:[
+      "General Chat",
+      "Friendship",
+      "Daily Talk",
+      "Introductions",
+      "Random Talk"
+    ]
+  },
+
+  Mehfil:{
+    icon:"✨",
+    topics:[
+      "Open Chat",
+      "Friends",
+      "Community",
+      "Meet & Talk",
+      "Special Discussion"
+    ]
+  }
+
+};
+
+
+/* ========================================
    INIT
-===================================================== */
+======================================== */
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -940,10 +1585,7 @@ document.addEventListener(
 
 async function initMehfil(){
 
-  const list =
-    document.getElementById(
-      "mehfilList"
-    );
+  fillCategoryOptions();
 
   try{
 
@@ -967,29 +1609,27 @@ async function initMehfil(){
 
     if(!currentUser){
 
-      list.innerHTML =
-        `<div class="error-box">
+      document.getElementById(
+        "mehfilList"
+      ).innerHTML =
+        `
+        <div class="error-box">
           Login required hai.
-        </div>`;
+        </div>
+        `;
+
 
       setTimeout(
         () => {
           window.location.href =
             "login.html";
         },
-        1000
+        900
       );
 
       return;
     }
 
-
-    /*
-      IMPORTANT:
-      Profiles ko yahan load nahi kar rahe.
-      Is wajah se profiles/RLS issue hone par
-      Mehfil Loading par nahi atke gi.
-    */
 
     await loadMehfils();
 
@@ -1002,8 +1642,10 @@ async function initMehfil(){
     );
 
 
-    list.innerHTML = `
-
+    document.getElementById(
+      "mehfilList"
+    ).innerHTML =
+      `
       <div class="error-box">
 
         Mehfil load nahi ho saki.
@@ -1016,17 +1658,156 @@ async function initMehfil(){
         )}
 
       </div>
-
-    `;
+      `;
 
   }
 
 }
 
 
-/* =====================================================
+/* ========================================
+   CATEGORY OPTIONS
+======================================== */
+
+function fillCategoryOptions(){
+
+  const select =
+    document.getElementById(
+      "newMehfilCategory"
+    );
+
+
+  select.innerHTML =
+    `
+    <option value="">
+      🏷️ Category select karein
+    </option>
+    `;
+
+
+  Object.keys(
+    categoryData
+  ).forEach(
+    category => {
+
+      select.innerHTML +=
+        `
+        <option value="${escapeHtml(category)}">
+          ${categoryData[category].icon}
+          ${escapeHtml(category)}
+        </option>
+        `;
+
+    }
+  );
+
+}
+
+
+/* ========================================
+   TOPIC OPTIONS
+======================================== */
+
+function updateTopicOptions(){
+
+  const category =
+    document.getElementById(
+      "newMehfilCategory"
+    ).value;
+
+
+  const topicSelect =
+    document.getElementById(
+      "newMehfilTopic"
+    );
+
+
+  const previewIcon =
+    document.getElementById(
+      "categoryPreviewIcon"
+    );
+
+
+  const previewName =
+    document.getElementById(
+      "categoryPreviewName"
+    );
+
+
+  const previewTopic =
+    document.getElementById(
+      "categoryPreviewTopic"
+    );
+
+
+  topicSelect.innerHTML =
+    `
+    <option value="">
+      💭 Topic select karein
+    </option>
+    `;
+
+
+  if(!category){
+
+    previewIcon.textContent =
+      "💬";
+
+    previewName.textContent =
+      "Category";
+
+    previewTopic.textContent =
+      "Topic select karein";
+
+    return;
+  }
+
+
+  const info =
+    categoryData[category];
+
+
+  previewIcon.textContent =
+    info.icon;
+
+
+  previewName.textContent =
+    category;
+
+
+  info.topics.forEach(
+    topic => {
+
+      topicSelect.innerHTML +=
+        `
+        <option value="${escapeHtml(topic)}">
+          ${escapeHtml(topic)}
+        </option>
+        `;
+
+    }
+  );
+
+
+  previewTopic.textContent =
+    "Topic select karein";
+
+
+  topicSelect.onchange =
+    function(){
+
+      previewTopic.textContent =
+        this.value ||
+        "Topic select karein";
+
+    };
+
+}
+
+
+/* ========================================
    LOAD MEHFILS
-===================================================== */
+======================================== */
 
 async function loadMehfils(){
 
@@ -1037,7 +1818,11 @@ async function loadMehfils(){
 
 
   list.innerHTML =
-    '<div class="loading">Mehfil load ho rahi hain...</div>';
+    `
+    <div class="loading">
+      ✨ Mehfil load ho rahi hain...
+    </div>
+    `;
 
 
   try{
@@ -1049,7 +1834,7 @@ async function loadMehfils(){
       await supabaseClient
         .from("mehfils")
         .select(
-          "id,creator_id,name,description,avatar_url,privacy,created_at"
+          "id,creator_id,name,description,avatar_url,privacy,category,topic,created_at"
         )
         .order(
           "created_at",
@@ -1081,8 +1866,8 @@ async function loadMehfils(){
     );
 
 
-    list.innerHTML = `
-
+    list.innerHTML =
+      `
       <div class="error-box">
 
         Mehfil load nahi ho saki.
@@ -1095,17 +1880,16 @@ async function loadMehfils(){
         )}
 
       </div>
-
-    `;
+      `;
 
   }
 
 }
 
 
-/* =====================================================
-   RENDER MEHFILS
-===================================================== */
+/* ========================================
+   RENDER LIST
+======================================== */
 
 function renderMehfils(
   items
@@ -1120,9 +1904,11 @@ function renderMehfils(
   if(!items.length){
 
     list.innerHTML =
-      `<div class="empty">
-        Abhi koi Mehfil nahi bani.
-      </div>`;
+      `
+      <div class="empty">
+        ✨ Abhi koi Mehfil nahi bani.
+      </div>
+      `;
 
     return;
   }
@@ -1131,61 +1917,114 @@ function renderMehfils(
   list.innerHTML =
     items
       .map(
-        mehfil => `
+        mehfil => {
 
-          <div
-            class="mehfil-item"
-            onclick="openMehfil(${Number(mehfil.id)})">
+          const category =
+            mehfil.category ||
+            "General";
 
-            <div class="mehfil-name">
-              ${escapeHtml(
-                mehfil.name ||
-                "Mehfil"
-              )}
+
+          const info =
+            categoryData[category] ||
+            categoryData.General;
+
+
+          const topic =
+            mehfil.topic ||
+            "General Chat";
+
+
+          return `
+
+            <div
+              class="mehfil-item"
+              onclick="openMehfil(${Number(mehfil.id)})">
+
+
+              <div class="mehfil-top">
+
+                <div class="mehfil-icon">
+                  ${info.icon}
+                </div>
+
+
+                <div class="mehfil-info">
+
+                  <div class="mehfil-name">
+                    ${escapeHtml(
+                      mehfil.name ||
+                      "Mehfil"
+                    )}
+                  </div>
+
+                  <div class="mehfil-topic">
+                    ${escapeHtml(
+                      category
+                    )}
+                    •
+                    ${escapeHtml(
+                      topic
+                    )}
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              ${
+                mehfil.description
+                ?
+                `
+                <div class="mehfil-description">
+                  ${escapeHtml(
+                    mehfil.description
+                  )}
+                </div>
+                `
+                :
+                ""
+              }
+
+
+              <div class="mehfil-bottom">
+
+                <span class="mini-badge">
+                  ${getPrivacyText(
+                    mehfil.privacy
+                  )}
+                </span>
+
+                <span class="mini-badge">
+                  ✨ Join & Talk
+                </span>
+
+              </div>
+
             </div>
 
-            <div class="mehfil-description">
-              ${escapeHtml(
-                mehfil.description ||
-                "No description"
-              )}
-            </div>
+          `;
 
-            <div class="mehfil-meta">
-
-              <span class="privacy-badge">
-                ${getPrivacyText(
-                  mehfil.privacy
-                )}
-              </span>
-
-            </div>
-
-          </div>
-
-        `
+        }
       )
       .join("");
 
 }
 
 
-/* =====================================================
-   SEARCH MEHFILS
-===================================================== */
+/* ========================================
+   SEARCH
+======================================== */
 
 function filterMehfils(){
 
-  const input =
+  const value =
     document.getElementById(
       "searchInput"
-    );
-
-
-  const value =
-    input.value
-      .trim()
-      .toLowerCase();
+    )
+    .value
+    .trim()
+    .toLowerCase();
 
 
   if(!value){
@@ -1200,21 +2039,44 @@ function filterMehfils(){
 
   renderMehfils(
     allMehfils.filter(
-      mehfil =>
-        String(
-          mehfil.name || ""
-        )
-        .toLowerCase()
-        .includes(value)
+      mehfil => {
+
+        return (
+
+          String(
+            mehfil.name || ""
+          )
+          .toLowerCase()
+          .includes(value)
+
+          ||
+
+          String(
+            mehfil.category || ""
+          )
+          .toLowerCase()
+          .includes(value)
+
+          ||
+
+          String(
+            mehfil.topic || ""
+          )
+          .toLowerCase()
+          .includes(value)
+
+        );
+
+      }
     )
   );
 
 }
 
 
-/* =====================================================
-   CREATE BOX
-===================================================== */
+/* ========================================
+   SHOW CREATE
+======================================== */
 
 function showCreateMehfil(){
 
@@ -1229,12 +2091,25 @@ function showCreateMehfil(){
       ? "block"
       : "none";
 
+
+  if(
+    box.style.display ===
+    "block"
+  ){
+
+    box.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+  }
+
 }
 
 
-/* =====================================================
+/* ========================================
    CREATE MEHFIL
-===================================================== */
+======================================== */
 
 async function createMehfil(){
 
@@ -1244,6 +2119,20 @@ async function createMehfil(){
     )
     .value
     .trim();
+
+
+  const category =
+    document.getElementById(
+      "newMehfilCategory"
+    )
+    .value;
+
+
+  const topic =
+    document.getElementById(
+      "newMehfilTopic"
+    )
+    .value;
 
 
   const description =
@@ -1271,6 +2160,26 @@ async function createMehfil(){
   }
 
 
+  if(!category){
+
+    showNotice(
+      "Category select karein."
+    );
+
+    return;
+  }
+
+
+  if(!topic){
+
+    showNotice(
+      "Topic select karein."
+    );
+
+    return;
+  }
+
+
   try{
 
     const {
@@ -1289,7 +2198,13 @@ async function createMehfil(){
           description:
             description,
 
-          privacy:privacy
+          privacy:privacy,
+
+          category:
+            category,
+
+          topic:
+            topic
 
         })
         .select()
@@ -1302,7 +2217,7 @@ async function createMehfil(){
 
 
     /*
-      Creator ko automatically member.
+      Creator automatically member.
     */
 
     const memberResult =
@@ -1344,6 +2259,39 @@ async function createMehfil(){
 
 
     document.getElementById(
+      "newMehfilCategory"
+    ).value = "";
+
+
+    document.getElementById(
+      "newMehfilTopic"
+    ).innerHTML =
+      `
+      <option value="">
+        💭 Topic select karein
+      </option>
+      `;
+
+
+    document.getElementById(
+      "categoryPreviewIcon"
+    ).textContent =
+      "💬";
+
+
+    document.getElementById(
+      "categoryPreviewName"
+    ).textContent =
+      "Category";
+
+
+    document.getElementById(
+      "categoryPreviewTopic"
+    ).textContent =
+      "Topic select karein";
+
+
+    document.getElementById(
       "createBox"
     ).style.display =
       "none";
@@ -1353,7 +2301,7 @@ async function createMehfil(){
 
 
     showNotice(
-      "Mehfil create ho gayi."
+      "✨ Mehfil successfully create ho gayi."
     );
 
 
@@ -1380,9 +2328,9 @@ async function createMehfil(){
 }
 
 
-/* =====================================================
-   OPEN MEHFIL
-===================================================== */
+/* ========================================
+   OPEN
+======================================== */
 
 async function openMehfil(
   id
@@ -1418,14 +2366,44 @@ async function openMehfil(
     "block";
 
 
+  const category =
+    currentMehfil.category ||
+    "General";
+
+
+  const info =
+    categoryData[category] ||
+    categoryData.General;
+
+
+  const topic =
+    currentMehfil.topic ||
+    "General Chat";
+
+
   document.getElementById(
     "headerTitle"
   ).textContent =
-    "💬 " +
+    info.icon +
+    " " +
     (
       currentMehfil.name ||
       "Mehfil"
     );
+
+
+  document.getElementById(
+    "headerSub"
+  ).textContent =
+    category +
+    " • " +
+    topic;
+
+
+  document.getElementById(
+    "detailIcon"
+  ).textContent =
+    info.icon;
 
 
   document.getElementById(
@@ -1436,26 +2414,27 @@ async function openMehfil(
 
 
   document.getElementById(
-    "detailDescription"
+    "detailTopic"
   ).textContent =
-    currentMehfil.description ||
-    "";
+    category +
+    " • " +
+    topic;
 
 
   document.getElementById(
-    "detailMeta"
-  ).innerHTML =
-    `<span class="privacy-badge">
-      ${getPrivacyText(
-        currentMehfil.privacy
-      )}
-    </span>`;
+    "detailDescription"
+  ).textContent =
+    currentMehfil.description ||
+    "Yahan baat karein, share karein aur Mehfil enjoy karein ✨";
 
 
-  /*
-    Har operation separately.
-    Ek fail ho to baaki page band nahi hoga.
-  */
+  document.getElementById(
+    "detailPrivacy"
+  ).textContent =
+    getPrivacyText(
+      currentMehfil.privacy
+    );
+
 
   await checkMembership();
 
@@ -1466,9 +2445,9 @@ async function openMehfil(
 }
 
 
-/* =====================================================
+/* ========================================
    MEMBERSHIP
-===================================================== */
+======================================== */
 
 async function checkMembership(){
 
@@ -1504,10 +2483,6 @@ async function checkMembership(){
   }
 
 
-  /*
-    Creator
-  */
-
   if(
     String(
       currentMehfil.creator_id
@@ -1517,20 +2492,20 @@ async function checkMembership(){
     )
   ){
 
-    actions.innerHTML = `
-
+    actions.innerHTML =
+      `
       <button
+        type="button"
         onclick="refreshCurrent()">
         ↻ Refresh
       </button>
 
       <button
-        class="leave"
-        onclick="leaveMehfil()">
-        Leave
+        type="button"
+        onclick="showMembers()">
+        👥 Members
       </button>
-
-    `;
+      `;
 
 
     composer.style.display =
@@ -1575,23 +2550,31 @@ async function checkMembership(){
 
     if(
       data &&
-      data.status === "approved"
+      data.status ===
+      "approved"
     ){
 
-      actions.innerHTML = `
-
+      actions.innerHTML =
+        `
         <button
+          type="button"
           onclick="refreshCurrent()">
           ↻ Refresh
         </button>
 
         <button
+          type="button"
+          onclick="showMembers()">
+          👥 Members
+        </button>
+
+        <button
           class="leave"
+          type="button"
           onclick="leaveMehfil()">
           Leave
         </button>
-
-      `;
+        `;
 
 
       composer.style.display =
@@ -1617,30 +2600,26 @@ async function checkMembership(){
   }catch(error){
 
     console.warn(
-      "MEMBERSHIP CHECK ERROR:",
+      "MEMBERSHIP ERROR:",
       error
     );
 
   }
 
 
-  /*
-    Not member
-  */
-
   if(
     currentMehfil.privacy ===
     "public"
   ){
 
-    actions.innerHTML = `
-
+    actions.innerHTML =
+      `
       <button
+        type="button"
         onclick="joinMehfil()">
-        Join Mehfil
+        ✨ Join Mehfil
       </button>
-
-    `;
+      `;
 
   }
   else if(
@@ -1648,34 +2627,34 @@ async function checkMembership(){
     "private"
   ){
 
-    actions.innerHTML = `
-
+    actions.innerHTML =
+      `
       <button
+        type="button"
         onclick="requestJoin()">
         🔒 Request Join
       </button>
-
-    `;
+      `;
 
   }
   else{
 
-    actions.innerHTML = `
-
-      <button>
+    actions.innerHTML =
+      `
+      <button
+        type="button">
         📩 Invite Only
       </button>
-
-    `;
+      `;
 
   }
 
 }
 
 
-/* =====================================================
+/* ========================================
    JOIN
-===================================================== */
+======================================== */
 
 async function joinMehfil(){
 
@@ -1707,7 +2686,7 @@ async function joinMehfil(){
 
 
     showNotice(
-      "Aap Mehfil join kar chuke hain."
+      "✨ Aap Mehfil join kar chuke hain."
     );
 
 
@@ -1727,9 +2706,9 @@ async function joinMehfil(){
 }
 
 
-/* =====================================================
-   JOIN REQUEST
-===================================================== */
+/* ========================================
+   REQUEST
+======================================== */
 
 async function requestJoin(){
 
@@ -1759,7 +2738,7 @@ async function requestJoin(){
 
 
     showNotice(
-      "Join request bhej di gayi."
+      "📩 Join request bhej di gayi."
     );
 
   }catch(error){
@@ -1774,9 +2753,9 @@ async function requestJoin(){
 }
 
 
-/* =====================================================
+/* ========================================
    LEAVE
-===================================================== */
+======================================== */
 
 async function leaveMehfil(){
 
@@ -1841,9 +2820,9 @@ async function leaveMehfil(){
 }
 
 
-/* =====================================================
+/* ========================================
    LOAD MEMBERS
-===================================================== */
+======================================== */
 
 async function loadMembers(){
 
@@ -1859,7 +2838,11 @@ async function loadMembers(){
 
 
   list.innerHTML =
-    '<div class="loading">Members load ho rahe hain...</div>';
+    `
+    <div class="loading">
+      👥 Members load ho rahe hain...
+    </div>
+    `;
 
 
   try{
@@ -1894,59 +2877,85 @@ async function loadMembers(){
       data || [];
 
 
+    document.getElementById(
+      "detailMembers"
+    ).textContent =
+      "👥 " +
+      currentMembers.length +
+      " Members";
+
+
     if(!currentMembers.length){
 
       list.innerHTML =
-        '<div class="empty">Abhi members nahi hain.</div>';
+        `
+        <div class="empty">
+          Abhi members nahi hain.
+        </div>
+        `;
 
       return;
     }
 
-
-    /*
-      Profile query ko Members ke
-      display ke liye use karna hai,
-      lekin agar fail ho to Members
-      completely break nahi honge.
-    */
 
     let profiles = [];
 
 
     try{
 
-      const result =
-        await supabaseClient
-          .from("profiles")
-          .select(
-            "id,username,name,avatar_url"
-          );
+      const ids =
+        [
+          ...new Set(
+            currentMembers
+              .map(
+                member =>
+                  member.user_id
+              )
+              .filter(Boolean)
+          )
+        ];
 
 
-      if(!result.error){
+      if(ids.length){
 
-        profiles =
-          result.data || [];
+        const result =
+          await supabaseClient
+            .from("profiles")
+            .select(
+              "id,username,name,avatar_url"
+            )
+            .in(
+              "id",
+              ids
+            );
+
+
+        if(!result.error){
+
+          profiles =
+            result.data || [];
+
+        }
 
       }
 
-    }catch(profileError){
+    }catch(error){
 
       console.warn(
-        "PROFILE LOAD:",
-        profileError
+        "PROFILE ERROR:",
+        error
       );
 
     }
 
 
-    const map = {};
+    const profileMap = {};
 
 
     profiles.forEach(
       profile => {
 
-        map[
+        profileMap[
           String(profile.id)
         ] = profile;
 
@@ -1956,137 +2965,115 @@ async function loadMembers(){
 
     list.innerHTML =
       currentMembers
-        .map(member => {
+        .map(
+          member => {
 
-          const id =
-            String(
-              member.user_id || ""
-            );
-
-
-          let profile =
-            map[id];
+            const id =
+              String(
+                member.user_id ||
+                ""
+              );
 
 
-          /*
-            Current user fallback.
-          */
+            const profile =
+              profileMap[id];
 
-          if(
-            !profile &&
-            currentUser &&
-            id ===
-            String(
-              currentUser.id
-            )
-          ){
 
-            profile = {
-
-              username:
+            const username =
+              profile?.username ||
+              (
+                currentUser &&
+                id ===
+                String(
+                  currentUser.id
+                )
+                ?
                 currentUser
                   ?.user_metadata
-                  ?.username ||
-                currentUser
-                  ?.email
-                  ?.split("@")[0] ||
-                "Alone",
-
-              name:
-                currentUser
-                  ?.user_metadata
-                  ?.name ||
-                "Wajahat",
-
-              avatar_url:""
-
-            };
-
-          }
+                  ?.username
+                :
+                "User"
+              );
 
 
-          const username =
-            String(
-              profile?.username ||
+            const name =
               profile?.name ||
-              "User"
-            );
+              username ||
+              "User";
 
 
-          const name =
-            String(
-              profile?.name ||
-              profile?.username ||
-              "User"
-            );
-
-
-          let role =
-            String(
+            let role =
               member.role ||
-              "member"
-            );
+              "member";
 
 
-          if(
-            role === "admin"
-          ){
+            if(
+              role === "admin"
+            ){
 
-            role = "Admin";
+              role =
+                "Admin";
 
-          }
-          else if(
-            role === "moderator"
-          ){
+            }
+            else if(
+              role === "moderator"
+            ){
 
-            role = "Moderator";
+              role =
+                "Moderator";
 
-          }
-          else{
+            }
+            else{
 
-            role = "Member";
+              role =
+                "Member";
 
-          }
-
-
-          const avatar =
-            profile?.avatar_url ||
-            defaultAvatar();
+            }
 
 
-          return `
+            return `
 
-            <div class="member-row">
+              <div class="member-row">
 
-              <img
-                class="avatar"
-                src="${safeUrl(avatar)}"
-                onerror="
-                  this.src='${defaultAvatar()}'
-                ">
+                <img
+                  class="avatar"
+                  src="${safeUrl(
+                    profile?.avatar_url ||
+                    defaultAvatar()
+                  )}"
+                  onerror="
+                    this.src='${defaultAvatar()}'
+                  ">
 
 
-              <div class="member-info">
+                <div class="member-info">
 
-                <div class="member-name">
-                  ${escapeHtml(name)}
-                </div>
+                  <div class="member-name">
+                    ${escapeHtml(
+                      name
+                    )}
+                  </div>
 
-                <div class="member-username">
-                  @${escapeHtml(username)}
-                </div>
+                  <div class="member-username">
+                    @${escapeHtml(
+                      username
+                    )}
+                  </div>
 
-                <div class="member-role">
-                  ${escapeHtml(role)}
+                  <div class="member-role">
+                    ${escapeHtml(
+                      role
+                    )}
+                  </div>
+
                 </div>
 
               </div>
 
-            </div>
+            `;
 
-          `;
-
-        })
+          }
+        )
         .join("");
 
 
@@ -2099,23 +3086,41 @@ async function loadMembers(){
 
 
     list.innerHTML =
-      `<div class="error-box">
+      `
+      <div class="error-box">
         Members load nahi ho sake.
         <br><br>
         ${escapeHtml(
           error?.message ||
           String(error)
         )}
-      </div>`;
+      </div>
+      `;
 
   }
 
 }
 
 
-/* =====================================================
+/* ========================================
+   SHOW MEMBERS
+======================================== */
+
+function showMembers(){
+
+  document.getElementById(
+    "membersList"
+  ).scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+
+}
+
+
+/* ========================================
    LOAD FEED
-===================================================== */
+======================================== */
 
 async function loadFeed(){
 
@@ -2125,13 +3130,22 @@ async function loadFeed(){
     );
 
 
-  if(!feed || !currentMehfil){
+  if(
+    !feed ||
+    !currentMehfil
+  ){
+
     return;
+
   }
 
 
   feed.innerHTML =
-    '<div class="loading">Mehfil activity load ho rahi hai...</div>';
+    `
+    <div class="loading">
+      ✨ Activity load ho rahi hai...
+    </div>
+    `;
 
 
   try{
@@ -2167,18 +3181,21 @@ async function loadFeed(){
     if(!posts.length){
 
       feed.innerHTML =
-        `<div class="empty">
-          Abhi Mehfil mein koi activity nahi.
-        </div>`;
+        `
+        <div class="empty">
+
+          ✨ Mehfil bilkul quiet hai.
+
+          <br><br>
+
+          Pehli activity aap start karein 💬
+
+        </div>
+        `;
 
       return;
     }
 
-
-    /*
-      Profile lookup.
-      Fail hone par feed phir bhi show hogi.
-    */
 
     let profiles = [];
 
@@ -2221,11 +3238,11 @@ async function loadFeed(){
 
       }
 
-    }catch(profileError){
+    }catch(error){
 
       console.warn(
         "FEED PROFILE ERROR:",
-        profileError
+        error
       );
 
     }
@@ -2270,23 +3287,25 @@ async function loadFeed(){
 
 
     feed.innerHTML =
-      `<div class="error-box">
+      `
+      <div class="error-box">
         Activity load nahi ho saki.
         <br><br>
         ${escapeHtml(
           error?.message ||
           String(error)
         )}
-      </div>`;
+      </div>
+      `;
 
   }
 
 }
 
 
-/* =====================================================
+/* ========================================
    RENDER POST
-===================================================== */
+======================================== */
 
 function renderPost(
   post,
@@ -2296,15 +3315,10 @@ function renderPost(
   let username =
     profile?.username ||
     profile?.name ||
-    "";
+    "User";
 
-
-  /*
-    Current user fallback
-  */
 
   if(
-    !username &&
     currentUser &&
     String(post.user_id) ===
     String(currentUser.id)
@@ -2314,18 +3328,7 @@ function renderPost(
       currentUser
         ?.user_metadata
         ?.username ||
-      currentUser
-        ?.email
-        ?.split("@")[0] ||
-      "Alone";
-
-  }
-
-
-  if(!username){
-
-    username =
-      "User";
+      username;
 
   }
 
@@ -2341,27 +3344,125 @@ function renderPost(
     String(currentUser.id);
 
 
+  let content =
+    String(
+      post.content ||
+      ""
+    );
+
+
+  let replyReference =
+    "";
+
+
+  /*
+    Agar post @username se start ho
+    to usay reply reference style
+    mein show karna.
+  */
+
+  const match =
+    content.match(
+      /^@([a-zA-Z0-9_]+)\s+([\s\S]*)$/
+    );
+
+
+  if(match){
+
+    replyReference =
+      `
+      <div class="reply-reference">
+        ↩️ Reply to @${escapeHtml(
+          match[1]
+        )}
+      </div>
+      `;
+
+
+    content =
+      match[2];
+
+  }
+
+
   const image =
     post.image_url
-      ? `
+    ?
+    `
+    <div class="activity-image">
 
-        <div class="activity-image">
+      <img
+        src="${safeUrl(
+          post.image_url
+        )}"
+        alt="Mehfil photo">
 
-          <img
-            src="${safeUrl(
-              post.image_url
-            )}"
-            alt="Mehfil image">
+    </div>
+    `
+    :
+    "";
 
-        </div>
 
-      `
-      : "";
+  /*
+    OWN POST:
+    Sirf Delete
+
+    OTHER POST:
+    Reply + 1on1
+  */
+
+  const actions =
+    own
+    ?
+    `
+      <button
+        class="delete"
+        type="button"
+        onclick="deletePost(
+          ${Number(post.id)},
+          ${post.image_url
+            ? `'${escapeJs(
+                post.image_url
+              )}'`
+            : "null"}
+        )">
+
+        🗑️ Delete
+
+      </button>
+    `
+    :
+    `
+      <button
+        class="reply-btn"
+        type="button"
+        onclick="startReply(
+          '${escapeJs(username)}',
+          ${Number(post.id)}
+        )">
+
+        ↩️ Reply
+
+      </button>
+
+
+      <button
+        class="one-btn"
+        type="button"
+        onclick="openOneToOne(
+          '${escapeJs(post.user_id)}'
+        )">
+
+        💜 1on1
+
+      </button>
+    `;
 
 
   return `
 
     <article class="activity">
+
 
       <div class="activity-head">
 
@@ -2376,13 +3477,20 @@ function renderPost(
         <div class="activity-user">
 
           <div class="activity-username">
-            ${escapeHtml(username)}
+
+            ${escapeHtml(
+              username
+            )}
+
           </div>
 
+
           <div class="activity-time">
+
             ${formatDate(
               post.created_at
             )}
+
           </div>
 
         </div>
@@ -2390,15 +3498,18 @@ function renderPost(
       </div>
 
 
+      ${replyReference}
+
+
       ${
-        post.content
+        content
         ?
         `
-          <div class="activity-message">
-            ${escapeHtml(
-              post.content
-            )}
-          </div>
+        <div class="activity-message">
+          ${escapeHtml(
+            content
+          )}
+        </div>
         `
         :
         ""
@@ -2410,36 +3521,10 @@ function renderPost(
 
       <div class="activity-actions">
 
-        <button
-          onclick="startReply(
-            '${escapeJs(username)}'
-          )">
-          Reply
-        </button>
-
-
-        ${
-          own
-          ?
-          `
-            <button
-              class="delete"
-              onclick="deletePost(
-                ${Number(post.id)},
-                ${post.image_url
-                  ? `'${escapeJs(
-                      post.image_url
-                    )}'`
-                  : "null"}
-              )">
-              🗑️ Delete
-            </button>
-          `
-          :
-          ""
-        }
+        ${actions}
 
       </div>
+
 
     </article>
 
@@ -2448,16 +3533,21 @@ function renderPost(
 }
 
 
-/* =====================================================
+/* ========================================
    REPLY
-===================================================== */
+======================================== */
 
 function startReply(
-  username
+  username,
+  postId
 ){
 
   replyToUser =
     username;
+
+
+  replyToPostId =
+    postId;
 
 
   const target =
@@ -2466,8 +3556,10 @@ function startReply(
     );
 
 
-  target.textContent =
-    "↩️ Reply to @" +
+  document.getElementById(
+    "replyTargetText"
+  ).textContent =
+    "Replying to @" +
     username;
 
 
@@ -2476,16 +3568,28 @@ function startReply(
   );
 
 
+  const input =
+    document.getElementById(
+      "messageInput"
+    );
+
+
+  input.focus();
+
+
   document.getElementById(
-    "messageInput"
-  ).focus();
+    "composerCard"
+  ).scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
 
 }
 
 
-/* =====================================================
-   PUBLISH ACTIVITY
-===================================================== */
+/* ========================================
+   PUBLISH
+======================================== */
 
 async function publishActivity(){
 
@@ -2510,7 +3614,7 @@ async function publishActivity(){
   ){
 
     showNotice(
-      "Message ya image add karein."
+      "💬 Message ya image add karein."
     );
 
     return;
@@ -2518,11 +3622,6 @@ async function publishActivity(){
 
 
   try{
-
-    /*
-      Reply ko normal activity ke
-      top feed mein publish karna hai.
-    */
 
     if(
       replyToUser &&
@@ -2538,7 +3637,8 @@ async function publishActivity(){
     }
 
 
-    let imageUrl = "";
+    let imageUrl =
+      "";
 
 
     if(selectedImageFile){
@@ -2631,14 +3731,18 @@ async function publishActivity(){
     }
 
 
-    input.value = "";
+    input.value =
+      "";
+
 
     selectedImageFile =
       null;
 
+
     document.getElementById(
       "mehfilImage"
-    ).value = "";
+    ).value =
+      "";
 
 
     document.getElementById(
@@ -2649,16 +3753,16 @@ async function publishActivity(){
 
     document.getElementById(
       "previewImage"
-    ).src = "";
+    ).src =
+      "";
 
 
     replyToUser =
       null;
 
 
-    document.getElementById(
-      "replyTarget"
-    ).textContent = "";
+    replyToPostId =
+      null;
 
 
     document.getElementById(
@@ -2689,9 +3793,9 @@ async function publishActivity(){
 }
 
 
-/* =====================================================
+/* ========================================
    IMAGE PREVIEW
-===================================================== */
+======================================== */
 
 function previewMehfilImage(){
 
@@ -2720,7 +3824,8 @@ function previewMehfilImage(){
       "Sirf image upload karein."
     );
 
-    input.value = "";
+    input.value =
+      "";
 
     return;
   }
@@ -2735,7 +3840,8 @@ function previewMehfilImage(){
       "Image 8MB se chhoti honi chahiye."
     );
 
-    input.value = "";
+    input.value =
+      "";
 
     return;
   }
@@ -2773,9 +3879,9 @@ function previewMehfilImage(){
 }
 
 
-/* =====================================================
+/* ========================================
    REMOVE IMAGE
-===================================================== */
+======================================== */
 
 function removeSelectedImage(){
 
@@ -2785,12 +3891,14 @@ function removeSelectedImage(){
 
   document.getElementById(
     "mehfilImage"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "previewImage"
-  ).src = "";
+  ).src =
+    "";
 
 
   document.getElementById(
@@ -2801,9 +3909,9 @@ function removeSelectedImage(){
 }
 
 
-/* =====================================================
-   DELETE POST
-===================================================== */
+/* ========================================
+   DELETE
+======================================== */
 
 async function deletePost(
   postId,
@@ -2844,10 +3952,6 @@ async function deletePost(
     }
 
 
-    /*
-      Image delete optional.
-    */
-
     if(imageUrl){
 
       const marker =
@@ -2886,6 +3990,11 @@ async function deletePost(
     await loadFeed();
 
 
+    showNotice(
+      "🗑️ Activity delete ho gayi."
+    );
+
+
   }catch(error){
 
     console.error(
@@ -2904,9 +4013,45 @@ async function deletePost(
 }
 
 
-/* =====================================================
+/* ========================================
+   1 ON 1
+======================================== */
+
+function openOneToOne(
+  userId
+){
+
+  if(!userId){
+
+    showNotice(
+      "User nahi mila."
+    );
+
+    return;
+  }
+
+
+  if(
+    String(userId) ===
+    String(currentUser.id)
+  ){
+
+    return;
+  }
+
+
+  window.location.href =
+    "private-chat.html?user=" +
+    encodeURIComponent(
+      userId
+    );
+
+}
+
+
+/* ========================================
    INVITE SEARCH
-===================================================== */
+======================================== */
 
 function searchInviteUsers(){
 
@@ -2953,7 +4098,6 @@ async function doInviteSearch(){
       "";
 
     return;
-
   }
 
 
@@ -2994,10 +4138,13 @@ async function doInviteSearch(){
     if(!users.length){
 
       results.innerHTML =
-        '<div class="empty">User nahi mila.</div>';
+        `
+        <div class="empty">
+          User nahi mila.
+        </div>
+        `;
 
       return;
-
     }
 
 
@@ -3016,9 +4163,9 @@ async function doInviteSearch(){
                 )}">
 
 
-              <div class="invite-result-info">
+              <div class="invite-info">
 
-                <div class="invite-result-name">
+                <div class="invite-name">
                   ${escapeHtml(
                     user.name ||
                     user.username ||
@@ -3026,7 +4173,7 @@ async function doInviteSearch(){
                   )}
                 </div>
 
-                <div class="invite-result-username">
+                <div class="invite-username">
                   @${escapeHtml(
                     user.username ||
                     "User"
@@ -3038,10 +4185,15 @@ async function doInviteSearch(){
 
               <button
                 class="secondary-btn"
+                type="button"
                 onclick="sendInvite(
-                  '${escapeJs(user.id)}'
+                  '${escapeJs(
+                    user.id
+                  )}'
                 )">
+
                 Invite
+
               </button>
 
             </div>
@@ -3054,20 +4206,22 @@ async function doInviteSearch(){
   }catch(error){
 
     results.innerHTML =
-      `<div class="error-box">
+      `
+      <div class="error-box">
         ${escapeHtml(
           error.message
         )}
-      </div>`;
+      </div>
+      `;
 
   }
 
 }
 
 
-/* =====================================================
+/* ========================================
    SEND INVITE
-===================================================== */
+======================================== */
 
 async function sendInvite(
   userId
@@ -3091,7 +4245,8 @@ async function sendInvite(
           invitee_id:
             userId,
 
-          status:"pending"
+          status:
+            "pending"
 
         });
 
@@ -3102,7 +4257,7 @@ async function sendInvite(
 
 
     showNotice(
-      "Invite bhej diya gaya."
+      "📩 Invite bhej diya gaya."
     );
 
 
@@ -3118,15 +4273,13 @@ async function sendInvite(
 }
 
 
-/* =====================================================
+/* ========================================
    REFRESH
-===================================================== */
+======================================== */
 
 async function refreshCurrent(){
 
-  if(
-    currentMehfil
-  ){
+  if(currentMehfil){
 
     await checkMembership();
 
@@ -3135,7 +4288,6 @@ async function refreshCurrent(){
     await loadFeed();
 
     return;
-
   }
 
 
@@ -3144,17 +4296,23 @@ async function refreshCurrent(){
 }
 
 
-/* =====================================================
+/* ========================================
    BACK
-===================================================== */
+======================================== */
 
 function goBack(){
 
-  if(
-    currentMehfil
-  ){
+  if(currentMehfil){
 
     currentMehfil =
+      null;
+
+
+    replyToUser =
+      null;
+
+
+    replyToPostId =
       null;
 
 
@@ -3176,6 +4334,12 @@ function goBack(){
       "💬 Mehfil";
 
 
+    document.getElementById(
+      "headerSub"
+    ).textContent =
+      "Connect • Share • Enjoy";
+
+
     return;
 
   }
@@ -3186,9 +4350,9 @@ function goBack(){
 }
 
 
-/* =====================================================
+/* ========================================
    PRIVACY
-===================================================== */
+======================================== */
 
 function getPrivacyText(
   privacy
@@ -3219,9 +4383,9 @@ function getPrivacyText(
 }
 
 
-/* =====================================================
+/* ========================================
    DATE
-===================================================== */
+======================================== */
 
 function formatDate(
   value
@@ -3278,7 +4442,7 @@ function formatDate(
 
     return (
       minutes +
-      " min ago"
+      "m ago"
     );
 
   }
@@ -3294,7 +4458,7 @@ function formatDate(
 
     return (
       hours +
-      " hr ago"
+      "h ago"
     );
 
   }
@@ -3310,28 +4474,26 @@ function formatDate(
 
     return (
       days +
-      " day ago"
+      "d ago"
     );
 
   }
 
 
-  return date.toLocaleString(
+  return date.toLocaleDateString(
     undefined,
     {
       day:"numeric",
-      month:"short",
-      hour:"numeric",
-      minute:"2-digit"
+      month:"short"
     }
   );
 
 }
 
 
-/* =====================================================
+/* ========================================
    DEFAULT AVATAR
-===================================================== */
+======================================== */
 
 function defaultAvatar(){
 
@@ -3366,9 +4528,9 @@ function defaultAvatar(){
 }
 
 
-/* =====================================================
+/* ========================================
    SAFE URL
-===================================================== */
+======================================== */
 
 function safeUrl(
   value
@@ -3406,9 +4568,9 @@ function safeUrl(
 }
 
 
-/* =====================================================
+/* ========================================
    ESCAPE HTML
-===================================================== */
+======================================== */
 
 function escapeHtml(
   value
@@ -3441,9 +4603,9 @@ function escapeHtml(
 }
 
 
-/* =====================================================
+/* ========================================
    ESCAPE JS
-===================================================== */
+======================================== */
 
 function escapeJs(
   value
@@ -3472,9 +4634,9 @@ function escapeJs(
 }
 
 
-/* =====================================================
+/* ========================================
    NOTICE
-===================================================== */
+======================================== */
 
 function showNotice(
   message
@@ -3515,9 +4677,9 @@ function showNotice(
 }
 
 
-/* =====================================================
+/* ========================================
    NAVIGATION
-===================================================== */
+======================================== */
 
 function goHome(){
 
@@ -3559,9 +4721,9 @@ function goMore(){
 }
 
 
-/* =====================================================
+/* ========================================
    ERROR LOGGING
-===================================================== */
+======================================== */
 
 window.addEventListener(
   "error",
