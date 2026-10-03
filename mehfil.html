@@ -792,7 +792,6 @@ button{
 
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div class="header-row">
 
@@ -839,11 +838,8 @@ button{
   </div>
 </header>
 
-
-<!-- MAIN -->
 <main class="container">
 
-  <!-- MEHFIL LIST PAGE -->
   <section id="mehfilsPage">
 
     <div class="card">
@@ -899,14 +895,11 @@ button{
 
   </section>
 
-
-  <!-- MEHFIL HOME -->
   <section
     id="mehfilPage"
     style="display:none"
   >
 
-    <!-- INFO -->
     <div class="card">
 
       <div class="section-title">
@@ -953,8 +946,6 @@ button{
 
     </div>
 
-
-    <!-- COMPOSER -->
     <div
       class="composer"
       id="activityComposer"
@@ -1029,11 +1020,7 @@ button{
 
     </div>
 
-
-    <!-- FEED -->
-    <div
-      id="activityFeed"
-    >
+    <div id="activityFeed">
       <div class="loading">
         Activity load ho rahi hai...
       </div>
@@ -1041,8 +1028,6 @@ button{
 
   </section>
 
-
-  <!-- SETTINGS -->
   <section
     id="settingsPage"
     style="display:none"
@@ -1075,7 +1060,6 @@ button{
 
       </div>
 
-
       <div class="setting-item">
 
         <div>
@@ -1097,7 +1081,6 @@ button{
 
       </div>
 
-
       <div class="setting-item">
 
         <div>
@@ -1118,7 +1101,6 @@ button{
         </button>
 
       </div>
-
 
       <div
         class="setting-item"
@@ -1144,7 +1126,6 @@ button{
 
       </div>
 
-
       <div
         class="setting-item"
         id="applicationsSetting"
@@ -1169,7 +1150,6 @@ button{
 
       </div>
 
-
       <div
         class="setting-item"
         id="officersSetting"
@@ -1193,7 +1173,6 @@ button{
         </button>
 
       </div>
-
 
       <div
         class="setting-item"
@@ -1225,8 +1204,6 @@ button{
 
 </main>
 
-
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
 
   <div class="bottom-nav-inner">
@@ -1275,8 +1252,6 @@ button{
 
 </nav>
 
-
-<!-- MODAL -->
 <div
   class="modal"
   id="modal"
@@ -1312,8 +1287,6 @@ button{
 
 </div>
 
-
-<!-- IMAGE VIEWER -->
 <div
   class="image-viewer"
   id="imageViewer"
@@ -1336,13 +1309,10 @@ button{
 
 </div>
 
-
-<!-- TOAST -->
 <div
   class="toast"
   id="toast"
 ></div>
-
 
 <script>
 
@@ -2236,11 +2206,6 @@ function getMediaUrl(
     return "";
   }
 
-  /*
-    Agar database mein already complete URL saved hai,
-    usi ko use karo.
-  */
-
   if(
     raw.startsWith(
       "https://"
@@ -2252,11 +2217,6 @@ function getMediaUrl(
 
     return raw;
   }
-
-  /*
-    Agar database mein sirf storage path saved hai,
-    to Public URL generate karo.
-  */
 
   const {
     data
@@ -2307,10 +2267,6 @@ function previewSelectedImage(
 
     return;
   }
-
-  /*
-    10 MB limit
-  */
 
   if(
     file.size >
@@ -2447,12 +2403,6 @@ async function uploadMehfilImage(
     );
   }
 
-  /*
-    Important:
-    Database mein public URL save kar rahe hain.
-    Isse feed ko image dhoondhne mein problem nahi hogi.
-  */
-
   const {
     data:publicData
   } =
@@ -2530,11 +2480,6 @@ async function sendActivity(){
     let mediaUrl =
       null;
 
-    /*
-      STEP 1:
-      Picture upload
-    */
-
     if(selectedImageFile){
 
       mediaUrl =
@@ -2542,11 +2487,6 @@ async function sendActivity(){
           selectedImageFile
         );
     }
-
-    /*
-      STEP 2:
-      Post database mein save
-    */
 
     const {
       error
@@ -2565,11 +2505,6 @@ async function sendActivity(){
       });
 
     if(error){
-
-      /*
-        Agar post insert fail ho gaya aur image upload ho chuki
-        hai to image ko delete karne ki koshish.
-      */
 
       if(mediaUrl){
 
@@ -2738,10 +2673,6 @@ async function loadActivities(){
       return;
     }
 
-    /*
-      Profiles ek request mein.
-    */
-
     const userIds =
       [
         ...new Set(
@@ -2794,10 +2725,6 @@ async function loadActivities(){
           ]
         )
       );
-
-    /*
-      Members roles
-    */
 
     let roles = [];
 
@@ -2868,6 +2795,11 @@ async function loadActivities(){
 
 /* =========================================================
    RENDER POST
+   NOTE:
+   Member post actions:
+   Reply + 1on1 + Block
+   Own post:
+   Delete
 ========================================================= */
 
 function renderPost(
@@ -3013,17 +2945,13 @@ function renderPost(
       ${imageHtml}
 
 
-      <div class="activity-actions">
+      <!--
+        IMPORTANT:
+        Comments button removed.
+        Member posts now have Reply + 1on1 + Block.
+      -->
 
-        <button
-          class="action-btn"
-          onclick="toggleComments('${escapeJs(String(post.id))}')"
-        >
-          💬 Comments
-          <span
-            id="comment-count-${escapeHtml(String(post.id))}"
-          >0</span>
-        </button>
+      <div class="activity-actions">
 
         ${
           isOwn
@@ -3040,6 +2968,20 @@ function renderPost(
           `
           <button
             class="action-btn"
+            onclick="toggleComments('${escapeJs(String(post.id))}')"
+          >
+            ↩️ Reply
+          </button>
+
+          <button
+            class="action-btn"
+            onclick="openOneToOne('${escapeJs(String(post.user_id))}')"
+          >
+            👤 1on1
+          </button>
+
+          <button
+            class="action-btn"
             onclick="blockUser('${escapeJs(String(post.user_id))}')"
           >
             🚫 Block
@@ -3049,6 +2991,8 @@ function renderPost(
 
       </div>
 
+
+      <!-- Reply area -->
 
       <div
         class="replies"
@@ -3159,7 +3103,7 @@ function closeImageViewer(
 
 
 /* =========================================================
-   COMMENTS
+   REPLIES
 ========================================================= */
 
 async function toggleComments(
@@ -3205,11 +3149,6 @@ async function loadComments(
       "comments-list-"+postId
     );
 
-  const count =
-    document.getElementById(
-      "comment-count-"+postId
-    );
-
   if(!list){
     return;
   }
@@ -3218,7 +3157,7 @@ async function loadComments(
     `<div
       style="color:#888;font-size:12px;padding:8px 0"
     >
-      Comments load ho rahe hain...
+      Replies load ho rahe hain...
     </div>`;
 
   try{
@@ -3248,12 +3187,6 @@ async function loadComments(
     const comments =
       data || [];
 
-    if(count){
-
-      count.textContent =
-        comments.length;
-    }
-
     if(
       comments.length === 0
     ){
@@ -3262,7 +3195,7 @@ async function loadComments(
         `<div
           style="color:#888;font-size:12px;padding:8px 0"
         >
-          Abhi koi comment nahi.
+          Abhi koi reply nahi.
         </div>`;
 
       return;
@@ -3406,7 +3339,7 @@ async function loadComments(
       `<div
         style="color:#e74c3c;font-size:12px;padding:8px 0"
       >
-        Comments load nahi ho sake.
+        Replies load nahi ho sake.
       </div>`;
   }
 }
@@ -3431,7 +3364,7 @@ async function sendComment(
   if(!text){
 
     showToast(
-      "Comment likhein."
+      "Reply likhein."
     );
 
     return;
@@ -3477,7 +3410,7 @@ async function sendComment(
     );
 
     showToast(
-      "Comment send nahi hua: "+
+      "Reply send nahi hua: "+
       error.message
     );
   }
@@ -3491,7 +3424,7 @@ async function deleteComment(
 
   if(
     !confirm(
-      "Comment delete karna hai?"
+      "Reply delete karna hai?"
     )
   ){
     return;
@@ -3523,7 +3456,7 @@ async function deleteComment(
     );
 
     showToast(
-      "Comment delete ho gaya."
+      "Reply delete ho gaya."
     );
 
   }catch(error){
@@ -3533,7 +3466,7 @@ async function deleteComment(
     );
 
     showToast(
-      "Comment delete nahi hua: "+
+      "Reply delete nahi hua: "+
       error.message
     );
   }
@@ -3666,10 +3599,6 @@ async function deletePost(
     if(error){
       throw error;
     }
-
-    /*
-      Storage image bhi delete karne ki koshish.
-    */
 
     if(post.media_url){
 
@@ -5189,10 +5118,6 @@ async function blockUser(
 
     if(error){
 
-      /*
-        Duplicate ko harmless rakho.
-      */
-
       if(
         !String(
           error.message
@@ -5230,6 +5155,37 @@ function openUserProfile(
 
   window.location.href =
     "profile.html?user="+
+    encodeURIComponent(
+      userId
+    );
+}
+
+
+/* =========================================================
+   NEW: 1ON1 PRIVATE CHAT
+========================================================= */
+
+function openOneToOne(
+  userId
+){
+
+  if(!userId){
+    return;
+  }
+
+  if(
+    String(userId) ===
+    String(currentUser?.id)
+  ){
+    showToast(
+      "Apne saath 1on1 chat nahi khol sakte."
+    );
+
+    return;
+  }
+
+  window.location.href =
+    "private-chat.html?user="+
     encodeURIComponent(
       userId
     );
@@ -5346,10 +5302,6 @@ function showSettings(){
     currentMehfil.name ||
     "Mehfil";
 
-  /*
-    Creator-only options
-  */
-
   const creatorOnly = [
     "inviteSetting",
     "applicationsSetting",
@@ -5407,10 +5359,6 @@ async function deleteCurrentMehfil(){
 
     const mehfilId =
       currentMehfil.id;
-
-    /*
-      Posts first
-    */
 
     await supabaseClient
       .from("mehfil_posts")
