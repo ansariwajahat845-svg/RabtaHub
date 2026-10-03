@@ -840,30 +840,25 @@ button{
 
 <main class="container">
 
+  <!-- =====================================================
+       MEHFIL LIST PAGE
+  ====================================================== -->
+
   <section id="mehfilsPage">
 
-    <div class="card">
-
-      <div class="section-title">
-        🏠 My Mehfils
-      </div>
-
-      <div id="mehfilList">
-        <div class="loading">
-          Mehfil load ho rahi hai...
-        </div>
-      </div>
-
-    </div>
+    <!-- CREATE MEHFIL FIRST -->
 
     <div class="card">
 
       <div class="section-title">
-        ➕ New Mehfil
+        ➕ Create New Mehfil
       </div>
 
       <div class="field">
-        <label class="label">Mehfil Name</label>
+
+        <label class="label">
+          Mehfil Name
+        </label>
 
         <input
           id="newMehfilName"
@@ -871,10 +866,14 @@ button{
           maxlength="80"
           placeholder="Mehfil ka naam"
         >
+
       </div>
 
       <div class="field">
-        <label class="label">Description</label>
+
+        <label class="label">
+          Description
+        </label>
 
         <textarea
           id="newMehfilDescription"
@@ -882,6 +881,7 @@ button{
           maxlength="500"
           placeholder="Mehfil ke bare mein..."
         ></textarea>
+
       </div>
 
       <button
@@ -893,7 +893,31 @@ button{
 
     </div>
 
+
+    <!-- MEHFIL LIST BELOW -->
+
+    <div class="card">
+
+      <div class="section-title">
+        📋 Mehfil Lists
+      </div>
+
+      <div id="mehfilList">
+
+        <div class="loading">
+          Mehfil load ho rahi hai...
+        </div>
+
+      </div>
+
+    </div>
+
   </section>
+
+
+  <!-- =====================================================
+       OPEN MEHFIL PAGE
+  ====================================================== -->
 
   <section
     id="mehfilPage"
@@ -903,7 +927,9 @@ button{
     <div class="card">
 
       <div class="section-title">
-        <span id="mehfilNameDisplay">Mehfil</span>
+        <span id="mehfilNameDisplay">
+          Mehfil
+        </span>
       </div>
 
       <div
@@ -946,6 +972,7 @@ button{
 
     </div>
 
+
     <div
       class="composer"
       id="activityComposer"
@@ -969,6 +996,7 @@ button{
 
       </div>
 
+
       <div
         class="image-preview-box"
         id="imagePreviewBox"
@@ -984,9 +1012,12 @@ button{
         <button
           class="remove-preview"
           onclick="removeImagePreview()"
-        >×</button>
+        >
+          ×
+        </button>
 
       </div>
+
 
       <div class="composer-actions">
 
@@ -1020,13 +1051,21 @@ button{
 
     </div>
 
+
     <div id="activityFeed">
+
       <div class="loading">
         Activity load ho rahi hai...
       </div>
+
     </div>
 
   </section>
+
+
+  <!-- =====================================================
+       SETTINGS
+  ====================================================== -->
 
   <section
     id="settingsPage"
@@ -1038,6 +1077,7 @@ button{
       <div class="section-title">
         ⚙️ Mehfil Settings
       </div>
+
 
       <div class="setting-item">
 
@@ -1060,6 +1100,7 @@ button{
 
       </div>
 
+
       <div class="setting-item">
 
         <div>
@@ -1081,6 +1122,7 @@ button{
 
       </div>
 
+
       <div class="setting-item">
 
         <div>
@@ -1101,6 +1143,7 @@ button{
         </button>
 
       </div>
+
 
       <div
         class="setting-item"
@@ -1126,6 +1169,7 @@ button{
 
       </div>
 
+
       <div
         class="setting-item"
         id="applicationsSetting"
@@ -1150,6 +1194,7 @@ button{
 
       </div>
 
+
       <div
         class="setting-item"
         id="officersSetting"
@@ -1173,6 +1218,7 @@ button{
         </button>
 
       </div>
+
 
       <div
         class="setting-item"
@@ -1203,6 +1249,11 @@ button{
   </section>
 
 </main>
+
+
+<!-- =====================================================
+     BOTTOM NAV
+====================================================== -->
 
 <nav class="bottom-nav">
 
@@ -1252,6 +1303,11 @@ button{
 
 </nav>
 
+
+<!-- =====================================================
+     MODAL
+====================================================== -->
+
 <div
   class="modal"
   id="modal"
@@ -1287,6 +1343,11 @@ button{
 
 </div>
 
+
+<!-- =====================================================
+     IMAGE VIEWER
+====================================================== -->
+
 <div
   class="image-viewer"
   id="imageViewer"
@@ -1309,10 +1370,12 @@ button{
 
 </div>
 
+
 <div
   class="toast"
   id="toast"
 ></div>
+
 
 <script>
 
@@ -1691,6 +1754,9 @@ async function loadCurrentProfile(){
 
 /* =========================================================
    MEHFIL LIST
+   CREATE UPPER
+   ALL MEHFILS BELOW
+   JOIN / OPEN
 ========================================================= */
 
 async function loadMehfils(){
@@ -1730,14 +1796,53 @@ async function loadMehfils(){
   try{
 
     if(!currentUser){
+
       throw new Error(
         "User login nahi hai."
       );
     }
 
+
+    /* ALL MEHFILS */
+
+    const {
+      data:mehfils,
+      error:mehfilError
+    } =
+    await supabaseClient
+      .from("mehfils")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+    if(mehfilError){
+      throw mehfilError;
+    }
+
+
+    if(
+      !mehfils ||
+      mehfils.length === 0
+    ){
+
+      list.innerHTML =
+        `<div class="empty">
+          Abhi koi Mehfil available nahi hai.
+        </div>`;
+
+      return;
+    }
+
+
+    /* CURRENT USER KE JOINED MEHFILS */
+
     const {
       data:members,
-      error
+      error:memberError
     } =
     await supabaseClient
       .from("mehfil_members")
@@ -1747,130 +1852,119 @@ async function loadMehfils(){
       .eq(
         "user_id",
         currentUser.id
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
       );
 
-    if(error){
-      throw error;
+    if(memberError){
+      throw memberError;
     }
 
-    if(
-      !members ||
-      members.length === 0
-    ){
-
-      list.innerHTML =
-        `<div class="empty">
-          Abhi aap kisi Mehfil ke member nahi hain.
-        </div>`;
-
-      return;
-    }
-
-    const ids =
-      members.map(
-        x=>x.mehfil_id
-      );
-
-    const {
-      data:mehfils,
-      error:mehfilError
-    } =
-    await supabaseClient
-      .from("mehfils")
-      .select("*")
-      .in(
-        "id",
-        ids
-      );
-
-    if(mehfilError){
-      throw mehfilError;
-    }
-
-    if(
-      !mehfils ||
-      mehfils.length === 0
-    ){
-
-      list.innerHTML =
-        `<div class="empty">
-          Mehfil nahi mili.
-        </div>`;
-
-      return;
-    }
 
     const memberMap =
       new Map(
-        members.map(
-          m=>[
-            String(m.mehfil_id),
-            m
+        (members || []).map(
+          member=>[
+            String(
+              member.mehfil_id
+            ),
+            member
           ]
         )
       );
 
+
+    /* RENDER ALL MEHFILS */
+
     list.innerHTML =
-      mehfils.map(
-        mehfil=>{
+      mehfils
+        .map(
+          mehfil=>{
 
-          const member =
-            memberMap.get(
-              String(mehfil.id)
-            );
+            const member =
+              memberMap.get(
+                String(mehfil.id)
+              );
 
-          return `
-            <div class="mehfil-item">
+            const joined =
+              !!member;
 
-              <div class="mehfil-icon">
-                🏠
+            let roleText =
+              "🏠 Mehfil";
+
+            if(joined){
+
+              roleText =
+                member.role === "admin"
+                  ? "👑 Creator"
+                  : member.role === "moderator"
+                    ? "🛡️ Afsar"
+                    : "👤 Member";
+            }
+
+
+            return `
+              <div class="mehfil-item">
+
+                <div class="mehfil-icon">
+                  🏠
+                </div>
+
+                <div class="mehfil-info">
+
+                  <div class="mehfil-name">
+                    ${escapeHtml(
+                      mehfil.name ||
+                      "Mehfil"
+                    )}
+                  </div>
+
+                  <div class="mehfil-description">
+                    ${escapeHtml(
+                      mehfil.description ||
+                      "RabtaHub Mehfil"
+                    )}
+                  </div>
+
+                  <div
+                    style="
+                      font-size:11px;
+                      color:#888;
+                      margin-top:4px
+                    "
+                  >
+                    ${roleText}
+                  </div>
+
+                </div>
+
+
+                ${
+                  joined
+                  ?
+                  `
+                  <button
+                    class="open-btn"
+                    onclick="openMehfil('${escapeJs(String(mehfil.id))}')"
+                  >
+                    Open
+                  </button>
+                  `
+                  :
+                  `
+                  <button
+                    class="open-btn"
+                    onclick="joinMehfil('${escapeJs(String(mehfil.id))}')"
+                  >
+                    Join
+                  </button>
+                  `
+                }
+
               </div>
+            `;
+          }
+        )
+        .join("");
 
-              <div class="mehfil-info">
-
-                <div class="mehfil-name">
-                  ${escapeHtml(
-                    mehfil.name ||
-                    "Mehfil"
-                  )}
-                </div>
-
-                <div class="mehfil-description">
-                  ${escapeHtml(
-                    mehfil.description ||
-                    "RabtaHub Mehfil"
-                  )}
-                </div>
-
-                <div
-                  style="font-size:11px;color:#888;margin-top:4px"
-                >
-                  ${member?.role==="admin"
-                    ?"👑 Creator"
-                    :member?.role==="moderator"
-                      ?"🛡️ Afsar"
-                      :"👤 Member"}
-                </div>
-
-              </div>
-
-              <button
-                class="open-btn"
-                onclick="openMehfil('${escapeJs(String(mehfil.id))}')"
-              >
-                Open
-              </button>
-
-            </div>
-          `;
-        }
-      ).join("");
 
   }catch(error){
 
@@ -1888,6 +1982,117 @@ async function loadMehfils(){
           )}
         </small>
       </div>`;
+  }
+}
+
+
+/* =========================================================
+   JOIN MEHFIL
+========================================================= */
+
+async function joinMehfil(
+  mehfilId
+){
+
+  if(!currentUser){
+
+    showToast(
+      "Pehle login karein."
+    );
+
+    return;
+  }
+
+  if(!mehfilId){
+    return;
+  }
+
+  try{
+
+    /* CHECK ALREADY MEMBER */
+
+    const {
+      data:existing,
+      error:checkError
+    } =
+    await supabaseClient
+      .from("mehfil_members")
+      .select(
+        "id,role"
+      )
+      .eq(
+        "mehfil_id",
+        mehfilId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .maybeSingle();
+
+    if(checkError){
+      throw checkError;
+    }
+
+    if(existing){
+
+      showToast(
+        "Aap already is Mehfil ke member hain."
+      );
+
+      await openMehfil(
+        mehfilId
+      );
+
+      return;
+    }
+
+
+    /* JOIN */
+
+    const {
+      error
+    } =
+    await supabaseClient
+      .from("mehfil_members")
+      .insert({
+        mehfil_id:
+          mehfilId,
+        user_id:
+          currentUser.id,
+        role:
+          "member"
+      });
+
+    if(error){
+      throw error;
+    }
+
+
+    showToast(
+      "Mehfil join ho gayi."
+    );
+
+
+    await loadMehfils();
+
+
+    await openMehfil(
+      mehfilId
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "joinMehfil:",
+      error
+    );
+
+    showToast(
+      "Mehfil join nahi hui: "+
+      error.message
+    );
   }
 }
 
@@ -2795,11 +3000,6 @@ async function loadActivities(){
 
 /* =========================================================
    RENDER POST
-   NOTE:
-   Member post actions:
-   Reply + 1on1 + Block
-   Own post:
-   Delete
 ========================================================= */
 
 function renderPost(
@@ -2945,12 +3145,6 @@ function renderPost(
       ${imageHtml}
 
 
-      <!--
-        IMPORTANT:
-        Comments button removed.
-        Member posts now have Reply + 1on1 + Block.
-      -->
-
       <div class="activity-actions">
 
         ${
@@ -2991,8 +3185,6 @@ function renderPost(
 
       </div>
 
-
-      <!-- Reply area -->
 
       <div
         class="replies"
@@ -5162,7 +5354,7 @@ function openUserProfile(
 
 
 /* =========================================================
-   NEW: 1ON1 PRIVATE CHAT
+   1ON1 PRIVATE CHAT
 ========================================================= */
 
 function openOneToOne(
@@ -5177,6 +5369,7 @@ function openOneToOne(
     String(userId) ===
     String(currentUser?.id)
   ){
+
     showToast(
       "Apne saath 1on1 chat nahi khol sakte."
     );
