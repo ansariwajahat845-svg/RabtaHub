@@ -2578,8 +2578,7 @@ function closeMembers(){
 
 /* =========================================================
    SETTINGS
-========================================================= */
-
+=========================================================== */
 function showSettings(){
 
   if(!currentMehfil){
@@ -2659,6 +2658,470 @@ function hideAllPages(){
 
 
 /* =========================================================
+   CHECK CREATOR / AFSAR
+========================================================= */
+
+async function canManageMembers(){
+
+  if(
+    !currentMehfil ||
+    !currentUser
+  ){
+    return false;
+  }
+
+  /* Creator */
+
+  if(
+    String(currentMehfil.creator_id) ===
+    String(currentUser.id)
+  ){
+    return true;
+  }
+
+  /* Afsar */
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("mehfil_members")
+      .select("role,status")
+      .eq(
+        "mehfil_id",
+        currentMehfil.id
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .eq(
+        "status",
+        "approved"
+      )
+      .maybeSingle();
+
+  if(error){
+
+    console.error(
+      "ROLE CHECK ERROR:",
+      error
+    );
+
+    return false;
+  }
+
+  return (
+    data &&
+    data.role === "moderator"
+  );
+
+}
+
+
+/* =========================================================
+   KICK
+   CREATOR + AFSAR
+========================================================= */
+
+async function showKickMembers(){
+
+  if(!currentMehfil){
+    return;
+  }
+
+  const allowed =
+    await canManageMembers();
+
+  if(!allowed){
+
+    showNotice(
+      "Sirf Creator ya Afsar member ko kick kar sakta hai."
+    );
+
+    return;
+  }
+
+  hideAllPages();
+
+  document.getElementById(
+    "kickPage"
+  ).style.display = "block";
+
+  document.getElementById(
+    "headerTitle"
+  ).textContent =
+    "🚫 Kick Member";
+
+  document.getElementById(
+    "headerSub"
+  ).textContent =
+    (currentMehfil.name || "Mehfil") +
+    " • Kick";
+
+  await loadKickMembers();
+
+  window.scrollTo(0,0);
+
+}
+
+
+function closeKickMembers(){
+
+  hideAllPages();
+
+  document.getElementById(
+    "settingsPage"
+  ).style.display = "block";
+
+  document.getElementById(
+    "headerTitle"
+  ).textContent =
+    "⚙️ Mehfil Settings";
+
+  document.getElementById(
+    "headerSub"
+  ).textContent =
+    (currentMehfil?.name || "Mehfil") +
+    " • Settings";
+
+}
+
+
+/* =========================================================
+   LOAD KICK MEMBERS
+========================================================= */
+
+async function loadKickMembers(){
+
+  const list =
+    document.getElementById(
+      "kickList"
+    );
+
+  if(!list){
+    return;
+  }
+
+  list.innerHTML =
+    `<div class="loading">
+      Members load ho rahe hain...
+    </div>`;
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("mehfil_members")
+        .select(
+          "id,user_id,role,status"
+        )
+        .eq(
+          "mehfil_id",
+          currentMehfil.id
+        )
+        .eq(
+          "status",
+          "approved"
+        );
+
+    if(error){
+      throw error;
+    }
+
+    const members =
+      (data || []).filter(
+        member =>
+
+          String(member.user_id) !==
+          String(currentUser.id)
+
+          &&
+
+          String(member.user_id) !==
+          String(currentMehfil.creator_id)
+
+          &&
+
+          member.role !== "admin"
+
+          &&
+
+          member.role !== "moderator"
+      );
+
+
+    if(!members.length){
+
+      list.innerHTML =
+        `<div class="empty">
+          👥 Abhi koi kickable member nahi hai.
+        </div>`;
+
+      return;
+    }
+
+
+    const ids =
+      members
+        .map(
+          x => x.user_id
+        )
+        .filter(Boolean);
+
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,username,name,avatar_url"
+        )
+        .in(
+          "id",
+          ids
+        );
+
+
+    const map = {};
+
+    (result.data || []).forEach(
+      p => {
+
+        map[
+          String(p.id)
+        ] = p;
+
+      }
+    );
+
+
+    list.innerHTML =
+      members
+        .map(
+          member => {
+
+            const profile =
+              map[
+                String(
+                  member.user_id
+                )
+              ] || {};
+
+            return `
+              <div class="member-row">
+
+                <img
+                  class="avatar"
+                  src="${safeUrl(
+                    profile.avatar_url ||
+                    defaultAvatar()
+                  )}">
+
+                <div class="member-info">
+
+                  <div class="member-name">
+                    ${escapeHtml(
+                      profile.name ||
+                      profile.username ||
+                      "User"
+                    )}
+                  </div>
+
+                  <div class="member-username">
+                    @${escapeHtml(
+                      profile.username ||
+                      "User"
+                    )}
+                  </div>
+
+                </div>
+
+                <button
+                  class="secondary-btn"
+                  type="button"
+                  onclick="kickMember('${escapeJs(
+                    member.user_id
+                  )}')">
+                  🚫 Kick
+                </button>
+
+              </div>
+            `;
+
+          }
+        )
+        .join("");
+
+
+  }catch(error){
+
+    list.innerHTML =
+      `
+      <div class="error-box">
+        Members load nahi ho sake.
+        <br><br>
+        ${escapeHtml(
+          error.message
+        )}
+      </div>
+      `;
+
+  }
+
+}
+
+
+/* =========================================================
+   KICK MEMBER
+   CREATOR + AFSAR
+========================================================= */
+
+async function kickMember(userId){
+
+  if(!currentMehfil){
+    return;
+  }
+
+  const allowed =
+    await canManageMembers();
+
+  if(!allowed){
+
+    showNotice(
+      "Sirf Creator ya Afsar kick kar sakta hai."
+    );
+
+    return;
+  }
+
+
+  /* Creator ko kick nahi karna */
+
+  if(
+    String(userId) ===
+    String(currentMehfil.creator_id)
+  ){
+
+    showNotice(
+      "Creator ko kick nahi kiya ja sakta."
+    );
+
+    return;
+  }
+
+
+  if(
+    String(userId) ===
+    String(currentUser.id)
+  ){
+
+    showNotice(
+      "Khud ko kick nahi kar sakte."
+    );
+
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "Is member ko Mehfil se kick karna hai?"
+    )
+  ){
+    return;
+  }
+
+
+  try{
+
+    /*
+      Afsar ko Afsar kick nahi kar sakta.
+      Creator/Afsar dono normal member ko kick
+      kar sakte hain.
+    */
+
+    const {
+      data: targetMember,
+      error: targetError
+    } =
+      await supabaseClient
+        .from("mehfil_members")
+        .select("role")
+        .eq(
+          "mehfil_id",
+          currentMehfil.id
+        )
+        .eq(
+          "user_id",
+          userId
+        )
+        .maybeSingle();
+
+    if(targetError){
+      throw targetError;
+    }
+
+
+    if(
+      targetMember &&
+      (
+        targetMember.role === "admin" ||
+        targetMember.role === "moderator"
+      )
+    ){
+
+      showNotice(
+        "Creator ya Afsar ko kick nahi kiya ja sakta."
+      );
+
+      return;
+    }
+
+
+    const {error} =
+      await supabaseClient
+        .from("mehfil_members")
+        .delete()
+        .eq(
+          "mehfil_id",
+          currentMehfil.id
+        )
+        .eq(
+          "user_id",
+          userId
+        );
+
+    if(error){
+      throw error;
+    }
+
+
+    showNotice(
+      "🚫 Member kick ho gaya."
+    );
+
+
+    await loadKickMembers();
+
+    await loadMembers();
+
+
+  }catch(error){
+
+    showNotice(
+      "Member kick nahi hua: " +
+      error.message
+    );
+
+  }
+
+}
+
+/* =========================================================
    KICK
 ========================================================= */
 
@@ -2721,182 +3184,11 @@ function closeKickMembers(){
     (currentMehfil?.name || "Mehfil") +
     " • Settings";
 
-}
 
 
-async function loadKickMembers(){
-
-  const list =
-    document.getElementById(
-      "kickList"
-    );
-
-  list.innerHTML =
-    `<div class="loading">Members load ho rahe hain...</div>`;
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("mehfil_members")
-        .select("id,user_id,role,status")
-        .eq("mehfil_id",currentMehfil.id)
-        .eq("status","approved");
-
-    if(error){
-      throw error;
-    }
-
-    const members =
-      (data || []).filter(
-        member =>
-          String(member.user_id) !==
-          String(currentUser.id)
-          &&
-          String(member.user_id) !==
-          String(currentMehfil.creator_id)
-          &&
-          member.role !== "admin"
-      );
-
-    if(!members.length){
-
-      list.innerHTML =
-        `<div class="empty">👥 Abhi koi kickable member nahi hai.</div>`;
-
-      return;
-    }
-
-    const ids =
-      members.map(
-        x => x.user_id
-      ).filter(Boolean);
-
-    const result =
-      await supabaseClient
-        .from("profiles")
-        .select("id,username,name,avatar_url")
-        .in("id",ids);
-
-    const map = {};
-
-    (result.data || []).forEach(
-      p => {
-        map[String(p.id)] = p;
-      }
-    );
-
-    list.innerHTML =
-      members.map(
-        member => {
-
-          const profile =
-            map[String(member.user_id)] || {};
-
-          return `
-            <div class="member-row">
-
-              <img
-                class="avatar"
-                src="${safeUrl(
-                  profile.avatar_url ||
-                  defaultAvatar()
-                )}">
-
-              <div class="member-info">
-
-                <div class="member-name">
-                  ${escapeHtml(
-                    profile.name ||
-                    profile.username ||
-                    "User"
-                  )}
-                </div>
-
-                <div class="member-username">
-                  @${escapeHtml(
-                    profile.username ||
-                    "User"
-                  )}
-                </div>
-
-              </div>
-
-              <button
-                class="secondary-btn"
-                type="button"
-                onclick="kickMember('${escapeJs(member.user_id)}')">
-                🚫 Kick
-              </button>
-
-            </div>
-          `;
-
-        }
-      ).join("");
-
-  }catch(error){
-
-    list.innerHTML =
-      `
-      <div class="error-box">
-        Members load nahi ho sake.
-        <br><br>
-        ${escapeHtml(error.message)}
-      </div>
-      `;
-
-  }
-
-}
 
 
-async function kickMember(userId){
-
-  if(
-    String(currentMehfil.creator_id) !==
-    String(currentUser.id)
-  ){
-    showNotice("Sirf Creator kick kar sakta hai.");
-    return;
-  }
-
-  if(!confirm("Is member ko Mehfil se kick karna hai?")){
-    return;
-  }
-
-  try{
-
-    const {error} =
-      await supabaseClient
-        .from("mehfil_members")
-        .delete()
-        .eq("mehfil_id",currentMehfil.id)
-        .eq("user_id",userId);
-
-    if(error){
-      throw error;
-    }
-
-    showNotice("🚫 Member kick ho gaya.");
-
-    await loadKickMembers();
-    await loadMembers();
-
-  }catch(error){
-
-    showNotice(
-      "Member kick nahi hua: " +
-      error.message
-    );
-
-  }
-
-}
-
+    
 
 /* =========================================================
    PUBLISH ACTIVITY
