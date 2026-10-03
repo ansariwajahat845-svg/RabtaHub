@@ -1454,39 +1454,81 @@ document.addEventListener(
 );
 
 
+function withTimeout(promise, ms, message){
+
+  let timer;
+
+  const timeout = new Promise((resolve, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error(message || "Request timeout ho gaya."));
+    }, ms);
+  });
+
+  return Promise.race([promise, timeout])
+    .finally(() => clearTimeout(timer));
+}
+
+
+function showMehfilError(message){
+
+  const list = document.getElementById("mehfilList");
+
+  if(!list){
+    return;
+  }
+
+  list.innerHTML = `
+    <div class="error-box">
+      <strong>Mehfil load nahi ho saki.</strong>
+      <br><br>
+      ${escapeHtml(message || "Unknown error") }
+      <br><br>
+      <button
+        type="button"
+        class="primary-btn"
+        onclick="initMehfil()">
+        🔄 Dobara Try Karein
+      </button>
+    </div>
+  `;
+}
+
+
 async function initMehfil(){
 
-  fillCategoryOptions();
+  const list = document.getElementById("mehfilList");
+
+  if(list){
+    list.innerHTML = `
+      <div class="loading">
+        ✨ Mehfil load ho rahi hain...
+      </div>
+    `;
+  }
 
   try{
 
-    const result =
-      await supabaseClient.auth.getUser();
+    fillCategoryOptions();
+
+    const result = await withTimeout(
+      supabaseClient.auth.getUser(),
+      10000,
+      "Supabase login check mein timeout ho gaya. Internet/Supabase connection check karein."
+    );
 
     if(result.error){
       throw result.error;
     }
 
-    currentUser =
-      result.data?.user || null;
+    currentUser = result.data?.user || null;
 
     if(!currentUser){
 
-      document.getElementById(
-        "mehfilList"
-      ).innerHTML =
-        `
-        <div class="error-box">
-          Login required hai.
-        </div>
-        `;
+      showMehfilError("Login required hai. Pehle login karein.");
 
-      setTimeout(
-        function(){
-          window.location.href = "login.html";
-        },
-        900
-      );
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1200);
 
       return;
     }
@@ -1495,21 +1537,8 @@ async function initMehfil(){
 
   }catch(error){
 
-    console.error(
-      "INIT ERROR:",
-      error
-    );
-
-    document.getElementById(
-      "mehfilList"
-    ).innerHTML =
-      `
-      <div class="error-box">
-        Mehfil load nahi ho saki.
-        <br><br>
-        ${escapeHtml(error.message)}
-      </div>
-      `;
+    console.error("INIT ERROR:", error);
+    showMehfilError(error?.message || String(error));
 
   }
 
@@ -1639,11 +1668,8 @@ async function loadMehfils(){
 
   try{
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
+    const result = await withTimeout(
+      supabaseClient
         .from("mehfils")
         .select(
           "id,creator_id,name,description,avatar_url,privacy,category,topic,created_at"
@@ -1651,7 +1677,12 @@ async function loadMehfils(){
         .order(
           "created_at",
           {ascending:false}
-        );
+        ),
+      12000,
+      "Mehfils table se response nahi aa raha. RLS/permissions ya Supabase connection check karein."
+    );
+
+    const { data, error } = result;
 
     if(error){
       throw error;
