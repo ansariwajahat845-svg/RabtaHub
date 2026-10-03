@@ -4653,3 +4653,737 @@ async function loadAfsarManagement(){
                     "User"
                   )}
                 </div>
+                <div class="member-username">
+                  @${escapeHtml(
+                    profile.username ||
+                    "User"
+                  )}
+                </div>
+
+                <div class="member-role">
+                  🛡️ Afsar
+                </div>
+
+              </div>
+
+              <button
+                class="secondary-btn"
+                type="button"
+                onclick="removeAfsar('${escapeJs(officer.user_id)}')">
+                Remove
+              </button>
+
+            </div>
+          `;
+
+        }
+      ).join("");
+
+  }catch(error){
+
+    list.innerHTML =
+      `
+      <div class="error-box">
+        Afsar list load nahi ho saki.
+        <br><br>
+        ${escapeHtml(error.message)}
+      </div>
+      `;
+
+  }
+
+}
+
+
+async function removeAfsar(userId){
+
+  if(
+    !currentMehfil ||
+    String(currentMehfil.creator_id) !==
+    String(currentUser.id)
+  ){
+    showNotice(
+      "Sirf Creator Afsar remove kar sakta hai."
+    );
+    return;
+  }
+
+  if(
+    !confirm(
+      "Is user ko Afsar role se remove karna hai?"
+    )
+  ){
+    return;
+  }
+
+  try{
+
+    const { error } =
+      await supabaseClient
+        .from("mehfil_members")
+        .update({
+          role:"member"
+        })
+        .eq("mehfil_id",currentMehfil.id)
+        .eq("user_id",userId)
+        .eq("role","moderator");
+
+    if(error){
+      throw error;
+    }
+
+    showNotice(
+      "Afsar role remove kar diya gaya."
+    );
+
+    await loadAfsarManagement();
+    await loadMembers();
+
+  }catch(error){
+
+    showNotice(
+      "Afsar role remove nahi hua: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   BACK NAVIGATION
+========================= */
+
+function goBack(){
+
+  const members =
+    document.getElementById("membersPage");
+
+  const settings =
+    document.getElementById("settingsPage");
+
+  const kick =
+    document.getElementById("kickPage");
+
+  const applications =
+    document.getElementById(
+      "afsarApplicationsPage"
+    );
+
+  const management =
+    document.getElementById(
+      "afsarManagementPage"
+    );
+
+  const detail =
+    document.getElementById("detailPage");
+
+  const list =
+    document.getElementById("listPage");
+
+
+  if(
+    kick &&
+    kick.style.display !== "none"
+  ){
+    closeKickMembers();
+    return;
+  }
+
+
+  if(
+    applications &&
+    applications.style.display !== "none"
+  ){
+    closeAfsarApplications();
+    return;
+  }
+
+
+  if(
+    management &&
+    management.style.display !== "none"
+  ){
+    closeAfsarManagement();
+    return;
+  }
+
+
+  if(
+    members &&
+    members.style.display !== "none"
+  ){
+    closeMembers();
+    return;
+  }
+
+
+  if(
+    settings &&
+    settings.style.display !== "none"
+  ){
+    closeSettings();
+    return;
+  }
+
+
+  if(
+    detail &&
+    detail.style.display !== "none"
+  ){
+
+    currentMehfil = null;
+
+    hideAllPages();
+
+    if(list){
+      list.style.display = "block";
+    }
+
+    restoreMainHeader();
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
+    return;
+  }
+
+
+  goHome();
+
+}
+
+
+/* =========================
+   MAIN HEADER
+========================= */
+
+function restoreMainHeader(){
+
+  const title =
+    document.getElementById(
+      "headerTitle"
+    );
+
+  const sub =
+    document.getElementById(
+      "headerSub"
+    );
+
+  if(title){
+    title.textContent =
+      "💬 Mehfil";
+  }
+
+  if(sub){
+    sub.textContent =
+      "Connect • Share • Enjoy";
+  }
+
+}
+
+
+function restoreMehfilHeader(){
+
+  if(!currentMehfil){
+
+    restoreMainHeader();
+
+    return;
+  }
+
+  const title =
+    document.getElementById(
+      "headerTitle"
+    );
+
+  const sub =
+    document.getElementById(
+      "headerSub"
+    );
+
+  if(title){
+
+    title.textContent =
+      "💬 " +
+      (
+        currentMehfil.name ||
+        "Mehfil"
+      );
+
+  }
+
+  if(sub){
+
+    sub.textContent =
+      (
+        currentMehfil.category ||
+        "General"
+      ) +
+      " • " +
+      (
+        currentMehfil.topic ||
+        "General Chat"
+      );
+
+  }
+
+}
+
+
+/* =========================
+   REFRESH
+========================= */
+
+async function refreshCurrent(){
+
+  const detail =
+    document.getElementById(
+      "detailPage"
+    );
+
+  const members =
+    document.getElementById(
+      "membersPage"
+    );
+
+  const applications =
+    document.getElementById(
+      "afsarApplicationsPage"
+    );
+
+  const management =
+    document.getElementById(
+      "afsarManagementPage"
+    );
+
+
+  if(
+    detail &&
+    detail.style.display !== "none" &&
+    currentMehfil
+  ){
+
+    updateDetailUI();
+
+    await checkMembership();
+
+    await loadMembers();
+
+    await loadFeed();
+
+    showNotice(
+      "↻ Mehfil refresh ho gayi."
+    );
+
+    return;
+  }
+
+
+  if(
+    members &&
+    members.style.display !== "none"
+  ){
+
+    await loadMembers();
+
+    return;
+  }
+
+
+  if(
+    applications &&
+    applications.style.display !== "none"
+  ){
+
+    await loadAfsarApplications();
+
+    return;
+  }
+
+
+  if(
+    management &&
+    management.style.display !== "none"
+  ){
+
+    await loadAfsarManagement();
+
+    return;
+  }
+
+
+  await loadMehfils();
+
+}
+
+
+/* =========================
+   NOTICE
+========================= */
+
+function showNotice(message){
+
+  const notice =
+    document.getElementById(
+      "notice"
+    );
+
+  if(!notice){
+    return;
+  }
+
+  notice.textContent =
+    message;
+
+  notice.classList.add("show");
+
+  clearTimeout(
+    noticeTimer
+  );
+
+  noticeTimer =
+    setTimeout(
+      function(){
+
+        notice.classList.remove(
+          "show"
+        );
+
+      },
+      3000
+    );
+
+}
+
+
+/* =========================
+   PRIVACY
+========================= */
+
+function getPrivacyText(
+  privacy
+){
+
+  if(
+    privacy === "private"
+  ){
+
+    return "🔒 Private";
+
+  }
+
+  if(
+    privacy === "invite"
+  ){
+
+    return "📩 Invite Only";
+
+  }
+
+  return "🌐 Public";
+
+}
+
+
+/* =========================
+   DATE FORMAT
+========================= */
+
+function formatDate(date){
+
+  if(!date){
+    return "";
+  }
+
+  const time =
+    new Date(date).getTime();
+
+  if(
+    Number.isNaN(time)
+  ){
+
+    return "";
+
+  }
+
+  const diff =
+    Date.now() - time;
+
+  const minute =
+    60 * 1000;
+
+  const hour =
+    60 * minute;
+
+  const day =
+    24 * hour;
+
+
+  if(
+    diff < minute
+  ){
+
+    return "Just now";
+
+  }
+
+
+  if(
+    diff < hour
+  ){
+
+    return (
+      Math.floor(
+        diff / minute
+      ) +
+      " min ago"
+    );
+
+  }
+
+
+  if(
+    diff < day
+  ){
+
+    return (
+      Math.floor(
+        diff / hour
+      ) +
+      " hr ago"
+    );
+
+  }
+
+
+  if(
+    diff < 7 * day
+  ){
+
+    return (
+      Math.floor(
+        diff / day
+      ) +
+      " days ago"
+    );
+
+  }
+
+
+  return new Date(
+    date
+  ).toLocaleDateString();
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================
+   ESCAPE JS
+========================= */
+
+function escapeJs(value){
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    )
+    .replace(
+      /"/g,
+      '\\"'
+    )
+    .replace(
+      /\r/g,
+      "\\r"
+    )
+    .replace(
+      /\n/g,
+      "\\n"
+    );
+
+}
+
+
+/* =========================
+   SAFE URL
+========================= */
+
+function safeUrl(url){
+
+  if(!url){
+
+    return defaultAvatar();
+
+  }
+
+  const value =
+    String(url).trim();
+
+
+  if(
+    value.startsWith(
+      "https://"
+    ) ||
+    value.startsWith(
+      "http://"
+    ) ||
+    value.startsWith(
+      "data:image/"
+    )
+  ){
+
+    return value;
+
+  }
+
+
+  return defaultAvatar();
+
+}
+
+
+/* =========================
+   DEFAULT AVATAR
+========================= */
+
+function defaultAvatar(){
+
+  return (
+    "data:image/svg+xml;charset=UTF-8," +
+    encodeURIComponent(`
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="100"
+        height="100"
+        viewBox="0 0 100 100">
+
+        <rect
+          width="100"
+          height="100"
+          rx="50"
+          fill="#eee"/>
+
+        <circle
+          cx="50"
+          cy="38"
+          r="18"
+          fill="#aaa"/>
+
+        <path
+          d="M18 88c5-20 17-30 32-30s27 10 32 30"
+          fill="#aaa"/>
+
+      </svg>
+    `)
+  );
+
+}
+
+
+/* =========================
+   BOTTOM NAVIGATION
+========================= */
+
+function goHome(){
+
+  window.location.href =
+    "index.html";
+
+}
+
+
+function goPrivate(){
+
+  window.location.href =
+    "private.html";
+
+}
+
+
+function goProfile(){
+
+  window.location.href =
+    "profile.html";
+
+}
+
+
+function goMehfil(){
+
+  window.location.href =
+    "mehfil.html";
+
+}
+
+
+function goMore(){
+
+  window.location.href =
+    "more.html";
+
+}
+
+
+function openPrivateChat(
+  userId
+){
+
+  if(!userId){
+    return;
+  }
+
+  window.location.href =
+    "private-chat.html?user=" +
+    encodeURIComponent(
+      userId
+    );
+
+}
+
+</script>
+
+</body>
+</html>
