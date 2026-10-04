@@ -847,7 +847,7 @@ body{
       <button
         class="refresh-btn"
         type="button"
-        onclick="loadFeed()">
+        onclick="refreshHomeFeed()">
         🔄 Refresh
       </button>
 
@@ -1532,76 +1532,80 @@ async function syncMyProfile(){
 
 async function checkUser(){
 
-  try{
+  console.log("Checking Home Feed login session...");
 
-    let user = null;
+  for(let attempt=1; attempt<=8; attempt++){
 
+    try{
 
-    const sessionResult =
-      await supabaseClient.auth.getSession();
+      const {data,error} =
+        await supabaseClient.auth.getSession();
 
-
-    if(
-      sessionResult.data &&
-      sessionResult.data.session
-    ){
-
-      user =
-        sessionResult.data.session.user;
-
-    }
-
-
-    if(!user){
-
-      const userResult =
-        await supabaseClient.auth.getUser();
-
+      console.log("Session check",attempt,data,error);
 
       if(
-        userResult.data &&
-        userResult.data.user
+        !error &&
+        data &&
+        data.session &&
+        data.session.user
       ){
 
-        user =
-          userResult.data.user;
+        setCurrentUser(data.session.user);
 
+        try{
+          await syncMyProfile();
+        }catch(profileError){
+          console.warn("PROFILE SYNC SKIPPED:",profileError);
+        }
+
+        await loadFeed();
+        return;
       }
 
-    }
+    }catch(error){
 
-
-    if(!user){
-
-      window.location.href =
-        "login.html";
-
-      return;
+      console.error("SESSION CHECK ERROR:",error);
 
     }
 
-
-    setCurrentUser(user);
-
-    try{ await syncMyProfile(); }catch(profileError){ console.warn("PROFILE SYNC SKIPPED:",profileError); }
-
-    await loadFeed();
-
-  }catch(error){
-
-    console.error("CHECK USER ERROR:",error);
-
-    if(!currentUser){
-      window.location.replace("login.html");
-      return;
+    if(attempt < 8){
+      await new Promise(resolve => setTimeout(resolve,750));
     }
-
-    showNotice("Home Feed load mein masla aya: " + (error?.message || "Unknown error"));
 
   }
 
-}
+  try{
 
+    const {data,error} =
+      await supabaseClient.auth.getUser();
+
+    console.log("Final user check:",data,error);
+
+    if(!error && data && data.user){
+
+      setCurrentUser(data.user);
+
+      try{
+        await syncMyProfile();
+      }catch(profileError){
+        console.warn("PROFILE SYNC SKIPPED:",profileError);
+      }
+
+      await loadFeed();
+      return;
+    }
+
+  }catch(error){
+
+    console.error("FINAL USER CHECK ERROR:",error);
+
+  }
+
+  if(!currentUser){
+    window.location.replace("login.html");
+  }
+
+}
 
 /* =====================================================
    AUTH STATE
@@ -1681,7 +1685,7 @@ async function addPost(){
         username:
           currentUsername,
 
-        comment:
+        content:
           text
 
       });
@@ -2447,6 +2451,33 @@ async function loadPostActions(){
 
     });
 
+  if(currentUser){
+
+    const myActions =
+      actions.filter(
+        row => row.user_id === currentUser.id
+      );
+
+    document.querySelectorAll("[id^='like-btn-']").forEach(button => {
+      const postId = Number(button.id.replace("like-btn-",""));
+      const active = myActions.some(
+        row => row.post_id === postId &&
+               row.action_type === "like"
+      );
+      button.style.fontWeight = active ? "bold" : "normal";
+    });
+
+    document.querySelectorAll("[id^='dislike-btn-']").forEach(button => {
+      const postId = Number(button.id.replace("dislike-btn-",""));
+      const active = myActions.some(
+        row => row.post_id === postId &&
+               row.action_type === "dislike"
+      );
+      button.style.fontWeight = active ? "bold" : "normal";
+    });
+
+  }
+
 }
 
 
@@ -2454,117 +2485,87 @@ async function loadPostActions(){
    SET POST ACTION
 ===================================================== */
 
-async function setPostAction(
-  postId,
-  actionType
-){
+async function setPostAction(postId, actionType){
 
   if(!currentUser){
-
-    showNotice(
-      "Please login first."
-    );
-
+    showNotice("Please login first.");
     return;
-
   }
 
-
   const opposite =
-    actionType === "like"
-      ? "dislike"
-      : "like";
+    actionType === "like" ? "dislike" : "like";
 
+  try{
 
-  const existing =
-    await supabaseClient
-      .from("post_actions")
-      .select("*")
-      .eq(
-        "post_id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .eq(
-        "action_type",
-        actionType
-      )
-      .maybeSingle();
-
-
-  if(existing.data){
-
-    await supabaseClient
-      .from("post_actions")
-      .delete()
-      .eq(
-        "post_id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .eq(
-        "action_type",
-        actionType
-      );
-
-  }else{
-
-    await supabaseClient
-      .from("post_actions")
-      .delete()
-      .eq(
-        "post_id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .eq(
-        "action_type",
-        opposite
-      );
-
-
-    const { error } =
+    const {data:existing,error:findError} =
       await supabaseClient
         .from("post_actions")
-        .insert({
+        .select("id")
+        .eq("post_id",Number(postId))
+        .eq("user_id",currentUser.id)
+        .eq("action_type",actionType)
+        .limit(1)
+        .maybeSingle();
 
-          post_id:
-            postId,
+    if(findError){
+      throw findError;
+    }
 
-          user_id:
-            currentUser.id,
+    if(existing){
 
-          action_type:
-            actionType
+      const {error:deleteError} =
+        await supabaseClient
+          .from("post_actions")
+          .delete()
+          .eq("id",existing.id);
 
-        });
+      if(deleteError){
+        throw deleteError;
+      }
 
+    }else{
 
-    if(error){
+      const {error:oppositeError} =
+        await supabaseClient
+          .from("post_actions")
+          .delete()
+          .eq("post_id",Number(postId))
+          .eq("user_id",currentUser.id)
+          .eq("action_type",opposite);
 
-      console.error(
-        "ACTION ERROR:",
-        error
-      );
+      if(oppositeError){
+        throw oppositeError;
+      }
+
+      const {error:insertError} =
+        await supabaseClient
+          .from("post_actions")
+          .insert({
+            post_id:Number(postId),
+            user_id:currentUser.id,
+            action_type:actionType
+          });
+
+      if(insertError){
+        throw insertError;
+      }
 
     }
 
+    await loadPostActions();
+
+  }catch(error){
+
+    console.error("LIKE/DISLIKE ERROR:",error);
+
+    showNotice(
+      "Like/Dislike nahi ho saka: " +
+      (error?.message || "Database error")
+    );
+
   }
 
-
-  await loadPostActions();
-
 }
-
 
 /* =====================================================
    LIKE / DISLIKE
@@ -3401,7 +3402,7 @@ async function addComment(postId){
         username:
           currentUsername,
 
-        comment:
+        content:
           text
 
       });
@@ -3555,7 +3556,7 @@ async function sendCommentReply(
         username:
           currentUsername,
 
-        comment:
+        content:
           text
 
       });
