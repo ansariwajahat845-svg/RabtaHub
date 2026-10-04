@@ -1583,6 +1583,19 @@ async function checkUser(){
       error
     );
 
+    /*
+      Login session mil chuki ho to kisi feed/profile
+      error ki wajah se user ko login page par wapas
+      redirect nahi karna.
+    */
+    if(currentUser){
+      showNotice(
+        "Feed load mein masla aya: " +
+        (error?.message || "Unknown error")
+      );
+      return;
+    }
+
     window.location.href =
       "login.html";
 
