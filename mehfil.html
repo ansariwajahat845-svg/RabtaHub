@@ -3242,11 +3242,19 @@ function renderPost(
         <img
           class="activity-avatar"
           src="${escapeHtml(avatar)}"
-          alt=""
+          alt="${escapeHtml(name)}"
+          title="Profile dekhein"
+          style="cursor:pointer"
+          onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
           onerror="this.style.display='none'"
         >
 
-        <div class="activity-user">
+        <div
+          class="activity-user"
+          style="cursor:pointer"
+          onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
+          title="Profile dekhein"
+        >
 
           <div class="activity-name">
 
@@ -3308,9 +3316,16 @@ function renderPost(
           `
           <button
             class="action-btn"
+            onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
+          >
+            👤 Profile
+          </button>
+
+          <button
+            class="action-btn"
             onclick="openOneToOne('${escapeJs(String(post.user_id))}')"
           >
-            👤 1on1
+            💬 1on1
           </button>
 
           <button
@@ -3328,6 +3343,13 @@ function renderPost(
           isOwn
           ?
           `
+          <button
+            class="action-btn"
+            onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
+          >
+            👤 Profile
+          </button>
+
           <button
             class="action-btn delete-post"
             onclick="deletePost('${escapeJs(String(post.id))}')"
