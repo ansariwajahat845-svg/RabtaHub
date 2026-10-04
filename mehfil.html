@@ -1638,35 +1638,6 @@ function formatDate(date){
 }
 
 
-async function createNotification({user_id,sender_id,type,message,mehfil_id=null}){
-
-  if(!user_id || String(user_id)===String(currentUser?.id)){
-    return;
-  }
-
-  try{
-
-    const {error}=await supabaseClient
-      .from("notifications")
-      .insert({
-        user_id:user_id,
-        sender_id:sender_id || currentUser?.id || null,
-        type:type,
-        message:message,
-        mehfil_id:mehfil_id,
-        is_read:false
-      });
-
-    if(error){
-      console.warn("Notification insert failed:",error.message);
-    }
-
-  }catch(error){
-    console.warn("Notification error:",error);
-  }
-}
-
-
 function showModal(title,html){
 
   document.getElementById(
@@ -1759,6 +1730,22 @@ function canManageMembers(){
   return isOfficer();
 }
 
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+async function createNotification({user_id,sender_id,type,message,mehfil_id=null}){
+  if(!user_id || String(user_id)===String(currentUser?.id)) return;
+  try{
+    const {error}=await supabaseClient.from("notifications").insert({
+      user_id, sender_id:sender_id || currentUser?.id || null, type, message, mehfil_id, is_read:false
+    });
+    if(error) console.warn("Notification insert failed:",error.message);
+  }catch(error){ console.warn("Notification error:",error.message); }
+}
+
+function goNotifications(){ window.location.href="notifications.html"; }
 
 /* =========================================================
    PROFILE
@@ -2694,36 +2681,28 @@ async function sendActivity(){
       throw error;
     }
 
-    if(currentReply?.postId){
-
-      try{
-
-        const {data:originalPost}=await supabaseClient
-          .from("mehfil_posts")
-          .select("user_id")
-          .eq("id",currentReply.postId)
-          .maybeSingle();
-
-        if(originalPost?.user_id){
-          await createNotification({
-            user_id:originalPost.user_id,
-            sender_id:currentUser.id,
-            type:"mehfil_reply",
-            message:"@"+(currentProfile?.username || "User")+" ne aapke Mehfil message ka reply kiya hai.",
-            mehfil_id:currentMehfil.id
-          });
-        }
-
-      }catch(notificationError){
-        console.warn("Reply notification:",notificationError);
-      }
-    }
+    const sentReply = currentReply ? {...currentReply} : null;
 
     textarea.value = "";
 
     removeImagePreview();
 
     cancelReply();
+
+    if(sentReply?.postId){
+      try{
+        const {data:originalPost}=await supabaseClient.from("mehfil_posts").select("user_id").eq("id",sentReply.postId).maybeSingle();
+        if(originalPost?.user_id){
+          createNotification({
+            user_id:originalPost.user_id,
+            sender_id:currentUser.id,
+            type:"mehfil_reply",
+            message:"@"+(currentProfile?.username || "User")+" ne aapke Mehfil message ka reply kiya.",
+            mehfil_id:currentMehfil.id
+          });
+        }
+      }catch(e){ console.warn("Reply notification failed:",e.message); }
+    }
 
     showToast(
       "Message send ho gaya."
@@ -4256,14 +4235,6 @@ async function kickMember(userId){
       throw error;
     }
 
-    await createNotification({
-      user_id:userId,
-      sender_id:currentUser.id,
-      type:"mehfil_kicked",
-      message:"Aapko "+(currentMehfil.name || "Mehfil")+" se remove kar diya gaya hai.",
-      mehfil_id:currentMehfil.id
-    });
-
     showToast(
       "Member kick ho gaya."
     );
@@ -4395,7 +4366,7 @@ async function applyForOfficer(){
       throw error;
     }
 
-    await createNotification({
+    createNotification({
       user_id:currentMehfil.created_by,
       sender_id:currentUser.id,
       type:"mehfil_officer_application",
@@ -4585,7 +4556,7 @@ async function showApplications(){
 
                   <button
                     class="small-btn"
-                    onclick="rejectOfficer('${escapeJs(String(app.id))}','${escapeJs(String(app.user_id))}')"
+                    onclick="rejectOfficer('${escapeJs(String(app.id))}')"
                   >
                     Reject
                   </button>
@@ -4616,7 +4587,7 @@ async function showApplications(){
 }
 
 
-async async function approveOfficer(
+async function approveOfficer(
   applicationId,
   userId
 ){
@@ -4697,7 +4668,7 @@ async async function approveOfficer(
       throw applicationError;
     }
 
-    await createNotification({
+    createNotification({
       user_id:userId,
       sender_id:currentUser.id,
       type:"mehfil_officer_approved",
@@ -4724,8 +4695,7 @@ async async function approveOfficer(
 
 
 async function rejectOfficer(
-  applicationId,
-  userId
+  applicationId
 ){
 
   if(!isCreator()){
@@ -4733,6 +4703,14 @@ async function rejectOfficer(
   }
 
   try{
+
+    const {data:application,error:findError}=await supabaseClient
+      .from("mehfil_officer_applications")
+      .select("user_id")
+      .eq("id",applicationId)
+      .maybeSingle();
+
+    if(findError) throw findError;
 
     const {
       error
@@ -4753,13 +4731,15 @@ async function rejectOfficer(
       throw error;
     }
 
-    await createNotification({
-      user_id:userId,
-      sender_id:currentUser.id,
-      type:"mehfil_officer_rejected",
-      message:"Aapki "+(currentMehfil.name || "Mehfil")+" mein Afsar application reject kar di gayi hai.",
-      mehfil_id:currentMehfil.id
-    });
+    if(application?.user_id){
+      createNotification({
+        user_id:application.user_id,
+        sender_id:currentUser.id,
+        type:"mehfil_officer_rejected",
+        message:"Aapki "+(currentMehfil.name || "Mehfil")+" mein Afsar application reject kar di gayi hai.",
+        mehfil_id:currentMehfil.id
+      });
+    }
 
     showToast(
       "Application reject ho gayi."
@@ -5198,11 +5178,11 @@ async function sendInvite(userId){
       throw error;
     }
 
-    await createNotification({
+    createNotification({
       user_id:userId,
       sender_id:currentUser.id,
       type:"mehfil_invite",
-      message:"@"+(currentProfile?.username || "User")+" ne aapko "+(currentMehfil.name || "Mehfil")+" mein invite kiya hai.",
+      message:"@"+(currentProfile?.username || "User")+" ne aapko "+(currentMehfil.name || "Mehfil")+" Mehfil mein invite kiya hai.",
       mehfil_id:currentMehfil.id
     });
 
@@ -5517,13 +5497,6 @@ function goPrivate(){
 
   window.location.href =
     "private.html";
-}
-
-
-function goNotifications(){
-
-  window.location.href =
-    "notifications.html";
 }
 
 
