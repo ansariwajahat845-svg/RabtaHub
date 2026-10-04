@@ -406,6 +406,29 @@ button{cursor:pointer}
   min-width:0;
 }
 
+.profile-post-btn{
+  border:0;
+  background:transparent;
+  padding:0;
+  margin:0;
+  border-radius:50%;
+  flex:none;
+  line-height:0;
+}
+
+.profile-post-btn .activity-avatar{
+  display:block;
+  cursor:pointer;
+}
+
+.profile-post-user{
+  cursor:pointer;
+}
+
+.profile-post-user:hover .activity-name{
+  color:#6c5ce7;
+}
+
 .activity-name{
   font-weight:700;
   font-size:15px;
@@ -1346,14 +1369,6 @@ button{cursor:pointer}
     </button>
 
     <button
-      class="nav-item"
-      onclick="goNotifications()"
-    >
-      <span class="nav-icon">🔔</span>
-      Notifications
-    </button>
-
-    <button
       class="nav-item active"
       onclick="goMehfilList()"
     >
@@ -1730,22 +1745,6 @@ function canManageMembers(){
   return isOfficer();
 }
 
-
-
-/* =========================================================
-   NOTIFICATIONS
-========================================================= */
-async function createNotification({user_id,sender_id,type,message,mehfil_id=null}){
-  if(!user_id || String(user_id)===String(currentUser?.id)) return;
-  try{
-    const {error}=await supabaseClient.from("notifications").insert({
-      user_id, sender_id:sender_id || currentUser?.id || null, type, message, mehfil_id, is_read:false
-    });
-    if(error) console.warn("Notification insert failed:",error.message);
-  }catch(error){ console.warn("Notification error:",error.message); }
-}
-
-function goNotifications(){ window.location.href="notifications.html"; }
 
 /* =========================================================
    PROFILE
@@ -2681,28 +2680,11 @@ async function sendActivity(){
       throw error;
     }
 
-    const sentReply = currentReply ? {...currentReply} : null;
-
     textarea.value = "";
 
     removeImagePreview();
 
     cancelReply();
-
-    if(sentReply?.postId){
-      try{
-        const {data:originalPost}=await supabaseClient.from("mehfil_posts").select("user_id").eq("id",sentReply.postId).maybeSingle();
-        if(originalPost?.user_id){
-          createNotification({
-            user_id:originalPost.user_id,
-            sender_id:currentUser.id,
-            type:"mehfil_reply",
-            message:"@"+(currentProfile?.username || "User")+" ne aapke Mehfil message ka reply kiya.",
-            mehfil_id:currentMehfil.id
-          });
-        }
-      }catch(e){ console.warn("Reply notification failed:",e.message); }
-    }
 
     showToast(
       "Message send ho gaya."
@@ -3239,19 +3221,21 @@ function renderPost(
 
       <div class="activity-head">
 
-        <img
-          class="activity-avatar"
-          src="${escapeHtml(avatar)}"
-          alt="${escapeHtml(name)}"
-          title="Profile dekhein"
-          style="cursor:pointer"
+        <button
+          class="profile-post-btn"
           onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
-          onerror="this.style.display='none'"
+          title="Profile dekhein"
         >
+          <img
+            class="activity-avatar"
+            src="${escapeHtml(avatar || getDefaultAvatar())}"
+            alt="Profile"
+            onerror="this.onerror=null;this.src=getDefaultAvatar()"
+          >
+        </button>
 
         <div
-          class="activity-user"
-          style="cursor:pointer"
+          class="activity-user profile-post-user"
           onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
           title="Profile dekhein"
         >
@@ -3316,16 +3300,9 @@ function renderPost(
           `
           <button
             class="action-btn"
-            onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
-          >
-            👤 Profile
-          </button>
-
-          <button
-            class="action-btn"
             onclick="openOneToOne('${escapeJs(String(post.user_id))}')"
           >
-            💬 1on1
+            👤 1on1
           </button>
 
           <button
@@ -3343,13 +3320,6 @@ function renderPost(
           isOwn
           ?
           `
-          <button
-            class="action-btn"
-            onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
-          >
-            👤 Profile
-          </button>
-
           <button
             class="action-btn delete-post"
             onclick="deletePost('${escapeJs(String(post.id))}')"
@@ -4388,14 +4358,6 @@ async function applyForOfficer(){
       throw error;
     }
 
-    createNotification({
-      user_id:currentMehfil.created_by,
-      sender_id:currentUser.id,
-      type:"mehfil_officer_application",
-      message:"@"+(currentProfile?.username || "User")+" ne "+(currentMehfil.name || "Mehfil")+" mein Afsar banne ke liye apply kiya hai.",
-      mehfil_id:currentMehfil.id
-    });
-
     showToast(
       "Afsar application submit ho gayi."
     );
@@ -4690,14 +4652,6 @@ async function approveOfficer(
       throw applicationError;
     }
 
-    createNotification({
-      user_id:userId,
-      sender_id:currentUser.id,
-      type:"mehfil_officer_approved",
-      message:"Aapko "+(currentMehfil.name || "Mehfil")+" mein Afsar bana diya gaya hai.",
-      mehfil_id:currentMehfil.id
-    });
-
     showToast(
       "User Afsar ban gaya."
     );
@@ -4726,14 +4680,6 @@ async function rejectOfficer(
 
   try{
 
-    const {data:application,error:findError}=await supabaseClient
-      .from("mehfil_officer_applications")
-      .select("user_id")
-      .eq("id",applicationId)
-      .maybeSingle();
-
-    if(findError) throw findError;
-
     const {
       error
     } =
@@ -4751,16 +4697,6 @@ async function rejectOfficer(
 
     if(error){
       throw error;
-    }
-
-    if(application?.user_id){
-      createNotification({
-        user_id:application.user_id,
-        sender_id:currentUser.id,
-        type:"mehfil_officer_rejected",
-        message:"Aapki "+(currentMehfil.name || "Mehfil")+" mein Afsar application reject kar di gayi hai.",
-        mehfil_id:currentMehfil.id
-      });
     }
 
     showToast(
@@ -5199,14 +5135,6 @@ async function sendInvite(userId){
     if(error){
       throw error;
     }
-
-    createNotification({
-      user_id:userId,
-      sender_id:currentUser.id,
-      type:"mehfil_invite",
-      message:"@"+(currentProfile?.username || "User")+" ne aapko "+(currentMehfil.name || "Mehfil")+" Mehfil mein invite kiya hai.",
-      mehfil_id:currentMehfil.id
-    });
 
     showToast(
       "Invite send ho gaya."
