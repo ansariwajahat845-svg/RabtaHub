@@ -1,1537 +1,1305 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Mehfil - RabtaHub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RabtaHub</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f4f5fb;
+  background:#f4f6fb;
   color:#222;
+  padding-bottom:80px;
 }
 
-button,input,textarea{
-  font-family:inherit;
-}
-
-button{cursor:pointer}
-
-.hidden{display:none!important}
-
-/* HEADER */
+/* ================= HEADER ================= */
 
 .header{
   position:sticky;
   top:0;
-  z-index:100;
+  z-index:1000;
+  height:60px;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:14px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 15px;
   box-shadow:0 2px 10px rgba(0,0,0,.15);
 }
 
-.header-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+.logo{
+  font-size:24px;
+  font-weight:bold;
 }
 
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-width:0;
+.logo span{
+  font-weight:normal;
 }
 
-.back-btn{
+.online-btn{
   border:0;
-  background:rgba(255,255,255,.18);
-  color:#fff;
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  font-size:20px;
-}
-
-.header-title{
-  font-size:19px;
-  font-weight:700;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.header-sub{
-  font-size:12px;
-  opacity:.85;
-  margin-top:2px;
-}
-
-.header-actions{
-  display:flex;
-  gap:6px;
-}
-
-.header-icon{
-  border:0;
-  background:rgba(255,255,255,.17);
-  color:white;
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  font-size:18px;
-}
-
-/* MAIN */
-
-.container{
-  width:100%;
-  max-width:700px;
-  margin:0 auto;
-  padding:14px 12px 90px;
-}
-
-/* CARDS */
-
-.card{
-  background:white;
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,.07);
-}
-
-.section-title{
-  font-size:17px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-
-.empty{
-  text-align:center;
-  color:#777;
-  padding:30px 10px;
-}
-
-/* MEHFIL LIST */
-
-.mehfil-item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:13px;
-  border:1px solid #eee;
-  border-radius:14px;
-  margin-bottom:9px;
-  background:#fff;
-}
-
-.mehfil-icon{
-  width:48px;
-  height:48px;
-  border-radius:14px;
-  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  flex:none;
-}
-
-.mehfil-info{
-  flex:1;
-  min-width:0;
-}
-
-.mehfil-name{
-  font-weight:700;
-  font-size:16px;
-}
-
-.mehfil-description{
-  color:#777;
-  font-size:13px;
-  margin-top:4px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.open-btn{
-  border:0;
-  background:#6c5ce7;
+  background:rgba(255,255,255,.15);
   color:white;
   padding:9px 12px;
-  border-radius:10px;
-  font-weight:700;
-}
-
-/* INPUTS */
-
-.input,.textarea{
-  width:100%;
-  border:1px solid #ddd;
-  border-radius:12px;
-  padding:12px;
-  outline:none;
-  background:#fff;
-}
-
-.input:focus,.textarea:focus{
-  border-color:#6c5ce7;
-}
-
-.textarea{
-  min-height:90px;
-  resize:vertical;
-}
-
-.field{
-  margin-bottom:11px;
-}
-
-.label{
+  border-radius:20px;
   font-size:13px;
-  font-weight:700;
-  margin-bottom:6px;
-  display:block;
-}
-
-.primary-btn{
-  width:100%;
-  border:0;
-  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
-  color:white;
-  padding:12px;
-  border-radius:12px;
-  font-weight:700;
-}
-
-.secondary-btn{
-  border:1px solid #ddd;
-  background:#fff;
-  padding:10px 12px;
-  border-radius:10px;
-}
-
-.danger-btn{
-  border:0;
-  background:#e74c3c;
-  color:#fff;
-  padding:10px 12px;
-  border-radius:10px;
-}
-
-/* COMPOSER */
-
-.composer{
-  background:white;
-  border-radius:16px;
-  padding:14px;
-  box-shadow:0 2px 10px rgba(0,0,0,.07);
-  margin-bottom:13px;
-}
-
-.replying-bar{
-  display:none;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  background:#f4f0ff;
-  border:1px solid #ddd2ff;
-  border-radius:12px;
-  padding:9px 10px;
-  margin-bottom:10px;
-  color:#5b3db8;
-  font-size:13px;
-}
-
-.replying-info{
-  flex:1;
-  min-width:0;
-}
-
-.replying-label{
-  font-weight:700;
-}
-
-.replying-user{
-  margin-top:2px;
-  color:#777;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.cancel-reply{
-  border:0;
-  background:#fff;
-  color:#e74c3c;
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  font-size:18px;
-  flex:none;
-}
-
-.reply-preview{
-  margin-top:10px;
-  padding:9px 11px;
-  border-left:3px solid #6c5ce7;
-  background:#f7f5ff;
-  border-radius:9px;
-  font-size:12px;
-  color:#666;
   cursor:pointer;
 }
 
-.reply-preview strong{
-  color:#6c5ce7;
-}
+/* ================= CONTAINER ================= */
 
-.composer-top{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-}
-
-.composer-avatar{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:#eee;
-  object-fit:cover;
-  flex:none;
-}
-
-.composer-input{
-  flex:1;
-  min-width:0;
-  border:1px solid #ddd;
-  border-radius:13px;
+.container{
+  width:100%;
+  max-width:650px;
+  margin:auto;
   padding:12px;
-  min-height:70px;
-  resize:none;
-  outline:none;
 }
 
-.composer-actions{
+/* ================= BOXES ================= */
+
+.create-post-box,
+.welcome-box,
+.profile-box{
+  background:white;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.box-title{
+  font-size:17px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+#postInput{
+  width:100%;
+  min-height:90px;
+  resize:none;
+  border:1px solid #ddd;
+  border-radius:10px;
+  padding:12px;
+  font-size:15px;
+  outline:none;
+  font-family:Arial,sans-serif;
+}
+
+#postInput:focus{
+  border-color:#7b61d9;
+}
+
+/* ================= SEND POST ================= */
+
+.post-send-btn{
+  width:100%;
+  margin-top:10px;
+  border:0;
+  background:#6c5ce7;
+  color:white;
+  padding:11px;
+  border-radius:9px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.post-send-btn:active{
+  transform:scale(.98);
+}
+
+/* ================= MEDIA ================= */
+
+.post-media-row{
   display:flex;
-  align-items:center;
-  justify-content:space-between;
   gap:8px;
   margin-top:10px;
 }
 
-.upload-btn{
-  border:1px solid #ddd;
-  background:#fff;
-  padding:9px 12px;
-  border-radius:10px;
-  color:#555;
-}
-
-.send-btn{
-  border:0;
-  background:#6c5ce7;
-  color:white;
-  padding:10px 17px;
-  border-radius:10px;
-  font-weight:700;
-}
-
-.image-preview-box{
-  margin-top:10px;
-  position:relative;
-  display:none;
-}
-
-.image-preview{
-  width:100%;
-  max-height:300px;
-  object-fit:cover;
-  border-radius:13px;
-}
-
-.remove-preview{
-  position:absolute;
-  top:8px;
-  right:8px;
-  width:32px;
-  height:32px;
-  border:0;
-  border-radius:50%;
-  background:rgba(0,0,0,.7);
-  color:white;
-  font-size:18px;
-}
-
-/* ACTIVITY */
-
-.activity{
-  background:white;
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,.07);
-}
-
-.activity-head{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.activity-avatar{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#eee;
-  flex:none;
-}
-
-.activity-user{
+.media-btn{
   flex:1;
-  min-width:0;
-}
-
-.activity-name{
-  font-weight:700;
-  font-size:15px;
-}
-
-.activity-meta{
-  color:#888;
-  font-size:12px;
-  margin-top:3px;
-}
-
-.creator-badge{
-  display:inline-block;
-  background:#fff0b3;
-  color:#9b7200;
-  padding:2px 6px;
-  border-radius:6px;
-  font-size:10px;
-  margin-left:4px;
-  vertical-align:middle;
-}
-
-.officer-badge{
-  display:inline-block;
-  background:#eee8ff;
-  color:#6845c5;
-  padding:2px 6px;
-  border-radius:6px;
-  font-size:10px;
-  margin-left:4px;
-  vertical-align:middle;
-}
-
-.activity-menu{
   border:0;
-  background:#f5f5f5;
-  width:34px;
-  height:34px;
-  border-radius:50%;
-}
-
-.activity-content{
-  white-space:pre-wrap;
-  word-break:break-word;
-  line-height:1.5;
-  margin-top:12px;
-  font-size:15px;
-}
-
-.activity-image{
-  display:block;
-  width:100%;
-  max-height:500px;
-  object-fit:contain;
-  background:#f3f3f3;
-  border-radius:13px;
-  margin-top:12px;
+  background:#f0edff;
+  color:#6045c5;
+  padding:10px 7px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:bold;
   cursor:pointer;
 }
 
-.image-error{
+.media-btn:active{
+  transform:scale(.98);
+}
+
+#recordStatus{
   display:none;
-  margin-top:10px;
-  padding:14px;
-  background:#f7f7f7;
-  color:#888;
-  border-radius:10px;
+  margin-top:8px;
   text-align:center;
+  color:#e74c3c;
+  font-size:12px;
 }
 
-.activity-actions{
-  display:flex;
-  gap:7px;
-  margin-top:12px;
-  flex-wrap:wrap;
+/* ================= WELCOME ================= */
+
+.welcome-title{
+  font-size:17px;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
-.action-btn{
-  border:1px solid #e3e3e3;
-  background:#fff;
-  padding:8px 11px;
-  border-radius:9px;
-  color:#555;
+.username-line{
+  color:#777;
   font-size:13px;
 }
 
-.action-btn:hover{
-  background:#f5f3ff;
+/* ================= SECTION ================= */
+
+.section-title{
+  font-size:18px;
+  font-weight:bold;
+  margin:15px 3px 10px;
 }
 
-.delete-post{
-  color:#e74c3c;
+.refresh-center{
+  text-align:center;
+  margin:-3px 0 12px;
 }
 
-/* REPLIES */
+.refresh-btn{
+  border:0;
+  background:#eeeaff;
+  color:#6045c5;
+  padding:8px 16px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-.replies{
-  display:none;
+.refresh-btn:active{
+  transform:scale(.96);
+}
+
+/* ================= FEED ================= */
+
+.feed-item{
+  background:white;
+  border-radius:14px;
+  padding:13px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.feed-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.feed-user-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.feed-avatar,
+.avatar-fallback{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.avatar-fallback{
+  background:#eeeaff;
+  color:#6c5ce7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.feed-user{
+  font-weight:bold;
+  color:#5d42c5;
+  font-size:15px;
+  word-break:break-word;
+}
+
+.feed-date{
+  color:#999;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.feed-content{
+  margin-top:9px;
+  font-size:15px;
+  line-height:1.5;
+  word-break:break-word;
+}
+
+.feed-type{
+  display:inline-block;
+  margin-top:7px;
+  font-size:11px;
+  color:#999;
+}
+
+/* ================= ACTIONS ================= */
+
+.action-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
   margin-top:12px;
+}
+
+.action-btn{
+  border:0;
+  background:#f3f4f8;
+  color:#444;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.action-btn:hover{
+  background:#e9e7f7;
+}
+
+.delete-btn{
+  background:#ffecec;
+  color:#d63031;
+}
+
+.block-btn{
+  background:#fff3f3;
+  color:#c0392b;
+}
+
+.follow-btn{
+  background:#eeeaff;
+  color:#5d42c5;
+}
+
+/* ================= COMMENTS ================= */
+
+.comments-box{
+  display:none;
+  margin-top:10px;
   border-top:1px solid #eee;
   padding-top:10px;
 }
 
-.reply{
-  display:flex;
-  gap:8px;
-  padding:9px 0;
-  border-bottom:1px solid #f1f1f1;
+.comment-item{
+  background:#f7f7fa;
+  border-radius:9px;
+  padding:8px;
+  margin-bottom:7px;
 }
 
-.reply:last-child{
-  border-bottom:0;
+.comment-user{
+  font-weight:bold;
+  font-size:12px;
+  color:#5d42c5;
 }
 
-.reply-avatar{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#eee;
-}
-
-.reply-body{
-  flex:1;
-  min-width:0;
-}
-
-.reply-name{
-  font-size:13px;
-  font-weight:700;
-}
-
-.reply-text{
+.comment-text{
   font-size:13px;
   margin-top:3px;
-  white-space:pre-wrap;
   word-break:break-word;
 }
 
-.reply-delete{
+.comment-actions{
+  margin-top:5px;
+}
+
+.reply-btn{
   border:0;
   background:none;
-  color:#e74c3c;
+  color:#6c5ce7;
   font-size:11px;
-  padding:3px;
+  padding:0;
+  cursor:pointer;
 }
 
-.reply-form{
+.comment-input-row,
+.reply-input-row{
   display:flex;
-  gap:7px;
-  margin-top:10px;
+  gap:6px;
+  margin-top:8px;
 }
 
-.reply-input{
+.comment-input{
   flex:1;
+  min-width:0;
   border:1px solid #ddd;
-  border-radius:10px;
-  padding:10px;
+  border-radius:8px;
+  padding:8px;
   outline:none;
+  font-size:13px;
 }
 
+.comment-send,
 .reply-send{
   border:0;
   background:#6c5ce7;
   color:white;
-  border-radius:10px;
-  padding:0 13px;
+  border-radius:8px;
+  padding:0 12px;
+  cursor:pointer;
 }
 
-/* SETTINGS */
-
-.setting-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:13px 0;
-  border-bottom:1px solid #eee;
+.reply-box{
+  display:none;
+  margin-top:6px;
 }
 
-.setting-item:last-child{
-  border-bottom:0;
-}
-
-.setting-title{
-  font-weight:700;
-  font-size:14px;
-}
-
-.setting-desc{
-  color:#888;
-  font-size:12px;
-  margin-top:3px;
-}
-
-.setting-btn{
-  border:1px solid #ddd;
-  background:#fff;
-  padding:9px 11px;
-  border-radius:9px;
-  white-space:nowrap;
-}
-
-/* MEMBERS */
-
-.member-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:11px 0;
-  border-bottom:1px solid #eee;
-}
-
-.member-item:last-child{
-  border-bottom:0;
-}
-
-.member-avatar{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#eee;
-}
-
-.member-info{
+.reply-input{
   flex:1;
   min-width:0;
-}
-
-.member-name{
-  font-weight:700;
-  font-size:14px;
-}
-
-.member-role{
-  font-size:11px;
-  color:#777;
-  margin-top:2px;
-}
-
-.member-actions{
-  display:flex;
-  gap:5px;
-}
-
-.small-btn{
   border:1px solid #ddd;
-  background:#fff;
-  padding:7px 9px;
   border-radius:8px;
+  padding:7px;
   font-size:12px;
+  outline:none;
 }
 
-/* MODAL */
+/* ================= PROFILE ================= */
 
-.modal{
-  position:fixed;
-  inset:0;
-  z-index:1000;
-  background:rgba(0,0,0,.55);
+.profile-page{
   display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
 }
 
-.modal-box{
-  width:100%;
-  max-width:550px;
-  max-height:90vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:18px;
-  padding:16px;
+.profile-header{
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:white;
+  border-radius:15px;
+  padding:20px 15px;
+  text-align:center;
+  margin-bottom:12px;
 }
 
-.modal-head{
+.profile-avatar-wrap{
   display:flex;
-  justify-content:space-between;
+  flex-direction:column;
   align-items:center;
-  gap:10px;
-  margin-bottom:13px;
 }
 
-.modal-title{
-  font-size:18px;
-  font-weight:700;
-}
-
-.close-btn{
-  border:0;
-  background:#f1f1f1;
-  width:34px;
-  height:34px;
+.profile-avatar{
+  width:82px;
+  height:82px;
   border-radius:50%;
-  font-size:18px;
-}
-
-/* IMAGE VIEWER */
-
-.image-viewer{
-  position:fixed;
-  inset:0;
-  z-index:2000;
-  background:rgba(0,0,0,.93);
-  display:none;
+  background:white;
+  color:#6c5ce7;
+  display:flex;
   align-items:center;
   justify-content:center;
-  padding:15px;
+  margin:0 auto 10px;
+  font-size:35px;
+  font-weight:bold;
+  overflow:hidden;
+  border:3px solid rgba(255,255,255,.7);
 }
 
-.viewer-image{
-  max-width:100%;
-  max-height:90vh;
-  object-fit:contain;
-  border-radius:8px;
+.profile-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-.viewer-close{
-  position:absolute;
-  top:15px;
-  right:15px;
-  width:42px;
-  height:42px;
+.profile-picture-btn{
   border:0;
-  border-radius:50%;
-  background:rgba(255,255,255,.18);
-  color:#fff;
-  font-size:24px;
+  background:rgba(255,255,255,.16);
+  color:white;
+  padding:8px 12px;
+  border-radius:9px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-/* BOTTOM NAV */
+.profile-picture-btn:active{
+  transform:scale(.97);
+}
+
+.profile-name-display{
+  font-size:20px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.profile-username-display{
+  margin-top:4px;
+  font-size:12px;
+  opacity:.85;
+}
+
+.profile-info{
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.profile-info-row{
+  padding:10px 3px;
+  border-bottom:1px solid #eee;
+  font-size:13px;
+}
+
+.profile-info-row:last-child{
+  border-bottom:0;
+}
+
+.profile-info-label{
+  font-weight:bold;
+  color:#5d42c5;
+  margin-bottom:3px;
+}
+
+.profile-info-value{
+  color:#555;
+  word-break:break-word;
+}
+
+.profile-edit{
+  display:none;
+  background:white;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.profile-field{
+  margin-bottom:12px;
+}
+
+.profile-field label{
+  display:block;
+  font-size:12px;
+  font-weight:bold;
+  color:#555;
+  margin-bottom:5px;
+}
+
+.profile-field input,
+.profile-field textarea,
+.profile-field select{
+  width:100%;
+  border:1px solid #ddd;
+  border-radius:9px;
+  padding:10px;
+  font-size:13px;
+  outline:none;
+  font-family:Arial,sans-serif;
+}
+
+.profile-field textarea{
+  min-height:80px;
+  resize:none;
+}
+
+.profile-save-btn{
+  width:100%;
+  border:0;
+  background:#6c5ce7;
+  color:white;
+  padding:11px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.profile-action-row{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.profile-action-btn{
+  flex:1;
+  border:0;
+  background:#eeeaff;
+  color:#5d42c5;
+  padding:10px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.profile-logout{
+  background:#ffecec;
+  color:#d63031;
+}
+
+
+/* FOLLOW / PUBLIC PROFILE */
+.profile-follow-stats{display:flex;gap:8px;margin-top:12px}
+.profile-follow-btn{flex:1;border:0;background:rgba(255,255,255,.16);color:white;padding:9px 8px;border-radius:9px;font-size:12px;font-weight:bold;cursor:pointer}
+.profile-follow-btn strong{display:block;margin-top:2px;font-size:14px}
+.follow-list-box{display:none;background:white;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.follow-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.follow-list-title{font-size:15px;font-weight:bold;color:#5d42c5}
+.follow-list-close{border:0;background:#f3f4f8;color:#555;padding:6px 9px;border-radius:8px;font-size:11px;cursor:pointer}
+.follow-user{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #eee;cursor:pointer}
+.follow-user:last-child{border-bottom:0}
+.follow-user-info{min-width:0;flex:1}
+.follow-user-name{font-size:13px;font-weight:bold;color:#333;word-break:break-word}
+.follow-user-username{font-size:11px;color:#777;margin-top:2px;word-break:break-word}
+.follow-user .avatar-fallback,.follow-user .feed-avatar{width:38px;height:38px;min-width:38px}
+.public-profile-page{display:none}
+.public-profile-back{width:100%;border:0;background:white;color:#5d42c5;padding:10px;border-radius:10px;margin-bottom:10px;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.public-profile-header{background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:white;border-radius:15px;padding:20px 15px;text-align:center;margin-bottom:12px}
+.public-profile-avatar{width:82px;height:82px;border-radius:50%;background:white;color:#6c5ce7;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:35px;font-weight:bold;overflow:hidden;border:3px solid rgba(255,255,255,.7)}
+.public-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.public-profile-name{font-size:20px;font-weight:bold}
+.public-profile-username{margin-top:4px;font-size:12px;opacity:.85}
+.public-profile-follow{margin-top:12px}
+.public-profile-follow .follow-btn{border:0;background:white;color:#5d42c5;padding:9px 18px;border-radius:9px;font-size:12px;font-weight:bold;cursor:pointer}
+.public-profile-follow-stats{display:flex;gap:8px;margin-top:10px}
+.public-profile-stat{flex:1;border:0;background:rgba(255,255,255,.16);color:white;padding:8px;border-radius:9px;font-size:11px;font-weight:bold;cursor:pointer}
+.public-profile-stat strong{display:block;font-size:14px;margin-top:2px}
+.public-profile-info{background:white;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.private-profile-note{text-align:center;color:#777;font-size:13px;padding:10px}
+.clickable-profile{cursor:pointer}
+.clickable-profile:active{opacity:.7}
+
+/* ================= EMPTY ================= */
+
+.empty{
+  background:white;
+  border-radius:12px;
+  padding:25px;
+  text-align:center;
+  color:#999;
+}
+
+/* ================= NOTICE ================= */
+
+.notice{
+  position:fixed;
+  left:50%;
+  bottom:85px;
+  transform:translateX(-50%);
+  z-index:3000;
+  background:#222;
+  color:white;
+  padding:10px 15px;
+  border-radius:10px;
+  font-size:13px;
+  max-width:90%;
+  text-align:center;
+  display:none;
+}
+
+/* ================= ONLINE POPUP ================= */
+
+.online-popup{
+  display:none;
+  position:fixed;
+  top:65px;
+  right:10px;
+  z-index:2000;
+  width:240px;
+  max-width:90%;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,.2);
+  padding:12px;
+}
+
+.online-popup h3{
+  margin:0 0 10px;
+  font-size:16px;
+}
+
+.online-user{
+  padding:8px;
+  border-bottom:1px solid #eee;
+  font-size:13px;
+}
+
+.online-dot{
+  color:#16a085;
+}
+
+/* ================= BOTTOM NAV ================= */
 
 .bottom-nav{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
-  z-index:500;
-  background:#fff;
+  z-index:1500;
+  height:65px;
+  background:white;
   border-top:1px solid #ddd;
   display:flex;
-  justify-content:center;
+  justify-content:space-around;
+  align-items:center;
   box-shadow:0 -2px 10px rgba(0,0,0,.08);
 }
 
-.bottom-nav-inner{
-  width:100%;
-  max-width:700px;
-  display:flex;
-}
-
-.nav-item{
-  flex:1;
+.nav-btn{
   border:0;
-  background:#fff;
-  padding:9px 4px;
-  color:#777;
+  background:none;
+  color:#666;
   font-size:11px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  cursor:pointer;
 }
 
 .nav-icon{
-  display:block;
-  font-size:19px;
-  margin-bottom:2px;
+  font-size:21px;
 }
 
-.nav-item.active{
+.nav-btn.active{
   color:#6c5ce7;
-  font-weight:700;
 }
 
-/* TOAST */
+/* ================= MOBILE ================= */
 
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:75px;
-  transform:translateX(-50%);
-  z-index:3000;
-  background:#222;
-  color:#fff;
-  padding:11px 15px;
-  border-radius:10px;
-  font-size:13px;
-  max-width:90%;
-  display:none;
-  text-align:center;
+@media(max-width:480px){
+
+  .logo{
+    font-size:22px;
+  }
+
+  .online-btn{
+    font-size:12px;
+    padding:8px 10px;
+  }
+
+  .container{
+    padding:10px;
+  }
+
+  .post-media-row{
+    gap:6px;
+  }
+
+  .media-btn{
+    font-size:12px;
+    padding:9px 4px;
+  }
+
 }
 
-/* LOADING */
+/* ================= LOADING ================= */
 
 .loading{
   text-align:center;
-  padding:30px;
-  color:#777;
+  color:#888;
+  padding:20px;
 }
 
-/* MOBILE */
-
-@media(max-width:500px){
-
-  .container{
-    padding-left:9px;
-    padding-right:9px;
-  }
-
-  .activity{
-    border-radius:13px;
-  }
-
-  .composer{
-    border-radius:13px;
-  }
-
-  .header{
-    padding:12px;
-  }
-
-  .header-title{
-    font-size:17px;
-  }
-
-  .activity-image{
-    max-height:430px;
-  }
-}
 </style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
+
 <header class="header">
 
-  <div class="header-row">
-
-    <div class="header-left">
-
-      <button
-        class="back-btn"
-        onclick="goBack()"
-      >‹</button>
-
-      <div>
-
-        <div
-          class="header-title"
-          id="headerTitle"
-        >Mehfil</div>
-
-        <div
-          class="header-sub"
-          id="headerSub"
-        >RabtaHub</div>
-
-      </div>
-
-    </div>
-
-    <div class="header-actions">
-
-      <button
-        class="header-icon"
-        onclick="refreshCurrent()"
-      >↻</button>
-
-      <button
-        class="header-icon"
-        id="settingsHeaderBtn"
-        onclick="showSettings()"
-        style="display:none"
-      >⚙️</button>
-
-    </div>
-
+  <div class="logo">
+    Socia<span>lyte</span>
   </div>
+
+  <button
+    class="online-btn"
+    type="button"
+    onclick="toggleOnlineUsers()">
+    🟢 Online Users
+  </button>
 
 </header>
 
 
-<main class="container">
+<!-- ================= ONLINE USERS ================= -->
 
-<!-- =====================================================
-     MEHFIL LIST
-====================================================== -->
+<div id="onlinePopup" class="online-popup">
 
-<section id="mehfilsPage">
+  <h3>🟢 Online Users</h3>
 
-  <div class="card">
-
-    <div class="section-title">
-      ➕ Create New Mehfil
-    </div>
-
-    <div class="field">
-
-      <label class="label">
-        Mehfil Name
-      </label>
-
-      <input
-        id="newMehfilName"
-        class="input"
-        maxlength="80"
-        placeholder="Mehfil ka naam"
-      >
-
-    </div>
-
-    <div class="field">
-
-      <label class="label">
-        Description
-      </label>
-
-      <textarea
-        id="newMehfilDescription"
-        class="textarea"
-        maxlength="500"
-        placeholder="Mehfil ke bare mein..."
-      ></textarea>
-
-    </div>
-
-    <button
-      class="primary-btn"
-      onclick="createMehfil()"
-    >
-      Create Mehfil
-    </button>
-
+  <div id="onlineUsersList">
+    Loading...
   </div>
 
+</div>
 
-  <div class="card">
 
-    <div class="section-title">
-      📋 Mehfil Lists
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+  <!-- ================= HOME PAGE ================= -->
+
+  <div id="homePage">
+
+    <!-- CREATE POST -->
+
+    <div class="create-post-box">
+
+      <div class="box-title">
+        📝 Create Post
+      </div>
+
+      <div id="feedReplyBar" style="display:none;background:#f0edff;color:#5d42c5;padding:9px 10px;border-radius:9px;margin-bottom:8px;font-size:12px;font-weight:bold;">
+        <span id="feedReplyText"></span>
+        <button type="button" onclick="cancelFeedReply()" style="float:right;border:0;background:none;color:#d63031;font-weight:bold;cursor:pointer;">✕</button>
+      </div>
+
+      <textarea
+        id="postInput"
+        placeholder="Write a post..."
+        autocomplete="off"></textarea>
+
+      <button
+        id="publishPostBtn"
+        class="post-send-btn"
+        type="button">
+        📤 Send a Post
+      </button>
+
+      <div class="post-media-row">
+
+        <button
+          id="uploadImageBtn"
+          class="media-btn"
+          type="button">
+          🖼️ Upload Image
+        </button>
+
+        <button
+          id="voiceBtn"
+          class="media-btn"
+          type="button">
+          🎤 Voice
+        </button>
+
+      </div>
+
+      <input
+        id="imageInput"
+        type="file"
+        accept="image/*"
+        style="display:none;">
+
+      <div id="recordStatus">
+        Recording... Tap 🎤 again to stop
+      </div>
+
     </div>
 
-    <div id="mehfilList">
 
-      <div class="loading">
-        Mehfil load ho rahi hai...
+    <!-- WELCOME -->
+
+    <div class="welcome-box">
+
+      <div class="welcome-title">
+        Welcome to Socialyte ♥️
+      </div>
+
+      <div class="username-line">
+        Logged in as:
+        <strong id="loggedInUsername">User</strong>
+      </div>
+
+    </div>
+
+
+    <!-- HOME FEED -->
+
+    <div class="section-title">
+      🏠 Home Feed
+    </div>
+
+    <div class="refresh-center">
+
+      <button
+        class="refresh-btn"
+        type="button"
+        onclick="refreshHomeFeed()">
+        🔄 Refresh
+      </button>
+
+    </div>
+
+    <div id="homeFeed">
+
+      <div class="empty">
+        Loading feed...
       </div>
 
     </div>
 
   </div>
 
-</section>
 
+  <!-- ================= PROFILE PAGE ================= -->
 
-<!-- =====================================================
-     OPEN MEHFIL
-====================================================== -->
+  <div id="profilePage" class="profile-page">
 
-<section
-  id="mehfilPage"
-  style="display:none"
->
+    <div class="profile-header">
 
-  <div class="card">
+      <div class="profile-avatar-wrap">
 
-    <div class="section-title">
-
-      <span id="mehfilNameDisplay">
-        Mehfil
-      </span>
-
-    </div>
-
-    <div
-      id="mehfilDescriptionDisplay"
-      style="color:#777;font-size:13px;line-height:1.5"
-    ></div>
-
-    <div
-      id="mehfilStats"
-      style="margin-top:10px;color:#777;font-size:12px"
-    ></div>
-
-    <div
-      style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px"
-    >
-
-      <button
-        class="secondary-btn"
-        onclick="showMembers()"
-      >
-        👥 Members
-      </button>
-
-      <button
-        class="secondary-btn"
-        onclick="showMyStatus()"
-      >
-        ℹ️ My Status
-      </button>
-
-      <button
-        class="secondary-btn"
-        onclick="applyForOfficer()"
-        id="applyOfficerBtn"
-      >
-        🛡️ Apply Afsar
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <div
-    class="composer"
-    id="activityComposer"
-  >
-
-    <div
-    class="replying-bar"
-    id="replyingBar"
-  >
-    <div class="replying-info">
-      <div class="replying-label">↩️ Replying to</div>
-      <div
-        class="replying-user"
-        id="replyingUser"
-      ></div>
-    </div>
-
-    <button
-      class="cancel-reply"
-      onclick="cancelReply()"
-      title="Cancel Reply"
-    >×</button>
-  </div>
-
-  <div class="composer-top">
-
-      <img
-        id="composerAvatar"
-        class="composer-avatar"
-        src=""
-        alt=""
-      >
-
-      <textarea
-        id="activityText"
-        class="composer-input"
-        maxlength="5000"
-        placeholder="Mehfil mein kuch share karein..."
-      ></textarea>
-
-    </div>
-
-
-    <div
-      class="image-preview-box"
-      id="imagePreviewBox"
-    >
-
-      <img
-        id="imagePreview"
-        class="image-preview"
-        src=""
-        alt="Preview"
-      >
-
-      <button
-        class="remove-preview"
-        onclick="removeImagePreview()"
-      >×</button>
-
-    </div>
-
-
-    <div class="composer-actions">
-
-      <div style="display:flex;gap:7px">
+        <div
+          id="profileAvatar"
+          class="profile-avatar">
+          👤
+        </div>
 
         <button
-          class="upload-btn"
-          onclick="document.getElementById('imageInput').click()"
-        >
-          🖼️ Picture
+          class="profile-picture-btn"
+          type="button"
+          onclick="chooseProfilePicture()">
+          🖼️ Change Profile Picture
         </button>
 
         <input
+          id="profileImageInput"
           type="file"
-          id="imageInput"
           accept="image/*"
-          style="display:none"
-          onchange="previewSelectedImage(event)"
-        >
+          style="display:none;">
 
       </div>
 
+      <div
+        id="profileNameDisplay"
+        class="profile-name-display">
+        User
+      </div>
+
+      <div
+        id="profileUsernameDisplay"
+        class="profile-username-display">
+        @User
+      </div>
+
+      <div class="profile-follow-stats">
+        <button class="profile-follow-btn" type="button" onclick="openOwnFollowList('followers')">
+          👥 Followers
+          <strong id="followersCount">0</strong>
+        </button>
+        <button class="profile-follow-btn" type="button" onclick="openOwnFollowList('following')">
+          ➡️ Following
+          <strong id="followingCount">0</strong>
+        </button>
+      </div>
+
+    </div>
+
+
+    <!-- OWN FOLLOW LIST -->
+
+    <div id="ownFollowListBox" class="follow-list-box">
+      <div class="follow-list-head">
+        <div id="ownFollowListTitle" class="follow-list-title">👥 Followers</div>
+        <button class="follow-list-close" type="button" onclick="closeOwnFollowList()">✕ Close</button>
+      </div>
+      <div id="ownFollowListContent">Loading...</div>
+    </div>
+
+    <!-- PROFILE INFORMATION -->
+
+    <div class="profile-info">
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          👤 Profile Name
+        </div>
+
+        <div
+          id="profileNameValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          🎂 Date of Birth
+        </div>
+
+        <div
+          id="profileDobValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          📍 City
+        </div>
+
+        <div
+          id="profileCityValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          🔒 Profile
+        </div>
+
+        <div
+          id="profilePrivacyValue"
+          class="profile-info-value">
+          Public
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          📝 Bio
+        </div>
+
+        <div
+          id="profileBioValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-action-row">
+
+        <button
+          class="profile-action-btn"
+          type="button"
+          onclick="showEditProfile()">
+          ✏️ Edit Profile
+        </button>
+
+        <button
+          class="profile-action-btn profile-logout"
+          type="button"
+          onclick="signOut()">
+          🚪 Logout
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- EDIT PROFILE -->
+
+    <div
+      id="profileEdit"
+      class="profile-edit">
+
+      <div class="box-title">
+        ✏️ Edit Profile
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          👤 Profile Name
+        </label>
+
+        <input
+          id="editName"
+          type="text"
+          placeholder="Enter your name"
+          autocomplete="off">
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          🎂 Date of Birth
+        </label>
+
+        <input
+          id="editDob"
+          type="date">
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          📍 City
+        </label>
+
+        <input
+          id="editCity"
+          type="text"
+          placeholder="Enter your city"
+          autocomplete="off">
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          🔒 Profile Privacy
+        </label>
+
+        <select id="editPrivacy">
+
+          <option value="public">
+            Public
+          </option>
+
+          <option value="private">
+            Private
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          📝 Bio
+        </label>
+
+        <textarea
+          id="editBio"
+          placeholder="Write something about yourself..."
+          maxlength="350"></textarea>
+
+      </div>
+
+
       <button
-        class="send-btn"
-        onclick="sendActivity()"
-      >
-        Send
+        class="profile-save-btn"
+        type="button"
+        onclick="saveProfile()">
+        💾 Save Profile
       </button>
 
     </div>
 
-  </div>
 
-
-  <div id="activityFeed">
-
-    <div class="loading">
-      Activity load ho rahi hai...
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =====================================================
-     SETTINGS
-====================================================== -->
-
-<section
-  id="settingsPage"
-  style="display:none"
->
-
-  <div class="card">
+    <!-- MY POSTS -->
 
     <div class="section-title">
-      ⚙️ Mehfil Settings
+      📝 My Posts
     </div>
 
+    <div id="myPosts">
 
-    <div class="setting-item">
-
-      <div>
-        <div class="setting-title">
-          ✏️ Edit Mehfil
-        </div>
-
-        <div class="setting-desc">
-          Name aur description change karein
-        </div>
+      <div class="empty">
+        Loading your posts...
       </div>
-
-      <button
-        class="setting-btn"
-        onclick="showEditMehfil()"
-      >
-        Edit
-      </button>
-
-    </div>
-
-
-    <div class="setting-item">
-
-      <div>
-        <div class="setting-title">
-          👥 Manage Members
-        </div>
-
-        <div class="setting-desc">
-          Mehfil members dekhein
-        </div>
-      </div>
-
-      <button
-        class="setting-btn"
-        onclick="showManageMembers()"
-      >
-        Open
-      </button>
-
-    </div>
-
-
-    <div class="setting-item">
-
-      <div>
-        <div class="setting-title">
-          🚪 Kick Members
-        </div>
-
-        <div class="setting-desc">
-          Members ko Mehfil se remove karein
-        </div>
-      </div>
-
-      <button
-        class="setting-btn"
-        onclick="showKickMembers()"
-      >
-        Open
-      </button>
-
-    </div>
-
-
-    <div
-      class="setting-item"
-      id="inviteSetting"
-    >
-
-      <div>
-        <div class="setting-title">
-          📩 Invite User
-        </div>
-
-        <div class="setting-desc">
-          Kisi user ko Mehfil mein invite karein
-        </div>
-      </div>
-
-      <button
-        class="setting-btn"
-        onclick="showInviteUser()"
-      >
-        Invite
-      </button>
-
-    </div>
-
-
-    <div
-      class="setting-item"
-      id="applicationsSetting"
-    >
-
-      <div>
-        <div class="setting-title">
-          🛡️ Afsar Applications
-        </div>
-
-        <div class="setting-desc">
-          Afsar banne ki applications
-        </div>
-      </div>
-
-      <button
-        class="setting-btn"
-        onclick="showApplications()"
-      >
-        Open
-      </button>
-
-    </div>
-
-
-    <div
-      class="setting-item"
-      id="officersSetting"
-    >
-
-      <div>
-        <div class="setting-title">
-          👮 Manage Afsar
-        </div>
-
-        <div class="setting-desc">
-          Afsar promote ya remove karein
-        </div>
-      </div>
-
-      <button
-        class="setting-btn"
-        onclick="showOfficers()"
-      >
-        Open
-      </button>
-
-    </div>
-
-
-    <div
-      class="setting-item"
-      id="deleteMehfilSetting"
-    >
-
-      <div>
-        <div class="setting-title">
-          🗑️ Delete Mehfil
-        </div>
-
-        <div class="setting-desc">
-          Ye action undo nahi hoga
-        </div>
-      </div>
-
-      <button
-        class="danger-btn"
-        onclick="deleteCurrentMehfil()"
-      >
-        Delete
-      </button>
 
     </div>
 
   </div>
 
-</section>
+
+  <!-- PUBLIC USER PROFILE -->
+  <div id="publicProfilePage" class="public-profile-page">
+
+    <button class="public-profile-back" type="button" onclick="closePublicProfile()">← Back to Home</button>
+
+    <div class="public-profile-header">
+      <div id="publicProfileAvatar" class="public-profile-avatar">👤</div>
+      <div id="publicProfileName" class="public-profile-name">User</div>
+      <div id="publicProfileUsername" class="public-profile-username">@User</div>
+
+      <div class="public-profile-follow">
+        <button id="publicProfileFollowBtn" class="follow-btn" type="button" onclick="togglePublicProfileFollow()">Follow</button>
+      </div>
+
+      <div class="public-profile-follow-stats">
+        <button class="public-profile-stat" type="button" onclick="openPublicFollowList('followers')">
+          👥 Followers
+          <strong id="publicFollowersCount">0</strong>
+        </button>
+        <button class="public-profile-stat" type="button" onclick="openPublicFollowList('following')">
+          ➡️ Following
+          <strong id="publicFollowingCount">0</strong>
+        </button>
+      </div>
+    </div>
+
+    <div id="publicFollowListBox" class="follow-list-box">
+      <div class="follow-list-head">
+        <div id="publicFollowListTitle" class="follow-list-title">👥 Followers</div>
+        <button class="follow-list-close" type="button" onclick="closePublicFollowList()">✕ Close</button>
+      </div>
+      <div id="publicFollowListContent">Loading...</div>
+    </div>
+
+    <div id="publicProfileInfo" class="public-profile-info"></div>
+
+    <div class="section-title">📝 Posts</div>
+    <div id="publicUserPosts"><div class="empty">Loading posts...</div></div>
+  </div>
 
 </main>
 
 
-<!-- BOTTOM NAV -->
+<!-- ================= NOTICE ================= -->
+
+<div id="notice" class="notice"></div>
+
+
+<!-- ================= BOTTOM NAV ================= -->
 
 <nav class="bottom-nav">
 
-  <div class="bottom-nav-inner">
+  <button
+    id="homeNavBtn"
+    class="nav-btn active"
+    type="button"
+    onclick="goHome()">
 
-    <button
-      class="nav-item"
-      onclick="goHome()"
-    >
-      <span class="nav-icon">🏠</span>
-      Home
-    </button>
+    <span class="nav-icon">🏠</span>
+    <span>Home</span>
 
-    <button
-      class="nav-item"
-      onclick="goPrivate()"
-    >
-      <span class="nav-icon">💬</span>
-      Private
-    </button>
+  </button>
 
-    <button
-      class="nav-item"
-      onclick="goProfile()"
-    >
-      <span class="nav-icon">👤</span>
-      Profile
-    </button>
 
-    <button
-      class="nav-item"
-      onclick="goNotifications()"
-    >
-      <span class="nav-icon">🔔</span>
-      Notifications
-    </button>
+  <button
+    class="nav-btn"
+    type="button"
+    onclick="goPrivate()">
 
-    <button
-      class="nav-item active"
-      onclick="goMehfilList()"
-    >
-      <span class="nav-icon">🏘️</span>
-      Mehfil
-    </button>
+    <span class="nav-icon">💬</span>
+    <span>Private</span>
 
-    <button
-      class="nav-item"
-      onclick="goMore()"
-    >
-      <span class="nav-icon">☰</span>
-      More
-    </button>
+  </button>
 
-  </div>
+
+  <button
+    id="profileNavBtn"
+    class="nav-btn"
+    type="button"
+    onclick="goProfile()">
+
+    <span class="nav-icon">👤</span>
+    <span>Profile</span>
+
+  </button>
+
+
+  <button
+    class="nav-btn"
+    type="button"
+    onclick="goNotifications()">
+
+    <span class="nav-icon">🔔</span>
+    <span>Notifications</span>
+
+  </button>
+
+
+  <button
+    class="nav-btn"
+    type="button"
+    onclick="goMore()">
+
+    <span class="nav-icon">☰</span>
+    <span>More</span>
+
+  </button>
 
 </nav>
 
 
-<!-- MODAL -->
-
-<div
-  class="modal"
-  id="modal"
-  onclick="closeModalOutside(event)"
->
-
-  <div
-    class="modal-box"
-    id="modalBox"
-  >
-
-    <div class="modal-head">
-
-      <div
-        class="modal-title"
-        id="modalTitle"
-      >
-        Modal
-      </div>
-
-      <button
-        class="close-btn"
-        onclick="closeModal()"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <div id="modalBody"></div>
-
-  </div>
-
-</div>
-
-
-<!-- IMAGE VIEWER -->
-
-<div
-  class="image-viewer"
-  id="imageViewer"
-  onclick="closeImageViewer(event)"
->
-
-  <button
-    class="viewer-close"
-    onclick="closeImageViewer()"
-  >
-    ×
-  </button>
-
-  <img
-    id="viewerImage"
-    class="viewer-image"
-    src=""
-    alt="Image"
-  >
-
-</div>
-
-
-<div
-  class="toast"
-  id="toast"
-></div>
-
-
 <script>
 
-/* =========================================================
+/* =====================================================
    SUPABASE
-========================================================= */
+===================================================== */
 
 const SUPABASE_URL =
-  "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+  "https://szmauhxiyjffjhrcruee.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+  "sb_publishable_-ys_eIxK2WuUucSGtoBdqw_nKWnIgep";
 
 const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY
+    SUPABASE_KEY,
+    {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
   );
 
 
-/* =========================================================
-   GLOBALS
-========================================================= */
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
 let currentUser = null;
-let currentProfile = null;
-let currentMehfil = null;
-let currentMembership = null;
-let selectedImageFile = null;
-let currentPage = "list";
+let currentUsername = "User";
 
-/* Active feed reply */
-let currentReply = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+let feedLoadToken = 0;
 
 
-/* =========================================================
-   INIT
-========================================================= */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  async function(){
-
-    try{
-
-      const {
-        data:{
-          session
-        }
-      } =
-      await supabaseClient
-        .auth
-        .getSession();
-
-      if(!session){
-
-        window.location.href =
-          "login.html";
-
-        return;
-      }
-
-      currentUser =
-        session.user;
-
-      await loadCurrentProfile();
-      await loadMehfils();
-
-    }catch(error){
-
-      console.error(error);
-
-      showToast(
-        error.message ||
-        "Page load nahi ho saki."
-      );
-
-    }
-
-  }
-);
-
-
-/* =========================================================
+/* =====================================================
    HELPERS
-========================================================= */
+===================================================== */
 
 function escapeHtml(value){
 
-  return String(value ?? "")
+  if(value === null || value === undefined){
+    return "";
+  }
+
+  return String(value)
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
@@ -1540,1920 +1308,1878 @@ function escapeHtml(value){
 }
 
 
-function escapeJs(value){
+function escapeAttr(value){
 
-  return String(value ?? "")
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'")
-    .replace(/\n/g,"\\n")
-    .replace(/\r/g,"\\r");
-}
-
-
-function showToast(message){
-
-  const toast =
-    document.getElementById("toast");
-
-  toast.textContent =
-    message;
-
-  toast.style.display =
-    "block";
-
-  clearTimeout(
-    window.__toastTimer
-  );
-
-  window.__toastTimer =
-    setTimeout(
-      ()=>{
-        toast.style.display =
-          "none";
-      },
-      3000
-    );
+  return escapeHtml(value)
+    .replace(/`/g,"&#096;");
 }
 
 
 function formatDate(date){
-
-  if(!date){
-    return "";
-  }
-
-  const d =
-    new Date(date);
-
-  if(Number.isNaN(d.getTime())){
-    return "";
-  }
-
-  const diff =
-    Date.now() -
-    d.getTime();
-
-  const seconds =
-    Math.floor(diff/1000);
-
-  if(seconds < 10){
-    return "Just now";
-  }
-
-  if(seconds < 60){
-    return seconds+" sec ago";
-  }
-
-  const minutes =
-    Math.floor(seconds/60);
-
-  if(minutes < 60){
-    return minutes+
-      (minutes===1
-        ?" min ago"
-        :" mins ago");
-  }
-
-  const hours =
-    Math.floor(minutes/60);
-
-  if(hours < 24){
-    return hours+
-      (hours===1
-        ?" hour ago"
-        :" hours ago");
-  }
-
-  const days =
-    Math.floor(hours/24);
-
-  if(days < 7){
-    return days+
-      (days===1
-        ?" day ago"
-        :" days ago");
-  }
-
+  if(!date) return "";
+  const d = new Date(date);
+  if(Number.isNaN(d.getTime())) return "";
+  const seconds = Math.max(0, Math.floor((Date.now()-d.getTime())/1000));
+  if(seconds < 10) return "Just now";
+  if(seconds < 60) return seconds + " sec ago";
+  const minutes = Math.floor(seconds/60);
+  if(minutes < 60) return minutes + (minutes===1 ? " min ago" : " mins ago");
+  const hours = Math.floor(minutes/60);
+  if(hours < 24) return hours + (hours===1 ? " hour ago" : " hours ago");
+  const days = Math.floor(hours/24);
+  if(days < 7) return days + (days===1 ? " day ago" : " days ago");
   return d.toLocaleDateString();
 }
 
 
-function showModal(title,html){
+function showNotice(message){
 
-  document.getElementById(
-    "modalTitle"
-  ).textContent =
-    title;
+  const notice =
+    document.getElementById("notice");
 
-  document.getElementById(
-    "modalBody"
-  ).innerHTML =
-    html;
-
-  document.getElementById(
-    "modal"
-  ).style.display =
-    "flex";
-}
-
-
-function closeModal(){
-
-  document.getElementById(
-    "modal"
-  ).style.display =
-    "none";
-}
-
-
-function closeModalOutside(event){
-
-  if(event.target.id === "modal"){
-    closeModal();
-  }
-}
-
-
-function hideAllPages(){
-
-  document.getElementById(
-    "mehfilsPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "mehfilPage"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "settingsPage"
-  ).style.display =
-    "none";
-}
-
-
-function showPage(id){
-
-  hideAllPages();
-
-  document.getElementById(
-    id
-  ).style.display =
-    "block";
-}
-
-
-function getRole(){
-
-  return currentMembership?.role || "member";
-}
-
-
-function isCreator(){
-
-  return getRole() === "admin";
-}
-
-
-function isOfficer(){
-
-  return (
-    getRole() === "moderator" ||
-    isCreator()
-  );
-}
-
-
-function canManageMembers(){
-
-  return isOfficer();
-}
-
-
-
-/* =========================================================
-   NOTIFICATIONS
-========================================================= */
-async function createNotification({user_id,sender_id,type,message,mehfil_id=null}){
-  if(!user_id || String(user_id)===String(currentUser?.id)) return;
-  try{
-    const {error}=await supabaseClient.from("notifications").insert({
-      user_id, sender_id:sender_id || currentUser?.id || null, type, message, mehfil_id, is_read:false
-    });
-    if(error) console.warn("Notification insert failed:",error.message);
-  }catch(error){ console.warn("Notification error:",error.message); }
-}
-
-function goNotifications(){ window.location.href="notifications.html"; }
-
-/* =========================================================
-   PROFILE
-========================================================= */
-
-async function loadCurrentProfile(){
-
-  if(!currentUser){
+  if(!notice){
     return;
   }
 
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("profiles")
-    .select("*")
-    .eq(
-      "id",
-      currentUser.id
-    )
-    .maybeSingle();
+  notice.textContent = message;
+  notice.style.display = "block";
 
-  if(error){
+  clearTimeout(window.noticeTimer);
 
-    console.warn(
-      "Profile load:",
-      error.message
-    );
+  window.noticeTimer =
+    setTimeout(() => {
 
-    currentProfile = null;
+      notice.style.display = "none";
 
-    return;
-  }
+    },3000);
 
-  currentProfile =
-    data || null;
-
-  const avatar =
-    currentProfile?.avatar_url || "";
-
-  const composerAvatar =
-    document.getElementById(
-      "composerAvatar"
-    );
-
-  if(composerAvatar){
-
-    composerAvatar.src =
-      avatar ||
-      "data:image/svg+xml;charset=UTF-8,"+
-      encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
-          <rect width="100%" height="100%" fill="#eeeeee"/>
-          <text x="50%" y="55%" text-anchor="middle" font-size="30">👤</text>
-        </svg>`
-      );
-  }
 }
 
 
-/* =========================================================
-   MEHFIL LIST
-========================================================= */
-
-async function loadMehfils(){
-
-  currentPage = "list";
-
-  showPage("mehfilsPage");
-
-  document.getElementById(
-    "headerTitle"
-  ).textContent =
-    "Mehfil";
-
-  document.getElementById(
-    "headerSub"
-  ).textContent =
-    "RabtaHub";
-
-  document.getElementById(
-    "settingsHeaderBtn"
-  ).style.display =
-    "none";
-
-  const list =
-    document.getElementById(
-      "mehfilList"
-    );
-
-  list.innerHTML =
-    `<div class="loading">
-      Mehfil load ho rahi hai...
-    </div>`;
-
-  try{
-
-    if(!currentUser){
-      throw new Error(
-        "User login nahi hai."
-      );
-    }
-
-    const {
-      data:mehfils,
-      error:mehfilError
-    } =
-    await supabaseClient
-      .from("mehfils")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
-
-    if(mehfilError){
-      throw mehfilError;
-    }
-
-    if(!mehfils || mehfils.length === 0){
-
-      list.innerHTML =
-        `<div class="empty">
-          Abhi koi Mehfil available nahi hai.
-        </div>`;
-
-      return;
-    }
-
-    const {
-      data:members,
-      error:memberError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select(
-        "mehfil_id,role,created_at"
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-    if(memberError){
-      throw memberError;
-    }
-
-    const memberMap =
-      new Map(
-        (members || []).map(
-          member=>[
-            String(member.mehfil_id),
-            member
-          ]
-        )
-      );
-
-    list.innerHTML =
-      mehfils.map(
-        mehfil=>{
-
-          const member =
-            memberMap.get(
-              String(mehfil.id)
-            );
-
-          const joined =
-            !!member;
-
-          let roleText =
-            "🏠 Mehfil";
-
-          if(joined){
-
-            roleText =
-              member.role === "admin"
-                ? "👑 Creator"
-                : member.role === "moderator"
-                  ? "🛡️ Afsar"
-                  : "👤 Member";
-          }
-
-          return `
-            <div class="mehfil-item">
-
-              <div class="mehfil-icon">
-                🏠
-              </div>
-
-              <div class="mehfil-info">
-
-                <div class="mehfil-name">
-                  ${escapeHtml(
-                    mehfil.name ||
-                    "Mehfil"
-                  )}
-                </div>
-
-                <div class="mehfil-description">
-                  ${escapeHtml(
-                    mehfil.description ||
-                    "RabtaHub Mehfil"
-                  )}
-                </div>
-
-                <div
-                  style="
-                    font-size:11px;
-                    color:#888;
-                    margin-top:4px
-                  "
-                >
-                  ${roleText}
-                </div>
-
-              </div>
-
-              ${
-                joined
-                ?
-                `
-                <button
-                  class="open-btn"
-                  onclick="openMehfil('${escapeJs(String(mehfil.id))}')"
-                >
-                  Open
-                </button>
-                `
-                :
-                `
-                <button
-                  class="open-btn"
-                  onclick="joinMehfil('${escapeJs(String(mehfil.id))}')"
-                >
-                  Join
-                </button>
-                `
-              }
-
-            </div>
-          `;
-        }
-      ).join("");
-
-  }catch(error){
-
-    console.error(
-      "loadMehfils:",
-      error
-    );
-
-    list.innerHTML =
-      `<div class="empty">
-        Mehfil load nahi ho saki.<br>
-        <small>
-          ${escapeHtml(error.message)}
-        </small>
-      </div>`;
-  }
-}
-
-
-/* =========================================================
-   JOIN MEHFIL
-========================================================= */
-
-async function joinMehfil(mehfilId){
-
-  if(!currentUser){
-
-    showToast(
-      "Pehle login karein."
-    );
-
-    return;
-  }
-
-  if(!mehfilId){
-    return;
-  }
-
-  try{
-
-    const {
-      data:existing,
-      error:checkError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select("id,role")
-      .eq(
-        "mehfil_id",
-        mehfilId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .maybeSingle();
-
-    if(checkError){
-      throw checkError;
-    }
-
-    if(existing){
-
-      showToast(
-        "Aap already is Mehfil ke member hain."
-      );
-
-      await openMehfil(mehfilId);
-
-      return;
-    }
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .insert({
-        mehfil_id:mehfilId,
-        user_id:currentUser.id,
-        role:"member"
-      });
-
-    if(error){
-      throw error;
-    }
-
-    showToast(
-      "Mehfil join ho gayi."
-    );
-
-    await loadMehfils();
-
-    await openMehfil(mehfilId);
-
-  }catch(error){
-
-    console.error(
-      "joinMehfil:",
-      error
-    );
-
-    showToast(
-      "Mehfil join nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   CREATE MEHFIL
-========================================================= */
-
-async function createMehfil(){
-
-  const name =
-    document.getElementById(
-      "newMehfilName"
-    ).value.trim();
-
-  const description =
-    document.getElementById(
-      "newMehfilDescription"
-    ).value.trim();
-
-  if(!name){
-
-    showToast(
-      "Mehfil name likhein."
-    );
-
-    return;
-  }
-
-  try{
-
-    const {
-      data:mehfil,
-      error
-    } =
-    await supabaseClient
-      .from("mehfils")
-      .insert({
-        name,
-        description,
-        created_by:currentUser.id
-      })
-      .select()
-      .single();
-
-    if(error){
-      throw error;
-    }
-
-    const {
-      error:memberError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .insert({
-        mehfil_id:mehfil.id,
-        user_id:currentUser.id,
-        role:"admin"
-      });
-
-    if(memberError){
-
-      await supabaseClient
-        .from("mehfils")
-        .delete()
-        .eq("id",mehfil.id);
-
-      throw memberError;
-    }
-
-    document.getElementById(
-      "newMehfilName"
-    ).value = "";
-
-    document.getElementById(
-      "newMehfilDescription"
-    ).value = "";
-
-    showToast(
-      "Mehfil create ho gayi."
-    );
-
-    await loadMehfils();
-
-    await openMehfil(mehfil.id);
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Mehfil create nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   OPEN MEHFIL
-========================================================= */
-
-async function openMehfil(mehfilId){
-
-  try{
-
-    const {
-      data:mehfil,
-      error
-    } =
-    await supabaseClient
-      .from("mehfils")
-      .select("*")
-      .eq("id",mehfilId)
-      .single();
-
-    if(error){
-      throw error;
-    }
-
-    const {
-      data:membership,
-      error:memberError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select("*")
-      .eq(
-        "mehfil_id",
-        mehfilId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .maybeSingle();
-
-    if(memberError){
-      throw memberError;
-    }
-
-    if(!membership){
-
-      showToast(
-        "Aap is Mehfil ke member nahi hain."
-      );
-
-      await loadMehfils();
-
-      return;
-    }
-
-    currentMehfil =
-      mehfil;
-
-    currentMembership =
-      membership;
-
-    currentPage =
-      "mehfil";
-
-    showPage(
-      "mehfilPage"
-    );
-
-    document.getElementById(
-      "headerTitle"
-    ).textContent =
-      mehfil.name || "Mehfil";
-
-    document.getElementById(
-      "headerSub"
-    ).textContent =
-      membership.role === "admin"
-        ? "👑 Creator"
-        : membership.role === "moderator"
-          ? "🛡️ Afsar"
-          : "👤 Member";
-
-    document.getElementById(
-      "mehfilNameDisplay"
-    ).textContent =
-      mehfil.name || "Mehfil";
-
-    document.getElementById(
-      "mehfilDescriptionDisplay"
-    ).textContent =
-      mehfil.description || "";
-
-    document.getElementById(
-      "settingsHeaderBtn"
-    ).style.display =
-      canManageMembers()
-        ? "block"
-        : "none";
-
-    document.getElementById(
-      "activityComposer"
-    ).style.display =
-      "block";
-
-    document.getElementById(
-      "applyOfficerBtn"
-    ).style.display =
-      membership.role === "member"
-        ? "inline-block"
-        : "none";
-
-    await loadMehfilStats();
-    await loadActivities();
-
-  }catch(error){
-
-    console.error(
-      "openMehfil:",
-      error
-    );
-
-    showToast(
-      "Mehfil open nahi ho saki: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   STATS
-========================================================= */
-
-async function loadMehfilStats(){
-
-  if(!currentMehfil){
-    return;
-  }
-
-  try{
-
-    const {
-      count,
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select(
-        "id",
-        {
-          count:"exact",
-          head:true
-        }
-      )
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      );
-
-    if(error){
-      throw error;
-    }
-
-    document.getElementById(
-      "mehfilStats"
-    ).textContent =
-      "👥 "+(count || 0)+" members";
-
-  }catch(error){
-
-    console.warn(error.message);
-
-  }
-}
-
-
-/* =========================================================
-   IMAGE URL
-========================================================= */
-
-function getMediaUrl(mediaUrl){
-
-  if(!mediaUrl){
-    return "";
-  }
-
-  const raw =
-    String(mediaUrl).trim();
-
-  if(!raw){
-    return "";
-  }
-
-  if(
-    raw.startsWith("https://") ||
-    raw.startsWith("http://")
-  ){
-    return raw;
-  }
-
-  const {
-    data
-  } =
-  supabaseClient
-    .storage
-    .from("mehfil-media")
-    .getPublicUrl(raw);
-
-  return data?.publicUrl || "";
-}
-
-
-/* =========================================================
-   IMAGE PREVIEW
-========================================================= */
-
-function previewSelectedImage(event){
-
-  const file =
-    event.target.files?.[0];
-
-  if(!file){
-    return;
-  }
-
-  if(
-    !file.type.startsWith("image/")
-  ){
-
-    showToast(
-      "Sirf image select karein."
-    );
-
-    event.target.value = "";
-
-    return;
-  }
-
-  if(file.size > 10 * 1024 * 1024){
-
-    showToast(
-      "Image 10MB se choti honi chahiye."
-    );
-
-    event.target.value = "";
-
-    return;
-  }
-
-  selectedImageFile =
-    file;
-
-  const reader =
-    new FileReader();
-
-  reader.onload =
-    function(e){
-
-      document.getElementById(
-        "imagePreview"
-      ).src =
-        e.target.result;
-
-      document.getElementById(
-        "imagePreviewBox"
-      ).style.display =
-        "block";
-
-    };
-
-  reader.readAsDataURL(file);
-}
-
-
-function removeImagePreview(){
-
-  selectedImageFile =
-    null;
-
-  document.getElementById(
-    "imageInput"
-  ).value = "";
-
-  document.getElementById(
-    "imagePreview"
-  ).src = "";
-
-  document.getElementById(
-    "imagePreviewBox"
-  ).style.display =
-    "none";
-}
-
-
-/* =========================================================
-   UPLOAD IMAGE
-========================================================= */
-
-async function uploadMehfilImage(file){
-
-  if(!file){
-    return null;
-  }
-
-  const extension =
-    (
-      file.name.split(".").pop() ||
-      "jpg"
-    )
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g,"");
-
-  const safeExtension =
-    extension || "jpg";
-
-  const path =
-    currentMehfil.id+
-    "/"+
-    currentUser.id+
-    "/"+
-    Date.now()+
-    "-"+
-    Math.random()
-      .toString(36)
-      .substring(2,10)+
-    "."+
-    safeExtension;
-
-  const {
-    error
-  } =
-  await supabaseClient
-    .storage
-    .from("mehfil-media")
-    .upload(
-      path,
-      file,
-      {
-        upsert:false,
-        contentType:
-          file.type || "image/jpeg",
-        cacheControl:"3600"
-      }
-    );
-
-  if(error){
-
-    throw new Error(
-      "Image upload nahi hui: "+
-      error.message
-    );
-  }
-
-  const {
-    data:publicData
-  } =
-  supabaseClient
-    .storage
-    .from("mehfil-media")
-    .getPublicUrl(path);
-
-  const publicUrl =
-    publicData?.publicUrl;
-
-  if(!publicUrl){
-
-    throw new Error(
-      "Image ka public URL nahi bana."
-    );
-  }
-
-  return publicUrl;
-}
-
-
-/* =========================================================
-   SEND ACTIVITY
-========================================================= */
-
-async function sendActivity(){
-
-  if(!currentMehfil){
-
-    showToast(
-      "Pehle Mehfil open karein."
-    );
-
-    return;
-  }
-
-  const textarea =
-    document.getElementById(
-      "activityText"
-    );
-
-  const typedContent =
-    textarea.value.trim();
-
-  if(
-    !typedContent &&
-    !selectedImageFile
-  ){
-
-    showToast(
-      "Message ya picture add karein."
-    );
-
-    return;
-  }
-
-  try{
-
-    const sendButton =
-      document.querySelector(
-        ".send-btn"
-      );
-
-    sendButton.disabled =
-      true;
-
-    sendButton.textContent =
-      "Sending...";
-
-    let mediaUrl = null;
-
-    if(selectedImageFile){
-
-      mediaUrl =
-        await uploadMehfilImage(
-          selectedImageFile
-        );
-    }
-
-    /* Reply metadata existing content field mein save hota hai. */
-    const replyPrefix =
-      currentReply
-        ? makeReplyPrefix(currentReply)
-        : "";
-
-    const finalContent =
-      replyPrefix +
-      typedContent;
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .insert({
-        mehfil_id:
-          currentMehfil.id,
-        user_id:
-          currentUser.id,
-        content:
-          finalContent || "",
-        media_url:
-          mediaUrl
-      });
-
-    if(error){
-
-      if(mediaUrl){
-
-        try{
-
-          const path =
-            getStoragePathFromUrl(
-              mediaUrl
-            );
-
-          if(path){
-
-            await supabaseClient
-              .storage
-              .from("mehfil-media")
-              .remove([path]);
-          }
-
-        }catch(removeError){
-
-          console.warn(removeError);
-        }
-      }
-
-      throw error;
-    }
-
-    const sentReply = currentReply ? {...currentReply} : null;
-
-    textarea.value = "";
-
-    removeImagePreview();
-
-    cancelReply();
-
-    if(sentReply?.postId){
-      try{
-        const {data:originalPost}=await supabaseClient.from("mehfil_posts").select("user_id").eq("id",sentReply.postId).maybeSingle();
-        if(originalPost?.user_id){
-          createNotification({
-            user_id:originalPost.user_id,
-            sender_id:currentUser.id,
-            type:"mehfil_reply",
-            message:"@"+(currentProfile?.username || "User")+" ne aapke Mehfil message ka reply kiya.",
-            mehfil_id:currentMehfil.id
-          });
-        }
-      }catch(e){ console.warn("Reply notification failed:",e.message); }
-    }
-
-    showToast(
-      "Message send ho gaya."
-    );
-
-    await loadActivities();
-
-    /* New reply/message feed ke bilkul top par show ho. */
-    const feed = document.getElementById("activityFeed");
-    if(feed){
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
-    }
-
-  }catch(error){
-
-    console.error(
-      "sendActivity:",
-      error
-    );
-
-    showToast(
-      "Message send nahi hua: "+
-      error.message
-    );
-
-  }finally{
-
-    const sendButton =
-      document.querySelector(
-        ".send-btn"
-      );
-
-    sendButton.disabled =
-      false;
-
-    sendButton.textContent =
-      "Send";
-  }
-}
-
-
-/* =========================================================
-   FEED REPLY
-========================================================= */
-
-function makeReplyPrefix(reply){
-
-  return (
-    "__RABTA_REPLY__:" +
-    encodeURIComponent(
-      String(reply.postId || "")
-    ) +
-    ":" +
-    encodeURIComponent(
-      String(reply.username || "User")
-    ) +
-    "__\n"
-  );
-}
-
-
-function parseReplyContent(content){
-
-  const text =
-    String(content || "");
-
-  const match =
-    text.match(
-      /^__RABTA_REPLY__:(.*?):(.*?)__\n/
-    );
-
-  if(!match){
-
-    return {
-      isReply:false,
-      replyPostId:null,
-      replyUsername:"",
-      content:text
-    };
-  }
-
-  return {
-    isReply:true,
-    replyPostId:
-      decodeURIComponent(
-        match[1] || ""
-      ),
-    replyUsername:
-      decodeURIComponent(
-        match[2] || "User"
-      ),
-    content:
-      text.substring(
-        match[0].length
-      )
-  };
-}
-
-
-function startReply(
-  postId,
+/* =====================================================
+   AVATAR
+===================================================== */
+
+function renderUserAvatar(
   username,
-  name
+  avatarUrl,
+  sizeClass = "feed-avatar"
 ){
 
-  currentReply = {
-    postId:String(postId),
-    username:
-      username ||
-      name ||
-      "User",
-    name:
-      name ||
-      username ||
-      "User"
-  };
+  const safeName =
+    escapeHtml(username || "User");
 
-  const bar =
-    document.getElementById(
-      "replyingBar"
+  const initial =
+    escapeHtml(
+      (username || "U")
+        .charAt(0)
+        .toUpperCase()
     );
 
-  const user =
-    document.getElementById(
-      "replyingUser"
-    );
 
-  if(bar){
+  if(avatarUrl){
 
-    bar.style.display =
-      "flex";
+    return `
+      <img
+        class="${sizeClass}"
+        src="${escapeAttr(avatarUrl)}"
+        alt=""
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+
+      <span
+        class="${sizeClass} avatar-fallback"
+        style="display:none;">
+        ${initial}
+      </span>
+    `;
+
   }
 
-  if(user){
 
-    user.textContent =
-      "@" +
-      (
-        currentReply.username ||
-        "User"
-      );
-  }
+  return `
+    <span class="${sizeClass} avatar-fallback">
+      ${initial}
+    </span>
+  `;
 
-  const textarea =
-    document.getElementById(
-      "activityText"
-    );
-
-  if(textarea){
-
-    textarea.focus();
-
-    textarea.placeholder =
-      "@" +
-      (
-        currentReply.username ||
-        "User"
-      ) +
-      " ko reply likhein...";
-  }
-
-  showToast(
-    "Reply mode on ho gaya."
-  );
 }
 
 
-function cancelReply(){
+/* =====================================================
+   CURRENT USER
+===================================================== */
 
-  currentReply =
-    null;
+function setCurrentUser(user){
 
-  const bar =
-    document.getElementById(
-      "replyingBar"
-    );
+  currentUser = user;
 
-  if(bar){
+  if(!user){
 
-    bar.style.display =
-      "none";
+    currentUsername = "User";
+
+    return;
+
   }
 
-  const user =
+
+  currentUsername =
+    user.user_metadata?.username ||
+    user.user_metadata?.name ||
+    user.email?.split("@")[0] ||
+    "User";
+
+
+  const usernameElement =
     document.getElementById(
-      "replyingUser"
+      "loggedInUsername"
     );
 
-  if(user){
+  if(usernameElement){
 
-    user.textContent =
-      "";
+    usernameElement.textContent =
+      currentUsername;
+
   }
 
-  const textarea =
-    document.getElementById(
-      "activityText"
-    );
-
-  if(textarea){
-
-    textarea.placeholder =
-      "Mehfil mein kuch share karein...";
-  }
 }
 
 
-function scrollToReplyPost(postId){
+/* =====================================================
+   SYNC PROFILE
+===================================================== */
 
-  const post =
-    document.getElementById(
-      "post-" + postId
-    );
+async function syncMyProfile(){
 
-  if(!post){
-
+  if(!currentUser){
     return;
   }
 
-  post.scrollIntoView({
-    behavior:"smooth",
-    block:"center"
-  });
 
-  post.style.outline =
-    "2px solid #6c5ce7";
+  const metadata =
+    currentUser.user_metadata || {};
 
-  setTimeout(
-    ()=>{
-      post.style.outline =
-        "";
-    },
-    1400
-  );
+
+  const username =
+    metadata.username ||
+    metadata.name ||
+    currentUser.email?.split("@")[0] ||
+    "User";
+
+
+  const name =
+    metadata.name ||
+    username;
+
+
+  const payload = {
+
+    id:
+      currentUser.id,
+
+    username:
+      username,
+
+    name:
+      name,
+
+    avatar_url:
+      metadata.avatar_url || null,
+
+    date_of_birth:
+      metadata.date_of_birth || null,
+
+    city:
+      metadata.city || null,
+
+    bio:
+      metadata.bio || null,
+
+    profile_privacy:
+      metadata.profile_privacy || "public",
+
+    updated_at:
+      new Date().toISOString()
+
+  };
+
+
+  const { error } =
+    await supabaseClient
+      .from("profiles")
+      .upsert(
+        payload,
+        {
+          onConflict:"id"
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      "PROFILE SYNC ERROR:",
+      error
+    );
+
+  }
+
 }
 
 
+/* =====================================================
+   CHECK USER
+===================================================== */
 
-/* =========================================================
-   STORAGE PATH
-========================================================= */
+async function checkUser(){
 
-function getStoragePathFromUrl(url){
+  console.log("Checking Home Feed login session...");
+
+  for(let attempt=1; attempt<=8; attempt++){
+
+    try{
+
+      const {data,error} =
+        await supabaseClient.auth.getSession();
+
+      console.log("Session check",attempt,data,error);
+
+      if(
+        !error &&
+        data &&
+        data.session &&
+        data.session.user
+      ){
+
+        setCurrentUser(data.session.user);
+
+        try{
+          await syncMyProfile();
+        }catch(profileError){
+          console.warn("PROFILE SYNC SKIPPED:",profileError);
+        }
+
+        await loadFeed();
+        return;
+      }
+
+    }catch(error){
+
+      console.error("SESSION CHECK ERROR:",error);
+
+    }
+
+    if(attempt < 8){
+      await new Promise(resolve => setTimeout(resolve,750));
+    }
+
+  }
 
   try{
 
-    const marker =
-      "/storage/v1/object/public/mehfil-media/";
+    const {data,error} =
+      await supabaseClient.auth.getUser();
 
-    const index =
-      String(url).indexOf(marker);
+    console.log("Final user check:",data,error);
 
-    if(index === -1){
-      return null;
+    if(!error && data && data.user){
+
+      setCurrentUser(data.user);
+
+      try{
+        await syncMyProfile();
+      }catch(profileError){
+        console.warn("PROFILE SYNC SKIPPED:",profileError);
+      }
+
+      await loadFeed();
+      return;
     }
-
-    return decodeURIComponent(
-      String(url).substring(
-        index + marker.length
-      )
-    );
 
   }catch(error){
 
-    return null;
+    console.error("FINAL USER CHECK ERROR:",error);
+
   }
+
+  if(!currentUser){
+    window.location.replace("login.html");
+  }
+
+}
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+supabaseClient.auth.onAuthStateChange(
+  async (event,session) => {
+
+    if(session?.user){
+
+      setCurrentUser(
+        session.user
+      );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   ADD POST
+===================================================== */
+
+async function addPost(){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "postInput"
+    );
+
+
+  if(!input){
+
+    showNotice(
+      "Post box nahi mila."
+    );
+
+    return;
+
+  }
+
+
+  const text =
+    input.value.trim();
+
+
+  if(!text){
+    return;
+  }
+
+  if(feedReplyTarget){
+    await sendFeedReply();
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("posts")
+      .insert({
+
+        user_id:
+          currentUser.id,
+
+        username:
+          currentUsername,
+
+        content:
+          text
+
+      });
+
+
+  if(error){
+
+    console.error(
+      "POST ERROR:",
+      error
+    );
+
+    showNotice(
+      "Post send nahi hua: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  input.value = "";
+
+  await loadFeed();
+
 }
 
 
-/* =========================================================
-   LOAD ACTIVITIES
-========================================================= */
+/* =====================================================
+   LOAD FEED
+===================================================== */
 
-async function loadActivities(){
+async function loadFeed(){
 
-  if(!currentMehfil){
-    return;
-  }
+  const loadToken = ++feedLoadToken;
 
   const feed =
     document.getElementById(
-      "activityFeed"
+      "homeFeed"
     );
 
+
+  if(!feed){
+    return;
+  }
+
+
   feed.innerHTML =
-    `<div class="loading">
-      Activity load ho rahi hai...
-    </div>`;
+    '<div class="loading">Loading feed...</div>';
+
 
   try{
 
-    const {
-      data:posts,
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .select("*")
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .order(
-        "created_at",
-        {ascending:false}
+    let blockedIds = [];
+
+
+    /* ---------- BLOCKED USERS ---------- */
+
+    if(currentUser){
+
+      const blockedResult =
+        await supabaseClient
+          .from("user_blocks")
+          .select("blocked_id")
+          .eq(
+            "blocker_id",
+            currentUser.id
+          );
+
+
+      if(
+        !blockedResult.error &&
+        blockedResult.data
+      ){
+
+        blockedIds =
+          blockedResult.data.map(
+            row => row.blocked_id
+          );
+
+      }
+
+    }
+
+
+    /* ---------- POSTS ---------- */
+
+    const postsResult =
+      await supabaseClient
+        .from("posts")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(postsResult.error){
+
+      console.error(
+        "POST LOAD ERROR:",
+        postsResult.error
       );
 
-    if(error){
-      throw error;
     }
 
-    if(!posts || posts.length === 0){
 
-      feed.innerHTML =
-        `<div class="card empty">
-          Abhi koi activity nahi hai.<br>
-          Pehli activity aap post karein.
-        </div>`;
+    /* ---------- MESSAGES ---------- */
 
-      return;
+    const messagesResult =
+      await supabaseClient
+        .from("home_messages")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(messagesResult.error){
+
+      console.error(
+        "MESSAGE LOAD ERROR:",
+        messagesResult.error
+      );
+
     }
+
+
+    const posts =
+      postsResult.data || [];
+
+
+    const messages =
+      messagesResult.data || [];
+
+
+    if(loadToken !== feedLoadToken) return;
+
+    /* ---------- COMBINE ---------- */
+
+    let feedItems = [];
+
+
+    posts.forEach(post => {
+
+      if(
+        !blockedIds.includes(
+          post.user_id
+        )
+      ){
+
+        feedItems.push({
+
+          type:"post",
+          data:post
+
+        });
+
+      }
+
+    });
+
+
+    messages.forEach(message => {
+
+      if(
+        !blockedIds.includes(
+          message.user_id
+        )
+      ){
+
+        feedItems.push({
+
+          type:"message",
+          data:message
+
+        });
+
+      }
+
+    });
+
+
+    /* ---------- NEWEST FIRST: NEVER REVERSE ---------- */
+
+    feedItems.sort(
+      (a,b) =>
+        new Date(
+          b.data.created_at
+        ) -
+        new Date(
+          a.data.created_at
+        )
+    );
+
+
+    /* ---------- LOAD PROFILES ---------- */
 
     const userIds =
       [
         ...new Set(
-          posts
-            .map(p=>p.user_id)
+          feedItems
+            .map(
+              item =>
+                item.data.user_id
+            )
             .filter(Boolean)
         )
       ];
 
-    let profiles = [];
+
+    let profileMap = {};
+
 
     if(userIds.length){
 
       const {
-        data,
+        data:profileRows,
         error:profileError
       } =
-      await supabaseClient
-        .from("profiles")
-        .select(
-          "id,username,name,avatar_url"
-        )
-        .in(
-          "id",
-          userIds
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id,avatar_url,username,name"
+          )
+          .in(
+            "id",
+            userIds
+          );
+
+
+      if(
+        !profileError &&
+        profileRows
+      ){
+
+        profileRows.forEach(
+          profile => {
+
+            profileMap[
+              profile.id
+            ] = profile;
+
+          }
         );
+
+      }
+
 
       if(profileError){
 
-        console.warn(
-          "Profiles:",
-          profileError.message
+        console.error(
+          "PROFILE LOAD ERROR:",
+          profileError
         );
 
-      }else{
-
-        profiles =
-          data || [];
       }
+
     }
 
-    const profileMap =
-      new Map(
-        profiles.map(
-          p=>[
-            String(p.id),
-            p
-          ]
-        )
-      );
 
-    const {
-      data:memberRoles
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select("user_id,role")
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .in(
-        "user_id",
-        userIds
-      );
+    /* ---------- ADD AVATARS ---------- */
 
-    const roleMap =
-      new Map(
-        (memberRoles || []).map(
-          r=>[
-            String(r.user_id),
-            r.role
-          ]
-        )
-      );
+    feedItems.forEach(item => {
+
+      const profile =
+        profileMap[
+          item.data.user_id
+        ];
+
+
+      item.data.avatar_url =
+        profile?.avatar_url || "";
+
+
+      if(!item.data.username){
+
+        item.data.username =
+          profile?.username ||
+          profile?.name ||
+          "User";
+
+      }
+
+    });
+
+
+    if(feedItems.length === 0){
+
+      feed.innerHTML =
+        '<div class="empty">No posts or messages yet.</div>';
+
+      return;
+
+    }
+
+
+    if(loadToken !== feedLoadToken) return;
 
     feed.innerHTML =
-      posts.map(
-        post=>
-          renderPost(
-            post,
-            profileMap.get(
-              String(post.user_id)
-            ),
-            roleMap.get(
-              String(post.user_id)
-            )
-          )
-      ).join("");
+      feedItems
+        .map(item => {
+
+          if(item.type === "post"){
+
+            return renderPost(
+              item.data
+            );
+
+          }
+
+          return renderMessage(
+            item.data
+          );
+
+        })
+        .join("");
+
+
+    await loadPostActions();
+
+    await loadFollowStatus();
 
   }catch(error){
 
     console.error(
-      "loadActivities:",
+      "FEED ERROR:",
       error
     );
 
     feed.innerHTML =
-      `<div class="card empty">
-        Activity load nahi ho saki.<br>
-        <small>
-          ${escapeHtml(
-            error.message
-          )}
-        </small>
-      </div>`;
+      '<div class="empty">Feed load nahi ho saki.</div>';
+
   }
+
 }
 
 
-/* =========================================================
+/* =====================================================
    RENDER POST
-========================================================= */
+===================================================== */
 
-function renderPost(
-  post,
-  profile,
-  role
-){
-
-  const username =
-    profile?.username ||
-    profile?.name ||
-    "User";
-
-  const name =
-    profile?.name ||
-    username;
-
-  const avatar =
-    profile?.avatar_url ||
-    "";
-
-  const image =
-    getMediaUrl(
-      post.media_url
-    );
+function renderPost(post){
 
   const isOwn =
-    String(post.user_id) ===
-    String(currentUser.id);
+    currentUser &&
+    post.user_id ===
+    currentUser.id;
 
-  const replyInfo =
-    parseReplyContent(
-      post.content
-    );
 
-  let roleBadge = "";
+  let buttons = "";
 
-  if(role === "admin"){
 
-    roleBadge =
-      `<span class="creator-badge">
-        👑 Creator
-      </span>`;
+  if(isOwn){
 
-  }else if(role === "moderator"){
+    buttons += `
+      <button
+        class="action-btn delete-btn"
+        onclick="deletePost(${post.id})">
+        🗑️ Delete
+      </button>
+    `;
 
-    roleBadge =
-      `<span class="officer-badge">
-        🛡️ Afsar
-      </span>`;
+  }else{
+
+    buttons += `
+      <button
+        class="action-btn block-btn"
+        onclick="blockUser('${escapeAttr(post.user_id)}')">
+        🚫 Block
+      </button>
+
+    `;
+
   }
 
-  let imageHtml = "";
-
-  if(image){
-
-    imageHtml =
-      `
-      <img
-        class="activity-image"
-        src="${escapeHtml(image)}"
-        alt="Mehfil Image"
-        loading="lazy"
-        onclick="openImage('${escapeJs(image)}')"
-        onerror="imageLoadFailed(this)"
-      >
-
-      <div class="image-error">
-        🖼️ Image load nahi ho saki
-      </div>
-      `;
-  }
-
-  let replyPreview = "";
-
-  if(replyInfo.isReply){
-
-    replyPreview =
-      `
-      <div
-        class="reply-preview"
-        onclick="scrollToReplyPost('${escapeJs(replyInfo.replyPostId)}')"
-      >
-        ↩️ Reply to
-        <strong>
-          @${escapeHtml(replyInfo.replyUsername)}
-        </strong>
-      </div>
-      `;
-  }
 
   return `
-    <article
-      class="activity"
-      id="post-${escapeHtml(String(post.id))}"
-    >
 
-      <div class="activity-head">
+    <div
+      class="feed-item"
+      id="post-${post.id}">
 
-        <img
-          class="activity-avatar"
-          src="${escapeHtml(avatar)}"
-          alt="${escapeHtml(name)}"
-          title="Profile dekhein"
-          style="cursor:pointer"
-          onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
-          onerror="this.style.display='none'"
-        >
+      <div class="feed-head">
 
-        <div
-          class="activity-user"
-          style="cursor:pointer"
-          onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
-          title="Profile dekhein"
-        >
-
-          <div class="activity-name">
-
-            ${escapeHtml(name)}
-
-            ${roleBadge}
-
+        <div class="feed-user-wrap">
+          <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(post.user_id)}')" title="Open profile">
+            ${renderUserAvatar(
+              post.username || "User",
+              post.avatar_url
+            )}
           </div>
 
-          <div class="activity-meta">
-
-            @${escapeHtml(username)}
-            ·
+          <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(post.user_id)}')" title="Open profile">
             ${escapeHtml(
-              formatDate(post.created_at)
+              post.username || "User"
             )}
-
           </div>
 
         </div>
 
-        <button
-          class="activity-menu"
-          onclick="showPostMenu('${escapeJs(String(post.id))}','${escapeJs(String(post.user_id))}')"
-        >
-          ⋮
-        </button>
+        <div class="feed-date">
+          ${formatDate(post.created_at)}
+        </div>
 
       </div>
 
-      ${replyPreview}
+      <div class="feed-content">
+        ${escapeHtml(post.content)}
+      </div>
 
-      ${
-        replyInfo.content
-        ?
-        `
-        <div class="activity-content">
-          ${escapeHtml(replyInfo.content)}
-        </div>
-        `
-        :
-        ""
-      }
+      <div class="feed-type">
+        📝 Post
+      </div>
 
-      ${imageHtml}
+      <div class="action-row">
 
-      <div class="activity-actions">
+        ${buttons}
+
+        <button
+          id="like-btn-${post.id}"
+          class="action-btn"
+          onclick="toggleLike(${post.id})">
+          ❤️ Like <span id="like-count-${post.id}">0</span>
+        </button>
+
+        <button
+          id="dislike-btn-${post.id}"
+          class="action-btn"
+          onclick="toggleDislike(${post.id})">
+          👎 Dislike <span id="dislike-count-${post.id}">0</span>
+        </button>
 
         <button
           class="action-btn"
-          onclick="startReply('${escapeJs(String(post.id))}','${escapeJs(String(username))}','${escapeJs(String(name))}')"
-        >
+          onclick="toggleComments(${post.id})">
+          💬 Comments
+        </button>
+
+        <button
+          class="action-btn"
+          onclick="startFeedReply(${post.id}, '${escapeAttr(post.username || "User")}')">
           ↩️ Reply
         </button>
 
-        ${
-          !isOwn
-          ?
-          `
-          <button
-            class="action-btn"
-            onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
-          >
-            👤 Profile
-          </button>
+      </div>
+
+      <div
+        id="comments-${post.id}"
+        class="comments-box">
+
+        <div
+          id="comments-list-${post.id}">
+          Loading comments...
+        </div>
+
+        <div class="comment-input-row">
+
+          <input
+            id="comment-input-${post.id}"
+            class="comment-input"
+            type="text"
+            placeholder="Write a comment..."
+            autocomplete="off">
 
           <button
-            class="action-btn"
-            onclick="openOneToOne('${escapeJs(String(post.user_id))}')"
-          >
-            💬 1on1
+            class="comment-send"
+            onclick="addComment(${post.id})">
+            ➤
           </button>
 
-          <button
-            class="action-btn"
-            onclick="blockUser('${escapeJs(String(post.user_id))}')"
-          >
-            🚫 Block
-          </button>
-          `
-          :
-          ""
-        }
-
-        ${
-          isOwn
-          ?
-          `
-          <button
-            class="action-btn"
-            onclick="openUserProfile('${escapeJs(String(post.user_id))}')"
-          >
-            👤 Profile
-          </button>
-
-          <button
-            class="action-btn delete-post"
-            onclick="deletePost('${escapeJs(String(post.id))}')"
-          >
-            🗑️ Delete
-          </button>
-          `
-          :
-          ""
-        }
+        </div>
 
       </div>
 
-    </article>
+    </div>
+
   `;
+
 }
 
 
+/* =====================================================
+   RENDER MESSAGE
+===================================================== */
 
-function imageLoadFailed(img){
+function renderMessage(message){
 
-  img.style.display =
-    "none";
+  const isOwn =
+    currentUser &&
+    message.user_id ===
+    currentUser.id;
 
-  if(img.nextElementSibling){
 
-    img.nextElementSibling.style.display =
-      "block";
+  let buttons = "";
+
+
+  if(isOwn){
+
+    buttons += `
+      <button
+        class="action-btn delete-btn"
+        onclick="deleteHomeMessage(${message.id})">
+        🗑️ Delete
+      </button>
+    `;
+
+  }else{
+
+    buttons += `
+      <button
+        class="action-btn block-btn"
+        onclick="blockUser('${escapeAttr(message.user_id)}')">
+        🚫 Block
+      </button>
+
+    `;
+
   }
+
+
+  return `
+
+    <div
+      class="feed-item"
+      id="message-${message.id}">
+
+      <div class="feed-head">
+
+        <div class="feed-user-wrap">
+          <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(message.user_id)}')" title="Open profile">
+            ${renderUserAvatar(
+              message.username || "User",
+              message.avatar_url
+            )}
+          </div>
+
+          <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(message.user_id)}')" title="Open profile">
+            ${escapeHtml(
+              message.username || "User"
+            )}
+          </div>
+
+        </div>
+
+        <div class="feed-date">
+          ${formatDate(message.created_at)}
+        </div>
+
+      </div>
+
+      <div class="feed-content">
+        ${escapeHtml(message.message)}
+      </div>
+
+      <div class="feed-type">
+        💬 Message
+      </div>
+
+      <div class="action-row">
+
+        ${buttons}
+
+      </div>
+
+    </div>
+
+  `;
+
 }
 
 
-/* =========================================================
-   IMAGE VIEWER
-========================================================= */
+/* =====================================================
+   DELETE POST
+===================================================== */
 
-function openImage(url){
+async function deletePost(postId){
 
-  if(!url){
+  if(!currentUser){
     return;
   }
 
-  document.getElementById(
-    "viewerImage"
-  ).src =
-    url;
 
-  document.getElementById(
-    "imageViewer"
-  ).style.display =
-    "flex";
+  if(
+    !confirm(
+      "Delete this post?"
+    )
+  ){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("posts")
+      .delete()
+      .eq(
+        "id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    showNotice(
+      "Delete nahi hua: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadFeed();
+
 }
 
 
-function closeImageViewer(event){
+/* =====================================================
+   DELETE MESSAGE
+===================================================== */
+
+async function deleteHomeMessage(messageId){
+
+  if(!currentUser){
+    return;
+  }
+
 
   if(
-    !event ||
-    event.target.id === "imageViewer" ||
-    event.target.classList.contains("viewer-close")
+    !confirm(
+      "Delete this message?"
+    )
+  ){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("home_messages")
+      .delete()
+      .eq(
+        "id",
+        messageId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    showNotice(
+      "Message delete nahi hua: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadFeed();
+
+}
+
+
+/* =====================================================
+   POST ACTIONS
+===================================================== */
+
+async function loadPostActions(){
+
+  const { data,error } =
+    await supabaseClient
+      .from("post_actions")
+      .select("*");
+
+
+  if(error){
+
+    console.error(
+      "ACTION LOAD ERROR:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  const actions =
+    data || [];
+
+
+  document
+    .querySelectorAll(
+      "[id^='like-count-']"
+    )
+    .forEach(element => {
+
+      const postId =
+        Number(
+          element.id.replace(
+            "like-count-",
+            ""
+          )
+        );
+
+
+      const count =
+        actions.filter(
+          row =>
+            row.post_id === postId &&
+            row.action_type === "like"
+        ).length;
+
+
+      element.textContent =
+        count;
+
+    });
+
+
+  document
+    .querySelectorAll(
+      "[id^='dislike-count-']"
+    )
+    .forEach(element => {
+
+      const postId =
+        Number(
+          element.id.replace(
+            "dislike-count-",
+            ""
+          )
+        );
+
+
+      const count =
+        actions.filter(
+          row =>
+            row.post_id === postId &&
+            row.action_type === "dislike"
+        ).length;
+
+
+      element.textContent =
+        count;
+
+    });
+
+  if(currentUser){
+
+    const myActions =
+      actions.filter(
+        row => row.user_id === currentUser.id
+      );
+
+    document.querySelectorAll("[id^='like-btn-']").forEach(button => {
+      const postId = Number(button.id.replace("like-btn-",""));
+      const active = myActions.some(
+        row => row.post_id === postId &&
+               row.action_type === "like"
+      );
+      button.style.fontWeight = active ? "bold" : "normal";
+    });
+
+    document.querySelectorAll("[id^='dislike-btn-']").forEach(button => {
+      const postId = Number(button.id.replace("dislike-btn-",""));
+      const active = myActions.some(
+        row => row.post_id === postId &&
+               row.action_type === "dislike"
+      );
+      button.style.fontWeight = active ? "bold" : "normal";
+    });
+
+  }
+
+}
+
+
+/* =====================================================
+   SET POST ACTION
+===================================================== */
+
+async function setPostAction(postId, actionType){
+
+  if(!currentUser){
+    showNotice("Please login first.");
+    return;
+  }
+
+  const opposite =
+    actionType === "like" ? "dislike" : "like";
+
+  try{
+
+    const {data:existing,error:findError} =
+      await supabaseClient
+        .from("post_actions")
+        .select("id")
+        .eq("post_id",Number(postId))
+        .eq("user_id",currentUser.id)
+        .eq("action_type",actionType)
+        .limit(1)
+        .maybeSingle();
+
+    if(findError){
+      throw findError;
+    }
+
+    if(existing){
+
+      const {error:deleteError} =
+        await supabaseClient
+          .from("post_actions")
+          .delete()
+          .eq("id",existing.id);
+
+      if(deleteError){
+        throw deleteError;
+      }
+
+    }else{
+
+      const {error:oppositeError} =
+        await supabaseClient
+          .from("post_actions")
+          .delete()
+          .eq("post_id",Number(postId))
+          .eq("user_id",currentUser.id)
+          .eq("action_type",opposite);
+
+      if(oppositeError){
+        throw oppositeError;
+      }
+
+      const {error:insertError} =
+        await supabaseClient
+          .from("post_actions")
+          .insert({
+            post_id:Number(postId),
+            user_id:currentUser.id,
+            action_type:actionType
+          });
+
+      if(insertError){
+        throw insertError;
+      }
+
+    }
+
+    await loadPostActions();
+
+  }catch(error){
+
+    console.error("LIKE/DISLIKE ERROR:",error);
+
+    showNotice(
+      "Like/Dislike nahi ho saka: " +
+      (error?.message || "Database error")
+    );
+
+  }
+
+}
+
+/* =====================================================
+   LIKE / DISLIKE
+===================================================== */
+
+async function toggleLike(postId){
+
+  await setPostAction(
+    postId,
+    "like"
+  );
+
+}
+
+
+async function toggleDislike(postId){
+
+  await setPostAction(
+    postId,
+    "dislike"
+  );
+
+}
+
+
+/* =====================================================
+   FOLLOW
+===================================================== */
+
+async function loadFollowStatus(){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const { data,error } =
+    await supabaseClient
+      .from("user_follows")
+      .select("*")
+      .eq(
+        "follower_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    console.error(
+      "FOLLOW LOAD ERROR:",
+      error
+    );
+
+    return;
+
+  }
+
+
+  const follows =
+    data || [];
+
+
+  document
+    .querySelectorAll(
+      "[id^='follow-']"
+    )
+    .forEach(button => {
+
+      const userId =
+        button.id.replace(
+          "follow-",
+          ""
+        );
+
+
+      const following =
+        follows.some(
+          row =>
+            row.following_id === userId
+        );
+
+
+      button.textContent =
+        following
+          ? "Following"
+          : "Follow";
+
+    });
+
+}
+
+
+async function toggleFollow(userId){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    userId ===
+    currentUser.id
   ){
 
-    document.getElementById(
-      "imageViewer"
-    ).style.display =
-      "none";
+    return;
 
-    document.getElementById(
-      "viewerImage"
-    ).src = "";
+  }
+
+
+  const { data,error } =
+    await supabaseClient
+      .from("user_follows")
+      .select("*")
+      .eq(
+        "follower_id",
+        currentUser.id
+      )
+      .eq(
+        "following_id",
+        userId
+      )
+      .maybeSingle();
+
+
+  if(error){
+
+    showNotice(
+      "Follow error: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  if(data){
+
+    await supabaseClient
+      .from("user_follows")
+      .delete()
+      .eq(
+        "follower_id",
+        currentUser.id
+      )
+      .eq(
+        "following_id",
+        userId
+      );
+
+  }else{
+
+    await supabaseClient
+      .from("user_follows")
+      .insert({
+
+        follower_id:
+          currentUser.id,
+
+        following_id:
+          userId
+
+      });
+
+  }
+
+
+  await loadFollowStatus();
+
+}
+
+
+
+/* =====================================================
+   FOLLOW COUNTS + LISTS
+===================================================== */
+
+async function getFollowCounts(userId){
+  const result = {followers:0,following:0};
+  if(!userId) return result;
+
+  const followersResult = await supabaseClient
+    .from("user_follows")
+    .select("*",{count:"exact",head:true})
+    .eq("following_id",userId);
+
+  const followingResult = await supabaseClient
+    .from("user_follows")
+    .select("*",{count:"exact",head:true})
+    .eq("follower_id",userId);
+
+  if(!followersResult.error) result.followers = followersResult.count || 0;
+  else console.error("FOLLOWERS COUNT ERROR:",followersResult.error);
+
+  if(!followingResult.error) result.following = followingResult.count || 0;
+  else console.error("FOLLOWING COUNT ERROR:",followingResult.error);
+
+  return result;
+}
+
+async function loadFollowCounts(){
+  if(!currentUser) return;
+  const counts = await getFollowCounts(currentUser.id);
+  const followers = document.getElementById("followersCount");
+  const following = document.getElementById("followingCount");
+  if(followers) followers.textContent = counts.followers;
+  if(following) following.textContent = counts.following;
+}
+
+async function loadFollowList(userId,type,contentId){
+  const content = document.getElementById(contentId);
+  if(!content || !userId) return;
+
+  content.innerHTML = '<div class="loading">Loading...</div>';
+
+  const column = type === "followers" ? "following_id" : "follower_id";
+  const otherColumn = type === "followers" ? "follower_id" : "following_id";
+
+  const {data,error} = await supabaseClient
+    .from("user_follows")
+    .select("follower_id,following_id")
+    .eq(column,userId);
+
+  if(error){
+    console.error("FOLLOW LIST ERROR:",error);
+    content.innerHTML = '<div class="empty">Follow list load nahi ho saki.</div>';
+    return;
+  }
+
+  const ids = (data || []).map(row => row[otherColumn]).filter(Boolean);
+
+  if(!ids.length){
+    content.innerHTML = '<div class="empty">Abhi koi user nahi.</div>';
+    return;
+  }
+
+  const {data:profiles,error:profileError} = await supabaseClient
+    .from("profiles")
+    .select("id,username,name,avatar_url")
+    .in("id",ids);
+
+  if(profileError){
+    console.error("FOLLOW PROFILE LIST ERROR:",profileError);
+    content.innerHTML = '<div class="empty">Profiles load nahi ho sake.</div>';
+    return;
+  }
+
+  const profileMap = {};
+  (profiles || []).forEach(profile => profileMap[profile.id] = profile);
+
+  content.innerHTML = ids.map(id => {
+    const profile = profileMap[id] || {};
+    const username = profile.username || profile.name || "User";
+    const name = profile.name || username;
+
+    return `
+      <div class="follow-user" onclick="openUserProfile('${escapeAttr(id)}')">
+        ${renderUserAvatar(username,profile.avatar_url,"feed-avatar")}
+        <div class="follow-user-info">
+          <div class="follow-user-name">${escapeHtml(name)}</div>
+          <div class="follow-user-username">@${escapeHtml(username)}</div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function openOwnFollowList(type){
+  const box = document.getElementById("ownFollowListBox");
+  const title = document.getElementById("ownFollowListTitle");
+  if(!box || !currentUser) return;
+
+  if(title) title.textContent = type === "followers" ? "👥 Followers" : "➡️ Following";
+  box.style.display = "block";
+  loadFollowList(currentUser.id,type,"ownFollowListContent");
+}
+
+function closeOwnFollowList(){
+  const box = document.getElementById("ownFollowListBox");
+  if(box) box.style.display = "none";
+}
+
+async function loadPublicProfileCounts(userId){
+  const counts = await getFollowCounts(userId);
+  const followers = document.getElementById("publicFollowersCount");
+  const following = document.getElementById("publicFollowingCount");
+  if(followers) followers.textContent = counts.followers;
+  if(following) following.textContent = counts.following;
+}
+
+async function loadPublicProfileFollowStatus(userId){
+  const button = document.getElementById("publicProfileFollowBtn");
+  if(!button || !currentUser) return;
+
+  if(userId === currentUser.id){
+    button.style.display = "none";
+    return;
+  }
+
+  button.style.display = "inline-block";
+
+  const {data,error} = await supabaseClient
+    .from("user_follows")
+    .select("id")
+    .eq("follower_id",currentUser.id)
+    .eq("following_id",userId)
+    .maybeSingle();
+
+  if(error){
+    console.error("PUBLIC FOLLOW STATUS ERROR:",error);
+    button.textContent = "Follow";
+    return;
+  }
+
+  button.textContent = data ? "Following" : "Follow";
+}
+
+function openPublicFollowList(type){
+  const box = document.getElementById("publicFollowListBox");
+  const title = document.getElementById("publicFollowListTitle");
+  if(!box || !window.publicProfileUserId) return;
+
+  if(title) title.textContent = type === "followers" ? "👥 Followers" : "➡️ Following";
+  box.style.display = "block";
+  loadFollowList(window.publicProfileUserId,type,"publicFollowListContent");
+}
+
+function closePublicFollowList(){
+  const box = document.getElementById("publicFollowListBox");
+  if(box) box.style.display = "none";
+}
+
+async function togglePublicProfileFollow(){
+  if(!window.publicProfileUserId) return;
+  await toggleFollow(window.publicProfileUserId);
+  await loadPublicProfileFollowStatus(window.publicProfileUserId);
+  await loadPublicProfileCounts(window.publicProfileUserId);
+}
+
+/* =====================================================
+   OPEN USER PROFILE
+===================================================== */
+
+async function openUserProfile(userId){
+  if(!currentUser){
+    showNotice("Please login first.");
+    return;
+  }
+
+  if(!userId) return;
+
+  if(userId === currentUser.id){
+    goProfile();
+    return;
+  }
+
+  window.publicProfileUserId = userId;
+
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("profilePage").style.display = "none";
+  document.getElementById("publicProfilePage").style.display = "block";
+
+  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  const avatar = document.getElementById("publicProfileAvatar");
+  const nameEl = document.getElementById("publicProfileName");
+  const usernameEl = document.getElementById("publicProfileUsername");
+  const info = document.getElementById("publicProfileInfo");
+  const postsBox = document.getElementById("publicUserPosts");
+
+  if(avatar) avatar.innerHTML = "👤";
+  if(nameEl) nameEl.textContent = "Loading...";
+  if(usernameEl) usernameEl.textContent = "";
+  if(info) info.innerHTML = '<div class="loading">Loading profile...</div>';
+  if(postsBox) postsBox.innerHTML = '<div class="loading">Loading posts...</div>';
+
+  const {data:profile,error} = await supabaseClient
+    .from("profiles")
+    .select("id,username,name,avatar_url,date_of_birth,city,bio,profile_privacy")
+    .eq("id",userId)
+    .maybeSingle();
+
+  if(error || !profile){
+    console.error("PUBLIC PROFILE ERROR:",error);
+    if(nameEl) nameEl.textContent = "User";
+    if(usernameEl) usernameEl.textContent = "@User";
+    if(info) info.innerHTML = '<div class="empty">Profile load nahi ho saki.</div>';
+    if(postsBox) postsBox.innerHTML = '<div class="empty">Posts load nahi ho sake.</div>';
+    return;
+  }
+
+  const username = profile.username || profile.name || "User";
+  const name = profile.name || username;
+  const privacy = profile.profile_privacy || "public";
+
+  if(nameEl) nameEl.textContent = name;
+  if(usernameEl) usernameEl.textContent = "@" + username;
+
+  if(avatar){
+    avatar.innerHTML = "";
+    if(profile.avatar_url){
+      const img = document.createElement("img");
+      img.src = profile.avatar_url;
+      img.alt = "Profile Picture";
+      img.onerror = () => { avatar.textContent = username.charAt(0).toUpperCase(); };
+      avatar.appendChild(img);
+    }else{
+      avatar.textContent = username.charAt(0).toUpperCase();
+    }
+  }
+
+  await loadPublicProfileFollowStatus(userId);
+  await loadPublicProfileCounts(userId);
+
+  if(info){
+    if(privacy === "private"){
+      info.innerHTML = `
+        <div class="profile-info-row">
+          <div class="profile-info-label">🔒 Profile</div>
+          <div class="profile-info-value">Private</div>
+        </div>
+        <div class="private-profile-note">🔒 This profile is private.</div>`;
+    }else{
+      info.innerHTML = `
+        <div class="profile-info-row">
+          <div class="profile-info-label">👤 Profile Name</div>
+          <div class="profile-info-value">${escapeHtml(name)}</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">🎂 Date of Birth</div>
+          <div class="profile-info-value">${escapeHtml(profile.date_of_birth || "—")}</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">📍 City</div>
+          <div class="profile-info-value">${escapeHtml(profile.city || "—")}</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">🔒 Profile</div>
+          <div class="profile-info-value">Public</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">📝 Bio</div>
+          <div class="profile-info-value">${escapeHtml(profile.bio || "—")}</div>
+        </div>`;
+    }
+  }
+
+  if(postsBox){
+    if(privacy === "private"){
+      postsBox.innerHTML = '<div class="empty">🔒 Posts are hidden because this profile is private.</div>';
+    }else{
+      const {data:posts,error:postsError} = await supabaseClient
+        .from("posts")
+        .select("*")
+        .eq("user_id",userId)
+        .order("created_at",{ascending:false});
+
+      if(postsError){
+        console.error("PUBLIC POSTS ERROR:",postsError);
+        postsBox.innerHTML = '<div class="empty">Posts load nahi ho sake.</div>';
+      }else if(!posts || posts.length === 0){
+        postsBox.innerHTML = '<div class="empty">Is user ne abhi koi post nahi ki.</div>';
+      }else{
+        postsBox.innerHTML = posts.map(post => `
+          <div class="feed-item">
+            <div class="feed-head">
+              <div class="feed-user-wrap">
+                <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(userId)}')">
+                  ${renderUserAvatar(username,profile.avatar_url)}
+                </div>
+                <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(userId)}')">
+                  ${escapeHtml(username)}
+                </div>
+              </div>
+              <div class="feed-date">${formatDate(post.created_at)}</div>
+            </div>
+            <div class="feed-content">${escapeHtml(post.content)}</div>
+            <div class="feed-type">📝 Post</div>
+          </div>
+        `).join("");
+      }
+    }
   }
 }
 
+function closePublicProfile(){
+  window.publicProfileUserId = null;
+  document.getElementById("publicProfilePage").style.display = "none";
+  goHome();
+}
 
-/* =========================================================
-   REPLIES
-========================================================= */
+/* =====================================================
+   BLOCK USER
+===================================================== */
+
+async function blockUser(userId){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  if(
+    userId ===
+    currentUser.id
+  ){
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "Block this user?"
+    )
+  ){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("user_blocks")
+      .insert({
+
+        blocker_id:
+          currentUser.id,
+
+        blocked_id:
+          userId
+
+      });
+
+
+  if(error){
+
+    if(error.code === "23505"){
+
+      showNotice(
+        "User already blocked."
+      );
+
+    }else{
+
+      showNotice(
+        "Block nahi hua: " +
+        error.message
+      );
+
+    }
+
+    return;
+
+  }
+
+
+  showNotice(
+    "User blocked."
+  );
+
+
+  await loadFeed();
+
+}
+
+
+/* =====================================================
+   COMMENTS
+===================================================== */
 
 async function toggleComments(postId){
 
   const box =
     document.getElementById(
-      "comments-"+postId
+      "comments-" + postId
     );
+
 
   if(!box){
     return;
   }
 
-  const currentlyOpen =
-    box.style.display === "block";
 
-  if(currentlyOpen){
+  if(
+    box.style.display ===
+    "block"
+  ){
 
     box.style.display =
       "none";
 
     return;
+
   }
+
 
   box.style.display =
     "block";
 
-  await loadComments(postId);
+
+  await loadComments(
+    postId
+  );
+
+
+  setupCommentInput(
+    postId
+  );
+
 }
 
 
@@ -3461,28 +3187,18 @@ async function loadComments(postId){
 
   const list =
     document.getElementById(
-      "comments-list-"+postId
+      "comments-list-" + postId
     );
+
 
   if(!list){
     return;
   }
 
-  list.innerHTML =
-    `<div
-      style="color:#888;font-size:12px;padding:8px 0"
-    >
-      Replies load ho rahe hain...
-    </div>`;
 
-  try{
-
-    const {
-      data,
-      error
-    } =
+  const { data,error } =
     await supabaseClient
-      .from("mehfil_replies")
+      .from("comments")
       .select("*")
       .eq(
         "post_id",
@@ -3490,2445 +3206,1887 @@ async function loadComments(postId){
       )
       .order(
         "created_at",
-        {ascending:true}
+        {
+          ascending:true
+        }
       );
 
-    if(error){
-      throw error;
-    }
 
-    const comments =
-      data || [];
+  if(error){
 
-    if(comments.length === 0){
-
-      list.innerHTML =
-        `<div
-          style="color:#888;font-size:12px;padding:8px 0"
-        >
-          Abhi koi reply nahi.
-        </div>`;
-
-      return;
-    }
-
-    const ids =
-      [
-        ...new Set(
-          comments
-            .map(c=>c.user_id)
-            .filter(Boolean)
-        )
-      ];
-
-    let profiles = [];
-
-    if(ids.length){
-
-      const {
-        data:p
-      } =
-      await supabaseClient
-        .from("profiles")
-        .select(
-          "id,username,name,avatar_url"
-        )
-        .in(
-          "id",
-          ids
-        );
-
-      profiles =
-        p || [];
-    }
-
-    const profileMap =
-      new Map(
-        profiles.map(
-          p=>[
-            String(p.id),
-            p
-          ]
-        )
-      );
+    console.error(
+      "COMMENTS ERROR:",
+      error
+    );
 
     list.innerHTML =
-      comments.map(
-        comment=>{
+      "<div>No comments found.</div>";
 
-          const profile =
-            profileMap.get(
-              String(comment.user_id)
-            );
+    return;
 
-          const username =
-            comment.username ||
-            profile?.username ||
-            profile?.name ||
-            "User";
+  }
 
-          const avatar =
-            profile?.avatar_url ||
-            "";
 
-          const own =
-            String(comment.user_id) ===
-            String(currentUser.id);
+  const comments =
+    data || [];
 
-          return `
-            <div class="reply">
 
-              <img
-                class="reply-avatar"
-                src="${escapeHtml(avatar)}"
-                alt=""
-                onerror="this.style.display='none'"
-              >
+  if(comments.length === 0){
 
-              <div class="reply-body">
+    list.innerHTML =
+      '<div style="color:#999;font-size:12px;">No comments yet.</div>';
 
-                <div class="reply-name">
-                  ${escapeHtml(username)}
-                  ·
-                  <span
-                    style="font-size:10px;color:#999;font-weight:400"
-                  >
-                    ${escapeHtml(
-                      formatDate(comment.created_at)
-                    )}
-                  </span>
-                </div>
+    return;
 
-                <div class="reply-text">
-                  ${escapeHtml(
-                    comment.comment || ""
-                  )}
-                </div>
+  }
 
-                ${
-                  own
-                  ?
-                  `
-                  <button
-                    class="reply-delete"
-                    onclick="deleteComment('${escapeJs(String(comment.id))}','${escapeJs(String(postId))}')"
-                  >
-                    Delete
-                  </button>
-                  `
-                  :
-                  ""
-                }
 
-              </div>
+  list.innerHTML =
+    comments
+      .map(comment => `
+
+        <div
+          class="comment-item"
+          id="comment-${comment.id}">
+
+          <div class="comment-user">
+            @${escapeHtml(
+              comment.username || "User"
+            )}
+          </div>
+
+          <div class="comment-text">
+            ${escapeHtml(
+              comment.comment || comment.content || ""
+            )}
+          </div>
+
+          <div class="comment-actions">
+
+            <button
+              class="reply-btn"
+              onclick="showCommentReply(
+                ${comment.id},
+                '${escapeAttr(
+                  comment.username || "User"
+                )}'
+              )">
+              ↩ Reply
+            </button>
+
+          </div>
+
+          <div
+            id="reply-box-${comment.id}-${postId}"
+            class="reply-box">
+
+            <div class="reply-input-row">
+
+              <input
+                id="reply-input-${comment.id}-${postId}"
+                class="reply-input"
+                type="text"
+                placeholder="@${escapeAttr(
+                  comment.username || "User"
+                )}">
+
+              <button
+                class="reply-send"
+                onclick="sendCommentReply(
+                  ${comment.id},
+                  ${postId}
+                )">
+                ➤
+              </button>
 
             </div>
-          `;
-        }
-      ).join("");
 
-  }catch(error){
+          </div>
 
-    console.error(error);
+        </div>
 
-    list.innerHTML =
-      `<div
-        style="color:#e74c3c;font-size:12px;padding:8px 0"
-      >
-        Replies load nahi ho sake.
-      </div>`;
-  }
+      `)
+      .join("");
+
 }
 
 
-async function sendComment(postId){
+function setupCommentInput(postId){
 
   const input =
     document.getElementById(
-      "comment-input-"+postId
+      "comment-input-" + postId
     );
+
 
   if(!input){
     return;
   }
 
-  const text =
-    input.value.trim();
 
-  if(!text){
+  input.onkeydown =
+    function(event){
 
-    showToast(
-      "Reply likhein."
-    );
+      if(
+        event.key ===
+        "Enter"
+      ){
 
-    return;
-  }
+        event.preventDefault();
 
-  try{
+        addComment(
+          postId
+        );
 
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_replies")
-      .insert({
-        post_id:postId,
-        user_id:currentUser.id,
-        username:
-          currentProfile?.username ||
-          currentProfile?.name ||
-          currentUser.email?.split("@")[0] ||
-          "User",
-        comment:text
-      });
+      }
 
-    if(error){
-      throw error;
-    }
+    };
 
-    input.value = "";
-
-    await loadComments(postId);
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Reply send nahi hua: "+
-      error.message
-    );
-  }
 }
 
 
-async function deleteComment(
+/* =====================================================
+   ADD COMMENT
+===================================================== */
+
+async function addComment(postId){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "comment-input-" + postId
+    );
+
+
+  if(!input){
+
+    showNotice(
+      "Comment box nahi mila."
+    );
+
+    return;
+
+  }
+
+
+  const text =
+    input.value.trim();
+
+
+  if(!text){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("comments")
+      .insert({
+
+        post_id:
+          postId,
+
+        user_id:
+          currentUser.id,
+
+        username:
+          currentUsername,
+
+        content:
+          text
+
+      });
+
+
+  if(error){
+
+    console.error(
+      "COMMENT ERROR:",
+      error
+    );
+
+    showNotice(
+      "Comment send nahi hua: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  input.value = "";
+
+  await loadComments(
+    postId
+  );
+
+}
+
+
+/* =====================================================
+   COMMENT REPLY
+===================================================== */
+
+function showCommentReply(
+  commentId,
+  username
+){
+
+  const boxes =
+    document.querySelectorAll(
+      '[id^="reply-box-"]'
+    );
+
+
+  boxes.forEach(box => {
+
+    box.style.display =
+      "none";
+
+  });
+
+
+  let targetBox = null;
+
+
+  boxes.forEach(box => {
+
+    if(
+      box.id.startsWith(
+        "reply-box-" +
+        commentId +
+        "-"
+      )
+    ){
+
+      targetBox =
+        box;
+
+    }
+
+  });
+
+
+  if(!targetBox){
+    return;
+  }
+
+
+  targetBox.style.display =
+    "block";
+
+
+  const input =
+    targetBox.querySelector(
+      "input"
+    );
+
+
+  if(input){
+
+    input.placeholder =
+      "@" + username;
+
+    input.focus();
+
+  }
+
+}
+
+
+/* =====================================================
+   SEND COMMENT REPLY
+===================================================== */
+
+async function sendCommentReply(
   commentId,
   postId
 ){
 
-  if(!confirm("Reply delete karna hai?")){
+  if(!currentUser){
     return;
   }
 
-  try{
 
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_replies")
-      .delete()
-      .eq(
-        "id",
-        commentId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-    if(error){
-      throw error;
-    }
-
-    await loadComments(postId);
-
-    showToast(
-      "Reply delete ho gaya."
+  const input =
+    document.getElementById(
+      "reply-input-" +
+      commentId +
+      "-" +
+      postId
     );
 
-  }catch(error){
 
-    console.error(error);
+  if(!input){
+    return;
+  }
 
-    showToast(
-      "Reply delete nahi hua: "+
+
+  const text =
+    input.value.trim();
+
+
+  if(!text){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("comments")
+      .insert({
+
+        post_id:
+          postId,
+
+        user_id:
+          currentUser.id,
+
+        username:
+          currentUsername,
+
+        content:
+          text
+
+      });
+
+
+  if(error){
+
+    console.error(
+      "REPLY ERROR:",
+      error
+    );
+
+    showNotice(
+      "Reply send nahi hui: " +
       error.message
     );
-  }
-}
 
-
-/* =========================================================
-   POST MENU
-========================================================= */
-
-function showPostMenu(
-  postId,
-  userId
-){
-
-  const own =
-    String(userId) ===
-    String(currentUser.id);
-
-  let html = "";
-
-  if(own){
-
-    html += `
-      <button
-        class="primary-btn"
-        onclick="closeModal();deletePost('${escapeJs(postId)}')"
-      >
-        🗑️ Delete Activity
-      </button>
-    `;
-
-  }else{
-
-    html += `
-      <button
-        class="primary-btn"
-        onclick="closeModal();blockUser('${escapeJs(userId)}')"
-      >
-        🚫 Block User
-      </button>
-
-      <div style="height:8px"></div>
-
-      <button
-        class="secondary-btn"
-        style="width:100%"
-        onclick="closeModal();openUserProfile('${escapeJs(userId)}')"
-      >
-        👤 View Profile
-      </button>
-    `;
-  }
-
-  showModal(
-    "Activity Options",
-    html
-  );
-}
-
-
-/* =========================================================
-   DELETE POST
-========================================================= */
-
-async function deletePost(postId){
-
-  if(!confirm("Ye activity delete karni hai?")){
     return;
+
   }
+
+
+  input.value = "";
+
+  await loadComments(
+    postId
+  );
+
+}
+
+
+/* =====================================================
+   FEED REPLY — MEHFIL STYLE
+===================================================== */
+
+let feedReplyTarget = null;
+
+function startFeedReply(postId, username){
+  feedReplyTarget = {postId:String(postId), username:String(username || "User")};
+  const bar = document.getElementById("feedReplyBar");
+  const text = document.getElementById("feedReplyText");
+  const input = document.getElementById("postInput");
+  if(bar) bar.style.display = "block";
+  if(text) text.textContent = "↩️ Replying to @" + feedReplyTarget.username;
+  if(input){ input.placeholder = "Reply to @" + feedReplyTarget.username + "..."; input.focus(); }
+}
+
+function cancelFeedReply(){
+  feedReplyTarget = null;
+  const bar = document.getElementById("feedReplyBar");
+  const input = document.getElementById("postInput");
+  if(bar) bar.style.display = "none";
+  if(input){ input.placeholder = "Write a post..."; }
+}
+
+async function sendFeedReply(){
+  if(!currentUser || !feedReplyTarget) return false;
+  const input = document.getElementById("postInput");
+  if(!input) return false;
+  const text = input.value.trim();
+  if(!text) return false;
+  const message = "↩️ Reply to @" + feedReplyTarget.username + " — " + text;
+  const {error} = await supabaseClient.from("home_messages").insert({
+    user_id: currentUser.id,
+    username: currentUsername,
+    message: message,
+    created_at: new Date().toISOString()
+  });
+  if(error){ showNotice("Reply send nahi hui: " + error.message); return false; }
+  input.value = "";
+  cancelFeedReply();
+  await loadFeed();
+  return true;
+}
+
+/* =====================================================
+   POST IMAGE
+===================================================== */
+
+function chooseImage(){
+
+  const input =
+    document.getElementById(
+      "imageInput"
+    );
+
+
+  if(input){
+    input.click();
+  }
+
+}
+
+
+function sendImage(){
+
+  const input =
+    document.getElementById(
+      "imageInput"
+    );
+
+
+  if(
+    !input ||
+    !input.files ||
+    !input.files.length
+  ){
+
+    return;
+
+  }
+
+
+  showNotice(
+    "🖼️ Post image storage abhi setup nahi hai."
+  );
+
+
+  input.value = "";
+
+}
+
+
+/* =====================================================
+   VOICE
+===================================================== */
+
+async function toggleRecording(){
+
+  const voiceBtn =
+    document.getElementById(
+      "voiceBtn"
+    );
+
+
+  const status =
+    document.getElementById(
+      "recordStatus"
+    );
+
+
+  if(
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ){
+
+    showNotice(
+      "Voice recording browser mein available nahi."
+    );
+
+    return;
+
+  }
+
+
+  if(isRecording){
+
+    if(mediaRecorder){
+
+      mediaRecorder.stop();
+
+    }
+
+    return;
+
+  }
+
 
   try{
 
-    const {
-      data:post,
-      error:postError
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .select(
-        "id,user_id,media_url"
-      )
-      .eq(
-        "id",
-        postId
-      )
-      .single();
+    const stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio:true
+        });
 
-    if(postError){
-      throw postError;
-    }
 
-    if(
-      String(post.user_id) !==
-      String(currentUser.id)
-    ){
+    audioChunks = [];
 
-      showToast(
-        "Sirf apni activity delete kar sakte hain."
+
+    mediaRecorder =
+      new MediaRecorder(
+        stream
       );
 
-      return;
-    }
 
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .delete()
-      .eq(
-        "id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
+    mediaRecorder.ondataavailable =
+      event => {
 
-    if(error){
-      throw error;
-    }
+        if(
+          event.data &&
+          event.data.size > 0
+        ){
 
-    if(post.media_url){
+          audioChunks.push(
+            event.data
+          );
 
-      const path =
-        getStoragePathFromUrl(
-          post.media_url
+        }
+
+      };
+
+
+    mediaRecorder.onstop =
+      () => {
+
+        isRecording = false;
+
+
+        if(voiceBtn){
+
+          voiceBtn.textContent =
+            "🎤 Voice";
+
+        }
+
+
+        if(status){
+
+          status.style.display =
+            "none";
+
+        }
+
+
+        stream
+          .getTracks()
+          .forEach(
+            track =>
+              track.stop()
+          );
+
+
+        showNotice(
+          "🎤 Voice recording complete. Storage abhi setup nahi hai."
         );
 
-      if(path){
+      };
 
-        await supabaseClient
-          .storage
-          .from("mehfil-media")
-          .remove([path]);
-      }
+
+    mediaRecorder.start();
+
+    isRecording = true;
+
+
+    if(voiceBtn){
+
+      voiceBtn.textContent =
+        "⏹️ Stop Voice";
+
     }
 
-    showToast(
-      "Activity delete ho gayi."
-    );
 
-    await loadActivities();
+    if(status){
+
+      status.style.display =
+        "block";
+
+    }
 
   }catch(error){
 
-    console.error(error);
-
-    showToast(
-      "Delete nahi hua: "+
-      error.message
+    console.error(
+      "VOICE ERROR:",
+      error
     );
+
+    showNotice(
+      "Microphone permission allow karein."
+    );
+
   }
+
 }
 
 
-/* =========================================================
-   MEMBERS
-========================================================= */
+/* =====================================================
+   ONLINE USERS
+===================================================== */
 
-async function getMembers(){
+function toggleOnlineUsers(){
 
-  if(!currentMehfil){
-    return [];
+  const popup =
+    document.getElementById(
+      "onlinePopup"
+    );
+
+
+  if(!popup){
+    return;
   }
+
+
+  if(
+    popup.style.display ===
+    "block"
+  ){
+
+    popup.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  popup.style.display =
+    "block";
+
+
+  loadOnlineUsers();
+
+}
+
+
+async function loadOnlineUsers(){
+
+  const list =
+    document.getElementById(
+      "onlineUsersList"
+    );
+
+
+  if(!list){
+    return;
+  }
+
+
+  if(!currentUser){
+
+    list.innerHTML =
+      "No online users.";
+
+    return;
+
+  }
+
+
+  list.innerHTML = `
+
+    <div class="online-user">
+
+      <span class="online-dot">
+        🟢
+      </span>
+
+      ${escapeHtml(currentUsername)}
+      <small>(You)</small>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+function goProfile(){
+
+  document.getElementById(
+    "homePage"
+  ).style.display = "none";
+
+  document.getElementById(
+    "publicProfilePage"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "profilePage"
+  ).style.display = "block";
+
+
+  setActiveNav("profile");
+
+  loadProfile();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+function loadProfile(){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const metadata =
+    currentUser.user_metadata || {};
+
+
+  const name =
+    metadata.name ||
+    metadata.username ||
+    currentUser.email?.split("@")[0] ||
+    "User";
+
+
+  const username =
+    metadata.username ||
+    name;
+
+
+  const dob =
+    metadata.date_of_birth ||
+    "";
+
+
+  const city =
+    metadata.city ||
+    "";
+
+
+  const privacy =
+    metadata.profile_privacy ||
+    "public";
+
+
+  const bio =
+    metadata.bio ||
+    "";
+
+
+  const avatarUrl =
+    metadata.avatar_url ||
+    "";
+
+
+  const nameDisplay =
+    document.getElementById(
+      "profileNameDisplay"
+    );
+
+
+  const usernameDisplay =
+    document.getElementById(
+      "profileUsernameDisplay"
+    );
+
+
+  const avatar =
+    document.getElementById(
+      "profileAvatar"
+    );
+
+
+  if(nameDisplay){
+
+    nameDisplay.textContent =
+      name;
+
+  }
+
+
+  if(usernameDisplay){
+
+    usernameDisplay.textContent =
+      "@" + username;
+
+  }
+
+
+  /* ---------- PROFILE PICTURE ---------- */
+
+  if(avatar){
+
+    avatar.innerHTML = "";
+
+
+    if(avatarUrl){
+
+      const img =
+        document.createElement(
+          "img"
+        );
+
+
+      img.src =
+        avatarUrl;
+
+
+      img.alt =
+        "Profile Picture";
+
+
+      img.onerror =
+        () => {
+
+          avatar.textContent =
+            name
+              .charAt(0)
+              .toUpperCase();
+
+        };
+
+
+      avatar.appendChild(
+        img
+      );
+
+    }else{
+
+      avatar.textContent =
+        name
+          .charAt(0)
+          .toUpperCase();
+
+    }
+
+  }
+
+
+  document.getElementById(
+    "profileNameValue"
+  ).textContent =
+    name || "—";
+
+
+  document.getElementById(
+    "profileDobValue"
+  ).textContent =
+    dob || "—";
+
+
+  document.getElementById(
+    "profileCityValue"
+  ).textContent =
+    city || "—";
+
+
+  document.getElementById(
+    "profilePrivacyValue"
+  ).textContent =
+    privacy === "private"
+      ? "Private"
+      : "Public";
+
+
+  document.getElementById(
+    "profileBioValue"
+  ).textContent =
+    bio || "—";
+
+
+  document.getElementById(
+    "editName"
+  ).value =
+    name === "User"
+      ? ""
+      : name;
+
+
+  document.getElementById(
+    "editDob"
+  ).value =
+    dob;
+
+
+  document.getElementById(
+    "editCity"
+  ).value =
+    city;
+
+
+  document.getElementById(
+    "editPrivacy"
+  ).value =
+    privacy;
+
+
+  document.getElementById(
+    "editBio"
+  ).value =
+    bio;
+
+
+  loadMyPosts();
+  loadFollowCounts();
+
+}
+
+
+/* =====================================================
+   CHOOSE PROFILE PICTURE
+===================================================== */
+
+function chooseProfilePicture(){
+
+  const input =
+    document.getElementById(
+      "profileImageInput"
+    );
+
+
+  if(input){
+
+    input.click();
+
+  }
+
+}
+
+
+/* =====================================================
+   UPLOAD PROFILE PICTURE
+===================================================== */
+
+async function uploadProfilePicture(){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "profileImageInput"
+    );
+
+
+  const file =
+    input?.files?.[0];
+
+
+  if(!file){
+    return;
+  }
+
+
+  if(
+    !file.type.startsWith(
+      "image/"
+    )
+  ){
+
+    showNotice(
+      "Sirf image file select karein."
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  if(
+    file.size >
+    5 * 1024 * 1024
+  ){
+
+    showNotice(
+      "Image 5MB se chhoti honi chahiye."
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  showNotice(
+    "🖼️ Profile picture upload ho rahi hai..."
+  );
+
+
+  const ext =
+    (
+      file.name
+        .split(".")
+        .pop() ||
+      "jpg"
+    )
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]/g,
+        ""
+      );
+
+
+  const path =
+    `${currentUser.id}/avatar-${Date.now()}.${ext || "jpg"}`;
+
+
+  const {
+    error:uploadError
+  } =
+    await supabaseClient
+      .storage
+      .from("avatars")
+      .upload(
+        path,
+        file,
+        {
+          cacheControl:"3600",
+          upsert:false,
+          contentType:file.type
+        }
+      );
+
+
+  if(uploadError){
+
+    console.error(
+      "AVATAR UPLOAD ERROR:",
+      uploadError
+    );
+
+    showNotice(
+      "Profile picture upload nahi hui: " +
+      uploadError.message
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  const {
+    data:publicData
+  } =
+    supabaseClient
+      .storage
+      .from("avatars")
+      .getPublicUrl(
+        path
+      );
+
+
+  const avatarUrl =
+    publicData?.publicUrl;
+
+
+  if(!avatarUrl){
+
+    showNotice(
+      "Profile picture URL nahi mili."
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  const oldMetadata =
+    currentUser.user_metadata || {};
+
 
   const {
     data,
     error
   } =
-  await supabaseClient
-    .from("mehfil_members")
-    .select("*")
-    .eq(
-      "mehfil_id",
-      currentMehfil.id
-    )
-    .order(
-      "created_at",
-      {ascending:true}
-    );
+    await supabaseClient.auth.updateUser({
+
+      data:{
+
+        ...oldMetadata,
+
+        avatar_url:
+          avatarUrl
+
+      }
+
+    });
+
 
   if(error){
-    throw error;
-  }
 
-  return data || [];
-}
-
-
-async function showMembers(){
-
-  try{
-
-    const members =
-      await getMembers();
-
-    if(members.length === 0){
-
-      showModal(
-        "Members",
-        `<div class="empty">
-          Koi member nahi mila.
-        </div>`
-      );
-
-      return;
-    }
-
-    const ids =
-      [
-        ...new Set(
-          members.map(
-            m=>m.user_id
-          )
-        )
-      ];
-
-    const {
-      data:profiles
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .in(
-        "id",
-        ids
-      );
-
-    const profileMap =
-      new Map(
-        (profiles || []).map(
-          p=>[
-            String(p.id),
-            p
-          ]
-        )
-      );
-
-    const html =
-      members.map(
-        member=>{
-
-          const profile =
-            profileMap.get(
-              String(member.user_id)
-            );
-
-          const name =
-            profile?.name ||
-            profile?.username ||
-            "User";
-
-          const role =
-            member.role || "member";
-
-          return `
-            <div class="member-item">
-
-              <img
-                class="member-avatar"
-                src="${escapeHtml(
-                  profile?.avatar_url || ""
-                )}"
-                alt=""
-              >
-
-              <div class="member-info">
-
-                <div class="member-name">
-                  ${escapeHtml(name)}
-                </div>
-
-                <div class="member-role">
-                  ${
-                    role==="admin"
-                      ? "👑 Creator"
-                      : role==="moderator"
-                        ? "🛡️ Afsar"
-                        : "👤 Member"
-                  }
-                </div>
-
-              </div>
-
-            </div>
-          `;
-        }
-      ).join("");
-
-    showModal(
-      "👥 Members",
-      html
-    );
-
-  }catch(error){
-
-    showToast(
-      "Members load nahi hue: "+
-      error.message
-    );
-  }
-}
-
-
-async function showManageMembers(){
-
-  await showMembers();
-}
-
-
-/* =========================================================
-   KICK MEMBERS
-========================================================= */
-
-async function showKickMembers(){
-
-  if(!canManageMembers()){
-
-    showToast(
-      "Aapko member manage karne ki permission nahi."
-    );
-
-    return;
-  }
-
-  try{
-
-    const members =
-      await getMembers();
-
-    const kickable =
-      members.filter(
-        m=>
-          m.role !== "admin" &&
-          m.role !== "moderator"
-      );
-
-    if(kickable.length === 0){
-
-      showModal(
-        "🚪 Kick Members",
-        `<div class="empty">
-          Kick karne ke liye koi normal member nahi.
-        </div>`
-      );
-
-      return;
-    }
-
-    const ids =
-      kickable.map(
-        m=>m.user_id
-      );
-
-    const {
-      data:profiles
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .in(
-        "id",
-        ids
-      );
-
-    const profileMap =
-      new Map(
-        (profiles || []).map(
-          p=>[
-            String(p.id),
-            p
-          ]
-        )
-      );
-
-    const html =
-      kickable.map(
-        member=>{
-
-          const profile =
-            profileMap.get(
-              String(member.user_id)
-            );
-
-          const name =
-            profile?.name ||
-            profile?.username ||
-            "User";
-
-          return `
-            <div class="member-item">
-
-              <img
-                class="member-avatar"
-                src="${escapeHtml(
-                  profile?.avatar_url || ""
-                )}"
-                alt=""
-              >
-
-              <div class="member-info">
-
-                <div class="member-name">
-                  ${escapeHtml(name)}
-                </div>
-
-                <div class="member-role">
-                  @${escapeHtml(
-                    profile?.username || ""
-                  )}
-                </div>
-
-              </div>
-
-              <button
-                class="danger-btn"
-                onclick="kickMember('${escapeJs(String(member.user_id))}')"
-              >
-                Kick
-              </button>
-
-            </div>
-          `;
-        }
-      ).join("");
-
-    showModal(
-      "🚪 Kick Members",
-      html
-    );
-
-  }catch(error){
-
-    showToast(
-      "Members load nahi hue: "+
-      error.message
-    );
-  }
-}
-
-
-async function kickMember(userId){
-
-  if(!canManageMembers()){
-
-    showToast(
-      "Permission nahi."
-    );
-
-    return;
-  }
-
-  if(!confirm(
-    "Is member ko Mehfil se kick karna hai?"
-  )){
-    return;
-  }
-
-  try{
-
-    const {
-      data:target
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select("role")
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .eq(
-        "user_id",
-        userId
-      )
-      .maybeSingle();
-
-    if(
-      target?.role === "admin" ||
-      target?.role === "moderator"
-    ){
-
-      showToast(
-        "Creator/Afsar ko yahan se kick nahi kiya ja sakta."
-      );
-
-      return;
-    }
-
-    const {
+    console.error(
+      "AVATAR PROFILE UPDATE ERROR:",
       error
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .delete()
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .eq(
-        "user_id",
-        userId
-      );
-
-    if(error){
-      throw error;
-    }
-
-    showToast(
-      "Member kick ho gaya."
     );
 
-    closeModal();
-
-    await loadMehfilStats();
-
-  }catch(error){
-
-    showToast(
-      "Kick nahi hua: "+
+    showNotice(
+      "Picture save nahi hui: " +
       error.message
     );
+
+    input.value = "";
+
+    return;
+
   }
+
+
+  if(
+    data &&
+    data.user
+  ){
+
+    setCurrentUser(
+      data.user
+    );
+
+  }
+
+
+  await syncMyProfile();
+
+  loadProfile();
+
+  await loadFeed();
+
+  input.value = "";
+
+  showNotice(
+    "✅ Profile picture updated."
+  );
+
 }
 
 
-/* =========================================================
-   OFFICER APPLICATION
-   FIXED: message REQUIRED
-========================================================= */
+/* =====================================================
+   EDIT PROFILE
+===================================================== */
 
-async function applyForOfficer(){
+function showEditProfile(){
 
-  if(
-    !currentMehfil ||
-    !currentMembership
-  ){
+  const edit =
+    document.getElementById(
+      "profileEdit"
+    );
+
+
+  if(!edit){
     return;
   }
 
-  if(
-    currentMembership.role !==
-    "member"
-  ){
 
-    showToast(
-      "Aap already Afsar/Creator hain."
+  edit.style.display =
+    edit.style.display === "block"
+      ? "none"
+      : "block";
+
+}
+
+
+/* =====================================================
+   SAVE PROFILE
+===================================================== */
+
+async function saveProfile(){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
     );
 
     return;
+
   }
 
-  try{
 
-    const {
-      data:existing,
-      error:checkError
-    } =
+  const name =
+    document.getElementById(
+      "editName"
+    ).value.trim();
+
+
+  const dob =
+    document.getElementById(
+      "editDob"
+    ).value;
+
+
+  const city =
+    document.getElementById(
+      "editCity"
+    ).value.trim();
+
+
+  const privacy =
+    document.getElementById(
+      "editPrivacy"
+    ).value;
+
+
+  const bio =
+    document.getElementById(
+      "editBio"
+    ).value.trim();
+
+
+  if(!name){
+
+    showNotice(
+      "Profile name zaroor likhein."
+    );
+
+    return;
+
+  }
+
+
+  const oldMetadata =
+    currentUser.user_metadata || {};
+
+
+  const username =
+    oldMetadata.username ||
+    name;
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth.updateUser({
+
+      data:{
+
+        ...oldMetadata,
+
+        username:
+          username,
+
+        name:
+          name,
+
+        date_of_birth:
+          dob,
+
+        city:
+          city,
+
+        bio:
+          bio,
+
+        profile_privacy:
+          privacy
+
+      }
+
+    });
+
+
+  if(error){
+
+    console.error(
+      "PROFILE UPDATE ERROR:",
+      error
+    );
+
+    showNotice(
+      "Profile save nahi hua: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  if(
+    data &&
+    data.user
+  ){
+
+    setCurrentUser(
+      data.user
+    );
+
+  }
+
+
+  await syncMyProfile();
+
+
+  const edit =
+    document.getElementById(
+      "profileEdit"
+    );
+
+
+  if(edit){
+
+    edit.style.display =
+      "none";
+
+  }
+
+
+  loadProfile();
+
+  await loadFeed();
+
+
+  showNotice(
+    "✅ Profile successfully updated."
+  );
+
+}
+
+
+/* =====================================================
+   MY POSTS
+===================================================== */
+
+async function loadMyPosts(){
+
+  const container =
+    document.getElementById(
+      "myPosts"
+    );
+
+
+  if(!container){
+    return;
+  }
+
+
+  if(!currentUser){
+
+    container.innerHTML =
+      '<div class="empty">Please login first.</div>';
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    '<div class="loading">Loading your posts...</div>';
+
+
+  const {
+    data,
+    error
+  } =
     await supabaseClient
-      .from(
-        "mehfil_officer_applications"
-      )
-      .select(
-        "id,status"
-      )
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
+      .from("posts")
+      .select("*")
       .eq(
         "user_id",
         currentUser.id
       )
-      .maybeSingle();
-
-    if(checkError){
-      throw checkError;
-    }
-
-    if(existing){
-
-      showToast(
-        existing.status === "approved"
-          ? "Aap already Afsar hain."
-          : existing.status === "pending"
-            ? "Aapki application pehle se pending hai."
-            : "Aap pehle hi application submit kar chuke hain."
-      );
-
-      return;
-    }
-
-    const message =
-      prompt(
-        "Afsar banne ki wajah / message likhein:",
-        "Main is Mehfil ko manage karne mein help karna chahta hoon."
-      );
-
-    if(message === null){
-      return;
-    }
-
-    const cleanMessage =
-      message.trim();
-
-    if(!cleanMessage){
-
-      showToast(
-        "Message likhna zaroori hai."
-      );
-
-      return;
-    }
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from(
-        "mehfil_officer_applications"
-      )
-      .insert({
-        mehfil_id:
-          currentMehfil.id,
-
-        user_id:
-          currentUser.id,
-
-        message:
-          cleanMessage,
-
-        status:
-          "pending"
-      });
-
-    if(error){
-      throw error;
-    }
-
-    createNotification({
-      user_id:currentMehfil.created_by,
-      sender_id:currentUser.id,
-      type:"mehfil_officer_application",
-      message:"@"+(currentProfile?.username || "User")+" ne "+(currentMehfil.name || "Mehfil")+" mein Afsar banne ke liye apply kiya hai.",
-      mehfil_id:currentMehfil.id
-    });
-
-    showToast(
-      "Afsar application submit ho gayi."
-    );
-
-  }catch(error){
-
-    console.error(
-      "applyForOfficer:",
-      error
-    );
-
-    showToast(
-      "Application submit nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   APPLICATIONS
-========================================================= */
-
-async function showApplications(){
-
-  if(!isCreator()){
-
-    showToast(
-      "Sirf Creator applications manage kar sakta hai."
-    );
-
-    return;
-  }
-
-  try{
-
-    const {
-      data:applications,
-      error
-    } =
-    await supabaseClient
-      .from(
-        "mehfil_officer_applications"
-      )
-      .select("*")
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
       .order(
         "created_at",
-        {ascending:false}
-      );
-
-    if(error){
-      throw error;
-    }
-
-    if(
-      !applications ||
-      applications.length === 0
-    ){
-
-      showModal(
-        "🛡️ Afsar Applications",
-        `<div class="empty">
-          Koi application nahi.
-        </div>`
-      );
-
-      return;
-    }
-
-    const ids =
-      [
-        ...new Set(
-          applications.map(
-            a=>a.user_id
-          )
-        )
-      ];
-
-    const {
-      data:profiles
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .in(
-        "id",
-        ids
-      );
-
-    const profileMap =
-      new Map(
-        (profiles || []).map(
-          p=>[
-            String(p.id),
-            p
-          ]
-        )
-      );
-
-    const html =
-      applications.map(
-        app=>{
-
-          const p =
-            profileMap.get(
-              String(app.user_id)
-            );
-
-          const status =
-            app.status || "pending";
-
-          return `
-            <div class="member-item">
-
-              <img
-                class="member-avatar"
-                src="${escapeHtml(
-                  p?.avatar_url || ""
-                )}"
-                alt=""
-              >
-
-              <div class="member-info">
-
-                <div class="member-name">
-                  ${escapeHtml(
-                    p?.name ||
-                    p?.username ||
-                    "User"
-                  )}
-                </div>
-
-                <div class="member-role">
-                  @${escapeHtml(
-                    p?.username || ""
-                  )}
-                  ·
-                  ${escapeHtml(status)}
-                </div>
-
-                ${
-                  app.message
-                  ?
-                  `
-                  <div
-                    style="
-                      margin-top:6px;
-                      font-size:12px;
-                      color:#555;
-                      line-height:1.4
-                    "
-                  >
-                    ${escapeHtml(app.message)}
-                  </div>
-                  `
-                  :
-                  ""
-                }
-
-              </div>
-
-              ${
-                status === "pending"
-                ?
-                `
-                <div class="member-actions">
-
-                  <button
-                    class="small-btn"
-                    onclick="approveOfficer('${escapeJs(String(app.id))}','${escapeJs(String(app.user_id))}')"
-                  >
-                    Approve
-                  </button>
-
-                  <button
-                    class="small-btn"
-                    onclick="rejectOfficer('${escapeJs(String(app.id))}')"
-                  >
-                    Reject
-                  </button>
-
-                </div>
-                `
-                :
-                ""
-              }
-
-            </div>
-          `;
+        {
+          ascending:false
         }
-      ).join("");
-
-    showModal(
-      "🛡️ Afsar Applications",
-      html
-    );
-
-  }catch(error){
-
-    showToast(
-      "Applications load nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-async function approveOfficer(
-  applicationId,
-  userId
-){
-
-  if(!isCreator()){
-    return;
-  }
-
-  try{
-
-    const {
-      data:member,
-      error:memberFindError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select("id,role")
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .eq(
-        "user_id",
-        userId
-      )
-      .maybeSingle();
-
-    if(memberFindError){
-      throw memberFindError;
-    }
-
-    if(!member){
-
-      showToast(
-        "User is Mehfil ka member nahi hai."
       );
 
-      return;
-    }
 
-    const {
-      error:roleError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .update({
-        role:"moderator"
-      })
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .eq(
-        "user_id",
-        userId
-      );
+  if(error){
 
-    if(roleError){
-      throw roleError;
-    }
-
-    const {
-      error:applicationError
-    } =
-    await supabaseClient
-      .from(
-        "mehfil_officer_applications"
-      )
-      .update({
-        status:"approved"
-      })
-      .eq(
-        "id",
-        applicationId
-      );
-
-    if(applicationError){
-      throw applicationError;
-    }
-
-    createNotification({
-      user_id:userId,
-      sender_id:currentUser.id,
-      type:"mehfil_officer_approved",
-      message:"Aapko "+(currentMehfil.name || "Mehfil")+" mein Afsar bana diya gaya hai.",
-      mehfil_id:currentMehfil.id
-    });
-
-    showToast(
-      "User Afsar ban gaya."
-    );
-
-    closeModal();
-
-    await loadActivities();
-
-  }catch(error){
-
-    showToast(
-      "Afsar approve nahi hua: "+
-      error.message
-    );
-  }
-}
-
-
-async function rejectOfficer(
-  applicationId
-){
-
-  if(!isCreator()){
-    return;
-  }
-
-  try{
-
-    const {data:application,error:findError}=await supabaseClient
-      .from("mehfil_officer_applications")
-      .select("user_id")
-      .eq("id",applicationId)
-      .maybeSingle();
-
-    if(findError) throw findError;
-
-    const {
+    console.error(
+      "MY POSTS ERROR:",
       error
-    } =
-    await supabaseClient
-      .from(
-        "mehfil_officer_applications"
-      )
-      .update({
-        status:"rejected"
-      })
-      .eq(
-        "id",
-        applicationId
-      );
-
-    if(error){
-      throw error;
-    }
-
-    if(application?.user_id){
-      createNotification({
-        user_id:application.user_id,
-        sender_id:currentUser.id,
-        type:"mehfil_officer_rejected",
-        message:"Aapki "+(currentMehfil.name || "Mehfil")+" mein Afsar application reject kar di gayi hai.",
-        mehfil_id:currentMehfil.id
-      });
-    }
-
-    showToast(
-      "Application reject ho gayi."
     );
 
-    closeModal();
-
-  }catch(error){
-
-    showToast(
-      "Application reject nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   OFFICERS
-========================================================= */
-
-async function showOfficers(){
-
-  if(!isCreator()){
-
-    showToast(
-      "Sirf Creator Afsar manage kar sakta hai."
-    );
+    container.innerHTML =
+      '<div class="empty">My Posts load nahi ho sake.</div>';
 
     return;
+
   }
 
-  try{
 
-    const {
-      data:officers,
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select("*")
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .eq(
-        "role",
-        "moderator"
-      );
-
-    if(error){
-      throw error;
-    }
-
-    if(
-      !officers ||
-      officers.length === 0
-    ){
-
-      showModal(
-        "👮 Afsar",
-        `<div class="empty">
-          Abhi koi Afsar nahi.
-        </div>`
-      );
-
-      return;
-    }
-
-    const ids =
-      officers.map(
-        o=>o.user_id
-      );
-
-    const {
-      data:profiles
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .in(
-        "id",
-        ids
-      );
-
-    const map =
-      new Map(
-        (profiles || []).map(
-          p=>[
-            String(p.id),
-            p
-          ]
-        )
-      );
-
-    const html =
-      officers.map(
-        officer=>{
-
-          const p =
-            map.get(
-              String(
-                officer.user_id
-              )
-            );
-
-          return `
-            <div class="member-item">
-
-              <img
-                class="member-avatar"
-                src="${escapeHtml(
-                  p?.avatar_url || ""
-                )}"
-                alt=""
-              >
-
-              <div class="member-info">
-
-                <div class="member-name">
-                  ${escapeHtml(
-                    p?.name ||
-                    p?.username ||
-                    "User"
-                  )}
-                </div>
-
-                <div class="member-role">
-                  🛡️ Afsar
-                </div>
-
-              </div>
-
-              <button
-                class="danger-btn"
-                onclick="removeOfficer('${escapeJs(String(officer.user_id))}')"
-              >
-                Remove
-              </button>
-
-            </div>
-          `;
-        }
-      ).join("");
-
-    showModal(
-      "👮 Manage Afsar",
-      html
-    );
-
-  }catch(error){
-
-    showToast(
-      "Afsar list load nahi hui: "+
-      error.message
-    );
-  }
-}
+  const posts =
+    data || [];
 
 
-async function removeOfficer(userId){
+  if(posts.length === 0){
 
-  if(!isCreator()){
-    return;
-  }
-
-  if(!confirm(
-    "Is user ka Afsar role remove karna hai?"
-  )){
-    return;
-  }
-
-  try{
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .update({
-        role:"member"
-      })
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      )
-      .eq(
-        "user_id",
-        userId
-      );
-
-    if(error){
-      throw error;
-    }
-
-    showToast(
-      "Afsar role remove ho gaya."
-    );
-
-    closeModal();
-
-    await loadActivities();
-
-  }catch(error){
-
-    showToast(
-      "Role remove nahi hua: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   INVITE USER
-========================================================= */
-
-function showInviteUser(){
-
-  if(!isCreator()){
-
-    showToast(
-      "Invite sirf Creator kar sakta hai."
-    );
+    container.innerHTML =
+      '<div class="empty">Aap ne abhi koi post nahi ki.</div>';
 
     return;
+
   }
 
-  showModal(
-    "📩 Invite User",
-    `
-      <div class="field">
 
-        <label class="label">
-          Username
-        </label>
-
-        <input
-          id="inviteUsername"
-          class="input"
-          placeholder="Username search karein"
-        >
-
-      </div>
-
-      <button
-        class="primary-btn"
-        onclick="searchInviteUser()"
-      >
-        Search
-      </button>
-
-      <div
-        id="inviteResults"
-        style="margin-top:12px"
-      ></div>
-    `
-  );
-}
+  const avatarUrl =
+    currentUser.user_metadata?.avatar_url ||
+    "";
 
 
-async function searchInviteUser(){
+  container.innerHTML =
+    posts
+      .map(post => `
 
-  const input =
-    document.getElementById(
-      "inviteUsername"
-    );
+        <div
+          class="feed-item">
 
-  const username =
-    input?.value.trim();
+          <div class="feed-head">
 
-  if(!username){
+            <div class="feed-user-wrap">
 
-    showToast(
-      "Username likhein."
-    );
+              ${renderUserAvatar(
+                post.username ||
+                currentUsername,
+                avatarUrl
+              )}
 
-    return;
-  }
-
-  const result =
-    document.getElementById(
-      "inviteResults"
-    );
-
-  result.innerHTML =
-    `<div style="color:#777;padding:10px">
-      Search ho raha hai...
-    </div>`;
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .ilike(
-        "username",
-        "%"+username+"%"
-      )
-      .limit(10);
-
-    if(error){
-      throw error;
-    }
-
-    const users =
-      (data || []).filter(
-        u=>
-          String(u.id) !==
-          String(currentUser.id)
-      );
-
-    if(users.length === 0){
-
-      result.innerHTML =
-        `<div class="empty">
-          User nahi mila.
-        </div>`;
-
-      return;
-    }
-
-    result.innerHTML =
-      users.map(
-        user=>`
-          <div class="member-item">
-
-            <img
-              class="member-avatar"
-              src="${escapeHtml(
-                user.avatar_url || ""
-              )}"
-              alt=""
-            >
-
-            <div class="member-info">
-
-              <div class="member-name">
+              <div class="feed-user">
                 ${escapeHtml(
-                  user.name ||
-                  user.username ||
-                  "User"
-                )}
-              </div>
-
-              <div class="member-role">
-                @${escapeHtml(
-                  user.username || ""
+                  post.username ||
+                  currentUsername
                 )}
               </div>
 
             </div>
+
+            <div class="feed-date">
+              ${formatDate(
+                post.created_at
+              )}
+            </div>
+
+          </div>
+
+          <div class="feed-content">
+            ${escapeHtml(
+              post.content
+            )}
+          </div>
+
+          <div class="feed-type">
+            📝 Post
+          </div>
+
+          <div class="action-row">
 
             <button
-              class="small-btn"
-              onclick="sendInvite('${escapeJs(String(user.id))}')"
-            >
-              Invite
+              class="action-btn delete-btn"
+              onclick="deletePostFromProfile(${post.id})">
+              🗑️ Delete
             </button>
 
           </div>
-        `
-      ).join("");
 
-  }catch(error){
+        </div>
 
-    result.innerHTML =
-      `<div
-        style="color:#e74c3c;padding:10px"
-      >
-        Search failed:
-        ${escapeHtml(error.message)}
-      </div>`;
-  }
+      `)
+      .join("");
+
 }
 
 
-async function sendInvite(userId){
+/* =====================================================
+   DELETE POST FROM PROFILE
+===================================================== */
 
-  if(!isCreator()){
+async function deletePostFromProfile(postId){
+
+  if(!currentUser){
     return;
   }
 
-  try{
 
-    const {
-      data:existing
-    } =
+  if(
+    !confirm(
+      "Delete this post?"
+    )
+  ){
+    return;
+  }
+
+
+  const { error } =
     await supabaseClient
-      .from("mehfil_members")
-      .select("id")
+      .from("posts")
+      .delete()
       .eq(
-        "mehfil_id",
-        currentMehfil.id
+        "id",
+        postId
       )
       .eq(
         "user_id",
-        userId
-      )
-      .maybeSingle();
-
-    if(existing){
-
-      showToast(
-        "Ye user already Mehfil member hai."
+        currentUser.id
       );
 
-      return;
-    }
 
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_invites")
-      .insert({
-        mehfil_id:
-          currentMehfil.id,
-        inviter_id:
-          currentUser.id,
-        invitee_id:
-          userId,
-        status:
-          "pending"
-      });
+  if(error){
 
-    if(error){
-      throw error;
-    }
-
-    createNotification({
-      user_id:userId,
-      sender_id:currentUser.id,
-      type:"mehfil_invite",
-      message:"@"+(currentProfile?.username || "User")+" ne aapko "+(currentMehfil.name || "Mehfil")+" Mehfil mein invite kiya hai.",
-      mehfil_id:currentMehfil.id
-    });
-
-    showToast(
-      "Invite send ho gaya."
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Invite send nahi hua: "+
+    showNotice(
+      "Delete nahi hua: " +
       error.message
     );
-  }
-}
 
-
-/* =========================================================
-   EDIT MEHFIL
-========================================================= */
-
-function showEditMehfil(){
-
-  if(!isCreator()){
     return;
+
   }
 
-  showModal(
-    "✏️ Edit Mehfil",
-    `
-      <div class="field">
 
-        <label class="label">
-          Mehfil Name
-        </label>
+  await loadMyPosts();
 
-        <input
-          id="editMehfilName"
-          class="input"
-          value="${escapeHtml(
-            currentMehfil.name || ""
-          )}"
-        >
+  await loadFeed();
 
-      </div>
 
-      <div class="field">
-
-        <label class="label">
-          Description
-        </label>
-
-        <textarea
-          id="editMehfilDescription"
-          class="textarea"
-        >${escapeHtml(
-          currentMehfil.description || ""
-        )}</textarea>
-
-      </div>
-
-      <button
-        class="primary-btn"
-        onclick="saveMehfilEdit()"
-      >
-        Save Changes
-      </button>
-    `
+  showNotice(
+    "Post deleted."
   );
+
 }
 
 
-async function saveMehfilEdit(){
-
-  if(!isCreator()){
-    return;
-  }
-
-  const name =
-    document.getElementById(
-      "editMehfilName"
-    ).value.trim();
-
-  const description =
-    document.getElementById(
-      "editMehfilDescription"
-    ).value.trim();
-
-  if(!name){
-
-    showToast(
-      "Name required hai."
-    );
-
-    return;
-  }
-
-  try{
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfils")
-      .update({
-        name,
-        description
-      })
-      .eq(
-        "id",
-        currentMehfil.id
-      );
-
-    if(error){
-      throw error;
-    }
-
-    currentMehfil.name =
-      name;
-
-    currentMehfil.description =
-      description;
-
-    closeModal();
-
-    document.getElementById(
-      "mehfilNameDisplay"
-    ).textContent =
-      name;
-
-    document.getElementById(
-      "mehfilDescriptionDisplay"
-    ).textContent =
-      description;
-
-    document.getElementById(
-      "headerTitle"
-    ).textContent =
-      name;
-
-    showToast(
-      "Mehfil update ho gayi."
-    );
-
-  }catch(error){
-
-    showToast(
-      "Update nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   MY STATUS
-========================================================= */
-
-function showMyStatus(){
-
-  const role =
-    getRole();
-
-  const roleText =
-    role === "admin"
-      ? "👑 Creator"
-      : role === "moderator"
-        ? "🛡️ Afsar"
-        : "👤 Member";
-
-  showModal(
-    "ℹ️ My Status",
-    `
-      <div
-        class="card"
-        style="box-shadow:none;border:1px solid #eee"
-      >
-
-        <div style="font-size:15px;font-weight:700">
-          ${escapeHtml(
-            currentProfile?.name ||
-            currentProfile?.username ||
-            "User"
-          )}
-        </div>
-
-        <div
-          style="color:#777;font-size:13px;margin-top:5px"
-        >
-          @${escapeHtml(
-            currentProfile?.username || ""
-          )}
-        </div>
-
-        <div style="margin-top:12px">
-          ${roleText}
-        </div>
-
-      </div>
-    `
-  );
-}
-
-
-/* =========================================================
-   BLOCK USER
-========================================================= */
-
-async function blockUser(userId){
-
-  if(
-    String(userId) ===
-    String(currentUser.id)
-  ){
-    return;
-  }
-
-  if(!confirm(
-    "Is user ko block karna hai?"
-  )){
-    return;
-  }
-
-  try{
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("user_blocks")
-      .insert({
-        blocker_id:
-          currentUser.id,
-        blocked_id:
-          userId
-      });
-
-    if(error){
-
-      if(
-        !String(error.message)
-          .toLowerCase()
-          .includes("duplicate")
-      ){
-
-        throw error;
-      }
-    }
-
-    showToast(
-      "User block ho gaya."
-    );
-
-    await loadActivities();
-
-  }catch(error){
-
-    showToast(
-      "Block nahi hua: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   PROFILE / PRIVATE / NAV
-========================================================= */
-
-function openUserProfile(userId){
-
-  window.location.href =
-    "profile.html?user="+
-    encodeURIComponent(userId);
-}
-
-
-function openOneToOne(userId){
-
-  if(!userId){
-    return;
-  }
-
-  if(
-    String(userId) ===
-    String(currentUser?.id)
-  ){
-
-    showToast(
-      "Apne saath 1on1 chat nahi khol sakte."
-    );
-
-    return;
-  }
-
-  window.location.href =
-    "private-chat.html?user="+
-    encodeURIComponent(userId);
-}
-
+/* =====================================================
+   HOME
+===================================================== */
 
 function goHome(){
 
-  window.location.href =
-    "index.html";
+  document.getElementById(
+    "profilePage"
+  ).style.display = "none";
+
+  document.getElementById(
+    "publicProfilePage"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "homePage"
+  ).style.display = "block";
+
+
+  setActiveNav("home");
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
 }
 
+
+function setActiveNav(type){
+
+  document
+    .querySelectorAll(
+      ".nav-btn"
+    )
+    .forEach(btn => {
+
+      btn.classList.remove(
+        "active"
+      );
+
+    });
+
+
+  if(type === "home"){
+
+    document
+      .getElementById(
+        "homeNavBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+
+  if(type === "profile"){
+
+    document
+      .getElementById(
+        "profileNavBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+}
+
+
+/* =====================================================
+   PRIVATE
+===================================================== */
 
 function goPrivate(){
 
   window.location.href =
     "private.html";
+
 }
 
 
-function goProfile(){
+/* =====================================================
+   NOTIFICATIONS
+===================================================== */
 
-  window.location.href =
-    "profile.html";
+function goNotifications(){
+
+  showNotice(
+    "Notifications page abhi setup nahi hai."
+  );
+
 }
 
+
+/* =====================================================
+   MORE
+===================================================== */
 
 function goMore(){
 
-  window.location.href =
-    "more.html";
-}
-
-
-function goBack(){
-
-  if(currentPage === "settings"){
-
-    openMehfil(
-      currentMehfil.id
+  const logout =
+    confirm(
+      "Logout karna hai?"
     );
 
-    return;
+
+  if(logout){
+
+    signOut();
+
   }
 
-  if(currentPage === "mehfil"){
-
-    currentMehfil = null;
-    currentMembership = null;
-
-    loadMehfils();
-
-    return;
-  }
-
-  window.history.back();
 }
 
 
-function goMehfilList(){
+/* =====================================================
+   SIGN OUT
+===================================================== */
 
-  currentMehfil = null;
-  currentMembership = null;
-
-  loadMehfils();
-}
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-function showSettings(){
-
-  if(
-    !currentMehfil ||
-    !canManageMembers()
-  ){
-
-    showToast(
-      "Settings ki permission nahi."
-    );
-
-    return;
-  }
-
-  currentPage =
-    "settings";
-
-  showPage(
-    "settingsPage"
-  );
-
-  document.getElementById(
-    "headerTitle"
-  ).textContent =
-    "⚙️ Settings";
-
-  document.getElementById(
-    "headerSub"
-  ).textContent =
-    currentMehfil.name ||
-    "Mehfil";
-
-  const creatorOnly = [
-    "inviteSetting",
-    "applicationsSetting",
-    "officersSetting",
-    "deleteMehfilSetting"
-  ];
-
-  creatorOnly.forEach(
-    id=>{
-
-      const el =
-        document.getElementById(id);
-
-      if(el){
-
-        el.style.display =
-          isCreator()
-            ? "flex"
-            : "none";
-      }
-    }
-  );
-}
-
-
-/* =========================================================
-   DELETE MEHFIL
-   FIXED: REPLIES FIRST
-========================================================= */
-
-async function deleteCurrentMehfil(){
-
-  if(!isCreator()){
-    return;
-  }
-
-  if(!confirm(
-    "Puri Mehfil delete karni hai?"
-  )){
-    return;
-  }
-
-  if(!confirm(
-    "Ye action undo nahi hoga. Continue?"
-  )){
-    return;
-  }
+async function signOut(){
 
   try{
 
-    const mehfilId =
-      currentMehfil.id;
-
-
-    /* GET POSTS FIRST */
-
-    const {
-      data:posts,
-      error:postFindError
-    } =
     await supabaseClient
-      .from("mehfil_posts")
-      .select("id")
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(postFindError){
-      throw postFindError;
-    }
-
-
-    /* DELETE REPLIES */
-
-    const postIds =
-      (posts || []).map(
-        post=>post.id
-      );
-
-    if(postIds.length){
-
-      const {
-        error:replyDeleteError
-      } =
-      await supabaseClient
-        .from("mehfil_replies")
-        .delete()
-        .in(
-          "post_id",
-          postIds
-        );
-
-      if(replyDeleteError){
-        throw replyDeleteError;
-      }
-    }
-
-
-    /* DELETE POSTS */
-
-    const {
-      error:postsDeleteError
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(postsDeleteError){
-      throw postsDeleteError;
-    }
-
-
-    /* DELETE MEMBERS */
-
-    const {
-      error:membersError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(membersError){
-      throw membersError;
-    }
-
-
-    /* DELETE INVITES */
-
-    const {
-      error:invitesError
-    } =
-    await supabaseClient
-      .from("mehfil_invites")
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(invitesError){
-      throw invitesError;
-    }
-
-
-    /* DELETE APPLICATIONS */
-
-    const {
-      error:applicationsError
-    } =
-    await supabaseClient
-      .from(
-        "mehfil_officer_applications"
-      )
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(applicationsError){
-      throw applicationsError;
-    }
-
-
-    /* DELETE MEHFIL */
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfils")
-      .delete()
-      .eq(
-        "id",
-        mehfilId
-      );
-
-    if(error){
-      throw error;
-    }
-
-    showToast(
-      "Mehfil delete ho gayi."
-    );
-
-    currentMehfil = null;
-    currentMembership = null;
-
-    await loadMehfils();
-
-  }catch(error){
-
-    console.error(
-      "deleteCurrentMehfil:",
-      error
-    );
-
-    showToast(
-      "Mehfil delete nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
-   REFRESH
-========================================================= */
-
-async function refreshCurrent(){
-
-  const refreshButtons =
-    document.querySelectorAll(
-      ".header-actions .header-icon"
-    );
-
-  const refreshButton =
-    refreshButtons[0];
-
-  if(refreshButton){
-
-    refreshButton.disabled =
-      true;
-
-    refreshButton.textContent =
-      "⟳";
-  }
-
-  try{
-
-    if(
-      currentPage === "mehfil" &&
-      currentMehfil
-    ){
-
-      await loadMehfilStats();
-      await loadActivities();
-
-      showToast(
-        "Mehfil refresh ho gayi."
-      );
-
-      return;
-    }
-
-    if(
-      currentPage === "settings" &&
-      currentMehfil
-    ){
-
-      showSettings();
-
-      showToast(
-        "Settings refresh ho gayi."
-      );
-
-      return;
-    }
-
-    await loadMehfils();
-
-    showToast(
-      "Mehfil list refresh ho gayi."
-    );
-
-  }catch(error){
-
-    console.error(
-      "refreshCurrent:",
-      error
-    );
-
-    showToast(
-      "Refresh nahi ho saki: "+
-      error.message
-    );
+      .auth
+      .signOut();
 
   }finally{
 
-    if(refreshButton){
+    window.location.href =
+      "login.html";
 
-      refreshButton.disabled =
-        false;
-
-      refreshButton.textContent =
-        "↻";
-    }
   }
+
 }
 
 
+/* =====================================================
+   CLOSE ONLINE POPUP
+===================================================== */
 
-/* =========================================================
-   AUTH STATE
-========================================================= */
+document.addEventListener(
+  "click",
+  function(event){
 
-supabaseClient
-  .auth
-  .onAuthStateChange(
-    async(
-      event,
-      session
-    )=>{
+    const popup =
+      document.getElementById(
+        "onlinePopup"
+      );
 
-      if(
-        event === "SIGNED_OUT"
-      ){
 
-        window.location.href =
-          "login.html";
-      }
+    const button =
+      document.querySelector(
+        ".online-btn"
+      );
+
+
+    if(
+      popup &&
+      popup.style.display === "block" &&
+      !popup.contains(event.target) &&
+      button &&
+      !button.contains(event.target)
+    ){
+
+      popup.style.display =
+        "none";
 
     }
-  );
+
+  }
+);
+
+
+/* =====================================================
+   DOM READY
+===================================================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    /* ---------- CREATE POST ---------- */
+
+    const postInput =
+      document.getElementById(
+        "postInput"
+      );
+
+
+    if(postInput){
+
+      postInput.addEventListener(
+        "keydown",
+        function(event){
+
+          if(
+            event.key === "Enter" &&
+            !event.shiftKey
+          ){
+
+            event.preventDefault();
+
+            addPost();
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* ---------- SEND POST ---------- */
+
+    const publishPostBtn =
+      document.getElementById(
+        "publishPostBtn"
+      );
+
+
+    if(publishPostBtn){
+
+      publishPostBtn.addEventListener(
+        "click",
+        addPost
+      );
+
+    }
+
+
+    /* ---------- POST IMAGE ---------- */
+
+    const uploadImageBtn =
+      document.getElementById(
+        "uploadImageBtn"
+      );
+
+
+    if(uploadImageBtn){
+
+      uploadImageBtn.addEventListener(
+        "click",
+        chooseImage
+      );
+
+    }
+
+
+    const imageInput =
+      document.getElementById(
+        "imageInput"
+      );
+
+
+    if(imageInput){
+
+      imageInput.addEventListener(
+        "change",
+        sendImage
+      );
+
+    }
+
+
+    /* ---------- PROFILE PICTURE ---------- */
+
+    const profileImageInput =
+      document.getElementById(
+        "profileImageInput"
+      );
+
+
+    if(profileImageInput){
+
+      profileImageInput.addEventListener(
+        "change",
+        uploadProfilePicture
+      );
+
+    }
+
+
+    /* ---------- VOICE ---------- */
+
+    const voiceBtn =
+      document.getElementById(
+        "voiceBtn"
+      );
+
+
+    if(voiceBtn){
+
+      voiceBtn.addEventListener(
+        "click",
+        toggleRecording
+      );
+
+    }
+
+
+    /* ---------- START ---------- */
+
+    checkUser();
+
+  }
+);
 
 </script>
 
