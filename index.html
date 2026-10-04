@@ -772,6 +772,11 @@ body{
         📝 Create Post
       </div>
 
+      <div id="feedReplyBar" style="display:none;background:#f0edff;color:#5d42c5;padding:9px 10px;border-radius:9px;margin-bottom:8px;font-size:12px;font-weight:bold;">
+        <span id="feedReplyText"></span>
+        <button type="button" onclick="cancelFeedReply()" style="float:right;border:0;background:none;color:#d63031;font-weight:bold;cursor:pointer;">✕</button>
+      </div>
+
       <textarea
         id="postInput"
         placeholder="Write a post..."
@@ -842,7 +847,7 @@ body{
       <button
         class="refresh-btn"
         type="button"
-        onclick="refreshHomeFeed()">
+        onclick="loadFeed()">
         🔄 Refresh
       </button>
 
@@ -1266,7 +1271,8 @@ const SUPABASE_KEY =
 const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY
+    SUPABASE_KEY,
+    {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
   );
 
 
@@ -1275,12 +1281,12 @@ const supabaseClient =
 ===================================================== */
 
 let currentUser = null;
-let feedLoadToken = 0;
 let currentUsername = "User";
 
 let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
+let feedLoadToken = 0;
 
 
 /* =====================================================
@@ -1310,14 +1316,19 @@ function escapeAttr(value){
 
 
 function formatDate(date){
-
-  if(!date){
-    return "";
-  }
-
+  if(!date) return "";
   const d = new Date(date);
-
-  return d.toLocaleString();
+  if(Number.isNaN(d.getTime())) return "";
+  const seconds = Math.max(0, Math.floor((Date.now()-d.getTime())/1000));
+  if(seconds < 10) return "Just now";
+  if(seconds < 60) return seconds + " sec ago";
+  const minutes = Math.floor(seconds/60);
+  if(minutes < 60) return minutes + (minutes===1 ? " min ago" : " mins ago");
+  const hours = Math.floor(minutes/60);
+  if(hours < 24) return hours + (hours===1 ? " hour ago" : " hours ago");
+  const days = Math.floor(hours/24);
+  if(days < 7) return days + (days===1 ? " day ago" : " days ago");
+  return d.toLocaleDateString();
 }
 
 
@@ -1572,32 +1583,20 @@ async function checkUser(){
 
     setCurrentUser(user);
 
-    await syncMyProfile();
+    try{ await syncMyProfile(); }catch(profileError){ console.warn("PROFILE SYNC SKIPPED:",profileError); }
 
     await loadFeed();
 
   }catch(error){
 
-    console.error(
-      "CHECK USER ERROR:",
-      error
-    );
+    console.error("CHECK USER ERROR:",error);
 
-    /*
-      Login session mil chuki ho to kisi feed/profile
-      error ki wajah se user ko login page par wapas
-      redirect nahi karna.
-    */
-    if(currentUser){
-      showNotice(
-        "Feed load mein masla aya: " +
-        (error?.message || "Unknown error")
-      );
+    if(!currentUser){
+      window.location.replace("login.html");
       return;
     }
 
-    window.location.href =
-      "login.html";
+    showNotice("Home Feed load mein masla aya: " + (error?.message || "Unknown error"));
 
   }
 
@@ -1665,6 +1664,11 @@ async function addPost(){
     return;
   }
 
+  if(feedReplyTarget){
+    await sendFeedReply();
+    return;
+  }
+
 
   const { error } =
     await supabaseClient
@@ -1677,7 +1681,7 @@ async function addPost(){
         username:
           currentUsername,
 
-        content:
+        comment:
           text
 
       });
@@ -1711,32 +1715,9 @@ async function addPost(){
    LOAD FEED
 ===================================================== */
 
-async function refreshHomeFeed(){
-
-  const button =
-    document.querySelector(".refresh-btn");
-
-  if(button){
-    button.disabled = true;
-    button.textContent = "⟳ Refreshing...";
-  }
-
-  try{
-    await loadFeed();
-    showNotice("Feed refresh ho gayi.");
-  }finally{
-    if(button){
-      button.disabled = false;
-      button.textContent = "🔄 Refresh";
-    }
-  }
-
-}
-
-
 async function loadFeed(){
 
-  const thisFeedToken = ++feedLoadToken;
+  const loadToken = ++feedLoadToken;
 
   const feed =
     document.getElementById(
@@ -1843,6 +1824,8 @@ async function loadFeed(){
       messagesResult.data || [];
 
 
+    if(loadToken !== feedLoadToken) return;
+
     /* ---------- COMBINE ---------- */
 
     let feedItems = [];
@@ -1888,19 +1871,17 @@ async function loadFeed(){
     });
 
 
-    /* ---------- NEWEST FIRST ---------- */
+    /* ---------- NEWEST FIRST: NEVER REVERSE ---------- */
 
-    feedItems.sort((a,b) => {
-      const timeDiff =
-        new Date(b.data.created_at).getTime() -
-        new Date(a.data.created_at).getTime();
-
-      if(timeDiff !== 0){
-        return timeDiff;
-      }
-
-      return Number(b.data.id || 0) - Number(a.data.id || 0);
-    });
+    feedItems.sort(
+      (a,b) =>
+        new Date(
+          b.data.created_at
+        ) -
+        new Date(
+          a.data.created_at
+        )
+    );
 
 
     /* ---------- LOAD PROFILES ---------- */
@@ -2004,10 +1985,7 @@ async function loadFeed(){
     }
 
 
-    /* Ignore an older request that finished after a newer refresh. */
-    if(thisFeedToken !== feedLoadToken){
-      return;
-    }
+    if(loadToken !== feedLoadToken) return;
 
     feed.innerHTML =
       feedItems
@@ -2082,12 +2060,6 @@ function renderPost(post){
         🚫 Block
       </button>
 
-      <button
-        id="follow-${escapeAttr(post.user_id)}"
-        class="action-btn follow-btn"
-        onclick="toggleFollow('${escapeAttr(post.user_id)}')">
-        Follow
-      </button>
     `;
 
   }
@@ -2153,6 +2125,12 @@ function renderPost(post){
           class="action-btn"
           onclick="toggleComments(${post.id})">
           💬 Comments
+        </button>
+
+        <button
+          class="action-btn"
+          onclick="startFeedReply(${post.id}, '${escapeAttr(post.username || "User")}')">
+          ↩️ Reply
         </button>
 
       </div>
@@ -2226,12 +2204,6 @@ function renderMessage(message){
         🚫 Block
       </button>
 
-      <button
-        id="follow-${escapeAttr(message.user_id)}"
-        class="action-btn follow-btn"
-        onclick="toggleFollow('${escapeAttr(message.user_id)}')">
-        Follow
-      </button>
     `;
 
   }
@@ -2475,28 +2447,6 @@ async function loadPostActions(){
 
     });
 
-  if(currentUser){
-    document.querySelectorAll("[id^='like-btn-']").forEach(button => {
-      const postId = Number(button.id.replace("like-btn-", ""));
-      const active = actions.some(row =>
-        Number(row.post_id) === postId &&
-        String(row.user_id) === String(currentUser.id) &&
-        row.action_type === "like"
-      );
-      button.classList.toggle("active-action", active);
-    });
-
-    document.querySelectorAll("[id^='dislike-btn-']").forEach(button => {
-      const postId = Number(button.id.replace("dislike-btn-", ""));
-      const active = actions.some(row =>
-        Number(row.post_id) === postId &&
-        String(row.user_id) === String(currentUser.id) &&
-        row.action_type === "dislike"
-      );
-      button.classList.toggle("active-action", active);
-    });
-  }
-
 }
 
 
@@ -2510,70 +2460,108 @@ async function setPostAction(
 ){
 
   if(!currentUser){
-    showNotice("Please login first.");
+
+    showNotice(
+      "Please login first."
+    );
+
     return;
+
   }
+
 
   const opposite =
-    actionType === "like" ? "dislike" : "like";
+    actionType === "like"
+      ? "dislike"
+      : "like";
 
-  try{
-    const { data:existingRows, error:findError } =
-      await supabaseClient
-        .from("post_actions")
-        .select("id,action_type")
-        .eq("post_id", postId)
-        .eq("user_id", currentUser.id);
 
-    if(findError){
-      throw findError;
-    }
+  const existing =
+    await supabaseClient
+      .from("post_actions")
+      .select("*")
+      .eq(
+        "post_id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .eq(
+        "action_type",
+        actionType
+      )
+      .maybeSingle();
 
-    const alreadyActive =
-      (existingRows || []).some(
-        row => row.action_type === actionType
+
+  if(existing.data){
+
+    await supabaseClient
+      .from("post_actions")
+      .delete()
+      .eq(
+        "post_id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .eq(
+        "action_type",
+        actionType
       );
 
-    if(alreadyActive){
-      const { error } =
-        await supabaseClient
-          .from("post_actions")
-          .delete()
-          .eq("post_id", postId)
-          .eq("user_id", currentUser.id)
-          .eq("action_type", actionType);
+  }else{
 
-      if(error) throw error;
+    await supabaseClient
+      .from("post_actions")
+      .delete()
+      .eq(
+        "post_id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .eq(
+        "action_type",
+        opposite
+      );
 
-    }else{
-      const { error:oppositeError } =
-        await supabaseClient
-          .from("post_actions")
-          .delete()
-          .eq("post_id", postId)
-          .eq("user_id", currentUser.id)
-          .eq("action_type", opposite);
 
-      if(oppositeError) throw oppositeError;
+    const { error } =
+      await supabaseClient
+        .from("post_actions")
+        .insert({
 
-      const { error:insertError } =
-        await supabaseClient
-          .from("post_actions")
-          .insert({
-            post_id: postId,
-            user_id: currentUser.id,
-            action_type: actionType
-          });
+          post_id:
+            postId,
 
-      if(insertError) throw insertError;
+          user_id:
+            currentUser.id,
+
+          action_type:
+            actionType
+
+        });
+
+
+    if(error){
+
+      console.error(
+        "ACTION ERROR:",
+        error
+      );
+
     }
 
-    await loadPostActions();
-
-  }catch(error){
-    console.error("ACTION ERROR:", error);
-    showNotice("Like/Dislike nahi ho saka: " + error.message);
   }
+
+
+  await loadPostActions();
 
 }
 
@@ -3268,7 +3256,7 @@ async function loadComments(postId){
 
           <div class="comment-text">
             ${escapeHtml(
-              comment.content
+              comment.comment || comment.content || ""
             )}
           </div>
 
@@ -3413,7 +3401,7 @@ async function addComment(postId){
         username:
           currentUsername,
 
-        content:
+        comment:
           text
 
       });
@@ -3567,7 +3555,7 @@ async function sendCommentReply(
         username:
           currentUsername,
 
-        content:
+        comment:
           text
 
       });
@@ -3598,6 +3586,50 @@ async function sendCommentReply(
 
 }
 
+
+/* =====================================================
+   FEED REPLY — MEHFIL STYLE
+===================================================== */
+
+let feedReplyTarget = null;
+
+function startFeedReply(postId, username){
+  feedReplyTarget = {postId:String(postId), username:String(username || "User")};
+  const bar = document.getElementById("feedReplyBar");
+  const text = document.getElementById("feedReplyText");
+  const input = document.getElementById("postInput");
+  if(bar) bar.style.display = "block";
+  if(text) text.textContent = "↩️ Replying to @" + feedReplyTarget.username;
+  if(input){ input.placeholder = "Reply to @" + feedReplyTarget.username + "..."; input.focus(); }
+}
+
+function cancelFeedReply(){
+  feedReplyTarget = null;
+  const bar = document.getElementById("feedReplyBar");
+  const input = document.getElementById("postInput");
+  if(bar) bar.style.display = "none";
+  if(input){ input.placeholder = "Write a post..."; }
+}
+
+async function sendFeedReply(){
+  if(!currentUser || !feedReplyTarget) return false;
+  const input = document.getElementById("postInput");
+  if(!input) return false;
+  const text = input.value.trim();
+  if(!text) return false;
+  const message = "↩️ Reply to @" + feedReplyTarget.username + " — " + text;
+  const {error} = await supabaseClient.from("home_messages").insert({
+    user_id: currentUser.id,
+    username: currentUsername,
+    message: message,
+    created_at: new Date().toISOString()
+  });
+  if(error){ showNotice("Reply send nahi hui: " + error.message); return false; }
+  input.value = "";
+  cancelFeedReply();
+  await loadFeed();
+  return true;
+}
 
 /* =====================================================
    POST IMAGE
