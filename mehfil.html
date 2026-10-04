@@ -242,6 +242,63 @@ button{cursor:pointer}
   margin-bottom:13px;
 }
 
+.replying-bar{
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:#f4f0ff;
+  border:1px solid #ddd2ff;
+  border-radius:12px;
+  padding:9px 10px;
+  margin-bottom:10px;
+  color:#5b3db8;
+  font-size:13px;
+}
+
+.replying-info{
+  flex:1;
+  min-width:0;
+}
+
+.replying-label{
+  font-weight:700;
+}
+
+.replying-user{
+  margin-top:2px;
+  color:#777;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.cancel-reply{
+  border:0;
+  background:#fff;
+  color:#e74c3c;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  font-size:18px;
+  flex:none;
+}
+
+.reply-preview{
+  margin-top:10px;
+  padding:9px 11px;
+  border-left:3px solid #6c5ce7;
+  background:#f7f5ff;
+  border-radius:9px;
+  font-size:12px;
+  color:#666;
+  cursor:pointer;
+}
+
+.reply-preview strong{
+  color:#6c5ce7;
+}
+
 .composer-top{
   display:flex;
   gap:10px;
@@ -968,7 +1025,26 @@ button{cursor:pointer}
     id="activityComposer"
   >
 
-    <div class="composer-top">
+    <div
+    class="replying-bar"
+    id="replyingBar"
+  >
+    <div class="replying-info">
+      <div class="replying-label">↩️ Replying to</div>
+      <div
+        class="replying-user"
+        id="replyingUser"
+      ></div>
+    </div>
+
+    <button
+      class="cancel-reply"
+      onclick="cancelReply()"
+      title="Cancel Reply"
+    >×</button>
+  </div>
+
+  <div class="composer-top">
 
       <img
         id="composerAvatar"
@@ -1388,6 +1464,9 @@ let currentMehfil = null;
 let currentMembership = null;
 let selectedImageFile = null;
 let currentPage = "list";
+
+/* Active feed reply */
+let currentReply = null;
 
 
 /* =========================================================
@@ -2486,11 +2565,11 @@ async function sendActivity(){
       "activityText"
     );
 
-  const content =
+  const typedContent =
     textarea.value.trim();
 
   if(
-    !content &&
+    !typedContent &&
     !selectedImageFile
   ){
 
@@ -2524,6 +2603,16 @@ async function sendActivity(){
         );
     }
 
+    /* Reply metadata existing content field mein save hota hai. */
+    const replyPrefix =
+      currentReply
+        ? makeReplyPrefix(currentReply)
+        : "";
+
+    const finalContent =
+      replyPrefix +
+      typedContent;
+
     const {
       error
     } =
@@ -2535,7 +2624,7 @@ async function sendActivity(){
         user_id:
           currentUser.id,
         content:
-          content || "",
+          finalContent || "",
         media_url:
           mediaUrl
       });
@@ -2572,11 +2661,22 @@ async function sendActivity(){
 
     removeImagePreview();
 
+    cancelReply();
+
     showToast(
-      "Activity send ho gayi."
+      "Message send ho gaya."
     );
 
     await loadActivities();
+
+    /* New reply/message feed ke bilkul top par show ho. */
+    const feed = document.getElementById("activityFeed");
+    if(feed){
+      window.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
+    }
 
   }catch(error){
 
@@ -2586,7 +2686,7 @@ async function sendActivity(){
     );
 
     showToast(
-      "Activity send nahi hui: "+
+      "Message send nahi hua: "+
       error.message
     );
 
@@ -2604,6 +2704,203 @@ async function sendActivity(){
       "Send";
   }
 }
+
+
+/* =========================================================
+   FEED REPLY
+========================================================= */
+
+function makeReplyPrefix(reply){
+
+  return (
+    "__RABTA_REPLY__:" +
+    encodeURIComponent(
+      String(reply.postId || "")
+    ) +
+    ":" +
+    encodeURIComponent(
+      String(reply.username || "User")
+    ) +
+    "__\n"
+  );
+}
+
+
+function parseReplyContent(content){
+
+  const text =
+    String(content || "");
+
+  const match =
+    text.match(
+      /^__RABTA_REPLY__:(.*?):(.*?)__\n/
+    );
+
+  if(!match){
+
+    return {
+      isReply:false,
+      replyPostId:null,
+      replyUsername:"",
+      content:text
+    };
+  }
+
+  return {
+    isReply:true,
+    replyPostId:
+      decodeURIComponent(
+        match[1] || ""
+      ),
+    replyUsername:
+      decodeURIComponent(
+        match[2] || "User"
+      ),
+    content:
+      text.substring(
+        match[0].length
+      )
+  };
+}
+
+
+function startReply(
+  postId,
+  username,
+  name
+){
+
+  currentReply = {
+    postId:String(postId),
+    username:
+      username ||
+      name ||
+      "User",
+    name:
+      name ||
+      username ||
+      "User"
+  };
+
+  const bar =
+    document.getElementById(
+      "replyingBar"
+    );
+
+  const user =
+    document.getElementById(
+      "replyingUser"
+    );
+
+  if(bar){
+
+    bar.style.display =
+      "flex";
+  }
+
+  if(user){
+
+    user.textContent =
+      "@" +
+      (
+        currentReply.username ||
+        "User"
+      );
+  }
+
+  const textarea =
+    document.getElementById(
+      "activityText"
+    );
+
+  if(textarea){
+
+    textarea.focus();
+
+    textarea.placeholder =
+      "@" +
+      (
+        currentReply.username ||
+        "User"
+      ) +
+      " ko reply likhein...";
+  }
+
+  showToast(
+    "Reply mode on ho gaya."
+  );
+}
+
+
+function cancelReply(){
+
+  currentReply =
+    null;
+
+  const bar =
+    document.getElementById(
+      "replyingBar"
+    );
+
+  if(bar){
+
+    bar.style.display =
+      "none";
+  }
+
+  const user =
+    document.getElementById(
+      "replyingUser"
+    );
+
+  if(user){
+
+    user.textContent =
+      "";
+  }
+
+  const textarea =
+    document.getElementById(
+      "activityText"
+    );
+
+  if(textarea){
+
+    textarea.placeholder =
+      "Mehfil mein kuch share karein...";
+  }
+}
+
+
+function scrollToReplyPost(postId){
+
+  const post =
+    document.getElementById(
+      "post-" + postId
+    );
+
+  if(!post){
+
+    return;
+  }
+
+  post.scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+
+  post.style.outline =
+    "2px solid #6c5ce7";
+
+  setTimeout(
+    ()=>{
+      post.style.outline =
+        "";
+    },
+    1400
+  );
+}
+
 
 
 /* =========================================================
@@ -2832,6 +3129,11 @@ function renderPost(
     String(post.user_id) ===
     String(currentUser.id);
 
+  const replyInfo =
+    parseReplyContent(
+      post.content
+    );
+
   let roleBadge = "";
 
   if(role === "admin"){
@@ -2866,6 +3168,24 @@ function renderPost(
 
       <div class="image-error">
         🖼️ Image load nahi ho saki
+      </div>
+      `;
+  }
+
+  let replyPreview = "";
+
+  if(replyInfo.isReply){
+
+    replyPreview =
+      `
+      <div
+        class="reply-preview"
+        onclick="scrollToReplyPost('${escapeJs(replyInfo.replyPostId)}')"
+      >
+        ↩️ Reply to
+        <strong>
+          @${escapeHtml(replyInfo.replyUsername)}
+        </strong>
       </div>
       `;
   }
@@ -2916,12 +3236,14 @@ function renderPost(
 
       </div>
 
+      ${replyPreview}
+
       ${
-        post.content
+        replyInfo.content
         ?
         `
         <div class="activity-content">
-          ${escapeHtml(post.content)}
+          ${escapeHtml(replyInfo.content)}
         </div>
         `
         :
@@ -2932,26 +3254,17 @@ function renderPost(
 
       <div class="activity-actions">
 
+        <button
+          class="action-btn"
+          onclick="startReply('${escapeJs(String(post.id))}','${escapeJs(String(username))}','${escapeJs(String(name))}')"
+        >
+          ↩️ Reply
+        </button>
+
         ${
-          isOwn
+          !isOwn
           ?
           `
-          <button
-            class="action-btn delete-post"
-            onclick="deletePost('${escapeJs(String(post.id))}')"
-          >
-            🗑️ Delete
-          </button>
-          `
-          :
-          `
-          <button
-            class="action-btn"
-            onclick="toggleComments('${escapeJs(String(post.id))}')"
-          >
-            ↩️ Reply
-          </button>
-
           <button
             class="action-btn"
             onclick="openOneToOne('${escapeJs(String(post.user_id))}')"
@@ -2966,42 +3279,31 @@ function renderPost(
             🚫 Block
           </button>
           `
+          :
+          ""
         }
 
-      </div>
-
-      <div
-        class="replies"
-        id="comments-${escapeHtml(String(post.id))}"
-      >
-
-        <div
-          id="comments-list-${escapeHtml(String(post.id))}"
-        ></div>
-
-        <div class="reply-form">
-
-          <input
-            id="comment-input-${escapeHtml(String(post.id))}"
-            class="reply-input"
-            maxlength="1000"
-            placeholder="Reply likhein..."
-          >
-
+        ${
+          isOwn
+          ?
+          `
           <button
-            class="reply-send"
-            onclick="sendComment('${escapeJs(String(post.id))}')"
+            class="action-btn delete-post"
+            onclick="deletePost('${escapeJs(String(post.id))}')"
           >
-            Send
+            🗑️ Delete
           </button>
-
-        </div>
+          `
+          :
+          ""
+        }
 
       </div>
 
     </article>
   `;
 }
+
 
 
 function imageLoadFailed(img){
@@ -5419,29 +5721,85 @@ async function deleteCurrentMehfil(){
 
 async function refreshCurrent(){
 
-  if(
-    currentPage === "mehfil" &&
-    currentMehfil
-  ){
+  const refreshButtons =
+    document.querySelectorAll(
+      ".header-actions .header-icon"
+    );
 
-    await loadMehfilStats();
-    await loadActivities();
+  const refreshButton =
+    refreshButtons[0];
 
-    return;
+  if(refreshButton){
+
+    refreshButton.disabled =
+      true;
+
+    refreshButton.textContent =
+      "⟳";
   }
 
-  if(
-    currentPage === "settings" &&
-    currentMehfil
-  ){
+  try{
 
-    showSettings();
+    if(
+      currentPage === "mehfil" &&
+      currentMehfil
+    ){
 
-    return;
+      await loadMehfilStats();
+      await loadActivities();
+
+      showToast(
+        "Mehfil refresh ho gayi."
+      );
+
+      return;
+    }
+
+    if(
+      currentPage === "settings" &&
+      currentMehfil
+    ){
+
+      showSettings();
+
+      showToast(
+        "Settings refresh ho gayi."
+      );
+
+      return;
+    }
+
+    await loadMehfils();
+
+    showToast(
+      "Mehfil list refresh ho gayi."
+    );
+
+  }catch(error){
+
+    console.error(
+      "refreshCurrent:",
+      error
+    );
+
+    showToast(
+      "Refresh nahi ho saki: "+
+      error.message
+    );
+
+  }finally{
+
+    if(refreshButton){
+
+      refreshButton.disabled =
+        false;
+
+      refreshButton.textContent =
+        "↻";
+    }
   }
-
-  await loadMehfils();
 }
+
 
 
 /* =========================================================
