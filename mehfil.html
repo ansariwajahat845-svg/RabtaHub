@@ -3124,6 +3124,24 @@ async function loadActivities(){
    RENDER POST
 ========================================================= */
 
+function getDefaultAvatar(){
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" rx="60" fill="#eee8ff"/><circle cx="60" cy="45" r="22" fill="#6c5ce7"/><path d="M22 104c4-23 19-35 38-35s34 12 38 35" fill="#6c5ce7"/></svg>'
+  );
+}
+
+function getProfileAvatar(profile){
+  const raw = String(profile?.avatar_url || "").trim();
+  if(!raw) return getDefaultAvatar();
+  if(/^https?:\/\//i.test(raw) || raw.startsWith("data:")) return raw;
+  try{
+    const {data} = supabaseClient.storage.from("avatars").getPublicUrl(raw);
+    return data?.publicUrl || getDefaultAvatar();
+  }catch(e){
+    return getDefaultAvatar();
+  }
+}
+
 function renderPost(
   post,
   profile,
@@ -3140,8 +3158,7 @@ function renderPost(
     username;
 
   const avatar =
-    profile?.avatar_url ||
-    "";
+    getProfileAvatar(profile);
 
   const image =
     getMediaUrl(
@@ -3228,7 +3245,7 @@ function renderPost(
         >
           <img
             class="activity-avatar"
-            src="${escapeHtml(avatar || getDefaultAvatar())}"
+            src="${escapeHtml(avatar)}"
             alt="Profile"
             onerror="this.onerror=null;this.src=getDefaultAvatar()"
           >
