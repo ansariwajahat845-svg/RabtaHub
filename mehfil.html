@@ -91,6 +91,22 @@ button{cursor:pointer}
   font-size:18px;
 }
 
+.header-refresh{
+  border:0;
+  background:rgba(255,255,255,.17);
+  color:#fff;
+  min-width:72px;
+  height:38px;
+  padding:0 12px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.header-refresh:disabled{
+  opacity:.7;
+}
+
 /* MAIN */
 
 .container{
@@ -312,6 +328,8 @@ button{cursor:pointer}
   background:#eee;
   object-fit:cover;
   flex:none;
+  border:2px solid #fff;
+  box-shadow:0 1px 5px rgba(0,0,0,.12);
 }
 
 .composer-input{
@@ -348,6 +366,10 @@ button{cursor:pointer}
   padding:10px 17px;
   border-radius:10px;
   font-weight:700;
+}
+
+.send-btn:disabled{
+  opacity:.6;
 }
 
 .image-preview-box{
@@ -389,16 +411,33 @@ button{cursor:pointer}
 .activity-head{
   display:flex;
   align-items:center;
+  gap:8px;
+}
+
+.activity-profile{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:center;
   gap:10px;
+  cursor:pointer;
+  border-radius:12px;
+  padding:2px;
+}
+
+.activity-profile:active{
+  background:#f4f1ff;
 }
 
 .activity-avatar{
   width:44px;
   height:44px;
+  min-width:44px;
   border-radius:50%;
   object-fit:cover;
   background:#eee;
-  flex:none;
+  border:2px solid #fff;
+  box-shadow:0 1px 5px rgba(0,0,0,.15);
 }
 
 .activity-user{
@@ -409,12 +448,16 @@ button{cursor:pointer}
 .activity-name{
   font-weight:700;
   font-size:15px;
+  word-break:break-word;
 }
 
 .activity-meta{
   color:#888;
   font-size:12px;
   margin-top:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .creator-badge{
@@ -445,6 +488,7 @@ button{cursor:pointer}
   width:34px;
   height:34px;
   border-radius:50%;
+  flex:none;
 }
 
 .activity-content{
@@ -500,79 +544,56 @@ button{cursor:pointer}
   color:#e74c3c;
 }
 
-/* REPLIES */
+/* MEMBERS */
 
-.replies{
-  display:none;
-  margin-top:12px;
-  border-top:1px solid #eee;
-  padding-top:10px;
-}
-
-.reply{
+.member-item{
   display:flex;
-  gap:8px;
-  padding:9px 0;
-  border-bottom:1px solid #f1f1f1;
+  align-items:center;
+  gap:10px;
+  padding:11px 0;
+  border-bottom:1px solid #eee;
 }
 
-.reply:last-child{
+.member-item:last-child{
   border-bottom:0;
 }
 
-.reply-avatar{
-  width:34px;
-  height:34px;
+.member-avatar{
+  width:42px;
+  height:42px;
   border-radius:50%;
   object-fit:cover;
   background:#eee;
+  flex:none;
 }
 
-.reply-body{
+.member-info{
   flex:1;
   min-width:0;
 }
 
-.reply-name{
-  font-size:13px;
+.member-name{
   font-weight:700;
+  font-size:14px;
 }
 
-.reply-text{
-  font-size:13px;
-  margin-top:3px;
-  white-space:pre-wrap;
-  word-break:break-word;
-}
-
-.reply-delete{
-  border:0;
-  background:none;
-  color:#e74c3c;
+.member-role{
   font-size:11px;
-  padding:3px;
+  color:#777;
+  margin-top:2px;
 }
 
-.reply-form{
+.member-actions{
   display:flex;
-  gap:7px;
-  margin-top:10px;
+  gap:5px;
 }
 
-.reply-input{
-  flex:1;
+.small-btn{
   border:1px solid #ddd;
-  border-radius:10px;
-  padding:10px;
-  outline:none;
-}
-
-.reply-send{
-  border:0;
-  background:#6c5ce7;
-  color:white;
-  border-radius:10px;
-  padding:0 13px;
+  background:#fff;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:12px;
 }
 
 /* SETTINGS */
@@ -607,57 +628,6 @@ button{cursor:pointer}
   padding:9px 11px;
   border-radius:9px;
   white-space:nowrap;
-}
-
-/* MEMBERS */
-
-.member-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:11px 0;
-  border-bottom:1px solid #eee;
-}
-
-.member-item:last-child{
-  border-bottom:0;
-}
-
-.member-avatar{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#eee;
-}
-
-.member-info{
-  flex:1;
-  min-width:0;
-}
-
-.member-name{
-  font-weight:700;
-  font-size:14px;
-}
-
-.member-role{
-  font-size:11px;
-  color:#777;
-  margin-top:2px;
-}
-
-.member-actions{
-  display:flex;
-  gap:5px;
-}
-
-.small-btn{
-  border:1px solid #ddd;
-  background:#fff;
-  padding:7px 9px;
-  border-radius:8px;
-  font-size:12px;
 }
 
 /* MODAL */
@@ -833,6 +803,12 @@ button{cursor:pointer}
   .activity-image{
     max-height:430px;
   }
+
+  .header-refresh{
+    min-width:68px;
+    padding:0 9px;
+    font-size:12px;
+  }
 }
 </style>
 </head>
@@ -869,9 +845,10 @@ button{cursor:pointer}
     <div class="header-actions">
 
       <button
-        class="header-icon"
+        class="header-refresh"
+        id="refreshHeaderBtn"
         onclick="refreshCurrent()"
-      >↻</button>
+      >Refresh</button>
 
       <button
         class="header-icon"
@@ -888,10 +865,6 @@ button{cursor:pointer}
 
 
 <main class="container">
-
-<!-- =====================================================
-     MEHFIL LIST
-====================================================== -->
 
 <section id="mehfilsPage">
 
@@ -960,10 +933,6 @@ button{cursor:pointer}
 </section>
 
 
-<!-- =====================================================
-     OPEN MEHFIL
-====================================================== -->
-
 <section
   id="mehfilPage"
   style="display:none"
@@ -1026,25 +995,32 @@ button{cursor:pointer}
   >
 
     <div
-    class="replying-bar"
-    id="replyingBar"
-  >
-    <div class="replying-info">
-      <div class="replying-label">↩️ Replying to</div>
-      <div
-        class="replying-user"
-        id="replyingUser"
-      ></div>
+      class="replying-bar"
+      id="replyingBar"
+    >
+
+      <div class="replying-info">
+
+        <div class="replying-label">
+          ↩️ Replying to
+        </div>
+
+        <div
+          class="replying-user"
+          id="replyingUser"
+        ></div>
+
+      </div>
+
+      <button
+        class="cancel-reply"
+        onclick="cancelReply()"
+      >×</button>
+
     </div>
 
-    <button
-      class="cancel-reply"
-      onclick="cancelReply()"
-      title="Cancel Reply"
-    >×</button>
-  </div>
 
-  <div class="composer-top">
+    <div class="composer-top">
 
       <img
         id="composerAvatar"
@@ -1085,7 +1061,7 @@ button{cursor:pointer}
 
     <div class="composer-actions">
 
-      <div style="display:flex;gap:7px">
+      <div>
 
         <button
           class="upload-btn"
@@ -1126,10 +1102,6 @@ button{cursor:pointer}
 
 </section>
 
-
-<!-- =====================================================
-     SETTINGS
-====================================================== -->
 
 <section
   id="settingsPage"
@@ -1315,8 +1287,6 @@ button{cursor:pointer}
 </main>
 
 
-<!-- BOTTOM NAV -->
-
 <nav class="bottom-nav">
 
   <div class="bottom-nav-inner">
@@ -1366,8 +1336,6 @@ button{cursor:pointer}
 </nav>
 
 
-<!-- MODAL -->
-
 <div
   class="modal"
   id="modal"
@@ -1404,8 +1372,6 @@ button{cursor:pointer}
 </div>
 
 
-<!-- IMAGE VIEWER -->
-
 <div
   class="image-viewer"
   id="imageViewer"
@@ -1437,10 +1403,6 @@ button{cursor:pointer}
 
 <script>
 
-/* =========================================================
-   SUPABASE
-========================================================= */
-
 const SUPABASE_URL =
   "https://jhcpqjmxiovvqbghpxbf.supabase.co";
 
@@ -1454,24 +1416,64 @@ const supabaseClient =
   );
 
 
-/* =========================================================
-   GLOBALS
-========================================================= */
-
 let currentUser = null;
 let currentProfile = null;
 let currentMehfil = null;
 let currentMembership = null;
 let selectedImageFile = null;
 let currentPage = "list";
-
-/* Active feed reply */
 let currentReply = null;
 
 
-/* =========================================================
+/* =========================
+   DEFAULT AVATAR
+========================= */
+
+function getDefaultAvatar(){
+
+  return "data:image/svg+xml;charset=UTF-8,"+
+    encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg"
+           width="100" height="100">
+
+        <rect
+          width="100"
+          height="100"
+          rx="50"
+          fill="#8e44ad"
+        />
+
+        <circle
+          cx="50"
+          cy="37"
+          r="18"
+          fill="#fff"
+        />
+
+        <path
+          d="M20 88c4-22 18-33 30-33s26 11 30 33"
+          fill="#fff"
+        />
+
+      </svg>
+    `);
+}
+
+
+function getAvatarUrl(profile){
+
+  const url =
+    profile?.avatar_url
+      ? String(profile.avatar_url).trim()
+      : "";
+
+  return url || getDefaultAvatar();
+}
+
+
+/* =========================
    INIT
-========================================================= */
+========================= */
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -1500,6 +1502,7 @@ document.addEventListener(
         session.user;
 
       await loadCurrentProfile();
+
       await loadMehfils();
 
     }catch(error){
@@ -1517,9 +1520,9 @@ document.addEventListener(
 );
 
 
-/* =========================================================
+/* =========================
    HELPERS
-========================================================= */
+========================= */
 
 function escapeHtml(value){
 
@@ -1698,7 +1701,8 @@ function showPage(id){
 
 function getRole(){
 
-  return currentMembership?.role || "member";
+  return currentMembership?.role ||
+    "member";
 }
 
 
@@ -1723,9 +1727,9 @@ function canManageMembers(){
 }
 
 
-/* =========================================================
+/* =========================
    PROFILE
-========================================================= */
+========================= */
 
 async function loadCurrentProfile(){
 
@@ -1749,20 +1753,17 @@ async function loadCurrentProfile(){
   if(error){
 
     console.warn(
-      "Profile load:",
+      "Profile:",
       error.message
     );
 
     currentProfile = null;
 
-    return;
+  }else{
+
+    currentProfile =
+      data || null;
   }
-
-  currentProfile =
-    data || null;
-
-  const avatar =
-    currentProfile?.avatar_url || "";
 
   const composerAvatar =
     document.getElementById(
@@ -1772,27 +1773,25 @@ async function loadCurrentProfile(){
   if(composerAvatar){
 
     composerAvatar.src =
-      avatar ||
-      "data:image/svg+xml;charset=UTF-8,"+
-      encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
-          <rect width="100%" height="100%" fill="#eeeeee"/>
-          <text x="50%" y="55%" text-anchor="middle" font-size="30">👤</text>
-        </svg>`
+      getAvatarUrl(
+        currentProfile
       );
   }
 }
 
 
-/* =========================================================
+/* =========================
    MEHFIL LIST
-========================================================= */
+========================= */
 
 async function loadMehfils(){
 
-  currentPage = "list";
+  currentPage =
+    "list";
 
-  showPage("mehfilsPage");
+  showPage(
+    "mehfilsPage"
+  );
 
   document.getElementById(
     "headerTitle"
@@ -1821,12 +1820,6 @@ async function loadMehfils(){
 
   try{
 
-    if(!currentUser){
-      throw new Error(
-        "User login nahi hai."
-      );
-    }
-
     const {
       data:mehfils,
       error:mehfilError
@@ -1843,7 +1836,7 @@ async function loadMehfils(){
       throw mehfilError;
     }
 
-    if(!mehfils || mehfils.length === 0){
+    if(!mehfils?.length){
 
       list.innerHTML =
         `<div class="empty">
@@ -1986,24 +1979,11 @@ async function loadMehfils(){
 }
 
 
-/* =========================================================
-   JOIN MEHFIL
-========================================================= */
+/* =========================
+   JOIN
+========================= */
 
 async function joinMehfil(mehfilId){
-
-  if(!currentUser){
-
-    showToast(
-      "Pehle login karein."
-    );
-
-    return;
-  }
-
-  if(!mehfilId){
-    return;
-  }
 
   try{
 
@@ -2030,11 +2010,9 @@ async function joinMehfil(mehfilId){
 
     if(existing){
 
-      showToast(
-        "Aap already is Mehfil ke member hain."
+      await openMehfil(
+        mehfilId
       );
-
-      await openMehfil(mehfilId);
 
       return;
     }
@@ -2058,28 +2036,23 @@ async function joinMehfil(mehfilId){
       "Mehfil join ho gayi."
     );
 
-    await loadMehfils();
-
-    await openMehfil(mehfilId);
+    await openMehfil(
+      mehfilId
+    );
 
   }catch(error){
 
-    console.error(
-      "joinMehfil:",
-      error
-    );
-
     showToast(
-      "Mehfil join nahi hui: "+
+      "Join nahi hui: "+
       error.message
     );
   }
 }
 
 
-/* =========================================================
-   CREATE MEHFIL
-========================================================= */
+/* =========================
+   CREATE
+========================= */
 
 async function createMehfil(){
 
@@ -2113,7 +2086,8 @@ async function createMehfil(){
       .insert({
         name,
         description,
-        created_by:currentUser.id
+        created_by:
+          currentUser.id
       })
       .select()
       .single();
@@ -2128,18 +2102,14 @@ async function createMehfil(){
     await supabaseClient
       .from("mehfil_members")
       .insert({
-        mehfil_id:mehfil.id,
-        user_id:currentUser.id,
+        mehfil_id:
+          mehfil.id,
+        user_id:
+          currentUser.id,
         role:"admin"
       });
 
     if(memberError){
-
-      await supabaseClient
-        .from("mehfils")
-        .delete()
-        .eq("id",mehfil.id);
-
       throw memberError;
     }
 
@@ -2155,13 +2125,11 @@ async function createMehfil(){
       "Mehfil create ho gayi."
     );
 
-    await loadMehfils();
-
-    await openMehfil(mehfil.id);
+    await openMehfil(
+      mehfil.id
+    );
 
   }catch(error){
-
-    console.error(error);
 
     showToast(
       "Mehfil create nahi hui: "+
@@ -2171,9 +2139,9 @@ async function createMehfil(){
 }
 
 
-/* =========================================================
+/* =========================
    OPEN MEHFIL
-========================================================= */
+========================= */
 
 async function openMehfil(mehfilId){
 
@@ -2186,7 +2154,10 @@ async function openMehfil(mehfilId){
     await supabaseClient
       .from("mehfils")
       .select("*")
-      .eq("id",mehfilId)
+      .eq(
+        "id",
+        mehfilId
+      )
       .single();
 
     if(error){
@@ -2217,10 +2188,8 @@ async function openMehfil(mehfilId){
     if(!membership){
 
       showToast(
-        "Aap is Mehfil ke member nahi hain."
+        "Pehle Mehfil join karein."
       );
-
-      await loadMehfils();
 
       return;
     }
@@ -2241,7 +2210,8 @@ async function openMehfil(mehfilId){
     document.getElementById(
       "headerTitle"
     ).textContent =
-      mehfil.name || "Mehfil";
+      mehfil.name ||
+      "Mehfil";
 
     document.getElementById(
       "headerSub"
@@ -2255,12 +2225,14 @@ async function openMehfil(mehfilId){
     document.getElementById(
       "mehfilNameDisplay"
     ).textContent =
-      mehfil.name || "Mehfil";
+      mehfil.name ||
+      "Mehfil";
 
     document.getElementById(
       "mehfilDescriptionDisplay"
     ).textContent =
-      mehfil.description || "";
+      mehfil.description ||
+      "";
 
     document.getElementById(
       "settingsHeaderBtn"
@@ -2270,11 +2242,6 @@ async function openMehfil(mehfilId){
         : "none";
 
     document.getElementById(
-      "activityComposer"
-    ).style.display =
-      "block";
-
-    document.getElementById(
       "applyOfficerBtn"
     ).style.display =
       membership.role === "member"
@@ -2282,14 +2249,12 @@ async function openMehfil(mehfilId){
         : "none";
 
     await loadMehfilStats();
+
     await loadActivities();
 
   }catch(error){
 
-    console.error(
-      "openMehfil:",
-      error
-    );
+    console.error(error);
 
     showToast(
       "Mehfil open nahi ho saki: "+
@@ -2299,9 +2264,9 @@ async function openMehfil(mehfilId){
 }
 
 
-/* =========================================================
+/* =========================
    STATS
-========================================================= */
+========================= */
 
 async function loadMehfilStats(){
 
@@ -2309,46 +2274,43 @@ async function loadMehfilStats(){
     return;
   }
 
-  try{
+  const {
+    count,
+    error
+  } =
+  await supabaseClient
+    .from("mehfil_members")
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "mehfil_id",
+      currentMehfil.id
+    );
 
-    const {
-      count,
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .select(
-        "id",
-        {
-          count:"exact",
-          head:true
-        }
-      )
-      .eq(
-        "mehfil_id",
-        currentMehfil.id
-      );
+  if(error){
 
-    if(error){
-      throw error;
-    }
+    console.warn(
+      error.message
+    );
 
-    document.getElementById(
-      "mehfilStats"
-    ).textContent =
-      "👥 "+(count || 0)+" members";
-
-  }catch(error){
-
-    console.warn(error.message);
-
+    return;
   }
+
+  document.getElementById(
+    "mehfilStats"
+  ).textContent =
+    "👥 "+(count || 0)+" members";
 }
 
 
-/* =========================================================
-   IMAGE URL
-========================================================= */
+/* =========================
+   MEDIA
+========================= */
 
 function getMediaUrl(mediaUrl){
 
@@ -2358,10 +2320,6 @@ function getMediaUrl(mediaUrl){
 
   const raw =
     String(mediaUrl).trim();
-
-  if(!raw){
-    return "";
-  }
 
   if(
     raw.startsWith("https://") ||
@@ -2382,10 +2340,6 @@ function getMediaUrl(mediaUrl){
 }
 
 
-/* =========================================================
-   IMAGE PREVIEW
-========================================================= */
-
 function previewSelectedImage(event){
 
   const file =
@@ -2395,9 +2349,7 @@ function previewSelectedImage(event){
     return;
   }
 
-  if(
-    !file.type.startsWith("image/")
-  ){
+  if(!file.type.startsWith("image/")){
 
     showToast(
       "Sirf image select karein."
@@ -2408,7 +2360,7 @@ function previewSelectedImage(event){
     return;
   }
 
-  if(file.size > 10 * 1024 * 1024){
+  if(file.size > 10*1024*1024){
 
     showToast(
       "Image 10MB se choti honi chahiye."
@@ -2437,7 +2389,6 @@ function previewSelectedImage(event){
         "imagePreviewBox"
       ).style.display =
         "block";
-
     };
 
   reader.readAsDataURL(file);
@@ -2464,15 +2415,7 @@ function removeImagePreview(){
 }
 
 
-/* =========================================================
-   UPLOAD IMAGE
-========================================================= */
-
 async function uploadMehfilImage(file){
-
-  if(!file){
-    return null;
-  }
 
   const extension =
     (
@@ -2480,10 +2423,8 @@ async function uploadMehfilImage(file){
       "jpg"
     )
     .toLowerCase()
-    .replace(/[^a-z0-9]/g,"");
-
-  const safeExtension =
-    extension || "jpg";
+    .replace(/[^a-z0-9]/g,"") ||
+    "jpg";
 
   const path =
     currentMehfil.id+
@@ -2494,9 +2435,9 @@ async function uploadMehfilImage(file){
     "-"+
     Math.random()
       .toString(36)
-      .substring(2,10)+
+      .substring(2,8)+
     "."+
-    safeExtension;
+    extension;
 
   const {
     error
@@ -2510,13 +2451,12 @@ async function uploadMehfilImage(file){
       {
         upsert:false,
         contentType:
-          file.type || "image/jpeg",
-        cacheControl:"3600"
+          file.type ||
+          "image/jpeg"
       }
     );
 
   if(error){
-
     throw new Error(
       "Image upload nahi hui: "+
       error.message
@@ -2524,203 +2464,52 @@ async function uploadMehfilImage(file){
   }
 
   const {
-    data:publicData
+    data
   } =
   supabaseClient
     .storage
     .from("mehfil-media")
     .getPublicUrl(path);
 
-  const publicUrl =
-    publicData?.publicUrl;
-
-  if(!publicUrl){
-
-    throw new Error(
-      "Image ka public URL nahi bana."
-    );
-  }
-
-  return publicUrl;
+  return data.publicUrl;
 }
 
 
-/* =========================================================
-   SEND ACTIVITY
-========================================================= */
+function getStoragePathFromUrl(url){
 
-async function sendActivity(){
+  const marker =
+    "/storage/v1/object/public/mehfil-media/";
 
-  if(!currentMehfil){
+  const index =
+    String(url).indexOf(marker);
 
-    showToast(
-      "Pehle Mehfil open karein."
-    );
-
-    return;
+  if(index === -1){
+    return null;
   }
 
-  const textarea =
-    document.getElementById(
-      "activityText"
-    );
-
-  const typedContent =
-    textarea.value.trim();
-
-  if(
-    !typedContent &&
-    !selectedImageFile
-  ){
-
-    showToast(
-      "Message ya picture add karein."
-    );
-
-    return;
-  }
-
-  try{
-
-    const sendButton =
-      document.querySelector(
-        ".send-btn"
-      );
-
-    sendButton.disabled =
-      true;
-
-    sendButton.textContent =
-      "Sending...";
-
-    let mediaUrl = null;
-
-    if(selectedImageFile){
-
-      mediaUrl =
-        await uploadMehfilImage(
-          selectedImageFile
-        );
-    }
-
-    /* Reply metadata existing content field mein save hota hai. */
-    const replyPrefix =
-      currentReply
-        ? makeReplyPrefix(currentReply)
-        : "";
-
-    const finalContent =
-      replyPrefix +
-      typedContent;
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .insert({
-        mehfil_id:
-          currentMehfil.id,
-        user_id:
-          currentUser.id,
-        content:
-          finalContent || "",
-        media_url:
-          mediaUrl
-      });
-
-    if(error){
-
-      if(mediaUrl){
-
-        try{
-
-          const path =
-            getStoragePathFromUrl(
-              mediaUrl
-            );
-
-          if(path){
-
-            await supabaseClient
-              .storage
-              .from("mehfil-media")
-              .remove([path]);
-          }
-
-        }catch(removeError){
-
-          console.warn(removeError);
-        }
-      }
-
-      throw error;
-    }
-
-    textarea.value = "";
-
-    removeImagePreview();
-
-    cancelReply();
-
-    showToast(
-      "Message send ho gaya."
-    );
-
-    await loadActivities();
-
-    /* New reply/message feed ke bilkul top par show ho. */
-    const feed = document.getElementById("activityFeed");
-    if(feed){
-      window.scrollTo({
-        top:0,
-        behavior:"smooth"
-      });
-    }
-
-  }catch(error){
-
-    console.error(
-      "sendActivity:",
-      error
-    );
-
-    showToast(
-      "Message send nahi hua: "+
-      error.message
-    );
-
-  }finally{
-
-    const sendButton =
-      document.querySelector(
-        ".send-btn"
-      );
-
-    sendButton.disabled =
-      false;
-
-    sendButton.textContent =
-      "Send";
-  }
+  return decodeURIComponent(
+    String(url).substring(
+      index + marker.length
+    )
+  );
 }
 
 
-/* =========================================================
-   FEED REPLY
-========================================================= */
+/* =========================
+   REPLY SYSTEM
+========================= */
 
 function makeReplyPrefix(reply){
 
   return (
-    "__RABTA_REPLY__:" +
+    "__RABTA_REPLY__:"+
     encodeURIComponent(
       String(reply.postId || "")
-    ) +
-    ":" +
+    )+
+    ":"+
     encodeURIComponent(
       String(reply.username || "User")
-    ) +
+    )+
     "__\n"
   );
 }
@@ -2792,39 +2581,24 @@ function startReply(
       "replyingUser"
     );
 
-  if(bar){
+  bar.style.display =
+    "flex";
 
-    bar.style.display =
-      "flex";
-  }
-
-  if(user){
-
-    user.textContent =
-      "@" +
-      (
-        currentReply.username ||
-        "User"
-      );
-  }
+  user.textContent =
+    "@"+
+    currentReply.username;
 
   const textarea =
     document.getElementById(
       "activityText"
     );
 
-  if(textarea){
+  textarea.placeholder =
+    "@"+
+    currentReply.username+
+    " ko reply likhein...";
 
-    textarea.focus();
-
-    textarea.placeholder =
-      "@" +
-      (
-        currentReply.username ||
-        "User"
-      ) +
-      " ko reply likhein...";
-  }
+  textarea.focus();
 
   showToast(
     "Reply mode on ho gaya."
@@ -2837,38 +2611,20 @@ function cancelReply(){
   currentReply =
     null;
 
-  const bar =
-    document.getElementById(
-      "replyingBar"
-    );
+  document.getElementById(
+    "replyingBar"
+  ).style.display =
+    "none";
 
-  if(bar){
+  document.getElementById(
+    "replyingUser"
+  ).textContent =
+    "";
 
-    bar.style.display =
-      "none";
-  }
-
-  const user =
-    document.getElementById(
-      "replyingUser"
-    );
-
-  if(user){
-
-    user.textContent =
-      "";
-  }
-
-  const textarea =
-    document.getElementById(
-      "activityText"
-    );
-
-  if(textarea){
-
-    textarea.placeholder =
-      "Mehfil mein kuch share karein...";
-  }
+  document.getElementById(
+    "activityText"
+  ).placeholder =
+    "Mehfil mein kuch share karein...";
 }
 
 
@@ -2876,11 +2632,10 @@ function scrollToReplyPost(postId){
 
   const post =
     document.getElementById(
-      "post-" + postId
+      "post-"+postId
     );
 
   if(!post){
-
     return;
   }
 
@@ -2894,49 +2649,133 @@ function scrollToReplyPost(postId){
 
   setTimeout(
     ()=>{
-      post.style.outline =
-        "";
+      post.style.outline="";
     },
     1400
   );
 }
 
 
+/* =========================
+   SEND ACTIVITY
+========================= */
 
-/* =========================================================
-   STORAGE PATH
-========================================================= */
+async function sendActivity(){
 
-function getStoragePathFromUrl(url){
+  if(!currentMehfil){
+    return;
+  }
+
+  const textarea =
+    document.getElementById(
+      "activityText"
+    );
+
+  const text =
+    textarea.value.trim();
+
+  if(!text && !selectedImageFile){
+
+    showToast(
+      "Message ya picture add karein."
+    );
+
+    return;
+  }
+
+  const button =
+    document.querySelector(
+      ".send-btn"
+    );
 
   try{
 
-    const marker =
-      "/storage/v1/object/public/mehfil-media/";
+    button.disabled =
+      true;
 
-    const index =
-      String(url).indexOf(marker);
+    button.textContent =
+      "Sending...";
 
-    if(index === -1){
-      return null;
+    let mediaUrl =
+      null;
+
+    if(selectedImageFile){
+
+      mediaUrl =
+        await uploadMehfilImage(
+          selectedImageFile
+        );
     }
 
-    return decodeURIComponent(
-      String(url).substring(
-        index + marker.length
-      )
+    const replyPrefix =
+      currentReply
+        ? makeReplyPrefix(currentReply)
+        : "";
+
+    const finalContent =
+      replyPrefix+
+      text;
+
+    const {
+      error
+    } =
+    await supabaseClient
+      .from("mehfil_posts")
+      .insert({
+        mehfil_id:
+          currentMehfil.id,
+        user_id:
+          currentUser.id,
+        content:
+          finalContent || "",
+        media_url:
+          mediaUrl
+      });
+
+    if(error){
+      throw error;
+    }
+
+    textarea.value="";
+
+    removeImagePreview();
+
+    cancelReply();
+
+    showToast(
+      "Message send ho gaya."
     );
+
+    await loadActivities();
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
 
   }catch(error){
 
-    return null;
+    console.error(error);
+
+    showToast(
+      "Message send nahi hua: "+
+      error.message
+    );
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Send";
   }
 }
 
 
-/* =========================================================
+/* =========================
    LOAD ACTIVITIES
-========================================================= */
+========================= */
 
 async function loadActivities(){
 
@@ -2976,7 +2815,7 @@ async function loadActivities(){
       throw error;
     }
 
-    if(!posts || posts.length === 0){
+    if(!posts?.length){
 
       feed.innerHTML =
         `<div class="card empty">
@@ -2996,7 +2835,7 @@ async function loadActivities(){
         )
       ];
 
-    let profiles = [];
+    let profiles=[];
 
     if(userIds.length){
 
@@ -3014,15 +2853,7 @@ async function loadActivities(){
           userIds
         );
 
-      if(profileError){
-
-        console.warn(
-          "Profiles:",
-          profileError.message
-        );
-
-      }else{
-
+      if(!profileError){
         profiles =
           data || [];
       }
@@ -3038,12 +2869,16 @@ async function loadActivities(){
         )
       );
 
+    let memberRoles=[];
+
     const {
-      data:memberRoles
+      data:roles
     } =
     await supabaseClient
       .from("mehfil_members")
-      .select("user_id,role")
+      .select(
+        "user_id,role"
+      )
       .eq(
         "mehfil_id",
         currentMehfil.id
@@ -3053,9 +2888,12 @@ async function loadActivities(){
         userIds
       );
 
+    memberRoles =
+      roles || [];
+
     const roleMap =
       new Map(
-        (memberRoles || []).map(
+        memberRoles.map(
           r=>[
             String(r.user_id),
             r.role
@@ -3097,9 +2935,9 @@ async function loadActivities(){
 }
 
 
-/* =========================================================
+/* =========================
    RENDER POST
-========================================================= */
+========================= */
 
 function renderPost(
   post,
@@ -3117,8 +2955,7 @@ function renderPost(
     username;
 
   const avatar =
-    profile?.avatar_url ||
-    "";
+    getAvatarUrl(profile);
 
   const image =
     getMediaUrl(
@@ -3134,16 +2971,16 @@ function renderPost(
       post.content
     );
 
-  let roleBadge = "";
+  let roleBadge="";
 
-  if(role === "admin"){
+  if(role==="admin"){
 
     roleBadge =
       `<span class="creator-badge">
         👑 Creator
       </span>`;
 
-  }else if(role === "moderator"){
+  }else if(role==="moderator"){
 
     roleBadge =
       `<span class="officer-badge">
@@ -3151,12 +2988,11 @@ function renderPost(
       </span>`;
   }
 
-  let imageHtml = "";
+  let imageHtml="";
 
   if(image){
 
-    imageHtml =
-      `
+    imageHtml = `
       <img
         class="activity-image"
         src="${escapeHtml(image)}"
@@ -3169,59 +3005,75 @@ function renderPost(
       <div class="image-error">
         🖼️ Image load nahi ho saki
       </div>
-      `;
+    `;
   }
 
-  let replyPreview = "";
+  let replyPreview="";
 
   if(replyInfo.isReply){
 
-    replyPreview =
-      `
+    replyPreview = `
       <div
         class="reply-preview"
-        onclick="scrollToReplyPost('${escapeJs(replyInfo.replyPostId)}')"
+        onclick="scrollToReplyPost(
+          '${escapeJs(replyInfo.replyPostId)}'
+        )"
       >
         ↩️ Reply to
         <strong>
-          @${escapeHtml(replyInfo.replyUsername)}
+          @${escapeHtml(
+            replyInfo.replyUsername
+          )}
         </strong>
       </div>
-      `;
+    `;
   }
 
   return `
     <article
       class="activity"
-      id="post-${escapeHtml(String(post.id))}"
+      id="post-${escapeHtml(
+        String(post.id)
+      )}"
     >
 
       <div class="activity-head">
 
-        <img
-          class="activity-avatar"
-          src="${escapeHtml(avatar)}"
-          alt=""
-          onerror="this.style.display='none'"
+        <div
+          class="activity-profile"
+          onclick="openUserProfile(
+            '${escapeJs(String(post.user_id))}'
+          )"
         >
 
-        <div class="activity-user">
+          <img
+            class="activity-avatar"
+            src="${escapeHtml(avatar)}"
+            alt="${escapeHtml(username)}"
+            onerror="this.src=getDefaultAvatar()"
+          >
 
-          <div class="activity-name">
+          <div class="activity-user">
 
-            ${escapeHtml(name)}
+            <div class="activity-name">
 
-            ${roleBadge}
+              ${escapeHtml(name)}
 
-          </div>
+              ${roleBadge}
 
-          <div class="activity-meta">
+            </div>
 
-            @${escapeHtml(username)}
-            ·
-            ${escapeHtml(
-              formatDate(post.created_at)
-            )}
+            <div class="activity-meta">
+
+              @${escapeHtml(username)}
+              ·
+              ${escapeHtml(
+                formatDate(
+                  post.created_at
+                )
+              )}
+
+            </div>
 
           </div>
 
@@ -3229,7 +3081,10 @@ function renderPost(
 
         <button
           class="activity-menu"
-          onclick="showPostMenu('${escapeJs(String(post.id))}','${escapeJs(String(post.user_id))}')"
+          onclick="showPostMenu(
+            '${escapeJs(String(post.id))}',
+            '${escapeJs(String(post.user_id))}'
+          )"
         >
           ⋮
         </button>
@@ -3243,7 +3098,9 @@ function renderPost(
         ?
         `
         <div class="activity-content">
-          ${escapeHtml(replyInfo.content)}
+          ${escapeHtml(
+            replyInfo.content
+          )}
         </div>
         `
         :
@@ -3256,7 +3113,11 @@ function renderPost(
 
         <button
           class="action-btn"
-          onclick="startReply('${escapeJs(String(post.id))}','${escapeJs(String(username))}','${escapeJs(String(name))}')"
+          onclick="startReply(
+            '${escapeJs(String(post.id))}',
+            '${escapeJs(String(username))}',
+            '${escapeJs(String(name))}'
+          )"
         >
           ↩️ Reply
         </button>
@@ -3267,14 +3128,18 @@ function renderPost(
           `
           <button
             class="action-btn"
-            onclick="openOneToOne('${escapeJs(String(post.user_id))}')"
+            onclick="openOneToOne(
+              '${escapeJs(String(post.user_id))}'
+            )"
           >
             👤 1on1
           </button>
 
           <button
             class="action-btn"
-            onclick="blockUser('${escapeJs(String(post.user_id))}')"
+            onclick="blockUser(
+              '${escapeJs(String(post.user_id))}'
+            )"
           >
             🚫 Block
           </button>
@@ -3289,7 +3154,9 @@ function renderPost(
           `
           <button
             class="action-btn delete-post"
-            onclick="deletePost('${escapeJs(String(post.id))}')"
+            onclick="deletePost(
+              '${escapeJs(String(post.id))}'
+            )"
           >
             🗑️ Delete
           </button>
@@ -3305,11 +3172,9 @@ function renderPost(
 }
 
 
-
 function imageLoadFailed(img){
 
-  img.style.display =
-    "none";
+  img.style.display="none";
 
   if(img.nextElementSibling){
 
@@ -3319,9 +3184,9 @@ function imageLoadFailed(img){
 }
 
 
-/* =========================================================
+/* =========================
    IMAGE VIEWER
-========================================================= */
+========================= */
 
 function openImage(url){
 
@@ -3345,8 +3210,11 @@ function closeImageViewer(event){
 
   if(
     !event ||
-    event.target.id === "imageViewer" ||
-    event.target.classList.contains("viewer-close")
+    event.target.id ===
+      "imageViewer" ||
+    event.target.classList.contains(
+      "viewer-close"
+    )
   ){
 
     document.getElementById(
@@ -3356,340 +3224,14 @@ function closeImageViewer(event){
 
     document.getElementById(
       "viewerImage"
-    ).src = "";
+    ).src="";
   }
 }
 
 
-/* =========================================================
-   REPLIES
-========================================================= */
-
-async function toggleComments(postId){
-
-  const box =
-    document.getElementById(
-      "comments-"+postId
-    );
-
-  if(!box){
-    return;
-  }
-
-  const currentlyOpen =
-    box.style.display === "block";
-
-  if(currentlyOpen){
-
-    box.style.display =
-      "none";
-
-    return;
-  }
-
-  box.style.display =
-    "block";
-
-  await loadComments(postId);
-}
-
-
-async function loadComments(postId){
-
-  const list =
-    document.getElementById(
-      "comments-list-"+postId
-    );
-
-  if(!list){
-    return;
-  }
-
-  list.innerHTML =
-    `<div
-      style="color:#888;font-size:12px;padding:8px 0"
-    >
-      Replies load ho rahe hain...
-    </div>`;
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_replies")
-      .select("*")
-      .eq(
-        "post_id",
-        postId
-      )
-      .order(
-        "created_at",
-        {ascending:true}
-      );
-
-    if(error){
-      throw error;
-    }
-
-    const comments =
-      data || [];
-
-    if(comments.length === 0){
-
-      list.innerHTML =
-        `<div
-          style="color:#888;font-size:12px;padding:8px 0"
-        >
-          Abhi koi reply nahi.
-        </div>`;
-
-      return;
-    }
-
-    const ids =
-      [
-        ...new Set(
-          comments
-            .map(c=>c.user_id)
-            .filter(Boolean)
-        )
-      ];
-
-    let profiles = [];
-
-    if(ids.length){
-
-      const {
-        data:p
-      } =
-      await supabaseClient
-        .from("profiles")
-        .select(
-          "id,username,name,avatar_url"
-        )
-        .in(
-          "id",
-          ids
-        );
-
-      profiles =
-        p || [];
-    }
-
-    const profileMap =
-      new Map(
-        profiles.map(
-          p=>[
-            String(p.id),
-            p
-          ]
-        )
-      );
-
-    list.innerHTML =
-      comments.map(
-        comment=>{
-
-          const profile =
-            profileMap.get(
-              String(comment.user_id)
-            );
-
-          const username =
-            comment.username ||
-            profile?.username ||
-            profile?.name ||
-            "User";
-
-          const avatar =
-            profile?.avatar_url ||
-            "";
-
-          const own =
-            String(comment.user_id) ===
-            String(currentUser.id);
-
-          return `
-            <div class="reply">
-
-              <img
-                class="reply-avatar"
-                src="${escapeHtml(avatar)}"
-                alt=""
-                onerror="this.style.display='none'"
-              >
-
-              <div class="reply-body">
-
-                <div class="reply-name">
-                  ${escapeHtml(username)}
-                  ·
-                  <span
-                    style="font-size:10px;color:#999;font-weight:400"
-                  >
-                    ${escapeHtml(
-                      formatDate(comment.created_at)
-                    )}
-                  </span>
-                </div>
-
-                <div class="reply-text">
-                  ${escapeHtml(
-                    comment.comment || ""
-                  )}
-                </div>
-
-                ${
-                  own
-                  ?
-                  `
-                  <button
-                    class="reply-delete"
-                    onclick="deleteComment('${escapeJs(String(comment.id))}','${escapeJs(String(postId))}')"
-                  >
-                    Delete
-                  </button>
-                  `
-                  :
-                  ""
-                }
-
-              </div>
-
-            </div>
-          `;
-        }
-      ).join("");
-
-  }catch(error){
-
-    console.error(error);
-
-    list.innerHTML =
-      `<div
-        style="color:#e74c3c;font-size:12px;padding:8px 0"
-      >
-        Replies load nahi ho sake.
-      </div>`;
-  }
-}
-
-
-async function sendComment(postId){
-
-  const input =
-    document.getElementById(
-      "comment-input-"+postId
-    );
-
-  if(!input){
-    return;
-  }
-
-  const text =
-    input.value.trim();
-
-  if(!text){
-
-    showToast(
-      "Reply likhein."
-    );
-
-    return;
-  }
-
-  try{
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_replies")
-      .insert({
-        post_id:postId,
-        user_id:currentUser.id,
-        username:
-          currentProfile?.username ||
-          currentProfile?.name ||
-          currentUser.email?.split("@")[0] ||
-          "User",
-        comment:text
-      });
-
-    if(error){
-      throw error;
-    }
-
-    input.value = "";
-
-    await loadComments(postId);
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Reply send nahi hua: "+
-      error.message
-    );
-  }
-}
-
-
-async function deleteComment(
-  commentId,
-  postId
-){
-
-  if(!confirm("Reply delete karna hai?")){
-    return;
-  }
-
-  try{
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfil_replies")
-      .delete()
-      .eq(
-        "id",
-        commentId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-    if(error){
-      throw error;
-    }
-
-    await loadComments(postId);
-
-    showToast(
-      "Reply delete ho gaya."
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Reply delete nahi hua: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
+/* =========================
    POST MENU
-========================================================= */
+========================= */
 
 function showPostMenu(
   postId,
@@ -3700,14 +3242,15 @@ function showPostMenu(
     String(userId) ===
     String(currentUser.id);
 
-  let html = "";
+  let html="";
 
   if(own){
 
-    html += `
+    html = `
       <button
         class="primary-btn"
-        onclick="closeModal();deletePost('${escapeJs(postId)}')"
+        onclick="closeModal();
+        deletePost('${escapeJs(postId)}')"
       >
         🗑️ Delete Activity
       </button>
@@ -3715,10 +3258,11 @@ function showPostMenu(
 
   }else{
 
-    html += `
+    html = `
       <button
         class="primary-btn"
-        onclick="closeModal();blockUser('${escapeJs(userId)}')"
+        onclick="closeModal();
+        blockUser('${escapeJs(userId)}')"
       >
         🚫 Block User
       </button>
@@ -3728,7 +3272,8 @@ function showPostMenu(
       <button
         class="secondary-btn"
         style="width:100%"
-        onclick="closeModal();openUserProfile('${escapeJs(userId)}')"
+        onclick="closeModal();
+        openUserProfile('${escapeJs(userId)}')"
       >
         👤 View Profile
       </button>
@@ -3742,13 +3287,15 @@ function showPostMenu(
 }
 
 
-/* =========================================================
+/* =========================
    DELETE POST
-========================================================= */
+========================= */
 
 async function deletePost(postId){
 
-  if(!confirm("Ye activity delete karni hai?")){
+  if(!confirm(
+    "Ye activity delete karni hai?"
+  )){
     return;
   }
 
@@ -3756,7 +3303,7 @@ async function deletePost(postId){
 
     const {
       data:post,
-      error:postError
+      error:findError
     } =
     await supabaseClient
       .from("mehfil_posts")
@@ -3769,8 +3316,8 @@ async function deletePost(postId){
       )
       .single();
 
-    if(postError){
-      throw postError;
+    if(findError){
+      throw findError;
     }
 
     if(
@@ -3828,8 +3375,6 @@ async function deletePost(postId){
 
   }catch(error){
 
-    console.error(error);
-
     showToast(
       "Delete nahi hua: "+
       error.message
@@ -3838,15 +3383,11 @@ async function deletePost(postId){
 }
 
 
-/* =========================================================
+/* =========================
    MEMBERS
-========================================================= */
+========================= */
 
 async function getMembers(){
-
-  if(!currentMehfil){
-    return [];
-  }
 
   const {
     data,
@@ -3879,7 +3420,7 @@ async function showMembers(){
     const members =
       await getMembers();
 
-    if(members.length === 0){
+    if(!members.length){
 
       showModal(
         "Members",
@@ -3892,13 +3433,9 @@ async function showMembers(){
     }
 
     const ids =
-      [
-        ...new Set(
-          members.map(
-            m=>m.user_id
-          )
-        )
-      ];
+      members.map(
+        m=>m.user_id
+      );
 
     const {
       data:profiles
@@ -3913,7 +3450,7 @@ async function showMembers(){
         ids
       );
 
-    const profileMap =
+    const map =
       new Map(
         (profiles || []).map(
           p=>[
@@ -3927,18 +3464,14 @@ async function showMembers(){
       members.map(
         member=>{
 
-          const profile =
-            profileMap.get(
+          const p =
+            map.get(
               String(member.user_id)
             );
 
-          const name =
-            profile?.name ||
-            profile?.username ||
-            "User";
-
           const role =
-            member.role || "member";
+            member.role ||
+            "member";
 
           return `
             <div class="member-item">
@@ -3946,18 +3479,27 @@ async function showMembers(){
               <img
                 class="member-avatar"
                 src="${escapeHtml(
-                  profile?.avatar_url || ""
+                  getAvatarUrl(p)
                 )}"
                 alt=""
+                onerror="this.src=getDefaultAvatar()"
               >
 
               <div class="member-info">
 
                 <div class="member-name">
-                  ${escapeHtml(name)}
+                  ${escapeHtml(
+                    p?.name ||
+                    p?.username ||
+                    "User"
+                  )}
                 </div>
 
                 <div class="member-role">
+                  @${escapeHtml(
+                    p?.username || ""
+                  )}
+                  ·
                   ${
                     role==="admin"
                       ? "👑 Creator"
@@ -3995,16 +3537,16 @@ async function showManageMembers(){
 }
 
 
-/* =========================================================
-   KICK MEMBERS
-========================================================= */
+/* =========================
+   KICK
+========================= */
 
 async function showKickMembers(){
 
   if(!canManageMembers()){
 
     showToast(
-      "Aapko member manage karne ki permission nahi."
+      "Permission nahi."
     );
 
     return;
@@ -4018,11 +3560,11 @@ async function showKickMembers(){
     const kickable =
       members.filter(
         m=>
-          m.role !== "admin" &&
-          m.role !== "moderator"
+          m.role!=="admin" &&
+          m.role!=="moderator"
       );
 
-    if(kickable.length === 0){
+    if(!kickable.length){
 
       showModal(
         "🚪 Kick Members",
@@ -4052,7 +3594,7 @@ async function showKickMembers(){
         ids
       );
 
-    const profileMap =
+    const map =
       new Map(
         (profiles || []).map(
           p=>[
@@ -4066,15 +3608,10 @@ async function showKickMembers(){
       kickable.map(
         member=>{
 
-          const profile =
-            profileMap.get(
+          const p =
+            map.get(
               String(member.user_id)
             );
-
-          const name =
-            profile?.name ||
-            profile?.username ||
-            "User";
 
           return `
             <div class="member-item">
@@ -4082,20 +3619,25 @@ async function showKickMembers(){
               <img
                 class="member-avatar"
                 src="${escapeHtml(
-                  profile?.avatar_url || ""
+                  getAvatarUrl(p)
                 )}"
+                onerror="this.src=getDefaultAvatar()"
                 alt=""
               >
 
               <div class="member-info">
 
                 <div class="member-name">
-                  ${escapeHtml(name)}
+                  ${escapeHtml(
+                    p?.name ||
+                    p?.username ||
+                    "User"
+                  )}
                 </div>
 
                 <div class="member-role">
                   @${escapeHtml(
-                    profile?.username || ""
+                    p?.username || ""
                   )}
                 </div>
 
@@ -4103,7 +3645,9 @@ async function showKickMembers(){
 
               <button
                 class="danger-btn"
-                onclick="kickMember('${escapeJs(String(member.user_id))}')"
+                onclick="kickMember(
+                  '${escapeJs(String(member.user_id))}'
+                )"
               >
                 Kick
               </button>
@@ -4131,11 +3675,6 @@ async function showKickMembers(){
 async function kickMember(userId){
 
   if(!canManageMembers()){
-
-    showToast(
-      "Permission nahi."
-    );
-
     return;
   }
 
@@ -4164,12 +3703,12 @@ async function kickMember(userId){
       .maybeSingle();
 
     if(
-      target?.role === "admin" ||
-      target?.role === "moderator"
+      target?.role==="admin" ||
+      target?.role==="moderator"
     ){
 
       showToast(
-        "Creator/Afsar ko yahan se kick nahi kiya ja sakta."
+        "Creator/Afsar ko kick nahi kiya ja sakta."
       );
 
       return;
@@ -4194,11 +3733,11 @@ async function kickMember(userId){
       throw error;
     }
 
+    closeModal();
+
     showToast(
       "Member kick ho gaya."
     );
-
-    closeModal();
 
     await loadMehfilStats();
 
@@ -4212,10 +3751,9 @@ async function kickMember(userId){
 }
 
 
-/* =========================================================
-   OFFICER APPLICATION
-   FIXED: message REQUIRED
-========================================================= */
+/* =========================
+   APPLY AFSAR
+========================= */
 
 async function applyForOfficer(){
 
@@ -4227,8 +3765,7 @@ async function applyForOfficer(){
   }
 
   if(
-    currentMembership.role !==
-    "member"
+    currentMembership.role!=="member"
   ){
 
     showToast(
@@ -4268,11 +3805,9 @@ async function applyForOfficer(){
     if(existing){
 
       showToast(
-        existing.status === "approved"
-          ? "Aap already Afsar hain."
-          : existing.status === "pending"
-            ? "Aapki application pehle se pending hai."
-            : "Aap pehle hi application submit kar chuke hain."
+        existing.status==="pending"
+          ? "Application pehle se pending hai."
+          : "Application pehle submit ho chuki hai."
       );
 
       return;
@@ -4280,18 +3815,18 @@ async function applyForOfficer(){
 
     const message =
       prompt(
-        "Afsar banne ki wajah / message likhein:",
+        "Afsar banne ki wajah/message likhein:",
         "Main is Mehfil ko manage karne mein help karna chahta hoon."
       );
 
-    if(message === null){
+    if(message===null){
       return;
     }
 
-    const cleanMessage =
+    const clean =
       message.trim();
 
-    if(!cleanMessage){
+    if(!clean){
 
       showToast(
         "Message likhna zaroori hai."
@@ -4310,13 +3845,10 @@ async function applyForOfficer(){
       .insert({
         mehfil_id:
           currentMehfil.id,
-
         user_id:
           currentUser.id,
-
         message:
-          cleanMessage,
-
+          clean,
         status:
           "pending"
       });
@@ -4331,11 +3863,6 @@ async function applyForOfficer(){
 
   }catch(error){
 
-    console.error(
-      "applyForOfficer:",
-      error
-    );
-
     showToast(
       "Application submit nahi hui: "+
       error.message
@@ -4344,9 +3871,9 @@ async function applyForOfficer(){
 }
 
 
-/* =========================================================
+/* =========================
    APPLICATIONS
-========================================================= */
+========================= */
 
 async function showApplications(){
 
@@ -4383,10 +3910,7 @@ async function showApplications(){
       throw error;
     }
 
-    if(
-      !applications ||
-      applications.length === 0
-    ){
+    if(!applications?.length){
 
       showModal(
         "🛡️ Afsar Applications",
@@ -4399,13 +3923,9 @@ async function showApplications(){
     }
 
     const ids =
-      [
-        ...new Set(
-          applications.map(
-            a=>a.user_id
-          )
-        )
-      ];
+      applications.map(
+        a=>a.user_id
+      );
 
     const {
       data:profiles
@@ -4420,7 +3940,7 @@ async function showApplications(){
         ids
       );
 
-    const profileMap =
+    const map =
       new Map(
         (profiles || []).map(
           p=>[
@@ -4435,12 +3955,9 @@ async function showApplications(){
         app=>{
 
           const p =
-            profileMap.get(
+            map.get(
               String(app.user_id)
             );
-
-          const status =
-            app.status || "pending";
 
           return `
             <div class="member-item">
@@ -4448,8 +3965,9 @@ async function showApplications(){
               <img
                 class="member-avatar"
                 src="${escapeHtml(
-                  p?.avatar_url || ""
+                  getAvatarUrl(p)
                 )}"
+                onerror="this.src=getDefaultAvatar()"
                 alt=""
               >
 
@@ -4468,7 +3986,9 @@ async function showApplications(){
                     p?.username || ""
                   )}
                   ·
-                  ${escapeHtml(status)}
+                  ${escapeHtml(
+                    app.status || "pending"
+                  )}
                 </div>
 
                 ${
@@ -4480,10 +4000,11 @@ async function showApplications(){
                       margin-top:6px;
                       font-size:12px;
                       color:#555;
-                      line-height:1.4
                     "
                   >
-                    ${escapeHtml(app.message)}
+                    ${escapeHtml(
+                      app.message
+                    )}
                   </div>
                   `
                   :
@@ -4493,21 +4014,26 @@ async function showApplications(){
               </div>
 
               ${
-                status === "pending"
+                app.status==="pending"
                 ?
                 `
                 <div class="member-actions">
 
                   <button
                     class="small-btn"
-                    onclick="approveOfficer('${escapeJs(String(app.id))}','${escapeJs(String(app.user_id))}')"
+                    onclick="approveOfficer(
+                      '${escapeJs(String(app.id))}',
+                      '${escapeJs(String(app.user_id))}'
+                    )"
                   >
                     Approve
                   </button>
 
                   <button
                     class="small-btn"
-                    onclick="rejectOfficer('${escapeJs(String(app.id))}')"
+                    onclick="rejectOfficer(
+                      '${escapeJs(String(app.id))}'
+                    )"
                   >
                     Reject
                   </button>
@@ -4551,11 +4077,11 @@ async function approveOfficer(
 
     const {
       data:member,
-      error:memberFindError
+      error
     } =
     await supabaseClient
       .from("mehfil_members")
-      .select("id,role")
+      .select("id")
       .eq(
         "mehfil_id",
         currentMehfil.id
@@ -4566,14 +4092,14 @@ async function approveOfficer(
       )
       .maybeSingle();
 
-    if(memberFindError){
-      throw memberFindError;
+    if(error){
+      throw error;
     }
 
     if(!member){
 
       showToast(
-        "User is Mehfil ka member nahi hai."
+        "User Mehfil ka member nahi hai."
       );
 
       return;
@@ -4601,7 +4127,7 @@ async function approveOfficer(
     }
 
     const {
-      error:applicationError
+      error:appError
     } =
     await supabaseClient
       .from(
@@ -4615,22 +4141,22 @@ async function approveOfficer(
         applicationId
       );
 
-    if(applicationError){
-      throw applicationError;
+    if(appError){
+      throw appError;
     }
+
+    closeModal();
 
     showToast(
       "User Afsar ban gaya."
     );
-
-    closeModal();
 
     await loadActivities();
 
   }catch(error){
 
     showToast(
-      "Afsar approve nahi hua: "+
+      "Approve nahi hua: "+
       error.message
     );
   }
@@ -4666,25 +4192,25 @@ async function rejectOfficer(
       throw error;
     }
 
+    closeModal();
+
     showToast(
       "Application reject ho gayi."
     );
 
-    closeModal();
-
   }catch(error){
 
     showToast(
-      "Application reject nahi hui: "+
+      "Reject nahi hui: "+
       error.message
     );
   }
 }
 
 
-/* =========================================================
+/* =========================
    OFFICERS
-========================================================= */
+========================= */
 
 async function showOfficers(){
 
@@ -4719,10 +4245,7 @@ async function showOfficers(){
       throw error;
     }
 
-    if(
-      !officers ||
-      officers.length === 0
-    ){
+    if(!officers?.length){
 
       showModal(
         "👮 Afsar",
@@ -4768,9 +4291,7 @@ async function showOfficers(){
 
           const p =
             map.get(
-              String(
-                officer.user_id
-              )
+              String(officer.user_id)
             );
 
           return `
@@ -4779,8 +4300,9 @@ async function showOfficers(){
               <img
                 class="member-avatar"
                 src="${escapeHtml(
-                  p?.avatar_url || ""
+                  getAvatarUrl(p)
                 )}"
+                onerror="this.src=getDefaultAvatar()"
                 alt=""
               >
 
@@ -4795,14 +4317,19 @@ async function showOfficers(){
                 </div>
 
                 <div class="member-role">
-                  🛡️ Afsar
+                  @${escapeHtml(
+                    p?.username || ""
+                  )}
+                  · 🛡️ Afsar
                 </div>
 
               </div>
 
               <button
                 class="danger-btn"
-                onclick="removeOfficer('${escapeJs(String(officer.user_id))}')"
+                onclick="removeOfficer(
+                  '${escapeJs(String(officer.user_id))}'
+                )"
               >
                 Remove
               </button>
@@ -4862,11 +4389,11 @@ async function removeOfficer(userId){
       throw error;
     }
 
+    closeModal();
+
     showToast(
       "Afsar role remove ho gaya."
     );
-
-    closeModal();
 
     await loadActivities();
 
@@ -4880,9 +4407,9 @@ async function removeOfficer(userId){
 }
 
 
-/* =========================================================
-   INVITE USER
-========================================================= */
+/* =========================
+   INVITE
+========================= */
 
 function showInviteUser(){
 
@@ -4930,13 +4457,10 @@ function showInviteUser(){
 
 async function searchInviteUser(){
 
-  const input =
+  const username =
     document.getElementById(
       "inviteUsername"
-    );
-
-  const username =
-    input?.value.trim();
+    )?.value.trim();
 
   if(!username){
 
@@ -4981,11 +4505,11 @@ async function searchInviteUser(){
     const users =
       (data || []).filter(
         u=>
-          String(u.id) !==
+          String(u.id)!==
           String(currentUser.id)
       );
 
-    if(users.length === 0){
+    if(!users.length){
 
       result.innerHTML =
         `<div class="empty">
@@ -5003,8 +4527,9 @@ async function searchInviteUser(){
             <img
               class="member-avatar"
               src="${escapeHtml(
-                user.avatar_url || ""
+                getAvatarUrl(user)
               )}"
+              onerror="this.src=getDefaultAvatar()"
               alt=""
             >
 
@@ -5028,7 +4553,9 @@ async function searchInviteUser(){
 
             <button
               class="small-btn"
-              onclick="sendInvite('${escapeJs(String(user.id))}')"
+              onclick="sendInvite(
+                '${escapeJs(String(user.id))}'
+              )"
             >
               Invite
             </button>
@@ -5077,7 +4604,7 @@ async function sendInvite(userId){
     if(existing){
 
       showToast(
-        "Ye user already Mehfil member hai."
+        "Ye user already member hai."
       );
 
       return;
@@ -5109,8 +4636,6 @@ async function sendInvite(userId){
 
   }catch(error){
 
-    console.error(error);
-
     showToast(
       "Invite send nahi hua: "+
       error.message
@@ -5119,9 +4644,9 @@ async function sendInvite(userId){
 }
 
 
-/* =========================================================
-   EDIT MEHFIL
-========================================================= */
+/* =========================
+   EDIT
+========================= */
 
 function showEditMehfil(){
 
@@ -5256,9 +4781,9 @@ async function saveMehfilEdit(){
 }
 
 
-/* =========================================================
-   MY STATUS
-========================================================= */
+/* =========================
+   STATUS
+========================= */
 
 function showMyStatus(){
 
@@ -5266,9 +4791,9 @@ function showMyStatus(){
     getRole();
 
   const roleText =
-    role === "admin"
+    role==="admin"
       ? "👑 Creator"
-      : role === "moderator"
+      : role==="moderator"
         ? "🛡️ Afsar"
         : "👤 Member";
 
@@ -5280,7 +4805,28 @@ function showMyStatus(){
         style="box-shadow:none;border:1px solid #eee"
       >
 
-        <div style="font-size:15px;font-weight:700">
+        <img
+          src="${escapeHtml(
+            getAvatarUrl(
+              currentProfile
+            )
+          )}"
+          onerror="this.src=getDefaultAvatar()"
+          style="
+            width:65px;
+            height:65px;
+            border-radius:50%;
+            object-fit:cover;
+          "
+        >
+
+        <div
+          style="
+            font-size:15px;
+            font-weight:700;
+            margin-top:10px
+          "
+        >
           ${escapeHtml(
             currentProfile?.name ||
             currentProfile?.username ||
@@ -5289,7 +4835,11 @@ function showMyStatus(){
         </div>
 
         <div
-          style="color:#777;font-size:13px;margin-top:5px"
+          style="
+            color:#777;
+            font-size:13px;
+            margin-top:5px
+          "
         >
           @${escapeHtml(
             currentProfile?.username || ""
@@ -5306,14 +4856,14 @@ function showMyStatus(){
 }
 
 
-/* =========================================================
-   BLOCK USER
-========================================================= */
+/* =========================
+   BLOCK
+========================= */
 
 async function blockUser(userId){
 
   if(
-    String(userId) ===
+    String(userId)===
     String(currentUser.id)
   ){
     return;
@@ -5339,16 +4889,12 @@ async function blockUser(userId){
           userId
       });
 
-    if(error){
-
-      if(
-        !String(error.message)
-          .toLowerCase()
-          .includes("duplicate")
-      ){
-
-        throw error;
-      }
+    if(error &&
+      !String(error.message)
+        .toLowerCase()
+        .includes("duplicate")
+    ){
+      throw error;
     }
 
     showToast(
@@ -5367,9 +4913,196 @@ async function blockUser(userId){
 }
 
 
-/* =========================================================
-   PROFILE / PRIVATE / NAV
-========================================================= */
+/* =========================
+   SETTINGS
+========================= */
+
+function showSettings(){
+
+  if(
+    !currentMehfil ||
+    !canManageMembers()
+  ){
+
+    showToast(
+      "Settings ki permission nahi."
+    );
+
+    return;
+  }
+
+  currentPage =
+    "settings";
+
+  showPage(
+    "settingsPage"
+  );
+
+  document.getElementById(
+    "headerTitle"
+  ).textContent =
+    "⚙️ Settings";
+
+  document.getElementById(
+    "headerSub"
+  ).textContent =
+    currentMehfil.name ||
+    "Mehfil";
+
+  [
+    "inviteSetting",
+    "applicationsSetting",
+    "officersSetting",
+    "deleteMehfilSetting"
+  ].forEach(
+    id=>{
+
+      const el =
+        document.getElementById(id);
+
+      el.style.display =
+        isCreator()
+          ? "flex"
+          : "none";
+    }
+  );
+}
+
+
+/* =========================
+   DELETE MEHFIL
+========================= */
+
+async function deleteCurrentMehfil(){
+
+  if(!isCreator()){
+    return;
+  }
+
+  if(!confirm(
+    "Puri Mehfil delete karni hai?"
+  )){
+    return;
+  }
+
+  if(!confirm(
+    "Ye action undo nahi hoga. Continue?"
+  )){
+    return;
+  }
+
+  try{
+
+    const id =
+      currentMehfil.id;
+
+    const {
+      data:posts,
+      error:postError
+    } =
+    await supabaseClient
+      .from("mehfil_posts")
+      .select("id")
+      .eq(
+        "mehfil_id",
+        id
+      );
+
+    if(postError){
+      throw postError;
+    }
+
+    const postIds =
+      (posts || []).map(
+        p=>p.id
+      );
+
+    if(postIds.length){
+
+      const {
+        error
+      } =
+      await supabaseClient
+        .from("mehfil_replies")
+        .delete()
+        .in(
+          "post_id",
+          postIds
+        );
+
+      if(error){
+        throw error;
+      }
+    }
+
+    const deletes = [
+      ["mehfil_posts","mehfil_id"],
+      ["mehfil_members","mehfil_id"],
+      ["mehfil_invites","mehfil_id"],
+      ["mehfil_officer_applications","mehfil_id"]
+    ];
+
+    for(
+      const [table,column]
+      of deletes
+    ){
+
+      const {
+        error
+      } =
+      await supabaseClient
+        .from(table)
+        .delete()
+        .eq(
+          column,
+          id
+        );
+
+      if(error){
+        throw error;
+      }
+    }
+
+    const {
+      error
+    } =
+    await supabaseClient
+      .from("mehfils")
+      .delete()
+      .eq(
+        "id",
+        id
+      );
+
+    if(error){
+      throw error;
+    }
+
+    currentMehfil =
+      null;
+
+    currentMembership =
+      null;
+
+    showToast(
+      "Mehfil delete ho gayi."
+    );
+
+    await loadMehfils();
+
+  }catch(error){
+
+    showToast(
+      "Mehfil delete nahi hui: "+
+      error.message
+    );
+  }
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
 
 function openUserProfile(userId){
 
@@ -5381,19 +5114,11 @@ function openUserProfile(userId){
 
 function openOneToOne(userId){
 
-  if(!userId){
-    return;
-  }
-
   if(
-    String(userId) ===
+    !userId ||
+    String(userId)===
     String(currentUser?.id)
   ){
-
-    showToast(
-      "Apne saath 1on1 chat nahi khol sakte."
-    );
-
     return;
   }
 
@@ -5431,9 +5156,21 @@ function goMore(){
 }
 
 
+function goMehfilList(){
+
+  currentMehfil =
+    null;
+
+  currentMembership =
+    null;
+
+  loadMehfils();
+}
+
+
 function goBack(){
 
-  if(currentPage === "settings"){
+  if(currentPage==="settings"){
 
     openMehfil(
       currentMehfil.id
@@ -5442,10 +5179,13 @@ function goBack(){
     return;
   }
 
-  if(currentPage === "mehfil"){
+  if(currentPage==="mehfil"){
 
-    currentMehfil = null;
-    currentMembership = null;
+    currentMehfil =
+      null;
+
+    currentMembership =
+      null;
 
     loadMehfils();
 
@@ -5456,296 +5196,35 @@ function goBack(){
 }
 
 
-function goMehfilList(){
-
-  currentMehfil = null;
-  currentMembership = null;
-
-  loadMehfils();
-}
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-function showSettings(){
-
-  if(
-    !currentMehfil ||
-    !canManageMembers()
-  ){
-
-    showToast(
-      "Settings ki permission nahi."
-    );
-
-    return;
-  }
-
-  currentPage =
-    "settings";
-
-  showPage(
-    "settingsPage"
-  );
-
-  document.getElementById(
-    "headerTitle"
-  ).textContent =
-    "⚙️ Settings";
-
-  document.getElementById(
-    "headerSub"
-  ).textContent =
-    currentMehfil.name ||
-    "Mehfil";
-
-  const creatorOnly = [
-    "inviteSetting",
-    "applicationsSetting",
-    "officersSetting",
-    "deleteMehfilSetting"
-  ];
-
-  creatorOnly.forEach(
-    id=>{
-
-      const el =
-        document.getElementById(id);
-
-      if(el){
-
-        el.style.display =
-          isCreator()
-            ? "flex"
-            : "none";
-      }
-    }
-  );
-}
-
-
-/* =========================================================
-   DELETE MEHFIL
-   FIXED: REPLIES FIRST
-========================================================= */
-
-async function deleteCurrentMehfil(){
-
-  if(!isCreator()){
-    return;
-  }
-
-  if(!confirm(
-    "Puri Mehfil delete karni hai?"
-  )){
-    return;
-  }
-
-  if(!confirm(
-    "Ye action undo nahi hoga. Continue?"
-  )){
-    return;
-  }
-
-  try{
-
-    const mehfilId =
-      currentMehfil.id;
-
-
-    /* GET POSTS FIRST */
-
-    const {
-      data:posts,
-      error:postFindError
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .select("id")
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(postFindError){
-      throw postFindError;
-    }
-
-
-    /* DELETE REPLIES */
-
-    const postIds =
-      (posts || []).map(
-        post=>post.id
-      );
-
-    if(postIds.length){
-
-      const {
-        error:replyDeleteError
-      } =
-      await supabaseClient
-        .from("mehfil_replies")
-        .delete()
-        .in(
-          "post_id",
-          postIds
-        );
-
-      if(replyDeleteError){
-        throw replyDeleteError;
-      }
-    }
-
-
-    /* DELETE POSTS */
-
-    const {
-      error:postsDeleteError
-    } =
-    await supabaseClient
-      .from("mehfil_posts")
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(postsDeleteError){
-      throw postsDeleteError;
-    }
-
-
-    /* DELETE MEMBERS */
-
-    const {
-      error:membersError
-    } =
-    await supabaseClient
-      .from("mehfil_members")
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(membersError){
-      throw membersError;
-    }
-
-
-    /* DELETE INVITES */
-
-    const {
-      error:invitesError
-    } =
-    await supabaseClient
-      .from("mehfil_invites")
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(invitesError){
-      throw invitesError;
-    }
-
-
-    /* DELETE APPLICATIONS */
-
-    const {
-      error:applicationsError
-    } =
-    await supabaseClient
-      .from(
-        "mehfil_officer_applications"
-      )
-      .delete()
-      .eq(
-        "mehfil_id",
-        mehfilId
-      );
-
-    if(applicationsError){
-      throw applicationsError;
-    }
-
-
-    /* DELETE MEHFIL */
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("mehfils")
-      .delete()
-      .eq(
-        "id",
-        mehfilId
-      );
-
-    if(error){
-      throw error;
-    }
-
-    showToast(
-      "Mehfil delete ho gayi."
-    );
-
-    currentMehfil = null;
-    currentMembership = null;
-
-    await loadMehfils();
-
-  }catch(error){
-
-    console.error(
-      "deleteCurrentMehfil:",
-      error
-    );
-
-    showToast(
-      "Mehfil delete nahi hui: "+
-      error.message
-    );
-  }
-}
-
-
-/* =========================================================
+/* =========================
    REFRESH
-========================================================= */
+========================= */
 
 async function refreshCurrent(){
 
-  const refreshButtons =
-    document.querySelectorAll(
-      ".header-actions .header-icon"
+  const button =
+    document.getElementById(
+      "refreshHeaderBtn"
     );
 
-  const refreshButton =
-    refreshButtons[0];
+  if(button){
 
-  if(refreshButton){
-
-    refreshButton.disabled =
+    button.disabled =
       true;
 
-    refreshButton.textContent =
-      "⟳";
+    button.textContent =
+      "Refreshing...";
   }
 
   try{
 
     if(
-      currentPage === "mehfil" &&
+      currentPage==="mehfil" &&
       currentMehfil
     ){
 
       await loadMehfilStats();
+
       await loadActivities();
 
       showToast(
@@ -5756,7 +5235,7 @@ async function refreshCurrent(){
     }
 
     if(
-      currentPage === "settings" &&
+      currentPage==="settings" &&
       currentMehfil
     ){
 
@@ -5777,11 +5256,6 @@ async function refreshCurrent(){
 
   }catch(error){
 
-    console.error(
-      "refreshCurrent:",
-      error
-    );
-
     showToast(
       "Refresh nahi ho saki: "+
       error.message
@@ -5789,33 +5263,29 @@ async function refreshCurrent(){
 
   }finally{
 
-    if(refreshButton){
+    if(button){
 
-      refreshButton.disabled =
+      button.disabled =
         false;
 
-      refreshButton.textContent =
-        "↻";
+      button.textContent =
+        "Refresh";
     }
   }
 }
 
 
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
+/* =========================
+   AUTH
+========================= */
 
 supabaseClient
   .auth
   .onAuthStateChange(
-    async(
-      event,
-      session
-    )=>{
+    async(event,session)=>{
 
       if(
-        event === "SIGNED_OUT"
+        event==="SIGNED_OUT"
       ){
 
         window.location.href =
