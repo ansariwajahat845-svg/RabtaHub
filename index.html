@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>RabtaHub</title>
+<title>Socialyte</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -21,979 +20,1248 @@ body{
   font-family:Arial,sans-serif;
   background:#f4f6fb;
   color:#222;
-  padding-bottom:75px;
+  padding-bottom:80px;
 }
 
-button,
-textarea,
-select,
-input{
-  font-family:inherit;
-}
+/* ================= HEADER ================= */
 
 .header{
-  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
-  color:white;
-  padding:14px 15px 12px;
   position:sticky;
   top:0;
-  z-index:100;
-  box-shadow:0 3px 12px rgba(0,0,0,.15);
-}
-
-.header-inner{
-  max-width:650px;
-  margin:auto;
-}
-
-.header-main{
+  z-index:1000;
+  height:60px;
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:white;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
+  padding:0 15px;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
 }
 
 .logo{
-  font-size:25px;
-  font-weight:800;
-}
-
-.header-user{
-  font-size:13px;
-  opacity:.95;
-  max-width:180px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.header-options{
-  display:flex;
-  gap:7px;
-  margin-top:12px;
-}
-
-.header-option{
-  flex:1;
-  border:0;
-  background:rgba(255,255,255,.16);
-  color:white;
-  padding:9px 5px;
-  border-radius:10px;
-  font-size:11px;
+  font-size:24px;
   font-weight:bold;
+}
+
+.logo span{
+  font-weight:normal;
+}
+
+.online-btn{
+  border:0;
+  background:rgba(255,255,255,.15);
+  color:white;
+  padding:9px 12px;
+  border-radius:20px;
+  font-size:13px;
   cursor:pointer;
 }
 
-.header-option:active{
-  transform:scale(.98);
-}
+/* ================= CONTAINER ================= */
 
 .container{
   width:100%;
   max-width:650px;
   margin:auto;
-  padding:15px;
+  padding:12px;
 }
 
+/* ================= BOXES ================= */
 
-/* =========================
-   HOME MESSAGE
-========================= */
-
-.message-box{
+.create-post-box,
+.welcome-box,
+.profile-box{
   background:white;
+  border-radius:14px;
   padding:14px;
-  border-radius:16px;
-  box-shadow:0 2px 10px rgba(0,0,0,.06);
   margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
 }
 
-.message-row{
-  display:flex;
-  gap:8px;
-  align-items:flex-end;
+.box-title{
+  font-size:17px;
+  font-weight:bold;
+  margin-bottom:10px;
 }
 
-.message-input{
-  flex:1;
-  min-height:48px;
-  max-height:120px;
+#postInput{
+  width:100%;
+  min-height:90px;
   resize:none;
   border:1px solid #ddd;
-  border-radius:13px;
-  padding:13px;
-  font-size:14px;
+  border-radius:10px;
+  padding:12px;
+  font-size:15px;
   outline:none;
-  margin:0;
+  font-family:Arial,sans-serif;
 }
 
-.message-input:focus{
-  border-color:#6c5ce7;
+#postInput:focus{
+  border-color:#7b61d9;
 }
 
-.send-message-btn{
-  width:48px;
-  height:48px;
+/* ================= SEND POST ================= */
+
+.post-send-btn{
+  width:100%;
+  margin-top:10px;
   border:0;
-  border-radius:13px;
   background:#6c5ce7;
   color:white;
-  font-size:20px;
+  padding:11px;
+  border-radius:9px;
+  font-size:14px;
+  font-weight:bold;
   cursor:pointer;
-  flex-shrink:0;
 }
 
-.message-bottom{
+.post-send-btn:active{
+  transform:scale(.98);
+}
+
+/* ================= MEDIA ================= */
+
+.post-media-row{
   display:flex;
-  justify-content:flex-end;
-  margin-top:8px;
+  gap:8px;
+  margin-top:10px;
 }
 
-.share-btn{
+.media-btn{
+  flex:1;
   border:0;
   background:#f0edff;
-  color:#6c5ce7;
-  padding:9px 15px;
-  border-radius:10px;
+  color:#6045c5;
+  padding:10px 7px;
+  border-radius:9px;
   font-size:13px;
   font-weight:bold;
   cursor:pointer;
 }
 
+.media-btn:active{
+  transform:scale(.98);
+}
 
-/* =========================
-   SHARE MENU
-========================= */
-
-.share-menu{
+#recordStatus{
   display:none;
-  gap:10px;
-  margin-top:12px;
-}
-
-.share-option{
-  flex:1;
-  padding:13px 8px;
-  border:1px solid #ddd;
-  background:white;
-  border-radius:12px;
-  font-size:14px;
-  cursor:pointer;
-}
-
-.share-option:hover{
-  background:#f4f1ff;
-}
-
-
-/* =========================
-   COMPOSER
-========================= */
-
-.composer{
-  display:none;
-  background:white;
-  padding:16px;
-  border-radius:16px;
-  margin-top:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,.05);
-}
-
-.composer h3{
-  margin:0 0 15px;
-}
-
-select,
-textarea,
-input[type="file"]{
-  width:100%;
-}
-
-select{
-  padding:12px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  background:white;
-  margin-bottom:12px;
-}
-
-textarea{
-  min-height:110px;
-  resize:none;
-  padding:13px;
-  border:1px solid #ddd;
-  border-radius:12px;
-  font-size:15px;
-  outline:none;
-  margin-bottom:12px;
-}
-
-textarea:focus,
-select:focus{
-  border-color:#6c5ce7;
-}
-
-input[type="file"]{
-  margin-bottom:12px;
-}
-
-.preview{
-  width:100%;
-  max-height:300px;
-  object-fit:cover;
-  border-radius:12px;
-  display:none;
-  margin-bottom:12px;
-}
-
-.publish-btn{
-  width:100%;
-  padding:13px;
-  border:0;
-  border-radius:11px;
-  background:#6c5ce7;
-  color:white;
-  font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.cancel-btn{
-  width:100%;
-  padding:11px;
-  border:0;
-  border-radius:11px;
-  background:#eee;
   margin-top:8px;
-  cursor:pointer;
+  text-align:center;
+  color:#e74c3c;
+  font-size:12px;
 }
 
+/* ================= WELCOME ================= */
 
-/* =========================
-   FEED
-========================= */
-
-.feed-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin:18px 0 12px;
+.welcome-title{
+  font-size:17px;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
-.feed-title h2{
-  margin:0;
-  font-size:20px;
+.username-line{
+  color:#777;
+  font-size:13px;
+}
+
+/* ================= SECTION ================= */
+
+.section-title{
+  font-size:18px;
+  font-weight:bold;
+  margin:15px 3px 10px;
+}
+
+.refresh-center{
+  text-align:center;
+  margin:-3px 0 12px;
 }
 
 .refresh-btn{
   border:0;
-  background:white;
-  padding:8px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:13px;
-}
-
-
-/* =========================
-   POST
-========================= */
-
-.post{
-  background:white;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:14px;
-  box-shadow:0 2px 10px rgba(0,0,0,.06);
-}
-
-.post-header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.avatar{
-  width:43px;
-  height:43px;
-  border-radius:50%;
-  background:#6c5ce7;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  background:#eeeaff;
+  color:#6045c5;
+  padding:8px 16px;
+  border-radius:9px;
+  font-size:12px;
   font-weight:bold;
-  overflow:hidden;
-  flex-shrink:0;
+  cursor:pointer;
 }
 
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.refresh-btn:active{
+  transform:scale(.96);
 }
 
-.user-info{
-  flex:1;
+/* ================= FEED ================= */
+
+.feed-item{
+  background:white;
+  border-radius:14px;
+  padding:13px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.feed-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.feed-user-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
   min-width:0;
 }
 
-.username{
-  font-weight:bold;
-  word-break:break-word;
-}
-
-.date{
-  color:#888;
-  font-size:12px;
-  margin-top:3px;
-}
-
-.message-label{
-  display:inline-block;
-  margin-top:10px;
-  color:#777;
-  font-size:11px;
-}
-
-.category{
-  display:inline-block;
-  margin-top:10px;
-  padding:5px 9px;
-  background:#f0edff;
-  color:#6c5ce7;
-  border-radius:8px;
-  font-size:12px;
-  font-weight:bold;
-}
-
-.post-content{
-  margin-top:12px;
-  line-height:1.5;
-  white-space:pre-wrap;
-  word-break:break-word;
-}
-
-.post-image{
-  width:100%;
-  max-height:450px;
+.feed-avatar,
+.avatar-fallback{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  border-radius:50%;
   object-fit:cover;
-  border-radius:13px;
-  margin-top:12px;
 }
 
-.actions{
+.avatar-fallback{
+  background:#eeeaff;
+  color:#6c5ce7;
   display:flex;
-  gap:7px;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.feed-user{
+  font-weight:bold;
+  color:#5d42c5;
+  font-size:15px;
+  word-break:break-word;
+}
+
+.feed-date{
+  color:#999;
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.feed-content{
+  margin-top:9px;
+  font-size:15px;
+  line-height:1.5;
+  word-break:break-word;
+}
+
+.feed-type{
+  display:inline-block;
+  margin-top:7px;
+  font-size:11px;
+  color:#999;
+}
+
+/* ================= ACTIONS ================= */
+
+.action-row{
+  display:flex;
   flex-wrap:wrap;
-  margin-top:14px;
-  padding-top:12px;
-  border-top:1px solid #eee;
+  gap:6px;
+  margin-top:12px;
 }
 
 .action-btn{
   border:0;
-  background:#f4f5f9;
-  padding:8px 10px;
-  border-radius:9px;
-  font-size:13px;
+  background:#f3f4f8;
+  color:#444;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:12px;
   cursor:pointer;
 }
 
-.action-btn:active{
-  transform:scale(.97);
+.action-btn:hover{
+  background:#e9e7f7;
 }
 
 .delete-btn{
+  background:#ffecec;
   color:#d63031;
-  margin-left:auto;
 }
 
+.block-btn{
+  background:#fff3f3;
+  color:#c0392b;
+}
 
-/* =========================
-   COMMENTS
-========================= */
+.follow-btn{
+  background:#eeeaff;
+  color:#5d42c5;
+}
+
+/* ================= COMMENTS ================= */
 
 .comments-box{
   display:none;
-  margin-top:12px;
-  padding-top:12px;
+  margin-top:10px;
   border-top:1px solid #eee;
-}
-
-.comments-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:12px;
+  padding-top:10px;
 }
 
 .comment-item{
-  display:flex;
-  gap:9px;
-  align-items:flex-start;
+  background:#f7f7fa;
+  border-radius:9px;
+  padding:8px;
+  margin-bottom:7px;
 }
 
-.comment-avatar{
-  width:34px;
-  height:34px;
-  border-radius:50%;
+.comment-user{
+  font-weight:bold;
+  font-size:12px;
+  color:#5d42c5;
+}
+
+.comment-text{
+  font-size:13px;
+  margin-top:3px;
+  word-break:break-word;
+}
+
+.comment-actions{
+  margin-top:5px;
+}
+
+.reply-btn{
+  border:0;
+  background:none;
+  color:#6c5ce7;
+  font-size:11px;
+  padding:0;
+  cursor:pointer;
+}
+
+.comment-input-row,
+.reply-input-row{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+}
+
+.comment-input{
+  flex:1;
+  min-width:0;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:8px;
+  outline:none;
+  font-size:13px;
+}
+
+.comment-send,
+.reply-send{
+  border:0;
   background:#6c5ce7;
   color:white;
+  border-radius:8px;
+  padding:0 12px;
+  cursor:pointer;
+}
+
+.reply-box{
+  display:none;
+  margin-top:6px;
+}
+
+.reply-input{
+  flex:1;
+  min-width:0;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:7px;
+  font-size:12px;
+  outline:none;
+}
+
+/* ================= PROFILE ================= */
+
+.profile-page{
+  display:none;
+}
+
+.profile-header{
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:white;
+  border-radius:15px;
+  padding:20px 15px;
+  text-align:center;
+  margin-bottom:12px;
+}
+
+.profile-avatar-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.profile-avatar{
+  width:82px;
+  height:82px;
+  border-radius:50%;
+  background:white;
+  color:#6c5ce7;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:13px;
+  margin:0 auto 10px;
+  font-size:35px;
   font-weight:bold;
   overflow:hidden;
-  flex-shrink:0;
+  border:3px solid rgba(255,255,255,.7);
 }
 
-.comment-avatar img{
+.profile-avatar img{
   width:100%;
   height:100%;
   object-fit:cover;
 }
 
-.comment-body{
-  flex:1;
-  min-width:0;
-  background:#f5f6fa;
-  border-radius:11px;
-  padding:8px 10px;
-}
-
-.comment-top{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  flex-wrap:wrap;
-}
-
-.comment-username{
-  font-size:13px;
+.profile-picture-btn{
+  border:0;
+  background:rgba(255,255,255,.16);
+  color:white;
+  padding:8px 12px;
+  border-radius:9px;
+  font-size:12px;
   font-weight:bold;
+  cursor:pointer;
 }
 
-.comment-time{
-  color:#888;
-  font-size:10px;
+.profile-picture-btn:active{
+  transform:scale(.97);
 }
 
-.comment-text{
+.profile-name-display{
+  font-size:20px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.profile-username-display{
   margin-top:4px;
+  font-size:12px;
+  opacity:.85;
+}
+
+.profile-info{
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.profile-info-row{
+  padding:10px 3px;
+  border-bottom:1px solid #eee;
   font-size:13px;
-  line-height:1.4;
-  white-space:pre-wrap;
+}
+
+.profile-info-row:last-child{
+  border-bottom:0;
+}
+
+.profile-info-label{
+  font-weight:bold;
+  color:#5d42c5;
+  margin-bottom:3px;
+}
+
+.profile-info-value{
+  color:#555;
   word-break:break-word;
 }
 
-.comment-delete{
-  border:0;
-  background:transparent;
-  color:#d63031;
-  font-size:11px;
-  padding:3px 0;
-  margin-top:5px;
-  cursor:pointer;
+.profile-edit{
+  display:none;
+  background:white;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
 }
 
-.comment-row{
-  display:flex;
-  gap:7px;
-  align-items:flex-end;
+.profile-field{
+  margin-bottom:12px;
 }
 
-.comment-input{
-  flex:1;
-  min-height:42px;
-  max-height:100px;
-  resize:none;
+.profile-field label{
+  display:block;
+  font-size:12px;
+  font-weight:bold;
+  color:#555;
+  margin-bottom:5px;
+}
+
+.profile-field input,
+.profile-field textarea,
+.profile-field select{
+  width:100%;
   border:1px solid #ddd;
-  border-radius:11px;
+  border-radius:9px;
   padding:10px;
   font-size:13px;
   outline:none;
-  margin:0;
+  font-family:Arial,sans-serif;
 }
 
-.comment-input:focus{
-  border-color:#6c5ce7;
+.profile-field textarea{
+  min-height:80px;
+  resize:none;
 }
 
-.comment-send{
-  width:43px;
-  height:42px;
+.profile-save-btn{
+  width:100%;
   border:0;
-  border-radius:11px;
   background:#6c5ce7;
   color:white;
-  font-size:17px;
+  padding:11px;
+  border-radius:9px;
+  font-weight:bold;
   cursor:pointer;
-  flex-shrink:0;
 }
 
-.comment-empty{
-  text-align:center;
-  color:#888;
-  font-size:12px;
-  padding:8px;
+.profile-action-row{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
 }
 
-.loading,
+.profile-action-btn{
+  flex:1;
+  border:0;
+  background:#eeeaff;
+  color:#5d42c5;
+  padding:10px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.profile-logout{
+  background:#ffecec;
+  color:#d63031;
+}
+
+
+/* FOLLOW / PUBLIC PROFILE */
+.profile-follow-stats{display:flex;gap:8px;margin-top:12px}
+.profile-follow-btn{flex:1;border:0;background:rgba(255,255,255,.16);color:white;padding:9px 8px;border-radius:9px;font-size:12px;font-weight:bold;cursor:pointer}
+.profile-follow-btn strong{display:block;margin-top:2px;font-size:14px}
+.follow-list-box{display:none;background:white;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.follow-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.follow-list-title{font-size:15px;font-weight:bold;color:#5d42c5}
+.follow-list-close{border:0;background:#f3f4f8;color:#555;padding:6px 9px;border-radius:8px;font-size:11px;cursor:pointer}
+.follow-user{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #eee;cursor:pointer}
+.follow-user:last-child{border-bottom:0}
+.follow-user-info{min-width:0;flex:1}
+.follow-user-name{font-size:13px;font-weight:bold;color:#333;word-break:break-word}
+.follow-user-username{font-size:11px;color:#777;margin-top:2px;word-break:break-word}
+.follow-user .avatar-fallback,.follow-user .feed-avatar{width:38px;height:38px;min-width:38px}
+.public-profile-page{display:none}
+.public-profile-back{width:100%;border:0;background:white;color:#5d42c5;padding:10px;border-radius:10px;margin-bottom:10px;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.public-profile-header{background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:white;border-radius:15px;padding:20px 15px;text-align:center;margin-bottom:12px}
+.public-profile-avatar{width:82px;height:82px;border-radius:50%;background:white;color:#6c5ce7;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:35px;font-weight:bold;overflow:hidden;border:3px solid rgba(255,255,255,.7)}
+.public-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.public-profile-name{font-size:20px;font-weight:bold}
+.public-profile-username{margin-top:4px;font-size:12px;opacity:.85}
+.public-profile-follow{margin-top:12px}
+.public-profile-follow .follow-btn{border:0;background:white;color:#5d42c5;padding:9px 18px;border-radius:9px;font-size:12px;font-weight:bold;cursor:pointer}
+.public-profile-follow-stats{display:flex;gap:8px;margin-top:10px}
+.public-profile-stat{flex:1;border:0;background:rgba(255,255,255,.16);color:white;padding:8px;border-radius:9px;font-size:11px;font-weight:bold;cursor:pointer}
+.public-profile-stat strong{display:block;font-size:14px;margin-top:2px}
+.public-profile-info{background:white;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.private-profile-note{text-align:center;color:#777;font-size:13px;padding:10px}
+.clickable-profile{cursor:pointer}
+.clickable-profile:active{opacity:.7}
+
+/* ================= EMPTY ================= */
+
 .empty{
+  background:white;
+  border-radius:12px;
+  padding:25px;
   text-align:center;
-  color:#777;
-  padding:30px 10px;
+  color:#999;
 }
 
-
-/* =========================
-   NOTICE
-========================= */
+/* ================= NOTICE ================= */
 
 .notice{
   position:fixed;
   left:50%;
   bottom:85px;
   transform:translateX(-50%);
+  z-index:3000;
   background:#222;
   color:white;
-  padding:10px 16px;
+  padding:10px 15px;
   border-radius:10px;
-  display:none;
-  z-index:500;
-  font-size:14px;
+  font-size:13px;
   max-width:90%;
   text-align:center;
+  display:none;
 }
 
+/* ================= ONLINE POPUP ================= */
 
-/* =========================
-   BOTTOM NAV
-========================= */
+.online-popup{
+  display:none;
+  position:fixed;
+  top:65px;
+  right:10px;
+  z-index:2000;
+  width:240px;
+  max-width:90%;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,.2);
+  padding:12px;
+}
+
+.online-popup h3{
+  margin:0 0 10px;
+  font-size:16px;
+}
+
+.online-user{
+  padding:8px;
+  border-bottom:1px solid #eee;
+  font-size:13px;
+}
+
+.online-dot{
+  color:#16a085;
+}
+
+/* ================= BOTTOM NAV ================= */
 
 .bottom-nav{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
-  height:68px;
+  z-index:1500;
+  height:65px;
   background:white;
   border-top:1px solid #ddd;
   display:flex;
-  justify-content:center;
-  z-index:200;
-}
-
-.nav-inner{
-  width:100%;
-  max-width:650px;
-  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 -2px 10px rgba(0,0,0,.08);
 }
 
 .nav-btn{
-  flex:1;
   border:0;
-  background:white;
-  color:#777;
+  background:none;
+  color:#666;
+  font-size:11px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
   gap:3px;
-  font-size:11px;
   cursor:pointer;
 }
 
 .nav-icon{
-  font-size:20px;
+  font-size:21px;
 }
 
 .nav-btn.active{
   color:#6c5ce7;
-  font-weight:bold;
 }
 
-
-/* =========================
-   MOBILE
-========================= */
+/* ================= MOBILE ================= */
 
 @media(max-width:480px){
-
-  .container{
-    padding:12px;
-  }
 
   .logo{
     font-size:22px;
   }
 
-  .header-user{
+  .online-btn{
     font-size:12px;
-    max-width:130px;
+    padding:8px 10px;
   }
 
-  .header-option{
-    font-size:10px;
-    padding:8px 3px;
+  .container{
+    padding:10px;
   }
 
-  .post{
-    padding:13px;
+  .post-media-row{
+    gap:6px;
   }
 
-  .action-btn{
+  .media-btn{
     font-size:12px;
-    padding:8px 8px;
+    padding:9px 4px;
   }
 
 }
 
-</style>
+/* ================= LOADING ================= */
 
+.loading{
+  text-align:center;
+  color:#888;
+  padding:20px;
+}
+
+</style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
 
 <header class="header">
 
-  <div class="header-inner">
-
-    <div class="header-main">
-
-      <div class="logo">
-        RabtaHub
-      </div>
-
-      <div
-        class="header-user"
-        id="headerUser">
-        Loading...
-      </div>
-
-    </div>
-
-
-    <div class="header-options">
-
-      <button
-        class="header-option"
-        onclick="goNotifications()">
-        🔔 Notifications
-      </button>
-
-      <button
-        class="header-option"
-        onclick="goStars()">
-        ⭐ Stars
-      </button>
-
-      <button
-        class="header-option"
-        onclick="goTrending()">
-        🔥 Trending
-      </button>
-
-    </div>
-
+  <div class="logo">
+    Socia<span>lyte</span>
   </div>
+
+  <button
+    class="online-btn"
+    type="button"
+    onclick="toggleOnlineUsers()">
+    🟢 Online Users
+  </button>
 
 </header>
 
 
-<main class="container">
+<!-- ================= ONLINE USERS ================= -->
 
+<div id="onlinePopup" class="online-popup">
 
-<!-- =========================
-     HOME MESSAGE BOX
-========================= -->
+  <h3>🟢 Online Users</h3>
 
-<section class="message-box">
-
-  <div class="message-row">
-
-    <textarea
-      id="homeMessage"
-      class="message-input"
-      maxlength="2000"
-      placeholder="Write a message..."></textarea>
-
-    <button
-      class="send-message-btn"
-      onclick="sendHomeMessage()">
-      ➤
-    </button>
-
+  <div id="onlineUsersList">
+    Loading...
   </div>
-
-
-  <div class="message-bottom">
-
-    <button
-      class="share-btn"
-      onclick="toggleShareMenu()">
-      📤 Share
-    </button>
-
-  </div>
-
-
-  <div
-    class="share-menu"
-    id="shareMenu">
-
-    <button
-      class="share-option"
-      onclick="openComposer('text')">
-      📝 Text Post
-    </button>
-
-    <button
-      class="share-option"
-      onclick="openComposer('image')">
-      🖼️ Image Post
-    </button>
-
-  </div>
-
-
-  <!-- TEXT POST -->
-
-  <div
-    class="composer"
-    id="textComposer">
-
-    <h3>
-      📝 Text Post
-    </h3>
-
-    <select id="textCategory">
-
-      <option value="">
-        Select Category
-      </option>
-
-      <option value="General">General</option>
-      <option value="Funny">Funny</option>
-      <option value="Love">Love</option>
-      <option value="Sad">Sad</option>
-      <option value="News">News</option>
-      <option value="Music">Music</option>
-      <option value="Entertainment">Entertainment</option>
-      <option value="Islamic">Islamic</option>
-      <option value="Thoughts">Thoughts</option>
-      <option value="Photography">Photography</option>
-      <option value="Mehfil">Mehfil</option>
-
-    </select>
-
-
-    <textarea
-      id="textContent"
-      maxlength="2000"
-      placeholder="Write your post..."></textarea>
-
-
-    <button
-      class="publish-btn"
-      onclick="publishTextPost()">
-      Publish Post
-    </button>
-
-
-    <button
-      class="cancel-btn"
-      onclick="closeComposer()">
-      Cancel
-    </button>
-
-  </div>
-
-
-  <!-- IMAGE POST -->
-
-  <div
-    class="composer"
-    id="imageComposer">
-
-    <h3>
-      🖼️ Image Post
-    </h3>
-
-
-    <select id="imageCategory">
-
-      <option value="">
-        Select Category
-      </option>
-
-      <option value="General">General</option>
-      <option value="Funny">Funny</option>
-      <option value="Love">Love</option>
-      <option value="Sad">Sad</option>
-      <option value="News">News</option>
-      <option value="Music">Music</option>
-      <option value="Entertainment">Entertainment</option>
-      <option value="Islamic">Islamic</option>
-      <option value="Thoughts">Thoughts</option>
-      <option value="Photography">Photography</option>
-      <option value="Mehfil">Mehfil</option>
-
-    </select>
-
-
-    <input
-      type="file"
-      id="imageFile"
-      accept="image/*"
-      onchange="previewImage(this)">
-
-
-    <img
-      id="imagePreview"
-      class="preview"
-      alt="Preview">
-
-
-    <textarea
-      id="imageCaption"
-      maxlength="1000"
-      placeholder="Caption (optional)..."></textarea>
-
-
-    <button
-      class="publish-btn"
-      onclick="publishImagePost()">
-      Publish Image
-    </button>
-
-
-    <button
-      class="cancel-btn"
-      onclick="closeComposer()">
-      Cancel
-    </button>
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     FEED TITLE
-========================= -->
-
-<div class="feed-title">
-
-  <h2>
-    Home Feed
-  </h2>
-
-  <button
-    class="refresh-btn"
-    onclick="loadFeed()">
-    🔄 Refresh
-  </button>
 
 </div>
 
 
-<section id="feed">
+<!-- ================= MAIN ================= -->
 
-  <div class="loading">
-    Loading feed...
+<main class="container">
+
+
+  <!-- ================= HOME PAGE ================= -->
+
+  <div id="homePage">
+
+    <!-- CREATE POST -->
+
+    <div class="create-post-box">
+
+      <div class="box-title">
+        📝 Create Post
+      </div>
+
+      <textarea
+        id="postInput"
+        placeholder="Write a post..."
+        autocomplete="off"></textarea>
+
+      <button
+        id="publishPostBtn"
+        class="post-send-btn"
+        type="button">
+        📤 Send a Post
+      </button>
+
+      <div class="post-media-row">
+
+        <button
+          id="uploadImageBtn"
+          class="media-btn"
+          type="button">
+          🖼️ Upload Image
+        </button>
+
+        <button
+          id="voiceBtn"
+          class="media-btn"
+          type="button">
+          🎤 Voice
+        </button>
+
+      </div>
+
+      <input
+        id="imageInput"
+        type="file"
+        accept="image/*"
+        style="display:none;">
+
+      <div id="recordStatus">
+        Recording... Tap 🎤 again to stop
+      </div>
+
+    </div>
+
+
+    <!-- WELCOME -->
+
+    <div class="welcome-box">
+
+      <div class="welcome-title">
+        Welcome to Socialyte ♥️
+      </div>
+
+      <div class="username-line">
+        Logged in as:
+        <strong id="loggedInUsername">User</strong>
+      </div>
+
+    </div>
+
+
+    <!-- HOME FEED -->
+
+    <div class="section-title">
+      🏠 Home Feed
+    </div>
+
+    <div class="refresh-center">
+
+      <button
+        class="refresh-btn"
+        type="button"
+        onclick="refreshHomeFeed()">
+        🔄 Refresh
+      </button>
+
+    </div>
+
+    <div id="homeFeed">
+
+      <div class="empty">
+        Loading feed...
+      </div>
+
+    </div>
+
   </div>
 
-</section>
 
+  <!-- ================= PROFILE PAGE ================= -->
+
+  <div id="profilePage" class="profile-page">
+
+    <div class="profile-header">
+
+      <div class="profile-avatar-wrap">
+
+        <div
+          id="profileAvatar"
+          class="profile-avatar">
+          👤
+        </div>
+
+        <button
+          class="profile-picture-btn"
+          type="button"
+          onclick="chooseProfilePicture()">
+          🖼️ Change Profile Picture
+        </button>
+
+        <input
+          id="profileImageInput"
+          type="file"
+          accept="image/*"
+          style="display:none;">
+
+      </div>
+
+      <div
+        id="profileNameDisplay"
+        class="profile-name-display">
+        User
+      </div>
+
+      <div
+        id="profileUsernameDisplay"
+        class="profile-username-display">
+        @User
+      </div>
+
+      <div class="profile-follow-stats">
+        <button class="profile-follow-btn" type="button" onclick="openOwnFollowList('followers')">
+          👥 Followers
+          <strong id="followersCount">0</strong>
+        </button>
+        <button class="profile-follow-btn" type="button" onclick="openOwnFollowList('following')">
+          ➡️ Following
+          <strong id="followingCount">0</strong>
+        </button>
+      </div>
+
+    </div>
+
+
+    <!-- OWN FOLLOW LIST -->
+
+    <div id="ownFollowListBox" class="follow-list-box">
+      <div class="follow-list-head">
+        <div id="ownFollowListTitle" class="follow-list-title">👥 Followers</div>
+        <button class="follow-list-close" type="button" onclick="closeOwnFollowList()">✕ Close</button>
+      </div>
+      <div id="ownFollowListContent">Loading...</div>
+    </div>
+
+    <!-- PROFILE INFORMATION -->
+
+    <div class="profile-info">
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          👤 Profile Name
+        </div>
+
+        <div
+          id="profileNameValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          🎂 Date of Birth
+        </div>
+
+        <div
+          id="profileDobValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          📍 City
+        </div>
+
+        <div
+          id="profileCityValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          🔒 Profile
+        </div>
+
+        <div
+          id="profilePrivacyValue"
+          class="profile-info-value">
+          Public
+        </div>
+
+      </div>
+
+
+      <div class="profile-info-row">
+
+        <div class="profile-info-label">
+          📝 Bio
+        </div>
+
+        <div
+          id="profileBioValue"
+          class="profile-info-value">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="profile-action-row">
+
+        <button
+          class="profile-action-btn"
+          type="button"
+          onclick="showEditProfile()">
+          ✏️ Edit Profile
+        </button>
+
+        <button
+          class="profile-action-btn profile-logout"
+          type="button"
+          onclick="signOut()">
+          🚪 Logout
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- EDIT PROFILE -->
+
+    <div
+      id="profileEdit"
+      class="profile-edit">
+
+      <div class="box-title">
+        ✏️ Edit Profile
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          👤 Profile Name
+        </label>
+
+        <input
+          id="editName"
+          type="text"
+          placeholder="Enter your name"
+          autocomplete="off">
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          🎂 Date of Birth
+        </label>
+
+        <input
+          id="editDob"
+          type="date">
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          📍 City
+        </label>
+
+        <input
+          id="editCity"
+          type="text"
+          placeholder="Enter your city"
+          autocomplete="off">
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          🔒 Profile Privacy
+        </label>
+
+        <select id="editPrivacy">
+
+          <option value="public">
+            Public
+          </option>
+
+          <option value="private">
+            Private
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="profile-field">
+
+        <label>
+          📝 Bio
+        </label>
+
+        <textarea
+          id="editBio"
+          placeholder="Write something about yourself..."
+          maxlength="350"></textarea>
+
+      </div>
+
+
+      <button
+        class="profile-save-btn"
+        type="button"
+        onclick="saveProfile()">
+        💾 Save Profile
+      </button>
+
+    </div>
+
+
+    <!-- MY POSTS -->
+
+    <div class="section-title">
+      📝 My Posts
+    </div>
+
+    <div id="myPosts">
+
+      <div class="empty">
+        Loading your posts...
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- PUBLIC USER PROFILE -->
+  <div id="publicProfilePage" class="public-profile-page">
+
+    <button class="public-profile-back" type="button" onclick="closePublicProfile()">← Back to Home</button>
+
+    <div class="public-profile-header">
+      <div id="publicProfileAvatar" class="public-profile-avatar">👤</div>
+      <div id="publicProfileName" class="public-profile-name">User</div>
+      <div id="publicProfileUsername" class="public-profile-username">@User</div>
+
+      <div class="public-profile-follow">
+        <button id="publicProfileFollowBtn" class="follow-btn" type="button" onclick="togglePublicProfileFollow()">Follow</button>
+      </div>
+
+      <div class="public-profile-follow-stats">
+        <button class="public-profile-stat" type="button" onclick="openPublicFollowList('followers')">
+          👥 Followers
+          <strong id="publicFollowersCount">0</strong>
+        </button>
+        <button class="public-profile-stat" type="button" onclick="openPublicFollowList('following')">
+          ➡️ Following
+          <strong id="publicFollowingCount">0</strong>
+        </button>
+      </div>
+    </div>
+
+    <div id="publicFollowListBox" class="follow-list-box">
+      <div class="follow-list-head">
+        <div id="publicFollowListTitle" class="follow-list-title">👥 Followers</div>
+        <button class="follow-list-close" type="button" onclick="closePublicFollowList()">✕ Close</button>
+      </div>
+      <div id="publicFollowListContent">Loading...</div>
+    </div>
+
+    <div id="publicProfileInfo" class="public-profile-info"></div>
+
+    <div class="section-title">📝 Posts</div>
+    <div id="publicUserPosts"><div class="empty">Loading posts...</div></div>
+  </div>
 
 </main>
 
 
-<div
-  id="notice"
-  class="notice">
-</div>
+<!-- ================= NOTICE ================= -->
+
+<div id="notice" class="notice"></div>
 
 
-<!-- =========================
-     BOTTOM NAV
-========================= -->
+<!-- ================= BOTTOM NAV ================= -->
 
 <nav class="bottom-nav">
 
-  <div class="nav-inner">
+  <button
+    id="homeNavBtn"
+    class="nav-btn active"
+    type="button"
+    onclick="goHome()">
 
-    <button
-      class="nav-btn active"
-      onclick="goHome()">
+    <span class="nav-icon">🏠</span>
+    <span>Home</span>
 
-      <span class="nav-icon">🏠</span>
-      <span>Home</span>
-
-    </button>
-
-
-    <button
-      class="nav-btn"
-      onclick="goPrivate()">
-
-      <span class="nav-icon">💬</span>
-      <span>Private</span>
-
-    </button>
+  </button>
 
 
-    <button
-      class="nav-btn"
-      onclick="goProfile()">
+  <button
+    class="nav-btn"
+    type="button"
+    onclick="goPrivate()">
 
-      <span class="nav-icon">👤</span>
-      <span>Profile</span>
+    <span class="nav-icon">💬</span>
+    <span>Private</span>
 
-    </button>
-
-
-    <button
-      class="nav-btn"
-      onclick="goMehfil()">
-
-      <span class="nav-icon">🏠</span>
-      <span>Mehfil</span>
-
-    </button>
+  </button>
 
 
-    <button
-      class="nav-btn"
-      onclick="goMore()">
+  <button
+    id="profileNavBtn"
+    class="nav-btn"
+    type="button"
+    onclick="goProfile()">
 
-      <span class="nav-icon">☰</span>
-      <span>More</span>
+    <span class="nav-icon">👤</span>
+    <span>Profile</span>
 
-    </button>
+  </button>
 
-  </div>
+
+  <button
+    class="nav-btn"
+    type="button"
+    onclick="goNotifications()">
+
+    <span class="nav-icon">🔔</span>
+    <span>Notifications</span>
+
+  </button>
+
+
+  <button
+    class="nav-btn"
+    type="button"
+    onclick="goMore()">
+
+    <span class="nav-icon">☰</span>
+    <span>More</span>
+
+  </button>
 
 </nav>
 
 
 <script>
 
-
-/* =========================
+/* =====================================================
    SUPABASE
-========================= */
+===================================================== */
 
 const SUPABASE_URL =
-  "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+  "https://szmauhxiyjffjhrcruee.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+  "sb_publishable_-ys_eIxK2WuUucSGtoBdqw_nKWnIgep";
 
 const supabaseClient =
   window.supabase.createClient(
@@ -1002,29 +1270,297 @@ const supabaseClient =
   );
 
 
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
 let currentUser = null;
-let currentProfile = null;
+let feedLoadToken = 0;
+let currentUsername = "User";
+
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
 
 
-/* =========================
-   INIT
-========================= */
+/* =====================================================
+   HELPERS
+===================================================== */
 
-async function init(){
+function escapeHtml(value){
+
+  if(value === null || value === undefined){
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+function escapeAttr(value){
+
+  return escapeHtml(value)
+    .replace(/`/g,"&#096;");
+}
+
+
+function formatDate(date){
+
+  if(!date){
+    return "";
+  }
+
+  const d = new Date(date);
+
+  return d.toLocaleString();
+}
+
+
+function showNotice(message){
+
+  const notice =
+    document.getElementById("notice");
+
+  if(!notice){
+    return;
+  }
+
+  notice.textContent = message;
+  notice.style.display = "block";
+
+  clearTimeout(window.noticeTimer);
+
+  window.noticeTimer =
+    setTimeout(() => {
+
+      notice.style.display = "none";
+
+    },3000);
+
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+function renderUserAvatar(
+  username,
+  avatarUrl,
+  sizeClass = "feed-avatar"
+){
+
+  const safeName =
+    escapeHtml(username || "User");
+
+  const initial =
+    escapeHtml(
+      (username || "U")
+        .charAt(0)
+        .toUpperCase()
+    );
+
+
+  if(avatarUrl){
+
+    return `
+      <img
+        class="${sizeClass}"
+        src="${escapeAttr(avatarUrl)}"
+        alt=""
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+
+      <span
+        class="${sizeClass} avatar-fallback"
+        style="display:none;">
+        ${initial}
+      </span>
+    `;
+
+  }
+
+
+  return `
+    <span class="${sizeClass} avatar-fallback">
+      ${initial}
+    </span>
+  `;
+
+}
+
+
+/* =====================================================
+   CURRENT USER
+===================================================== */
+
+function setCurrentUser(user){
+
+  currentUser = user;
+
+  if(!user){
+
+    currentUsername = "User";
+
+    return;
+
+  }
+
+
+  currentUsername =
+    user.user_metadata?.username ||
+    user.user_metadata?.name ||
+    user.email?.split("@")[0] ||
+    "User";
+
+
+  const usernameElement =
+    document.getElementById(
+      "loggedInUsername"
+    );
+
+  if(usernameElement){
+
+    usernameElement.textContent =
+      currentUsername;
+
+  }
+
+}
+
+
+/* =====================================================
+   SYNC PROFILE
+===================================================== */
+
+async function syncMyProfile(){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const metadata =
+    currentUser.user_metadata || {};
+
+
+  const username =
+    metadata.username ||
+    metadata.name ||
+    currentUser.email?.split("@")[0] ||
+    "User";
+
+
+  const name =
+    metadata.name ||
+    username;
+
+
+  const payload = {
+
+    id:
+      currentUser.id,
+
+    username:
+      username,
+
+    name:
+      name,
+
+    avatar_url:
+      metadata.avatar_url || null,
+
+    date_of_birth:
+      metadata.date_of_birth || null,
+
+    city:
+      metadata.city || null,
+
+    bio:
+      metadata.bio || null,
+
+    profile_privacy:
+      metadata.profile_privacy || "public",
+
+    updated_at:
+      new Date().toISOString()
+
+  };
+
+
+  const { error } =
+    await supabaseClient
+      .from("profiles")
+      .upsert(
+        payload,
+        {
+          onConflict:"id"
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      "PROFILE SYNC ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CHECK USER
+===================================================== */
+
+async function checkUser(){
 
   try{
 
-    const {
-      data,
-      error
-    } =
-    await supabaseClient.auth.getSession();
+    let user = null;
+
+
+    const sessionResult =
+      await supabaseClient.auth.getSession();
 
 
     if(
-      error ||
-      !data.session
+      sessionResult.data &&
+      sessionResult.data.session
     ){
+
+      user =
+        sessionResult.data.session.user;
+
+    }
+
+
+    if(!user){
+
+      const userResult =
+        await supabaseClient.auth.getUser();
+
+
+      if(
+        userResult.data &&
+        userResult.data.user
+      ){
+
+        user =
+          userResult.data.user;
+
+      }
+
+    }
+
+
+    if(!user){
 
       window.location.href =
         "login.html";
@@ -1034,227 +1570,56 @@ async function init(){
     }
 
 
-    currentUser =
-      data.session.user;
+    setCurrentUser(user);
 
-
-    await loadProfile();
+    await syncMyProfile();
 
     await loadFeed();
 
-
   }catch(error){
 
     console.error(
-      "INIT ERROR:",
+      "CHECK USER ERROR:",
       error
     );
+
+    window.location.href =
+      "login.html";
 
   }
 
 }
 
 
-/* =========================
-   LOAD PROFILE
-========================= */
+/* =====================================================
+   AUTH STATE
+===================================================== */
 
-async function loadProfile(){
+supabaseClient.auth.onAuthStateChange(
+  async (event,session) => {
 
-  try{
+    if(session?.user){
 
-    const {
-      data,
-      error
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .eq(
-        "id",
-        currentUser.id
-      )
-      .maybeSingle();
-
-
-    if(error){
-
-      console.error(
-        "PROFILE ERROR:",
-        error
+      setCurrentUser(
+        session.user
       );
 
     }
 
-
-    currentProfile =
-      data || {
-
-        id:
-          currentUser.id,
-
-        username:
-          currentUser.user_metadata?.username ||
-          currentUser.email?.split("@")[0] ||
-          "User",
-
-        name:
-          currentUser.user_metadata?.name ||
-          "",
-
-        avatar_url:
-          currentUser.user_metadata?.avatar_url ||
-          ""
-
-      };
-
-
-    const username =
-      currentProfile.username ||
-      currentProfile.name ||
-      currentUser.email?.split("@")[0] ||
-      "User";
-
-
-    const headerUser =
-      document.getElementById(
-        "headerUser"
-      );
-
-
-    if(headerUser){
-
-      headerUser.textContent =
-        "@" + username;
-
-    }
-
-
-  }catch(error){
-
-    console.error(
-      "LOAD PROFILE ERROR:",
-      error
-    );
-
   }
-
-}
-
-
-/* =========================
-   SHARE MENU
-========================= */
-
-function toggleShareMenu(){
-
-  const menu =
-    document.getElementById(
-      "shareMenu"
-    );
+);
 
 
-  if(
-    menu.style.display === "flex"
-  ){
+/* =====================================================
+   ADD POST
+===================================================== */
 
-    menu.style.display =
-      "none";
-
-  }else{
-
-    menu.style.display =
-      "flex";
-
-  }
-
-}
-
-
-/* =========================
-   OPEN COMPOSER
-========================= */
-
-function openComposer(type){
-
-  document
-    .getElementById("shareMenu")
-    .style.display =
-    "none";
-
-
-  document
-    .getElementById("textComposer")
-    .style.display =
-    "none";
-
-
-  document
-    .getElementById("imageComposer")
-    .style.display =
-    "none";
-
-
-  if(type === "text"){
-
-    document
-      .getElementById("textComposer")
-      .style.display =
-      "block";
-
-  }
-
-
-  if(type === "image"){
-
-    document
-      .getElementById("imageComposer")
-      .style.display =
-      "block";
-
-  }
-
-}
-
-
-/* =========================
-   CLOSE COMPOSER
-========================= */
-
-function closeComposer(){
-
-  document
-    .getElementById("textComposer")
-    .style.display =
-    "none";
-
-
-  document
-    .getElementById("imageComposer")
-    .style.display =
-    "none";
-
-
-  document
-    .getElementById("shareMenu")
-    .style.display =
-    "none";
-
-}
-
-
-/* =========================
-   CREATE MESSAGE
-========================= */
-
-async function sendHomeMessage(){
+async function addPost(){
 
   if(!currentUser){
 
     showNotice(
-      "User session nahi mili."
+      "Please login first."
     );
 
     return;
@@ -1264,18 +1629,14 @@ async function sendHomeMessage(){
 
   const input =
     document.getElementById(
-      "homeMessage"
+      "postInput"
     );
 
 
-  const message =
-    input.value.trim();
-
-
-  if(!message){
+  if(!input){
 
     showNotice(
-      "Message likho."
+      "Post box nahi mila."
     );
 
     return;
@@ -1283,48 +1644,41 @@ async function sendHomeMessage(){
   }
 
 
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("posts")
-    .insert({
+  const text =
+    input.value.trim();
 
-      user_id:
-        currentUser.id,
 
-      content:
-        message,
+  if(!text){
+    return;
+  }
 
-      post_type:
-        "message",
 
-      category:
-        "General"
+  const { error } =
+    await supabaseClient
+      .from("posts")
+      .insert({
 
-    })
-    .select(`
-      id,
-      user_id,
-      content,
-      created_at,
-      post_type,
-      category,
-      image_url
-    `)
-    .single();
+        user_id:
+          currentUser.id,
+
+        username:
+          currentUsername,
+
+        content:
+          text
+
+      });
 
 
   if(error){
 
     console.error(
-      "MESSAGE ERROR:",
+      "POST ERROR:",
       error
     );
 
     showNotice(
-      "Message send nahi hua: " +
+      "Post send nahi hua: " +
       error.message
     );
 
@@ -1335,539 +1689,45 @@ async function sendHomeMessage(){
 
   input.value = "";
 
-
-  await addPostToTop(
-    data
-  );
-
-
-  showNotice(
-    "Message sent! ❤️"
-  );
+  await loadFeed();
 
 }
 
 
-/* =========================
-   TEXT POST
-========================= */
-
-async function publishTextPost(){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  const category =
-    document
-      .getElementById(
-        "textCategory"
-      )
-      .value;
-
-
-  const content =
-    document
-      .getElementById(
-        "textContent"
-      )
-      .value
-      .trim();
-
-
-  if(!category){
-
-    showNotice(
-      "Pehle category select karo."
-    );
-
-    return;
-
-  }
-
-
-  if(!content){
-
-    showNotice(
-      "Post likho."
-    );
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("posts")
-    .insert({
-
-      user_id:
-        currentUser.id,
-
-      content:
-        content,
-
-      post_type:
-        "text",
-
-      category:
-        category
-
-    })
-    .select(`
-      id,
-      user_id,
-      content,
-      created_at,
-      post_type,
-      category,
-      image_url
-    `)
-    .single();
-
-
-  if(error){
-
-    console.error(
-      "TEXT POST ERROR:",
-      error
-    );
-
-    showNotice(
-      "Post nahi hua: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  document
-    .getElementById(
-      "textContent"
-    )
-    .value = "";
-
-
-  document
-    .getElementById(
-      "textCategory"
-    )
-    .value = "";
-
-
-  closeComposer();
-
-
-  await addPostToTop(
-    data
-  );
-
-
-  showNotice(
-    "Post published! ❤️"
-  );
-
-}
-
-
-/* =========================
-   IMAGE PREVIEW
-========================= */
-
-function previewImage(input){
-
-  const preview =
-    document.getElementById(
-      "imagePreview"
-    );
-
-
-  const file =
-    input.files[0];
-
-
-  if(!file){
-
-    preview.style.display =
-      "none";
-
-    preview.removeAttribute(
-      "src"
-    );
-
-    return;
-
-  }
-
-
-  preview.src =
-    URL.createObjectURL(file);
-
-
-  preview.style.display =
-    "block";
-
-}
-
-
-/* =========================
-   IMAGE POST
-========================= */
-
-async function publishImagePost(){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  const category =
-    document
-      .getElementById(
-        "imageCategory"
-      )
-      .value;
-
-
-  const file =
-    document
-      .getElementById(
-        "imageFile"
-      )
-      .files[0];
-
-
-  const caption =
-    document
-      .getElementById(
-        "imageCaption"
-      )
-      .value
-      .trim();
-
-
-  if(!category){
-
-    showNotice(
-      "Pehle category select karo."
-    );
-
-    return;
-
-  }
-
-
-  if(!file){
-
-    showNotice(
-      "Image select karo."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !file.type.startsWith("image/")
-  ){
-
-    showNotice(
-      "Sirf image file select karo."
-    );
-
-    return;
-
-  }
-
-
-  const extension =
-    file.name
-      .split(".")
-      .pop()
-      .toLowerCase()
-      .replace(
-        /[^a-z0-9]/g,
-        ""
-      ) ||
-      "jpg";
-
-
-  const fileName =
-    currentUser.id +
-    "/" +
-    Date.now() +
-    "." +
-    extension;
-
-
-  showNotice(
-    "Image uploading..."
-  );
-
-
-  const {
-    error: uploadError
-  } =
-  await supabaseClient
-    .storage
-    .from("post-images")
-    .upload(
-      fileName,
-      file
-    );
-
-
-  if(uploadError){
-
-    console.error(
-      "IMAGE UPLOAD ERROR:",
-      uploadError
-    );
-
-    showNotice(
-      "Image upload nahi hui: " +
-      uploadError.message
-    );
-
-    return;
-
-  }
-
-
-  const {
-    data: publicData
-  } =
-  supabaseClient
-    .storage
-    .from("post-images")
-    .getPublicUrl(
-      fileName
-    );
-
-
-  const imageUrl =
-    publicData.publicUrl;
-
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("posts")
-    .insert({
-
-      user_id:
-        currentUser.id,
-
-      content:
-        caption,
-
-      post_type:
-        "image",
-
-      category:
-        category,
-
-      image_url:
-        imageUrl
-
-    })
-    .select(`
-      id,
-      user_id,
-      content,
-      created_at,
-      post_type,
-      category,
-      image_url
-    `)
-    .single();
-
-
-  if(error){
-
-    console.error(
-      "IMAGE POST ERROR:",
-      error
-    );
-
-    showNotice(
-      "Image post save nahi hui: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  document
-    .getElementById(
-      "imageFile"
-    )
-    .value = "";
-
-
-  document
-    .getElementById(
-      "imageCaption"
-    )
-    .value = "";
-
-
-  document
-    .getElementById(
-      "imageCategory"
-    )
-    .value = "";
-
-
-  const preview =
-    document.getElementById(
-      "imagePreview"
-    );
-
-
-  preview.style.display =
-    "none";
-
-
-  preview.removeAttribute(
-    "src"
-  );
-
-
-  closeComposer();
-
-
-  await addPostToTop(
-    data
-  );
-
-
-  showNotice(
-    "Image post published! ❤️"
-  );
-
-}
-
-
-/* =========================
-   ADD NEW POST TO TOP
-========================= */
-
-async function addPostToTop(post){
-
-  const feed =
-    document.getElementById(
-      "feed"
-    );
-
-
-  if(!feed){
-    return;
-  }
-
-
-  const empty =
-    feed.querySelector(
-      ".empty"
-    );
-
-
-  if(empty){
-
-    feed.innerHTML = "";
-
-  }
-
-
-  let profile =
-    currentProfile;
-
-
-  if(
-    !profile ||
-    profile.id !== post.user_id
-  ){
-
-    const {
-      data
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .eq(
-        "id",
-        post.user_id
-      )
-      .maybeSingle();
-
-
-    profile =
-      data || {
-
-        id:
-          post.user_id,
-
-        username:
-          currentUser?.user_metadata?.username ||
-          currentUser?.email?.split("@")[0] ||
-          "User",
-
-        name:
-          currentUser?.user_metadata?.name ||
-          "",
-
-        avatar_url:
-          ""
-
-      };
-
-  }
-
-
-  const element =
-    await renderPost(
-      post,
-      profile,
-      false
-    );
-
-
-  if(!element){
-    return;
-  }
-
-
-  feed.insertBefore(
-    element,
-    feed.firstElementChild
-  );
-
-}
-
-
-/* =========================
+/* =====================================================
    LOAD FEED
-========================= */
+===================================================== */
+
+async function refreshHomeFeed(){
+
+  const button =
+    document.querySelector(".refresh-btn");
+
+  if(button){
+    button.disabled = true;
+    button.textContent = "⟳ Refreshing...";
+  }
+
+  try{
+    await loadFeed();
+    showNotice("Feed refresh ho gayi.");
+  }finally{
+    if(button){
+      button.disabled = false;
+      button.textContent = "🔄 Refresh";
+    }
+  }
+
+}
+
 
 async function loadFeed(){
 
+  const thisFeedToken = ++feedLoadToken;
+
   const feed =
     document.getElementById(
-      "feed"
+      "homeFeed"
     );
 
 
@@ -1882,116 +1742,182 @@ async function loadFeed(){
 
   try{
 
-    const {
-      data:{
-        user
+    let blockedIds = [];
+
+
+    /* ---------- BLOCKED USERS ---------- */
+
+    if(currentUser){
+
+      const blockedResult =
+        await supabaseClient
+          .from("user_blocks")
+          .select("blocked_id")
+          .eq(
+            "blocker_id",
+            currentUser.id
+          );
+
+
+      if(
+        !blockedResult.error &&
+        blockedResult.data
+      ){
+
+        blockedIds =
+          blockedResult.data.map(
+            row => row.blocked_id
+          );
+
       }
-    } =
-    await supabaseClient.auth.getUser();
-
-
-    if(!user){
-
-      window.location.href =
-        "login.html";
-
-      return;
 
     }
 
 
-    currentUser =
-      user;
+    /* ---------- POSTS ---------- */
+
+    const postsResult =
+      await supabaseClient
+        .from("posts")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
 
 
-    const {
-      data: posts,
-      error
-    } =
-    await supabaseClient
-      .from("posts")
-      .select(`
-        id,
-        user_id,
-        content,
-        created_at,
-        post_type,
-        category,
-        image_url
-      `)
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      )
-      .order(
-        "id",
-        {
-          ascending:false
-        }
-      );
-
-
-    if(error){
+    if(postsResult.error){
 
       console.error(
-        "FEED ERROR:",
-        error
+        "POST LOAD ERROR:",
+        postsResult.error
       );
 
-      feed.innerHTML =
-        `<div class="empty">
-          Feed load nahi hua.<br><br>
-          ${escapeHtml(
-            error.message
-          )}
-        </div>`;
+    }
 
-      return;
+
+    /* ---------- MESSAGES ---------- */
+
+    const messagesResult =
+      await supabaseClient
+        .from("home_messages")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(messagesResult.error){
+
+      console.error(
+        "MESSAGE LOAD ERROR:",
+        messagesResult.error
+      );
 
     }
 
 
-    if(
-      !posts ||
-      posts.length === 0
-    ){
+    const posts =
+      postsResult.data || [];
 
-      feed.innerHTML =
-        `<div class="empty">
-          Abhi koi post nahi hai.<br>
-          Sabse pehli post aap karo! ❤️
-        </div>`;
 
-      return;
+    const messages =
+      messagesResult.data || [];
 
-    }
 
+    /* ---------- COMBINE ---------- */
+
+    let feedItems = [];
+
+
+    posts.forEach(post => {
+
+      if(
+        !blockedIds.includes(
+          post.user_id
+        )
+      ){
+
+        feedItems.push({
+
+          type:"post",
+          data:post
+
+        });
+
+      }
+
+    });
+
+
+    messages.forEach(message => {
+
+      if(
+        !blockedIds.includes(
+          message.user_id
+        )
+      ){
+
+        feedItems.push({
+
+          type:"message",
+          data:message
+
+        });
+
+      }
+
+    });
+
+
+    /* ---------- NEWEST FIRST ---------- */
+
+    feedItems.sort((a,b) => {
+      const timeDiff =
+        new Date(b.data.created_at).getTime() -
+        new Date(a.data.created_at).getTime();
+
+      if(timeDiff !== 0){
+        return timeDiff;
+      }
+
+      return Number(b.data.id || 0) - Number(a.data.id || 0);
+    });
+
+
+    /* ---------- LOAD PROFILES ---------- */
 
     const userIds =
       [
         ...new Set(
-          posts
+          feedItems
             .map(
-              post =>
-                post.user_id
+              item =>
+                item.data.user_id
             )
             .filter(Boolean)
         )
       ];
 
 
-    let profiles = [];
+    let profileMap = {};
 
 
     if(userIds.length){
 
-      const profileResult =
+      const {
+        data:profileRows,
+        error:profileError
+      } =
         await supabaseClient
           .from("profiles")
           .select(
-            "id,username,name,avatar_url"
+            "id,avatar_url,username,name"
           )
           .in(
             "id",
@@ -1999,106 +1925,100 @@ async function loadFeed(){
           );
 
 
-      if(profileResult.error){
+      if(
+        !profileError &&
+        profileRows
+      ){
 
-        console.error(
-          "PROFILE LIST ERROR:",
-          profileResult.error
+        profileRows.forEach(
+          profile => {
+
+            profileMap[
+              profile.id
+            ] = profile;
+
+          }
         );
 
-      }else{
+      }
 
-        profiles =
-          profileResult.data || [];
+
+      if(profileError){
+
+        console.error(
+          "PROFILE LOAD ERROR:",
+          profileError
+        );
 
       }
 
     }
 
 
-    const profileMap = {};
+    /* ---------- ADD AVATARS ---------- */
 
+    feedItems.forEach(item => {
 
-    profiles.forEach(
-      profile => {
-
+      const profile =
         profileMap[
-          profile.id
-        ] = profile;
-
-      }
-    );
-
-
-    feed.innerHTML = "";
-
-
-    for(
-      const post of posts
-    ){
-
-      let profile =
-        profileMap[
-          post.user_id
+          item.data.user_id
         ];
 
 
-      if(
-        !profile &&
-        post.user_id === currentUser.id
-      ){
-
-        profile =
-          currentProfile;
-
-      }
+      item.data.avatar_url =
+        profile?.avatar_url || "";
 
 
-      if(!profile){
+      if(!item.data.username){
 
-        profile = {
-
-          id:
-            post.user_id,
-
-          username:
-            "User",
-
-          name:
-            "User",
-
-          avatar_url:
-            ""
-
-        };
+        item.data.username =
+          profile?.username ||
+          profile?.name ||
+          "User";
 
       }
 
-
-      const element =
-        await renderPost(
-          post,
-          profile,
-          false
-        );
+    });
 
 
-      if(element){
+    if(feedItems.length === 0){
 
-        feed.appendChild(
-          element
-        );
+      feed.innerHTML =
+        '<div class="empty">No posts or messages yet.</div>';
 
-      }
+      return;
 
     }
 
 
-    console.log(
-      "FEED LOADED:",
-      posts.length
-    );
+    /* Ignore an older request that finished after a newer refresh. */
+    if(thisFeedToken !== feedLoadToken){
+      return;
+    }
 
+    feed.innerHTML =
+      feedItems
+        .map(item => {
+
+          if(item.type === "post"){
+
+            return renderPost(
+              item.data
+            );
+
+          }
+
+          return renderMessage(
+            item.data
+          );
+
+        })
+        .join("");
+
+
+    await loadPostActions();
+
+    await loadFollowStatus();
 
   }catch(error){
 
@@ -2107,592 +2027,594 @@ async function loadFeed(){
       error
     );
 
-
     feed.innerHTML =
-      `<div class="empty">
-        Feed load nahi hua.<br><br>
-        ${escapeHtml(
-          error?.message ||
-          String(error)
-        )}
-      </div>`;
+      '<div class="empty">Feed load nahi ho saki.</div>';
 
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    RENDER POST
-========================= */
+===================================================== */
 
-async function renderPost(
-  post,
-  profile,
-  appendToFeed = false
-){
+function renderPost(post){
 
-  try{
-
-    const username =
-      profile?.username ||
-      profile?.name ||
-      currentUser?.user_metadata?.username ||
-      currentUser?.email?.split("@")[0] ||
-      "User";
+  const isOwn =
+    currentUser &&
+    post.user_id ===
+    currentUser.id;
 
 
-    const name =
-      profile?.name ||
-      username;
+  let buttons = "";
 
 
-    const firstLetter =
-      (
-        name ||
-        username ||
-        "U"
-      )
-        .charAt(0)
-        .toUpperCase();
+  if(isOwn){
+
+    buttons += `
+      <button
+        class="action-btn delete-btn"
+        onclick="deletePost(${post.id})">
+        🗑️ Delete
+      </button>
+    `;
+
+  }else{
+
+    buttons += `
+      <button
+        class="action-btn block-btn"
+        onclick="blockUser('${escapeAttr(post.user_id)}')">
+        🚫 Block
+      </button>
+
+      <button
+        id="follow-${escapeAttr(post.user_id)}"
+        class="action-btn follow-btn"
+        onclick="toggleFollow('${escapeAttr(post.user_id)}')">
+        Follow
+      </button>
+    `;
+
+  }
 
 
-    const ownPost =
-      post.user_id ===
-      currentUser.id;
+  return `
 
+    <div
+      class="feed-item"
+      id="post-${post.id}">
 
-    /* =========================
-       COUNTS
-    ========================= */
+      <div class="feed-head">
 
-    const [
-      likeResult,
-      dislikeResult,
-      commentResult
-    ] =
-    await Promise.all([
+        <div class="feed-user-wrap">
+          <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(post.user_id)}')" title="Open profile">
+            ${renderUserAvatar(
+              post.username || "User",
+              post.avatar_url
+            )}
+          </div>
 
-      supabaseClient
-        .from("likes")
-        .select(
-          "id",
-          {
-            count:"exact",
-            head:true
-          }
-        )
-        .eq(
-          "post_id",
-          post.id
-        ),
+          <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(post.user_id)}')" title="Open profile">
+            ${escapeHtml(
+              post.username || "User"
+            )}
+          </div>
 
-      supabaseClient
-        .from("dislikes")
-        .select(
-          "id",
-          {
-            count:"exact",
-            head:true
-          }
-        )
-        .eq(
-          "post_id",
-          post.id
-        ),
-
-      supabaseClient
-        .from("comments")
-        .select(
-          "id",
-          {
-            count:"exact",
-            head:true
-          }
-        )
-        .eq(
-          "post_id",
-          post.id
-        )
-
-    ]);
-
-
-    const likeCount =
-      likeResult.count || 0;
-
-
-    const dislikeCount =
-      dislikeResult.count || 0;
-
-
-    const commentCount =
-      commentResult.count || 0;
-
-
-    const div =
-      document.createElement(
-        "article"
-      );
-
-
-    div.className =
-      "post";
-
-
-    div.dataset.postId =
-      post.id;
-
-
-    /* =========================
-       AVATAR
-    ========================= */
-
-    let avatarHtml = "";
-
-
-    if(
-      profile?.avatar_url &&
-      String(
-        profile.avatar_url
-      ).trim()
-    ){
-
-      avatarHtml =
-        `<img
-          src="${escapeAttribute(
-            profile.avatar_url
-          )}"
-          alt="Avatar"
-          onerror="this.style.display='none';this.parentElement.textContent='${escapeAttribute(firstLetter)}';">`;
-
-    }else{
-
-      avatarHtml =
-        escapeHtml(
-          firstLetter
-        );
-
-    }
-
-
-    /* =========================
-       IMAGE
-    ========================= */
-
-    let media = "";
-
-
-    if(
-      post.post_type === "image" &&
-      post.image_url
-    ){
-
-      media =
-        `<img
-          class="post-image"
-          src="${escapeAttribute(
-            post.image_url
-          )}"
-          alt="Post image">`;
-
-    }
-
-
-    /* =========================
-       MESSAGE LABEL
-    ========================= */
-
-    const messageLabel =
-      post.post_type === "message"
-        ?
-        `<div class="message-label">
-          💬 Home Message
-        </div>`
-        :
-        "";
-
-
-    /* =========================
-       CATEGORY
-    ========================= */
-
-    const categoryHtml =
-      post.post_type !== "message"
-        ?
-        `<div class="category">
-          ${escapeHtml(
-            post.category ||
-            "General"
-          )}
-        </div>`
-        :
-        "";
-
-
-    /* =========================
-       CONTENT
-    ========================= */
-
-    const contentHtml =
-      post.content
-        ?
-        `<div class="post-content">
-          ${escapeHtml(
-            post.content
-          )}
-        </div>`
-        :
-        "";
-
-
-    /* =========================
-       CARD HTML
-    ========================= */
-
-    div.innerHTML = `
-
-      <div class="post-header">
-
-        <div class="avatar">
-          ${avatarHtml}
         </div>
 
-
-        <div class="user-info">
-
-          <div class="username">
-            ${escapeHtml(
-              username
-            )}
-          </div>
-
-          <div class="date">
-            ${formatDate(
-              post.created_at
-            )}
-          </div>
-
+        <div class="feed-date">
+          ${formatDate(post.created_at)}
         </div>
 
       </div>
 
+      <div class="feed-content">
+        ${escapeHtml(post.content)}
+      </div>
 
-      ${messageLabel}
+      <div class="feed-type">
+        📝 Post
+      </div>
 
+      <div class="action-row">
 
-      ${categoryHtml}
-
-
-      ${contentHtml}
-
-
-      ${media}
-
-
-      <div class="actions">
+        ${buttons}
 
         <button
+          id="like-btn-${post.id}"
           class="action-btn"
           onclick="toggleLike(${post.id})">
-
-          ❤️ Like
-          <span id="like-${post.id}">
-            ${likeCount}
-          </span>
-
+          ❤️ Like <span id="like-count-${post.id}">0</span>
         </button>
 
-
         <button
+          id="dislike-btn-${post.id}"
           class="action-btn"
           onclick="toggleDislike(${post.id})">
-
-          👎 Dislike
-          <span id="dislike-${post.id}">
-            ${dislikeCount}
-          </span>
-
+          👎 Dislike <span id="dislike-count-${post.id}">0</span>
         </button>
-
 
         <button
           class="action-btn"
-          onclick="openComments(${post.id})">
-
+          onclick="toggleComments(${post.id})">
           💬 Comments
-          <span id="comment-${post.id}">
-            ${commentCount}
-          </span>
-
         </button>
-
-
-        ${
-          ownPost
-          ?
-          `<button
-            class="action-btn delete-btn"
-            onclick="deletePost(${post.id})">
-
-            🗑️ Delete
-
-          </button>`
-          :
-          ""
-        }
 
       </div>
 
-
-      <!-- COMMENTS -->
-
       <div
-        class="comments-box"
-        id="comments-box-${post.id}">
+        id="comments-${post.id}"
+        class="comments-box">
 
         <div
-          class="comments-list"
           id="comments-list-${post.id}">
-
-          <div class="comment-empty">
-            Comments open karne ke liye button dabao.
-          </div>
-
+          Loading comments...
         </div>
 
+        <div class="comment-input-row">
 
-        <div class="comment-row">
-
-          <textarea
+          <input
             id="comment-input-${post.id}"
             class="comment-input"
-            maxlength="500"
-            placeholder="Write a comment..."></textarea>
+            type="text"
+            placeholder="Write a comment..."
+            autocomplete="off">
 
           <button
             class="comment-send"
             onclick="addComment(${post.id})">
-
             ➤
-
           </button>
 
         </div>
 
       </div>
 
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   RENDER MESSAGE
+===================================================== */
+
+function renderMessage(message){
+
+  const isOwn =
+    currentUser &&
+    message.user_id ===
+    currentUser.id;
+
+
+  let buttons = "";
+
+
+  if(isOwn){
+
+    buttons += `
+      <button
+        class="action-btn delete-btn"
+        onclick="deleteHomeMessage(${message.id})">
+        🗑️ Delete
+      </button>
     `;
 
+  }else{
 
-    if(appendToFeed){
+    buttons += `
+      <button
+        class="action-btn block-btn"
+        onclick="blockUser('${escapeAttr(message.user_id)}')">
+        🚫 Block
+      </button>
 
-      const feed =
-        document.getElementById(
-          "feed"
-        );
+      <button
+        id="follow-${escapeAttr(message.user_id)}"
+        class="action-btn follow-btn"
+        onclick="toggleFollow('${escapeAttr(message.user_id)}')">
+        Follow
+      </button>
+    `;
 
-      if(feed){
-
-        feed.appendChild(
-          div
-        );
-
-      }
-
-    }
-
-
-    return div;
+  }
 
 
-  }catch(error){
+  return `
+
+    <div
+      class="feed-item"
+      id="message-${message.id}">
+
+      <div class="feed-head">
+
+        <div class="feed-user-wrap">
+          <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(message.user_id)}')" title="Open profile">
+            ${renderUserAvatar(
+              message.username || "User",
+              message.avatar_url
+            )}
+          </div>
+
+          <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(message.user_id)}')" title="Open profile">
+            ${escapeHtml(
+              message.username || "User"
+            )}
+          </div>
+
+        </div>
+
+        <div class="feed-date">
+          ${formatDate(message.created_at)}
+        </div>
+
+      </div>
+
+      <div class="feed-content">
+        ${escapeHtml(message.message)}
+      </div>
+
+      <div class="feed-type">
+        💬 Message
+      </div>
+
+      <div class="action-row">
+
+        ${buttons}
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   DELETE POST
+===================================================== */
+
+async function deletePost(postId){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "Delete this post?"
+    )
+  ){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("posts")
+      .delete()
+      .eq(
+        "id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    showNotice(
+      "Delete nahi hua: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadFeed();
+
+}
+
+
+/* =====================================================
+   DELETE MESSAGE
+===================================================== */
+
+async function deleteHomeMessage(messageId){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "Delete this message?"
+    )
+  ){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("home_messages")
+      .delete()
+      .eq(
+        "id",
+        messageId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    showNotice(
+      "Message delete nahi hua: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadFeed();
+
+}
+
+
+/* =====================================================
+   POST ACTIONS
+===================================================== */
+
+async function loadPostActions(){
+
+  const { data,error } =
+    await supabaseClient
+      .from("post_actions")
+      .select("*");
+
+
+  if(error){
 
     console.error(
-      "RENDER POST ERROR:",
+      "ACTION LOAD ERROR:",
       error
     );
 
-    return null;
+    return;
 
+  }
+
+
+  const actions =
+    data || [];
+
+
+  document
+    .querySelectorAll(
+      "[id^='like-count-']"
+    )
+    .forEach(element => {
+
+      const postId =
+        Number(
+          element.id.replace(
+            "like-count-",
+            ""
+          )
+        );
+
+
+      const count =
+        actions.filter(
+          row =>
+            row.post_id === postId &&
+            row.action_type === "like"
+        ).length;
+
+
+      element.textContent =
+        count;
+
+    });
+
+
+  document
+    .querySelectorAll(
+      "[id^='dislike-count-']"
+    )
+    .forEach(element => {
+
+      const postId =
+        Number(
+          element.id.replace(
+            "dislike-count-",
+            ""
+          )
+        );
+
+
+      const count =
+        actions.filter(
+          row =>
+            row.post_id === postId &&
+            row.action_type === "dislike"
+        ).length;
+
+
+      element.textContent =
+        count;
+
+    });
+
+  if(currentUser){
+    document.querySelectorAll("[id^='like-btn-']").forEach(button => {
+      const postId = Number(button.id.replace("like-btn-", ""));
+      const active = actions.some(row =>
+        Number(row.post_id) === postId &&
+        String(row.user_id) === String(currentUser.id) &&
+        row.action_type === "like"
+      );
+      button.classList.toggle("active-action", active);
+    });
+
+    document.querySelectorAll("[id^='dislike-btn-']").forEach(button => {
+      const postId = Number(button.id.replace("dislike-btn-", ""));
+      const active = actions.some(row =>
+        Number(row.post_id) === postId &&
+        String(row.user_id) === String(currentUser.id) &&
+        row.action_type === "dislike"
+      );
+      button.classList.toggle("active-action", active);
+    });
   }
 
 }
 
 
-/* =========================
-   LIKE
-========================= */
+/* =====================================================
+   SET POST ACTION
+===================================================== */
+
+async function setPostAction(
+  postId,
+  actionType
+){
+
+  if(!currentUser){
+    showNotice("Please login first.");
+    return;
+  }
+
+  const opposite =
+    actionType === "like" ? "dislike" : "like";
+
+  try{
+    const { data:existingRows, error:findError } =
+      await supabaseClient
+        .from("post_actions")
+        .select("id,action_type")
+        .eq("post_id", postId)
+        .eq("user_id", currentUser.id);
+
+    if(findError){
+      throw findError;
+    }
+
+    const alreadyActive =
+      (existingRows || []).some(
+        row => row.action_type === actionType
+      );
+
+    if(alreadyActive){
+      const { error } =
+        await supabaseClient
+          .from("post_actions")
+          .delete()
+          .eq("post_id", postId)
+          .eq("user_id", currentUser.id)
+          .eq("action_type", actionType);
+
+      if(error) throw error;
+
+    }else{
+      const { error:oppositeError } =
+        await supabaseClient
+          .from("post_actions")
+          .delete()
+          .eq("post_id", postId)
+          .eq("user_id", currentUser.id)
+          .eq("action_type", opposite);
+
+      if(oppositeError) throw oppositeError;
+
+      const { error:insertError } =
+        await supabaseClient
+          .from("post_actions")
+          .insert({
+            post_id: postId,
+            user_id: currentUser.id,
+            action_type: actionType
+          });
+
+      if(insertError) throw insertError;
+    }
+
+    await loadPostActions();
+
+  }catch(error){
+    console.error("ACTION ERROR:", error);
+    showNotice("Like/Dislike nahi ho saka: " + error.message);
+  }
+
+}
+
+
+/* =====================================================
+   LIKE / DISLIKE
+===================================================== */
 
 async function toggleLike(postId){
 
-  if(!currentUser){
-    return;
-  }
-
-
-  const {
-    data: existing,
-    error: findError
-  } =
-  await supabaseClient
-    .from("likes")
-    .select("id")
-    .eq(
-      "post_id",
-      postId
-    )
-    .eq(
-      "user_id",
-      currentUser.id
-    )
-    .maybeSingle();
-
-
-  if(findError){
-
-    console.error(
-      "LIKE FIND ERROR:",
-      findError
-    );
-
-    showNotice(
-      "Like check nahi ho saka."
-    );
-
-    return;
-
-  }
-
-
-  if(existing){
-
-    const {
-      error
-    } =
-    await supabaseClient
-      .from("likes")
-      .delete()
-      .eq(
-        "id",
-        existing.id
-      );
-
-
-    if(error){
-
-      showNotice(
-        "Like remove nahi hua: " +
-        error.message
-      );
-
-      return;
-
-    }
-
-  }else{
-
-    const {
-      error: dislikeError
-    } =
-    await supabaseClient
-      .from("dislikes")
-      .delete()
-      .eq(
-        "post_id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-
-    if(dislikeError){
-
-      showNotice(
-        "Dislike remove nahi hua: " +
-        dislikeError.message
-      );
-
-      return;
-
-    }
-
-
-    const {
-      error: likeError
-    } =
-    await supabaseClient
-      .from("likes")
-      .insert({
-
-        post_id:
-          postId,
-
-        user_id:
-          currentUser.id
-
-      });
-
-
-    if(likeError){
-
-      showNotice(
-        "Like nahi hua: " +
-        likeError.message
-      );
-
-      return;
-
-    }
-
-  }
-
-
-  await loadFeed();
+  await setPostAction(
+    postId,
+    "like"
+  );
 
 }
 
-
-/* =========================
-   DISLIKE
-========================= */
 
 async function toggleDislike(postId){
 
+  await setPostAction(
+    postId,
+    "dislike"
+  );
+
+}
+
+
+/* =====================================================
+   FOLLOW
+===================================================== */
+
+async function loadFollowStatus(){
+
   if(!currentUser){
     return;
   }
 
 
-  const {
-    data: existing,
-    error: findError
-  } =
-  await supabaseClient
-    .from("dislikes")
-    .select("id")
-    .eq(
-      "post_id",
-      postId
-    )
-    .eq(
-      "user_id",
-      currentUser.id
-    )
-    .maybeSingle();
+  const { data,error } =
+    await supabaseClient
+      .from("user_follows")
+      .select("*")
+      .eq(
+        "follower_id",
+        currentUser.id
+      );
 
 
-  if(findError){
+  if(error){
 
     console.error(
-      "DISLIKE FIND ERROR:",
-      findError
-    );
-
-    showNotice(
-      "Dislike check nahi ho saka."
+      "FOLLOW LOAD ERROR:",
+      error
     );
 
     return;
@@ -2700,89 +2622,512 @@ async function toggleDislike(postId){
   }
 
 
-  if(existing){
+  const follows =
+    data || [];
 
-    const {
-      error
-    } =
+
+  document
+    .querySelectorAll(
+      "[id^='follow-']"
+    )
+    .forEach(button => {
+
+      const userId =
+        button.id.replace(
+          "follow-",
+          ""
+        );
+
+
+      const following =
+        follows.some(
+          row =>
+            row.following_id === userId
+        );
+
+
+      button.textContent =
+        following
+          ? "Following"
+          : "Follow";
+
+    });
+
+}
+
+
+async function toggleFollow(userId){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    userId ===
+    currentUser.id
+  ){
+
+    return;
+
+  }
+
+
+  const { data,error } =
     await supabaseClient
-      .from("dislikes")
+      .from("user_follows")
+      .select("*")
+      .eq(
+        "follower_id",
+        currentUser.id
+      )
+      .eq(
+        "following_id",
+        userId
+      )
+      .maybeSingle();
+
+
+  if(error){
+
+    showNotice(
+      "Follow error: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  if(data){
+
+    await supabaseClient
+      .from("user_follows")
       .delete()
       .eq(
-        "id",
-        existing.id
+        "follower_id",
+        currentUser.id
+      )
+      .eq(
+        "following_id",
+        userId
       );
-
-
-    if(error){
-
-      showNotice(
-        "Dislike remove nahi hua: " +
-        error.message
-      );
-
-      return;
-
-    }
 
   }else{
 
-    const {
-      error: likeError
-    } =
     await supabaseClient
-      .from("likes")
-      .delete()
-      .eq(
-        "post_id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-
-    if(likeError){
-
-      showNotice(
-        "Like remove nahi hua: " +
-        likeError.message
-      );
-
-      return;
-
-    }
-
-
-    const {
-      error: dislikeError
-    } =
-    await supabaseClient
-      .from("dislikes")
+      .from("user_follows")
       .insert({
 
-        post_id:
-          postId,
+        follower_id:
+          currentUser.id,
 
-        user_id:
-          currentUser.id
+        following_id:
+          userId
+
+      });
+
+  }
+
+
+  await loadFollowStatus();
+
+}
+
+
+
+/* =====================================================
+   FOLLOW COUNTS + LISTS
+===================================================== */
+
+async function getFollowCounts(userId){
+  const result = {followers:0,following:0};
+  if(!userId) return result;
+
+  const followersResult = await supabaseClient
+    .from("user_follows")
+    .select("*",{count:"exact",head:true})
+    .eq("following_id",userId);
+
+  const followingResult = await supabaseClient
+    .from("user_follows")
+    .select("*",{count:"exact",head:true})
+    .eq("follower_id",userId);
+
+  if(!followersResult.error) result.followers = followersResult.count || 0;
+  else console.error("FOLLOWERS COUNT ERROR:",followersResult.error);
+
+  if(!followingResult.error) result.following = followingResult.count || 0;
+  else console.error("FOLLOWING COUNT ERROR:",followingResult.error);
+
+  return result;
+}
+
+async function loadFollowCounts(){
+  if(!currentUser) return;
+  const counts = await getFollowCounts(currentUser.id);
+  const followers = document.getElementById("followersCount");
+  const following = document.getElementById("followingCount");
+  if(followers) followers.textContent = counts.followers;
+  if(following) following.textContent = counts.following;
+}
+
+async function loadFollowList(userId,type,contentId){
+  const content = document.getElementById(contentId);
+  if(!content || !userId) return;
+
+  content.innerHTML = '<div class="loading">Loading...</div>';
+
+  const column = type === "followers" ? "following_id" : "follower_id";
+  const otherColumn = type === "followers" ? "follower_id" : "following_id";
+
+  const {data,error} = await supabaseClient
+    .from("user_follows")
+    .select("follower_id,following_id")
+    .eq(column,userId);
+
+  if(error){
+    console.error("FOLLOW LIST ERROR:",error);
+    content.innerHTML = '<div class="empty">Follow list load nahi ho saki.</div>';
+    return;
+  }
+
+  const ids = (data || []).map(row => row[otherColumn]).filter(Boolean);
+
+  if(!ids.length){
+    content.innerHTML = '<div class="empty">Abhi koi user nahi.</div>';
+    return;
+  }
+
+  const {data:profiles,error:profileError} = await supabaseClient
+    .from("profiles")
+    .select("id,username,name,avatar_url")
+    .in("id",ids);
+
+  if(profileError){
+    console.error("FOLLOW PROFILE LIST ERROR:",profileError);
+    content.innerHTML = '<div class="empty">Profiles load nahi ho sake.</div>';
+    return;
+  }
+
+  const profileMap = {};
+  (profiles || []).forEach(profile => profileMap[profile.id] = profile);
+
+  content.innerHTML = ids.map(id => {
+    const profile = profileMap[id] || {};
+    const username = profile.username || profile.name || "User";
+    const name = profile.name || username;
+
+    return `
+      <div class="follow-user" onclick="openUserProfile('${escapeAttr(id)}')">
+        ${renderUserAvatar(username,profile.avatar_url,"feed-avatar")}
+        <div class="follow-user-info">
+          <div class="follow-user-name">${escapeHtml(name)}</div>
+          <div class="follow-user-username">@${escapeHtml(username)}</div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function openOwnFollowList(type){
+  const box = document.getElementById("ownFollowListBox");
+  const title = document.getElementById("ownFollowListTitle");
+  if(!box || !currentUser) return;
+
+  if(title) title.textContent = type === "followers" ? "👥 Followers" : "➡️ Following";
+  box.style.display = "block";
+  loadFollowList(currentUser.id,type,"ownFollowListContent");
+}
+
+function closeOwnFollowList(){
+  const box = document.getElementById("ownFollowListBox");
+  if(box) box.style.display = "none";
+}
+
+async function loadPublicProfileCounts(userId){
+  const counts = await getFollowCounts(userId);
+  const followers = document.getElementById("publicFollowersCount");
+  const following = document.getElementById("publicFollowingCount");
+  if(followers) followers.textContent = counts.followers;
+  if(following) following.textContent = counts.following;
+}
+
+async function loadPublicProfileFollowStatus(userId){
+  const button = document.getElementById("publicProfileFollowBtn");
+  if(!button || !currentUser) return;
+
+  if(userId === currentUser.id){
+    button.style.display = "none";
+    return;
+  }
+
+  button.style.display = "inline-block";
+
+  const {data,error} = await supabaseClient
+    .from("user_follows")
+    .select("id")
+    .eq("follower_id",currentUser.id)
+    .eq("following_id",userId)
+    .maybeSingle();
+
+  if(error){
+    console.error("PUBLIC FOLLOW STATUS ERROR:",error);
+    button.textContent = "Follow";
+    return;
+  }
+
+  button.textContent = data ? "Following" : "Follow";
+}
+
+function openPublicFollowList(type){
+  const box = document.getElementById("publicFollowListBox");
+  const title = document.getElementById("publicFollowListTitle");
+  if(!box || !window.publicProfileUserId) return;
+
+  if(title) title.textContent = type === "followers" ? "👥 Followers" : "➡️ Following";
+  box.style.display = "block";
+  loadFollowList(window.publicProfileUserId,type,"publicFollowListContent");
+}
+
+function closePublicFollowList(){
+  const box = document.getElementById("publicFollowListBox");
+  if(box) box.style.display = "none";
+}
+
+async function togglePublicProfileFollow(){
+  if(!window.publicProfileUserId) return;
+  await toggleFollow(window.publicProfileUserId);
+  await loadPublicProfileFollowStatus(window.publicProfileUserId);
+  await loadPublicProfileCounts(window.publicProfileUserId);
+}
+
+/* =====================================================
+   OPEN USER PROFILE
+===================================================== */
+
+async function openUserProfile(userId){
+  if(!currentUser){
+    showNotice("Please login first.");
+    return;
+  }
+
+  if(!userId) return;
+
+  if(userId === currentUser.id){
+    goProfile();
+    return;
+  }
+
+  window.publicProfileUserId = userId;
+
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("profilePage").style.display = "none";
+  document.getElementById("publicProfilePage").style.display = "block";
+
+  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  const avatar = document.getElementById("publicProfileAvatar");
+  const nameEl = document.getElementById("publicProfileName");
+  const usernameEl = document.getElementById("publicProfileUsername");
+  const info = document.getElementById("publicProfileInfo");
+  const postsBox = document.getElementById("publicUserPosts");
+
+  if(avatar) avatar.innerHTML = "👤";
+  if(nameEl) nameEl.textContent = "Loading...";
+  if(usernameEl) usernameEl.textContent = "";
+  if(info) info.innerHTML = '<div class="loading">Loading profile...</div>';
+  if(postsBox) postsBox.innerHTML = '<div class="loading">Loading posts...</div>';
+
+  const {data:profile,error} = await supabaseClient
+    .from("profiles")
+    .select("id,username,name,avatar_url,date_of_birth,city,bio,profile_privacy")
+    .eq("id",userId)
+    .maybeSingle();
+
+  if(error || !profile){
+    console.error("PUBLIC PROFILE ERROR:",error);
+    if(nameEl) nameEl.textContent = "User";
+    if(usernameEl) usernameEl.textContent = "@User";
+    if(info) info.innerHTML = '<div class="empty">Profile load nahi ho saki.</div>';
+    if(postsBox) postsBox.innerHTML = '<div class="empty">Posts load nahi ho sake.</div>';
+    return;
+  }
+
+  const username = profile.username || profile.name || "User";
+  const name = profile.name || username;
+  const privacy = profile.profile_privacy || "public";
+
+  if(nameEl) nameEl.textContent = name;
+  if(usernameEl) usernameEl.textContent = "@" + username;
+
+  if(avatar){
+    avatar.innerHTML = "";
+    if(profile.avatar_url){
+      const img = document.createElement("img");
+      img.src = profile.avatar_url;
+      img.alt = "Profile Picture";
+      img.onerror = () => { avatar.textContent = username.charAt(0).toUpperCase(); };
+      avatar.appendChild(img);
+    }else{
+      avatar.textContent = username.charAt(0).toUpperCase();
+    }
+  }
+
+  await loadPublicProfileFollowStatus(userId);
+  await loadPublicProfileCounts(userId);
+
+  if(info){
+    if(privacy === "private"){
+      info.innerHTML = `
+        <div class="profile-info-row">
+          <div class="profile-info-label">🔒 Profile</div>
+          <div class="profile-info-value">Private</div>
+        </div>
+        <div class="private-profile-note">🔒 This profile is private.</div>`;
+    }else{
+      info.innerHTML = `
+        <div class="profile-info-row">
+          <div class="profile-info-label">👤 Profile Name</div>
+          <div class="profile-info-value">${escapeHtml(name)}</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">🎂 Date of Birth</div>
+          <div class="profile-info-value">${escapeHtml(profile.date_of_birth || "—")}</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">📍 City</div>
+          <div class="profile-info-value">${escapeHtml(profile.city || "—")}</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">🔒 Profile</div>
+          <div class="profile-info-value">Public</div>
+        </div>
+        <div class="profile-info-row">
+          <div class="profile-info-label">📝 Bio</div>
+          <div class="profile-info-value">${escapeHtml(profile.bio || "—")}</div>
+        </div>`;
+    }
+  }
+
+  if(postsBox){
+    if(privacy === "private"){
+      postsBox.innerHTML = '<div class="empty">🔒 Posts are hidden because this profile is private.</div>';
+    }else{
+      const {data:posts,error:postsError} = await supabaseClient
+        .from("posts")
+        .select("*")
+        .eq("user_id",userId)
+        .order("created_at",{ascending:false});
+
+      if(postsError){
+        console.error("PUBLIC POSTS ERROR:",postsError);
+        postsBox.innerHTML = '<div class="empty">Posts load nahi ho sake.</div>';
+      }else if(!posts || posts.length === 0){
+        postsBox.innerHTML = '<div class="empty">Is user ne abhi koi post nahi ki.</div>';
+      }else{
+        postsBox.innerHTML = posts.map(post => `
+          <div class="feed-item">
+            <div class="feed-head">
+              <div class="feed-user-wrap">
+                <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(userId)}')">
+                  ${renderUserAvatar(username,profile.avatar_url)}
+                </div>
+                <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(userId)}')">
+                  ${escapeHtml(username)}
+                </div>
+              </div>
+              <div class="feed-date">${formatDate(post.created_at)}</div>
+            </div>
+            <div class="feed-content">${escapeHtml(post.content)}</div>
+            <div class="feed-type">📝 Post</div>
+          </div>
+        `).join("");
+      }
+    }
+  }
+}
+
+function closePublicProfile(){
+  window.publicProfileUserId = null;
+  document.getElementById("publicProfilePage").style.display = "none";
+  goHome();
+}
+
+/* =====================================================
+   BLOCK USER
+===================================================== */
+
+async function blockUser(userId){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  if(
+    userId ===
+    currentUser.id
+  ){
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "Block this user?"
+    )
+  ){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("user_blocks")
+      .insert({
+
+        blocker_id:
+          currentUser.id,
+
+        blocked_id:
+          userId
 
       });
 
 
-    if(dislikeError){
+  if(error){
+
+    if(error.code === "23505"){
 
       showNotice(
-        "Dislike nahi hua: " +
-        dislikeError.message
+        "User already blocked."
       );
 
-      return;
+    }else{
+
+      showNotice(
+        "Block nahi hua: " +
+        error.message
+      );
 
     }
 
+    return;
+
   }
+
+
+  showNotice(
+    "User blocked."
+  );
 
 
   await loadFeed();
@@ -2790,15 +3135,15 @@ async function toggleDislike(postId){
 }
 
 
-/* =========================
-   OPEN COMMENTS
-========================= */
+/* =====================================================
+   COMMENTS
+===================================================== */
 
-async function openComments(postId){
+async function toggleComments(postId){
 
   const box =
     document.getElementById(
-      "comments-box-" + postId
+      "comments-" + postId
     );
 
 
@@ -2807,11 +3152,10 @@ async function openComments(postId){
   }
 
 
-  const isOpen =
-    box.style.display === "block";
-
-
-  if(isOpen){
+  if(
+    box.style.display ===
+    "block"
+  ){
 
     box.style.display =
       "none";
@@ -2829,12 +3173,13 @@ async function openComments(postId){
     postId
   );
 
+
+  setupCommentInput(
+    postId
+  );
+
 }
 
-
-/* =========================
-   LOAD COMMENTS
-========================= */
 
 async function loadComments(postId){
 
@@ -2849,55 +3194,31 @@ async function loadComments(postId){
   }
 
 
-  list.innerHTML =
-    `<div class="comment-empty">
-      Loading comments...
-    </div>`;
-
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("comments")
-    .select(`
-      id,
-      post_id,
-      user_id,
-      comment,
-      created_at
-    `)
-    .eq(
-      "post_id",
-      postId
-    )
-    .order(
-      "created_at",
-      {
-        ascending:true
-      }
-    )
-    .order(
-      "id",
-      {
-        ascending:true
-      }
-    );
+  const { data,error } =
+    await supabaseClient
+      .from("comments")
+      .select("*")
+      .eq(
+        "post_id",
+        postId
+      )
+      .order(
+        "created_at",
+        {
+          ascending:true
+        }
+      );
 
 
   if(error){
 
     console.error(
-      "COMMENTS LOAD ERROR:",
+      "COMMENTS ERROR:",
       error
     );
 
-
     list.innerHTML =
-      `<div class="comment-empty">
-        Comments load nahi ho sake.
-      </div>`;
+      "<div>No comments found.</div>";
 
     return;
 
@@ -2908,268 +3229,130 @@ async function loadComments(postId){
     data || [];
 
 
-  /* =========================
-     UPDATE COMMENT COUNT
-  ========================= */
-
-  const countElement =
-    document.getElementById(
-      "comment-" + postId
-    );
-
-
-  if(countElement){
-
-    countElement.textContent =
-      comments.length;
-
-  }
-
-
   if(comments.length === 0){
 
     list.innerHTML =
-      `<div class="comment-empty">
-        Abhi koi comment nahi hai.
-      </div>`;
+      '<div style="color:#999;font-size:12px;">No comments yet.</div>';
 
     return;
 
   }
 
 
-  /* =========================
-     GET USER IDS
-  ========================= */
-
-  const userIds =
-    [
-      ...new Set(
-        comments
-          .map(
-            item =>
-              item.user_id
-          )
-          .filter(Boolean)
-      )
-    ];
-
-
-  let profiles = [];
-
-
-  if(userIds.length){
-
-    const {
-      data: profileData,
-      error: profileError
-    } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .in(
-        "id",
-        userIds
-      );
-
-
-    if(profileError){
-
-      console.error(
-        "COMMENT PROFILE ERROR:",
-        profileError
-      );
-
-    }else{
-
-      profiles =
-        profileData || [];
-
-    }
-
-  }
-
-
-  const profileMap = {};
-
-
-  profiles.forEach(
-    profile => {
-
-      profileMap[
-        profile.id
-      ] = profile;
-
-    }
-  );
-
-
-  /* =========================
-     RENDER COMMENTS
-  ========================= */
-
   list.innerHTML =
     comments
-      .map(
-        item => {
+      .map(comment => `
 
-          const profile =
-            profileMap[
-              item.user_id
-            ];
+        <div
+          class="comment-item"
+          id="comment-${comment.id}">
 
+          <div class="comment-user">
+            @${escapeHtml(
+              comment.username || "User"
+            )}
+          </div>
 
-          const username =
-            profile?.username ||
-            profile?.name ||
-            (
-              item.user_id ===
-              currentUser?.id
-              ?
-              currentProfile?.username
-              :
-              ""
-            ) ||
-            "User";
+          <div class="comment-text">
+            ${escapeHtml(
+              comment.content
+            )}
+          </div>
 
+          <div class="comment-actions">
 
-          const name =
-            profile?.name ||
-            username;
+            <button
+              class="reply-btn"
+              onclick="showCommentReply(
+                ${comment.id},
+                '${escapeAttr(
+                  comment.username || "User"
+                )}'
+              )">
+              ↩ Reply
+            </button>
 
+          </div>
 
-          const firstLetter =
-            (
-              name ||
-              username ||
-              "U"
-            )
-              .charAt(0)
-              .toUpperCase();
+          <div
+            id="reply-box-${comment.id}-${postId}"
+            class="reply-box">
 
+            <div class="reply-input-row">
 
-          let avatarHtml =
-            "";
+              <input
+                id="reply-input-${comment.id}-${postId}"
+                class="reply-input"
+                type="text"
+                placeholder="@${escapeAttr(
+                  comment.username || "User"
+                )}">
 
-
-          if(
-            profile?.avatar_url &&
-            String(
-              profile.avatar_url
-            ).trim()
-          ){
-
-            avatarHtml =
-              `<img
-                src="${escapeAttribute(
-                  profile.avatar_url
-                )}"
-                alt="Avatar"
-                onerror="this.style.display='none';this.parentElement.textContent='${escapeAttribute(firstLetter)}';">`;
-
-          }else{
-
-            avatarHtml =
-              escapeHtml(
-                firstLetter
-              );
-
-          }
-
-
-          const ownComment =
-            item.user_id ===
-            currentUser?.id;
-
-
-          return `
-
-            <div
-              class="comment-item"
-              data-comment-id="${item.id}">
-
-              <div class="comment-avatar">
-
-                ${avatarHtml}
-
-              </div>
-
-
-              <div class="comment-body">
-
-                <div class="comment-top">
-
-                  <span
-                    class="comment-username">
-
-                    ${escapeHtml(
-                      username
-                    )}
-
-                  </span>
-
-
-                  <span
-                    class="comment-time">
-
-                    ${formatDate(
-                      item.created_at
-                    )}
-
-                  </span>
-
-                </div>
-
-
-                <div
-                  class="comment-text">
-
-                  ${escapeHtml(
-                    item.comment
-                  )}
-
-                </div>
-
-
-                ${
-                  ownComment
-                  ?
-                  `<button
-                    class="comment-delete"
-                    onclick="deleteComment(${item.id},${postId})">
-
-                    🗑️ Delete
-
-                  </button>`
-                  :
-                  ""
-                }
-
-              </div>
+              <button
+                class="reply-send"
+                onclick="sendCommentReply(
+                  ${comment.id},
+                  ${postId}
+                )">
+                ➤
+              </button>
 
             </div>
 
-          `;
+          </div>
 
-        }
-      )
+        </div>
+
+      `)
       .join("");
 
 }
 
 
-/* =========================
+function setupCommentInput(postId){
+
+  const input =
+    document.getElementById(
+      "comment-input-" + postId
+    );
+
+
+  if(!input){
+    return;
+  }
+
+
+  input.onkeydown =
+    function(event){
+
+      if(
+        event.key ===
+        "Enter"
+      ){
+
+        event.preventDefault();
+
+        addComment(
+          postId
+        );
+
+      }
+
+    };
+
+}
+
+
+/* =====================================================
    ADD COMMENT
-========================= */
+===================================================== */
 
 async function addComment(postId){
 
   if(!currentUser){
 
     showNotice(
-      "Login required."
+      "Please login first."
     );
 
     return;
@@ -3184,74 +3367,54 @@ async function addComment(postId){
 
 
   if(!input){
+
+    showNotice(
+      "Comment box nahi mila."
+    );
+
     return;
+
   }
 
 
-  const comment =
+  const text =
     input.value.trim();
 
 
-  if(!comment){
-
-    showNotice(
-      "Comment likho."
-    );
-
+  if(!text){
     return;
-
   }
 
 
-  if(comment.length > 500){
+  const { error } =
+    await supabaseClient
+      .from("comments")
+      .insert({
 
-    showNotice(
-      "Comment bohat lamba hai."
-    );
+        post_id:
+          postId,
 
-    return;
+        user_id:
+          currentUser.id,
 
-  }
+        username:
+          currentUsername,
 
+        content:
+          text
 
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("comments")
-    .insert({
-
-      post_id:
-        postId,
-
-      user_id:
-        currentUser.id,
-
-      comment:
-        comment
-
-    })
-    .select(`
-      id,
-      post_id,
-      user_id,
-      comment,
-      created_at
-    `)
-    .single();
+      });
 
 
   if(error){
 
     console.error(
-      "COMMENT ADD ERROR:",
+      "COMMENT ERROR:",
       error
     );
 
-
     showNotice(
-      "Comment add nahi hua: " +
+      "Comment send nahi hua: " +
       error.message
     );
 
@@ -3262,24 +3425,89 @@ async function addComment(postId){
 
   input.value = "";
 
-
   await loadComments(
     postId
-  );
-
-
-  showNotice(
-    "Comment added! ❤️"
   );
 
 }
 
 
-/* =========================
-   DELETE COMMENT
-========================= */
+/* =====================================================
+   COMMENT REPLY
+===================================================== */
 
-async function deleteComment(
+function showCommentReply(
+  commentId,
+  username
+){
+
+  const boxes =
+    document.querySelectorAll(
+      '[id^="reply-box-"]'
+    );
+
+
+  boxes.forEach(box => {
+
+    box.style.display =
+      "none";
+
+  });
+
+
+  let targetBox = null;
+
+
+  boxes.forEach(box => {
+
+    if(
+      box.id.startsWith(
+        "reply-box-" +
+        commentId +
+        "-"
+      )
+    ){
+
+      targetBox =
+        box;
+
+    }
+
+  });
+
+
+  if(!targetBox){
+    return;
+  }
+
+
+  targetBox.style.display =
+    "block";
+
+
+  const input =
+    targetBox.querySelector(
+      "input"
+    );
+
+
+  if(input){
+
+    input.placeholder =
+      "@" + username;
+
+    input.focus();
+
+  }
+
+}
+
+
+/* =====================================================
+   SEND COMMENT REPLY
+===================================================== */
+
+async function sendCommentReply(
   commentId,
   postId
 ){
@@ -3289,32 +3517,58 @@ async function deleteComment(
   }
 
 
-  const {
-    error
-  } =
-  await supabaseClient
-    .from("comments")
-    .delete()
-    .eq(
-      "id",
-      commentId
-    )
-    .eq(
-      "user_id",
-      currentUser.id
+  const input =
+    document.getElementById(
+      "reply-input-" +
+      commentId +
+      "-" +
+      postId
     );
+
+
+  if(!input){
+    return;
+  }
+
+
+  const text =
+    input.value.trim();
+
+
+  if(!text){
+    return;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("comments")
+      .insert({
+
+        post_id:
+          postId,
+
+        user_id:
+          currentUser.id,
+
+        username:
+          currentUsername,
+
+        content:
+          text
+
+      });
 
 
   if(error){
 
     console.error(
-      "COMMENT DELETE ERROR:",
+      "REPLY ERROR:",
       error
     );
 
-
     showNotice(
-      "Comment delete nahi hua: " +
+      "Reply send nahi hui: " +
       error.message
     );
 
@@ -3323,54 +3577,905 @@ async function deleteComment(
   }
 
 
+  input.value = "";
+
   await loadComments(
     postId
-  );
-
-
-  showNotice(
-    "Comment deleted."
   );
 
 }
 
 
-/* =========================
-   DELETE POST
-========================= */
+/* =====================================================
+   POST IMAGE
+===================================================== */
 
-async function deletePost(postId){
+function chooseImage(){
+
+  const input =
+    document.getElementById(
+      "imageInput"
+    );
+
+
+  if(input){
+    input.click();
+  }
+
+}
+
+
+function sendImage(){
+
+  const input =
+    document.getElementById(
+      "imageInput"
+    );
+
+
+  if(
+    !input ||
+    !input.files ||
+    !input.files.length
+  ){
+
+    return;
+
+  }
+
+
+  showNotice(
+    "🖼️ Post image storage abhi setup nahi hai."
+  );
+
+
+  input.value = "";
+
+}
+
+
+/* =====================================================
+   VOICE
+===================================================== */
+
+async function toggleRecording(){
+
+  const voiceBtn =
+    document.getElementById(
+      "voiceBtn"
+    );
+
+
+  const status =
+    document.getElementById(
+      "recordStatus"
+    );
+
+
+  if(
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ){
+
+    showNotice(
+      "Voice recording browser mein available nahi."
+    );
+
+    return;
+
+  }
+
+
+  if(isRecording){
+
+    if(mediaRecorder){
+
+      mediaRecorder.stop();
+
+    }
+
+    return;
+
+  }
+
+
+  try{
+
+    const stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio:true
+        });
+
+
+    audioChunks = [];
+
+
+    mediaRecorder =
+      new MediaRecorder(
+        stream
+      );
+
+
+    mediaRecorder.ondataavailable =
+      event => {
+
+        if(
+          event.data &&
+          event.data.size > 0
+        ){
+
+          audioChunks.push(
+            event.data
+          );
+
+        }
+
+      };
+
+
+    mediaRecorder.onstop =
+      () => {
+
+        isRecording = false;
+
+
+        if(voiceBtn){
+
+          voiceBtn.textContent =
+            "🎤 Voice";
+
+        }
+
+
+        if(status){
+
+          status.style.display =
+            "none";
+
+        }
+
+
+        stream
+          .getTracks()
+          .forEach(
+            track =>
+              track.stop()
+          );
+
+
+        showNotice(
+          "🎤 Voice recording complete. Storage abhi setup nahi hai."
+        );
+
+      };
+
+
+    mediaRecorder.start();
+
+    isRecording = true;
+
+
+    if(voiceBtn){
+
+      voiceBtn.textContent =
+        "⏹️ Stop Voice";
+
+    }
+
+
+    if(status){
+
+      status.style.display =
+        "block";
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "VOICE ERROR:",
+      error
+    );
+
+    showNotice(
+      "Microphone permission allow karein."
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   ONLINE USERS
+===================================================== */
+
+function toggleOnlineUsers(){
+
+  const popup =
+    document.getElementById(
+      "onlinePopup"
+    );
+
+
+  if(!popup){
+    return;
+  }
+
+
+  if(
+    popup.style.display ===
+    "block"
+  ){
+
+    popup.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  popup.style.display =
+    "block";
+
+
+  loadOnlineUsers();
+
+}
+
+
+async function loadOnlineUsers(){
+
+  const list =
+    document.getElementById(
+      "onlineUsersList"
+    );
+
+
+  if(!list){
+    return;
+  }
+
+
+  if(!currentUser){
+
+    list.innerHTML =
+      "No online users.";
+
+    return;
+
+  }
+
+
+  list.innerHTML = `
+
+    <div class="online-user">
+
+      <span class="online-dot">
+        🟢
+      </span>
+
+      ${escapeHtml(currentUsername)}
+      <small>(You)</small>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
+function goProfile(){
+
+  document.getElementById(
+    "homePage"
+  ).style.display = "none";
+
+  document.getElementById(
+    "publicProfilePage"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "profilePage"
+  ).style.display = "block";
+
+
+  setActiveNav("profile");
+
+  loadProfile();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+function loadProfile(){
 
   if(!currentUser){
     return;
   }
 
 
+  const metadata =
+    currentUser.user_metadata || {};
+
+
+  const name =
+    metadata.name ||
+    metadata.username ||
+    currentUser.email?.split("@")[0] ||
+    "User";
+
+
+  const username =
+    metadata.username ||
+    name;
+
+
+  const dob =
+    metadata.date_of_birth ||
+    "";
+
+
+  const city =
+    metadata.city ||
+    "";
+
+
+  const privacy =
+    metadata.profile_privacy ||
+    "public";
+
+
+  const bio =
+    metadata.bio ||
+    "";
+
+
+  const avatarUrl =
+    metadata.avatar_url ||
+    "";
+
+
+  const nameDisplay =
+    document.getElementById(
+      "profileNameDisplay"
+    );
+
+
+  const usernameDisplay =
+    document.getElementById(
+      "profileUsernameDisplay"
+    );
+
+
+  const avatar =
+    document.getElementById(
+      "profileAvatar"
+    );
+
+
+  if(nameDisplay){
+
+    nameDisplay.textContent =
+      name;
+
+  }
+
+
+  if(usernameDisplay){
+
+    usernameDisplay.textContent =
+      "@" + username;
+
+  }
+
+
+  /* ---------- PROFILE PICTURE ---------- */
+
+  if(avatar){
+
+    avatar.innerHTML = "";
+
+
+    if(avatarUrl){
+
+      const img =
+        document.createElement(
+          "img"
+        );
+
+
+      img.src =
+        avatarUrl;
+
+
+      img.alt =
+        "Profile Picture";
+
+
+      img.onerror =
+        () => {
+
+          avatar.textContent =
+            name
+              .charAt(0)
+              .toUpperCase();
+
+        };
+
+
+      avatar.appendChild(
+        img
+      );
+
+    }else{
+
+      avatar.textContent =
+        name
+          .charAt(0)
+          .toUpperCase();
+
+    }
+
+  }
+
+
+  document.getElementById(
+    "profileNameValue"
+  ).textContent =
+    name || "—";
+
+
+  document.getElementById(
+    "profileDobValue"
+  ).textContent =
+    dob || "—";
+
+
+  document.getElementById(
+    "profileCityValue"
+  ).textContent =
+    city || "—";
+
+
+  document.getElementById(
+    "profilePrivacyValue"
+  ).textContent =
+    privacy === "private"
+      ? "Private"
+      : "Public";
+
+
+  document.getElementById(
+    "profileBioValue"
+  ).textContent =
+    bio || "—";
+
+
+  document.getElementById(
+    "editName"
+  ).value =
+    name === "User"
+      ? ""
+      : name;
+
+
+  document.getElementById(
+    "editDob"
+  ).value =
+    dob;
+
+
+  document.getElementById(
+    "editCity"
+  ).value =
+    city;
+
+
+  document.getElementById(
+    "editPrivacy"
+  ).value =
+    privacy;
+
+
+  document.getElementById(
+    "editBio"
+  ).value =
+    bio;
+
+
+  loadMyPosts();
+  loadFollowCounts();
+
+}
+
+
+/* =====================================================
+   CHOOSE PROFILE PICTURE
+===================================================== */
+
+function chooseProfilePicture(){
+
+  const input =
+    document.getElementById(
+      "profileImageInput"
+    );
+
+
+  if(input){
+
+    input.click();
+
+  }
+
+}
+
+
+/* =====================================================
+   UPLOAD PROFILE PICTURE
+===================================================== */
+
+async function uploadProfilePicture(){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "profileImageInput"
+    );
+
+
+  const file =
+    input?.files?.[0];
+
+
+  if(!file){
+    return;
+  }
+
+
+  if(
+    !file.type.startsWith(
+      "image/"
+    )
+  ){
+
+    showNotice(
+      "Sirf image file select karein."
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  if(
+    file.size >
+    5 * 1024 * 1024
+  ){
+
+    showNotice(
+      "Image 5MB se chhoti honi chahiye."
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  showNotice(
+    "🖼️ Profile picture upload ho rahi hai..."
+  );
+
+
+  const ext =
+    (
+      file.name
+        .split(".")
+        .pop() ||
+      "jpg"
+    )
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]/g,
+        ""
+      );
+
+
+  const path =
+    `${currentUser.id}/avatar-${Date.now()}.${ext || "jpg"}`;
+
+
   const {
+    error:uploadError
+  } =
+    await supabaseClient
+      .storage
+      .from("avatars")
+      .upload(
+        path,
+        file,
+        {
+          cacheControl:"3600",
+          upsert:false,
+          contentType:file.type
+        }
+      );
+
+
+  if(uploadError){
+
+    console.error(
+      "AVATAR UPLOAD ERROR:",
+      uploadError
+    );
+
+    showNotice(
+      "Profile picture upload nahi hui: " +
+      uploadError.message
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  const {
+    data:publicData
+  } =
+    supabaseClient
+      .storage
+      .from("avatars")
+      .getPublicUrl(
+        path
+      );
+
+
+  const avatarUrl =
+    publicData?.publicUrl;
+
+
+  if(!avatarUrl){
+
+    showNotice(
+      "Profile picture URL nahi mili."
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  const oldMetadata =
+    currentUser.user_metadata || {};
+
+
+  const {
+    data,
     error
   } =
-  await supabaseClient
-    .from("posts")
-    .delete()
-    .eq(
-      "id",
-      postId
-    )
-    .eq(
-      "user_id",
-      currentUser.id
-    );
+    await supabaseClient.auth.updateUser({
+
+      data:{
+
+        ...oldMetadata,
+
+        avatar_url:
+          avatarUrl
+
+      }
+
+    });
 
 
   if(error){
 
     console.error(
-      "DELETE ERROR:",
+      "AVATAR PROFILE UPDATE ERROR:",
       error
     );
 
     showNotice(
-      "Post delete nahi hua: " +
+      "Picture save nahi hui: " +
+      error.message
+    );
+
+    input.value = "";
+
+    return;
+
+  }
+
+
+  if(
+    data &&
+    data.user
+  ){
+
+    setCurrentUser(
+      data.user
+    );
+
+  }
+
+
+  await syncMyProfile();
+
+  loadProfile();
+
+  await loadFeed();
+
+  input.value = "";
+
+  showNotice(
+    "✅ Profile picture updated."
+  );
+
+}
+
+
+/* =====================================================
+   EDIT PROFILE
+===================================================== */
+
+function showEditProfile(){
+
+  const edit =
+    document.getElementById(
+      "profileEdit"
+    );
+
+
+  if(!edit){
+    return;
+  }
+
+
+  edit.style.display =
+    edit.style.display === "block"
+      ? "none"
+      : "block";
+
+}
+
+
+/* =====================================================
+   SAVE PROFILE
+===================================================== */
+
+async function saveProfile(){
+
+  if(!currentUser){
+
+    showNotice(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  const name =
+    document.getElementById(
+      "editName"
+    ).value.trim();
+
+
+  const dob =
+    document.getElementById(
+      "editDob"
+    ).value;
+
+
+  const city =
+    document.getElementById(
+      "editCity"
+    ).value.trim();
+
+
+  const privacy =
+    document.getElementById(
+      "editPrivacy"
+    ).value;
+
+
+  const bio =
+    document.getElementById(
+      "editBio"
+    ).value.trim();
+
+
+  if(!name){
+
+    showNotice(
+      "Profile name zaroor likhein."
+    );
+
+    return;
+
+  }
+
+
+  const oldMetadata =
+    currentUser.user_metadata || {};
+
+
+  const username =
+    oldMetadata.username ||
+    name;
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient.auth.updateUser({
+
+      data:{
+
+        ...oldMetadata,
+
+        username:
+          username,
+
+        name:
+          name,
+
+        date_of_birth:
+          dob,
+
+        city:
+          city,
+
+        bio:
+          bio,
+
+        profile_privacy:
+          privacy
+
+      }
+
+    });
+
+
+  if(error){
+
+    console.error(
+      "PROFILE UPDATE ERROR:",
+      error
+    );
+
+    showNotice(
+      "Profile save nahi hua: " +
       error.message
     );
 
@@ -3379,37 +4484,242 @@ async function deletePost(postId){
   }
 
 
-  const card =
-    document.querySelector(
-      `.post[data-post-id="${postId}"]`
+  if(
+    data &&
+    data.user
+  ){
+
+    setCurrentUser(
+      data.user
     );
-
-
-  if(card){
-
-    card.remove();
 
   }
 
 
-  const feed =
+  await syncMyProfile();
+
+
+  const edit =
     document.getElementById(
-      "feed"
+      "profileEdit"
     );
+
+
+  if(edit){
+
+    edit.style.display =
+      "none";
+
+  }
+
+
+  loadProfile();
+
+  await loadFeed();
+
+
+  showNotice(
+    "✅ Profile successfully updated."
+  );
+
+}
+
+
+/* =====================================================
+   MY POSTS
+===================================================== */
+
+async function loadMyPosts(){
+
+  const container =
+    document.getElementById(
+      "myPosts"
+    );
+
+
+  if(!container){
+    return;
+  }
+
+
+  if(!currentUser){
+
+    container.innerHTML =
+      '<div class="empty">Please login first.</div>';
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    '<div class="loading">Loading your posts...</div>';
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("posts")
+      .select("*")
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      "MY POSTS ERROR:",
+      error
+    );
+
+    container.innerHTML =
+      '<div class="empty">My Posts load nahi ho sake.</div>';
+
+    return;
+
+  }
+
+
+  const posts =
+    data || [];
+
+
+  if(posts.length === 0){
+
+    container.innerHTML =
+      '<div class="empty">Aap ne abhi koi post nahi ki.</div>';
+
+    return;
+
+  }
+
+
+  const avatarUrl =
+    currentUser.user_metadata?.avatar_url ||
+    "";
+
+
+  container.innerHTML =
+    posts
+      .map(post => `
+
+        <div
+          class="feed-item">
+
+          <div class="feed-head">
+
+            <div class="feed-user-wrap">
+
+              ${renderUserAvatar(
+                post.username ||
+                currentUsername,
+                avatarUrl
+              )}
+
+              <div class="feed-user">
+                ${escapeHtml(
+                  post.username ||
+                  currentUsername
+                )}
+              </div>
+
+            </div>
+
+            <div class="feed-date">
+              ${formatDate(
+                post.created_at
+              )}
+            </div>
+
+          </div>
+
+          <div class="feed-content">
+            ${escapeHtml(
+              post.content
+            )}
+          </div>
+
+          <div class="feed-type">
+            📝 Post
+          </div>
+
+          <div class="action-row">
+
+            <button
+              class="action-btn delete-btn"
+              onclick="deletePostFromProfile(${post.id})">
+              🗑️ Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      `)
+      .join("");
+
+}
+
+
+/* =====================================================
+   DELETE POST FROM PROFILE
+===================================================== */
+
+async function deletePostFromProfile(postId){
+
+  if(!currentUser){
+    return;
+  }
 
 
   if(
-    feed &&
-    !feed.querySelector(".post")
+    !confirm(
+      "Delete this post?"
+    )
   ){
+    return;
+  }
 
-    feed.innerHTML =
-      `<div class="empty">
-        Abhi koi post nahi hai.<br>
-        Sabse pehli post aap karo! ❤️
-      </div>`;
+
+  const { error } =
+    await supabaseClient
+      .from("posts")
+      .delete()
+      .eq(
+        "id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
+
+
+  if(error){
+
+    showNotice(
+      "Delete nahi hua: " +
+      error.message
+    );
+
+    return;
 
   }
+
+
+  await loadMyPosts();
+
+  await loadFeed();
 
 
   showNotice(
@@ -3419,195 +4729,83 @@ async function deletePost(postId){
 }
 
 
-/* =========================
-   DATE
-========================= */
-
-function formatDate(date){
-
-  const now =
-    new Date();
-
-
-  const created =
-    new Date(date);
-
-
-  const seconds =
-    Math.floor(
-      (now - created) /
-      1000
-    );
-
-
-  if(seconds < 60){
-
-    return "Just now";
-
-  }
-
-
-  const minutes =
-    Math.floor(
-      seconds / 60
-    );
-
-
-  if(minutes < 60){
-
-    return minutes + "m ago";
-
-  }
-
-
-  const hours =
-    Math.floor(
-      minutes / 60
-    );
-
-
-  if(hours < 24){
-
-    return hours + "h ago";
-
-  }
-
-
-  const days =
-    Math.floor(
-      hours / 24
-    );
-
-
-  if(days < 7){
-
-    return days + "d ago";
-
-  }
-
-
-  return created.toLocaleDateString();
-
-}
-
-
-/* =========================
-   NOTICE
-========================= */
-
-function showNotice(message){
-
-  const notice =
-    document.getElementById(
-      "notice"
-    );
-
-
-  if(!notice){
-    return;
-  }
-
-
-  notice.textContent =
-    message;
-
-
-  notice.style.display =
-    "block";
-
-
-  clearTimeout(
-    window.noticeTimer
-  );
-
-
-  window.noticeTimer =
-    setTimeout(
-      function(){
-
-        notice.style.display =
-          "none";
-
-      },
-      2500
-    );
-
-}
-
-
-/* =========================
-   ESCAPE HTML
-========================= */
-
-function escapeHtml(value){
-
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* =========================
-   ESCAPE ATTRIBUTE
-========================= */
-
-function escapeAttribute(value){
-
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    );
-
-}
-
-
-/* =========================
-   NAVIGATION
-========================= */
+/* =====================================================
+   HOME
+===================================================== */
 
 function goHome(){
 
-  window.location.href =
-    "index.html";
+  document.getElementById(
+    "profilePage"
+  ).style.display = "none";
+
+  document.getElementById(
+    "publicProfilePage"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "homePage"
+  ).style.display = "block";
+
+
+  setActiveNav("home");
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
 
 }
 
+
+function setActiveNav(type){
+
+  document
+    .querySelectorAll(
+      ".nav-btn"
+    )
+    .forEach(btn => {
+
+      btn.classList.remove(
+        "active"
+      );
+
+    });
+
+
+  if(type === "home"){
+
+    document
+      .getElementById(
+        "homeNavBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+
+  if(type === "profile"){
+
+    document
+      .getElementById(
+        "profileNavBtn"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+}
+
+
+/* =====================================================
+   PRIVATE
+===================================================== */
 
 function goPrivate(){
 
@@ -3617,64 +4815,234 @@ function goPrivate(){
 }
 
 
-function goProfile(){
-
-  window.location.href =
-    "profile.html";
-
-}
-
-
-function goMehfil(){
-
-  window.location.href =
-    "mehfil.html";
-
-}
-
+/* =====================================================
+   NOTIFICATIONS
+===================================================== */
 
 function goNotifications(){
 
-  window.location.href =
-    "notifications.html";
-
-}
-
-
-function goStars(){
-
   showNotice(
-    "Stars section next step mein banayenge ⭐"
+    "Notifications page abhi setup nahi hai."
   );
 
 }
 
 
-function goTrending(){
-
-  showNotice(
-    "Trending Posts next step mein banayenge 🔥"
-  );
-
-}
-
+/* =====================================================
+   MORE
+===================================================== */
 
 function goMore(){
 
-  window.location.href =
-    "more.html";
+  const logout =
+    confirm(
+      "Logout karna hai?"
+    );
+
+
+  if(logout){
+
+    signOut();
+
+  }
 
 }
 
 
-/* =========================
-   START
-========================= */
+/* =====================================================
+   SIGN OUT
+===================================================== */
 
-init();
+async function signOut(){
+
+  try{
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+  }finally{
+
+    window.location.href =
+      "login.html";
+
+  }
+
+}
+
+
+/* =====================================================
+   CLOSE ONLINE POPUP
+===================================================== */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    const popup =
+      document.getElementById(
+        "onlinePopup"
+      );
+
+
+    const button =
+      document.querySelector(
+        ".online-btn"
+      );
+
+
+    if(
+      popup &&
+      popup.style.display === "block" &&
+      !popup.contains(event.target) &&
+      button &&
+      !button.contains(event.target)
+    ){
+
+      popup.style.display =
+        "none";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   DOM READY
+===================================================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    /* ---------- CREATE POST ---------- */
+
+    const postInput =
+      document.getElementById(
+        "postInput"
+      );
+
+
+    if(postInput){
+
+      postInput.addEventListener(
+        "keydown",
+        function(event){
+
+          if(
+            event.key === "Enter" &&
+            !event.shiftKey
+          ){
+
+            event.preventDefault();
+
+            addPost();
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* ---------- SEND POST ---------- */
+
+    const publishPostBtn =
+      document.getElementById(
+        "publishPostBtn"
+      );
+
+
+    if(publishPostBtn){
+
+      publishPostBtn.addEventListener(
+        "click",
+        addPost
+      );
+
+    }
+
+
+    /* ---------- POST IMAGE ---------- */
+
+    const uploadImageBtn =
+      document.getElementById(
+        "uploadImageBtn"
+      );
+
+
+    if(uploadImageBtn){
+
+      uploadImageBtn.addEventListener(
+        "click",
+        chooseImage
+      );
+
+    }
+
+
+    const imageInput =
+      document.getElementById(
+        "imageInput"
+      );
+
+
+    if(imageInput){
+
+      imageInput.addEventListener(
+        "change",
+        sendImage
+      );
+
+    }
+
+
+    /* ---------- PROFILE PICTURE ---------- */
+
+    const profileImageInput =
+      document.getElementById(
+        "profileImageInput"
+      );
+
+
+    if(profileImageInput){
+
+      profileImageInput.addEventListener(
+        "change",
+        uploadProfilePicture
+      );
+
+    }
+
+
+    /* ---------- VOICE ---------- */
+
+    const voiceBtn =
+      document.getElementById(
+        "voiceBtn"
+      );
+
+
+    if(voiceBtn){
+
+      voiceBtn.addEventListener(
+        "click",
+        toggleRecording
+      );
+
+    }
+
+
+    /* ---------- START ---------- */
+
+    checkUser();
+
+  }
+);
 
 </script>
 
 </body>
 </html>
-```
