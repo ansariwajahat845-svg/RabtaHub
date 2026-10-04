@@ -1,42 +1,47 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>RabtaHub</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f4f6fb;
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  min-height:100vh;
   color:#222;
+}
+
+.app{
+  width:100%;
+  max-width:680px;
+  margin:auto;
+  min-height:100vh;
+  background:#f5f5f8;
   padding-bottom:80px;
 }
 
-/* ================= HEADER ================= */
-
 .header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  height:60px;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
+  padding:18px 15px 14px;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.header-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 15px;
-  box-shadow:0 2px 10px rgba(0,0,0,.15);
 }
 
 .logo{
@@ -44,5051 +49,587 @@ body{
   font-weight:bold;
 }
 
-.logo span{
-  font-weight:normal;
+.header-actions{
+  display:flex;
+  gap:8px;
 }
 
-.online-btn{
+.top-btn{
   border:0;
+  background:rgba(255,255,255,.18);
+  color:white;
+  border-radius:12px;
+  min-width:44px;
+  height:42px;
+  font-size:19px;
+  cursor:pointer;
+}
+
+.trending{
+  margin-top:13px;
   background:rgba(255,255,255,.15);
-  color:white;
-  padding:9px 12px;
-  border-radius:20px;
-  font-size:13px;
-  cursor:pointer;
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:14px;
 }
 
-/* ================= CONTAINER ================= */
-
-.container{
-  width:100%;
-  max-width:650px;
-  margin:auto;
+.content{
   padding:12px;
 }
 
-/* ================= BOXES ================= */
-
-.create-post-box,
-.welcome-box,
-.profile-box{
+.welcome{
   background:white;
-  border-radius:14px;
+  border-radius:15px;
+  padding:16px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px #00000012;
+}
+
+.welcome h2{
+  margin:0 0 5px;
+  font-size:20px;
+}
+
+.create-box{
+  background:white;
   padding:14px;
+  border-radius:15px;
   margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.07);
+  box-shadow:0 2px 8px #00000012;
 }
 
-.box-title{
-  font-size:17px;
-  font-weight:bold;
-  margin-bottom:10px;
-}
-
-#postInput{
+textarea{
   width:100%;
-  min-height:90px;
-  resize:none;
+  min-height:85px;
   border:1px solid #ddd;
-  border-radius:10px;
+  border-radius:12px;
   padding:12px;
   font-size:15px;
-  outline:none;
-  font-family:Arial,sans-serif;
+  resize:vertical;
 }
 
-#postInput:focus{
-  border-color:#7b61d9;
-}
-
-/* ================= SEND POST ================= */
-
-.post-send-btn{
-  width:100%;
-  margin-top:10px;
-  border:0;
-  background:#6c5ce7;
-  color:white;
-  padding:11px;
-  border-radius:9px;
-  font-size:14px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.post-send-btn:active{
-  transform:scale(.98);
-}
-
-/* ================= MEDIA ================= */
-
-.post-media-row{
+.create-actions{
   display:flex;
   gap:8px;
   margin-top:10px;
-}
-
-.media-btn{
-  flex:1;
-  border:0;
-  background:#f0edff;
-  color:#6045c5;
-  padding:10px 7px;
-  border-radius:9px;
-  font-size:13px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.media-btn:active{
-  transform:scale(.98);
-}
-
-#recordStatus{
-  display:none;
-  margin-top:8px;
-  text-align:center;
-  color:#e74c3c;
-  font-size:12px;
-}
-
-/* ================= WELCOME ================= */
-
-.welcome-title{
-  font-size:17px;
-  font-weight:bold;
-  margin-bottom:5px;
-}
-
-.username-line{
-  color:#777;
-  font-size:13px;
-}
-
-/* ================= SECTION ================= */
-
-.section-title{
-  font-size:18px;
-  font-weight:bold;
-  margin:15px 3px 10px;
-}
-
-.refresh-center{
-  text-align:center;
-  margin:-3px 0 12px;
-}
-
-.refresh-btn{
-  border:0;
-  background:#eeeaff;
-  color:#6045c5;
-  padding:8px 16px;
-  border-radius:9px;
-  font-size:12px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.refresh-btn:active{
-  transform:scale(.96);
-}
-
-/* ================= FEED ================= */
-
-.feed-item{
-  background:white;
-  border-radius:14px;
-  padding:13px;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.07);
-}
-
-.feed-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-}
-
-.feed-user-wrap{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  min-width:0;
-}
-
-.feed-avatar,
-.avatar-fallback{
-  width:38px;
-  height:38px;
-  min-width:38px;
-  border-radius:50%;
-  object-fit:cover;
-}
-
-.avatar-fallback{
-  background:#eeeaff;
-  color:#6c5ce7;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:14px;
-  font-weight:bold;
-}
-
-.feed-user{
-  font-weight:bold;
-  color:#5d42c5;
-  font-size:15px;
-  word-break:break-word;
-}
-
-.feed-date{
-  color:#999;
-  font-size:11px;
-  white-space:nowrap;
-}
-
-.feed-content{
-  margin-top:9px;
-  font-size:15px;
-  line-height:1.5;
-  word-break:break-word;
-}
-
-.feed-type{
-  display:inline-block;
-  margin-top:7px;
-  font-size:11px;
-  color:#999;
-}
-
-/* ================= ACTIONS ================= */
-
-.action-row{
-  display:flex;
   flex-wrap:wrap;
-  gap:6px;
-  margin-top:12px;
 }
 
 .action-btn{
   border:0;
-  background:#f3f4f8;
-  color:#444;
-  padding:7px 9px;
-  border-radius:8px;
-  font-size:12px;
+  border-radius:10px;
+  padding:10px 13px;
   cursor:pointer;
-}
-
-.action-btn:hover{
-  background:#e9e7f7;
-}
-
-.delete-btn{
-  background:#ffecec;
-  color:#d63031;
-}
-
-.block-btn{
-  background:#fff3f3;
-  color:#c0392b;
-}
-
-.follow-btn{
-  background:#eeeaff;
-  color:#5d42c5;
-}
-
-/* ================= COMMENTS ================= */
-
-.comments-box{
-  display:none;
-  margin-top:10px;
-  border-top:1px solid #eee;
-  padding-top:10px;
-}
-
-.comment-item{
-  background:#f7f7fa;
-  border-radius:9px;
-  padding:8px;
-  margin-bottom:7px;
-}
-
-.comment-user{
   font-weight:bold;
-  font-size:12px;
-  color:#5d42c5;
 }
 
-.comment-text{
-  font-size:13px;
-  margin-top:3px;
-  word-break:break-word;
-}
-
-.comment-actions{
-  margin-top:5px;
-}
-
-.reply-btn{
-  border:0;
-  background:none;
-  color:#6c5ce7;
-  font-size:11px;
-  padding:0;
-  cursor:pointer;
-}
-
-.comment-input-row,
-.reply-input-row{
-  display:flex;
-  gap:6px;
-  margin-top:8px;
-}
-
-.comment-input{
-  flex:1;
-  min-width:0;
-  border:1px solid #ddd;
-  border-radius:8px;
-  padding:8px;
-  outline:none;
-  font-size:13px;
-}
-
-.comment-send,
-.reply-send{
-  border:0;
+.post-btn{
   background:#6c5ce7;
   color:white;
-  border-radius:8px;
-  padding:0 12px;
-  cursor:pointer;
 }
 
-.reply-box{
-  display:none;
-  margin-top:6px;
+.secondary{
+  background:#eee;
 }
 
-.reply-input{
-  flex:1;
-  min-width:0;
-  border:1px solid #ddd;
-  border-radius:8px;
-  padding:7px;
-  font-size:12px;
-  outline:none;
+.section-title{
+  font-weight:bold;
+  font-size:18px;
+  margin:14px 2px 9px;
 }
 
-/* ================= PROFILE ================= */
-
-.profile-page{
-  display:none;
-}
-
-.profile-header{
-  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
-  color:white;
-  border-radius:15px;
-  padding:20px 15px;
-  text-align:center;
-  margin-bottom:12px;
-}
-
-.profile-avatar-wrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.profile-avatar{
-  width:82px;
-  height:82px;
-  border-radius:50%;
+.post{
   background:white;
-  color:#6c5ce7;
+  border-radius:15px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px #00000012;
+}
+
+.post-user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#6c5ce7;
+  color:white;
   display:flex;
   align-items:center;
   justify-content:center;
-  margin:0 auto 10px;
-  font-size:35px;
   font-weight:bold;
   overflow:hidden;
-  border:3px solid rgba(255,255,255,.7);
 }
 
-.profile-avatar img{
+.avatar img{
   width:100%;
   height:100%;
   object-fit:cover;
 }
 
-.profile-picture-btn{
-  border:0;
-  background:rgba(255,255,255,.16);
-  color:white;
-  padding:8px 12px;
-  border-radius:9px;
+.username{
+  font-weight:bold;
+}
+
+.date{
+  color:#888;
   font-size:12px;
-  font-weight:bold;
-  cursor:pointer;
+  margin-top:3px;
 }
 
-.profile-picture-btn:active{
-  transform:scale(.97);
+.post-content{
+  margin:12px 0;
+  white-space:pre-wrap;
+  line-height:1.45;
 }
 
-.profile-name-display{
-  font-size:20px;
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.profile-username-display{
-  margin-top:4px;
-  font-size:12px;
-  opacity:.85;
-}
-
-.profile-info{
-  background:#fff;
-  border-radius:12px;
-  padding:12px;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.07);
-}
-
-.profile-info-row{
-  padding:10px 3px;
-  border-bottom:1px solid #eee;
-  font-size:13px;
-}
-
-.profile-info-row:last-child{
-  border-bottom:0;
-}
-
-.profile-info-label{
-  font-weight:bold;
-  color:#5d42c5;
-  margin-bottom:3px;
-}
-
-.profile-info-value{
-  color:#555;
-  word-break:break-word;
-}
-
-.profile-edit{
-  display:none;
-  background:white;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.07);
-}
-
-.profile-field{
-  margin-bottom:12px;
-}
-
-.profile-field label{
-  display:block;
-  font-size:12px;
-  font-weight:bold;
-  color:#555;
-  margin-bottom:5px;
-}
-
-.profile-field input,
-.profile-field textarea,
-.profile-field select{
-  width:100%;
-  border:1px solid #ddd;
-  border-radius:9px;
-  padding:10px;
-  font-size:13px;
-  outline:none;
-  font-family:Arial,sans-serif;
-}
-
-.profile-field textarea{
-  min-height:80px;
-  resize:none;
-}
-
-.profile-save-btn{
-  width:100%;
-  border:0;
-  background:#6c5ce7;
-  color:white;
-  padding:11px;
-  border-radius:9px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.profile-action-row{
+.post-actions{
   display:flex;
-  gap:8px;
-  margin-top:10px;
+  gap:6px;
+  flex-wrap:wrap;
+  border-top:1px solid #eee;
+  padding-top:9px;
 }
 
-.profile-action-btn{
-  flex:1;
+.post-actions button{
   border:0;
-  background:#eeeaff;
-  color:#5d42c5;
-  padding:10px;
+  background:#f1f1f4;
   border-radius:9px;
-  font-size:13px;
-  font-weight:bold;
+  padding:8px 10px;
   cursor:pointer;
 }
-
-.profile-logout{
-  background:#ffecec;
-  color:#d63031;
-}
-
-
-/* FOLLOW / PUBLIC PROFILE */
-.profile-follow-stats{display:flex;gap:8px;margin-top:12px}
-.profile-follow-btn{flex:1;border:0;background:rgba(255,255,255,.16);color:white;padding:9px 8px;border-radius:9px;font-size:12px;font-weight:bold;cursor:pointer}
-.profile-follow-btn strong{display:block;margin-top:2px;font-size:14px}
-.follow-list-box{display:none;background:white;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.follow-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
-.follow-list-title{font-size:15px;font-weight:bold;color:#5d42c5}
-.follow-list-close{border:0;background:#f3f4f8;color:#555;padding:6px 9px;border-radius:8px;font-size:11px;cursor:pointer}
-.follow-user{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #eee;cursor:pointer}
-.follow-user:last-child{border-bottom:0}
-.follow-user-info{min-width:0;flex:1}
-.follow-user-name{font-size:13px;font-weight:bold;color:#333;word-break:break-word}
-.follow-user-username{font-size:11px;color:#777;margin-top:2px;word-break:break-word}
-.follow-user .avatar-fallback,.follow-user .feed-avatar{width:38px;height:38px;min-width:38px}
-.public-profile-page{display:none}
-.public-profile-back{width:100%;border:0;background:white;color:#5d42c5;padding:10px;border-radius:10px;margin-bottom:10px;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.public-profile-header{background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:white;border-radius:15px;padding:20px 15px;text-align:center;margin-bottom:12px}
-.public-profile-avatar{width:82px;height:82px;border-radius:50%;background:white;color:#6c5ce7;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:35px;font-weight:bold;overflow:hidden;border:3px solid rgba(255,255,255,.7)}
-.public-profile-avatar img{width:100%;height:100%;object-fit:cover}
-.public-profile-name{font-size:20px;font-weight:bold}
-.public-profile-username{margin-top:4px;font-size:12px;opacity:.85}
-.public-profile-follow{margin-top:12px}
-.public-profile-follow .follow-btn{border:0;background:white;color:#5d42c5;padding:9px 18px;border-radius:9px;font-size:12px;font-weight:bold;cursor:pointer}
-.public-profile-follow-stats{display:flex;gap:8px;margin-top:10px}
-.public-profile-stat{flex:1;border:0;background:rgba(255,255,255,.16);color:white;padding:8px;border-radius:9px;font-size:11px;font-weight:bold;cursor:pointer}
-.public-profile-stat strong{display:block;font-size:14px;margin-top:2px}
-.public-profile-info{background:white;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.private-profile-note{text-align:center;color:#777;font-size:13px;padding:10px}
-.clickable-profile{cursor:pointer}
-.clickable-profile:active{opacity:.7}
-
-/* ================= EMPTY ================= */
 
 .empty{
   background:white;
-  border-radius:12px;
-  padding:25px;
+  border-radius:14px;
+  padding:22px;
   text-align:center;
-  color:#999;
+  color:#777;
 }
-
-/* ================= NOTICE ================= */
-
-.notice{
-  position:fixed;
-  left:50%;
-  bottom:85px;
-  transform:translateX(-50%);
-  z-index:3000;
-  background:#222;
-  color:white;
-  padding:10px 15px;
-  border-radius:10px;
-  font-size:13px;
-  max-width:90%;
-  text-align:center;
-  display:none;
-}
-
-/* ================= ONLINE POPUP ================= */
-
-.online-popup{
-  display:none;
-  position:fixed;
-  top:65px;
-  right:10px;
-  z-index:2000;
-  width:240px;
-  max-width:90%;
-  background:white;
-  border-radius:12px;
-  box-shadow:0 5px 20px rgba(0,0,0,.2);
-  padding:12px;
-}
-
-.online-popup h3{
-  margin:0 0 10px;
-  font-size:16px;
-}
-
-.online-user{
-  padding:8px;
-  border-bottom:1px solid #eee;
-  font-size:13px;
-}
-
-.online-dot{
-  color:#16a085;
-}
-
-/* ================= BOTTOM NAV ================= */
 
 .bottom-nav{
   position:fixed;
   bottom:0;
-  left:0;
-  right:0;
-  z-index:1500;
-  height:65px;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:680px;
   background:white;
   border-top:1px solid #ddd;
   display:flex;
   justify-content:space-around;
-  align-items:center;
-  box-shadow:0 -2px 10px rgba(0,0,0,.08);
+  padding:7px 4px;
+  z-index:50;
 }
 
 .nav-btn{
   border:0;
   background:none;
   color:#666;
-  font-size:11px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:3px;
+  font-size:12px;
+  min-width:65px;
+  padding:6px 3px;
   cursor:pointer;
 }
 
-.nav-icon{
+.nav-btn .icon{
+  display:block;
   font-size:21px;
+  margin-bottom:2px;
 }
 
 .nav-btn.active{
   color:#6c5ce7;
+  font-weight:bold;
 }
 
-/* ================= MOBILE ================= */
-
-@media(max-width:480px){
-
-  .logo{
-    font-size:22px;
-  }
-
-  .online-btn{
-    font-size:12px;
-    padding:8px 10px;
-  }
-
-  .container{
-    padding:10px;
-  }
-
-  .post-media-row{
-    gap:6px;
-  }
-
-  .media-btn{
-    font-size:12px;
-    padding:9px 4px;
-  }
-
-}
-
-/* ================= LOADING ================= */
-
-.loading{
+#loading{
   text-align:center;
-  color:#888;
   padding:20px;
+  color:#777;
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<div class="app">
 
-<header class="header">
+  <header class="header">
 
-  <div class="logo">
-    Socia<span>lyte</span>
-  </div>
+    <div class="header-row">
 
-  <button
-    class="online-btn"
-    type="button"
-    onclick="toggleOnlineUsers()">
-    🟢 Online Users
-  </button>
+      <div class="logo">RabtaHub</div>
 
-</header>
-
-
-<!-- ================= ONLINE USERS ================= -->
-
-<div id="onlinePopup" class="online-popup">
-
-  <h3>🟢 Online Users</h3>
-
-  <div id="onlineUsersList">
-    Loading...
-  </div>
-
-</div>
-
-
-<!-- ================= MAIN ================= -->
-
-<main class="container">
-
-
-  <!-- ================= HOME PAGE ================= -->
-
-  <div id="homePage">
-
-    <!-- CREATE POST -->
-
-    <div class="create-post-box">
-
-      <div class="box-title">
-        📝 Create Post
+      <div class="header-actions">
+        <button class="top-btn" onclick="openTrending()" title="Trending">🔥</button>
+        <button class="top-btn" onclick="openStars()" title="Stars">⭐</button>
+        <button class="top-btn" onclick="openNotifications()" title="Notifications">🔔</button>
       </div>
 
-      <div id="feedReplyBar" style="display:none;background:#f0edff;color:#5d42c5;padding:9px 10px;border-radius:9px;margin-bottom:8px;font-size:12px;font-weight:bold;">
-        <span id="feedReplyText"></span>
-        <button type="button" onclick="cancelFeedReply()" style="float:right;border:0;background:none;color:#d63031;font-weight:bold;cursor:pointer;">✕</button>
-      </div>
+    </div>
+
+    <div class="trending" id="trendingBar">
+      🔥 Trending Posts
+    </div>
+
+  </header>
+
+  <main class="content">
+
+    <div class="welcome">
+      <h2>Welcome to RabtaHub ❤️</h2>
+      <div>Connect • Share • Enjoy</div>
+    </div>
+
+    <div class="create-box">
 
       <textarea
-        id="postInput"
-        placeholder="Write a post..."
-        autocomplete="off"></textarea>
+        id="postText"
+        placeholder="What's on your mind?"
+      ></textarea>
 
-      <button
-        id="publishPostBtn"
-        class="post-send-btn"
-        type="button">
-        📤 Send a Post
-      </button>
-
-      <div class="post-media-row">
+      <div class="create-actions">
 
         <button
-          id="uploadImageBtn"
-          class="media-btn"
-          type="button">
+          class="action-btn post-btn"
+          onclick="createPost()">
+          📝 Send Post
+        </button>
+
+        <button
+          class="action-btn secondary"
+          onclick="document.getElementById('imageInput').click()">
           🖼️ Upload Image
         </button>
 
         <button
-          id="voiceBtn"
-          class="media-btn"
-          type="button">
+          class="action-btn secondary"
+          onclick="startVoice()">
           🎤 Voice
         </button>
 
       </div>
 
       <input
-        id="imageInput"
         type="file"
+        id="imageInput"
         accept="image/*"
-        style="display:none;">
-
-      <div id="recordStatus">
-        Recording... Tap 🎤 again to stop
-      </div>
+        hidden
+      >
 
     </div>
-
-
-    <!-- WELCOME -->
-
-    <div class="welcome-box">
-
-      <div class="welcome-title">
-        Welcome to Socialyte ♥️
-      </div>
-
-      <div class="username-line">
-        Logged in as:
-        <strong id="loggedInUsername">User</strong>
-      </div>
-
-    </div>
-
-
-    <!-- HOME FEED -->
 
     <div class="section-title">
       🏠 Home Feed
     </div>
 
-    <div class="refresh-center">
-
-      <button
-        class="refresh-btn"
-        type="button"
-        onclick="refreshHomeFeed()">
-        🔄 Refresh
-      </button>
-
+    <div id="loading">
+      Feed load ho rahi hai...
     </div>
 
-    <div id="homeFeed">
+    <div id="feed"></div>
 
-      <div class="empty">
-        Loading feed...
-      </div>
+  </main>
 
-    </div>
-
-  </div>
-
-
-  <!-- ================= PROFILE PAGE ================= -->
-
-  <div id="profilePage" class="profile-page">
-
-    <div class="profile-header">
-
-      <div class="profile-avatar-wrap">
-
-        <div
-          id="profileAvatar"
-          class="profile-avatar">
-          👤
-        </div>
-
-        <button
-          class="profile-picture-btn"
-          type="button"
-          onclick="chooseProfilePicture()">
-          🖼️ Change Profile Picture
-        </button>
-
-        <input
-          id="profileImageInput"
-          type="file"
-          accept="image/*"
-          style="display:none;">
-
-      </div>
-
-      <div
-        id="profileNameDisplay"
-        class="profile-name-display">
-        User
-      </div>
-
-      <div
-        id="profileUsernameDisplay"
-        class="profile-username-display">
-        @User
-      </div>
-
-      <div class="profile-follow-stats">
-        <button class="profile-follow-btn" type="button" onclick="openOwnFollowList('followers')">
-          👥 Followers
-          <strong id="followersCount">0</strong>
-        </button>
-        <button class="profile-follow-btn" type="button" onclick="openOwnFollowList('following')">
-          ➡️ Following
-          <strong id="followingCount">0</strong>
-        </button>
-      </div>
-
-    </div>
-
-
-    <!-- OWN FOLLOW LIST -->
-
-    <div id="ownFollowListBox" class="follow-list-box">
-      <div class="follow-list-head">
-        <div id="ownFollowListTitle" class="follow-list-title">👥 Followers</div>
-        <button class="follow-list-close" type="button" onclick="closeOwnFollowList()">✕ Close</button>
-      </div>
-      <div id="ownFollowListContent">Loading...</div>
-    </div>
-
-    <!-- PROFILE INFORMATION -->
-
-    <div class="profile-info">
-
-      <div class="profile-info-row">
-
-        <div class="profile-info-label">
-          👤 Profile Name
-        </div>
-
-        <div
-          id="profileNameValue"
-          class="profile-info-value">
-          —
-        </div>
-
-      </div>
-
-
-      <div class="profile-info-row">
-
-        <div class="profile-info-label">
-          🎂 Date of Birth
-        </div>
-
-        <div
-          id="profileDobValue"
-          class="profile-info-value">
-          —
-        </div>
-
-      </div>
-
-
-      <div class="profile-info-row">
-
-        <div class="profile-info-label">
-          📍 City
-        </div>
-
-        <div
-          id="profileCityValue"
-          class="profile-info-value">
-          —
-        </div>
-
-      </div>
-
-
-      <div class="profile-info-row">
-
-        <div class="profile-info-label">
-          🔒 Profile
-        </div>
-
-        <div
-          id="profilePrivacyValue"
-          class="profile-info-value">
-          Public
-        </div>
-
-      </div>
-
-
-      <div class="profile-info-row">
-
-        <div class="profile-info-label">
-          📝 Bio
-        </div>
-
-        <div
-          id="profileBioValue"
-          class="profile-info-value">
-          —
-        </div>
-
-      </div>
-
-
-      <div class="profile-action-row">
-
-        <button
-          class="profile-action-btn"
-          type="button"
-          onclick="showEditProfile()">
-          ✏️ Edit Profile
-        </button>
-
-        <button
-          class="profile-action-btn profile-logout"
-          type="button"
-          onclick="signOut()">
-          🚪 Logout
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- EDIT PROFILE -->
-
-    <div
-      id="profileEdit"
-      class="profile-edit">
-
-      <div class="box-title">
-        ✏️ Edit Profile
-      </div>
-
-
-      <div class="profile-field">
-
-        <label>
-          👤 Profile Name
-        </label>
-
-        <input
-          id="editName"
-          type="text"
-          placeholder="Enter your name"
-          autocomplete="off">
-
-      </div>
-
-
-      <div class="profile-field">
-
-        <label>
-          🎂 Date of Birth
-        </label>
-
-        <input
-          id="editDob"
-          type="date">
-
-      </div>
-
-
-      <div class="profile-field">
-
-        <label>
-          📍 City
-        </label>
-
-        <input
-          id="editCity"
-          type="text"
-          placeholder="Enter your city"
-          autocomplete="off">
-
-      </div>
-
-
-      <div class="profile-field">
-
-        <label>
-          🔒 Profile Privacy
-        </label>
-
-        <select id="editPrivacy">
-
-          <option value="public">
-            Public
-          </option>
-
-          <option value="private">
-            Private
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="profile-field">
-
-        <label>
-          📝 Bio
-        </label>
-
-        <textarea
-          id="editBio"
-          placeholder="Write something about yourself..."
-          maxlength="350"></textarea>
-
-      </div>
-
-
-      <button
-        class="profile-save-btn"
-        type="button"
-        onclick="saveProfile()">
-        💾 Save Profile
-      </button>
-
-    </div>
-
-
-    <!-- MY POSTS -->
-
-    <div class="section-title">
-      📝 My Posts
-    </div>
-
-    <div id="myPosts">
-
-      <div class="empty">
-        Loading your posts...
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- PUBLIC USER PROFILE -->
-  <div id="publicProfilePage" class="public-profile-page">
-
-    <button class="public-profile-back" type="button" onclick="closePublicProfile()">← Back to Home</button>
-
-    <div class="public-profile-header">
-      <div id="publicProfileAvatar" class="public-profile-avatar">👤</div>
-      <div id="publicProfileName" class="public-profile-name">User</div>
-      <div id="publicProfileUsername" class="public-profile-username">@User</div>
-
-      <div class="public-profile-follow">
-        <button id="publicProfileFollowBtn" class="follow-btn" type="button" onclick="togglePublicProfileFollow()">Follow</button>
-      </div>
-
-      <div class="public-profile-follow-stats">
-        <button class="public-profile-stat" type="button" onclick="openPublicFollowList('followers')">
-          👥 Followers
-          <strong id="publicFollowersCount">0</strong>
-        </button>
-        <button class="public-profile-stat" type="button" onclick="openPublicFollowList('following')">
-          ➡️ Following
-          <strong id="publicFollowingCount">0</strong>
-        </button>
-      </div>
-    </div>
-
-    <div id="publicFollowListBox" class="follow-list-box">
-      <div class="follow-list-head">
-        <div id="publicFollowListTitle" class="follow-list-title">👥 Followers</div>
-        <button class="follow-list-close" type="button" onclick="closePublicFollowList()">✕ Close</button>
-      </div>
-      <div id="publicFollowListContent">Loading...</div>
-    </div>
-
-    <div id="publicProfileInfo" class="public-profile-info"></div>
-
-    <div class="section-title">📝 Posts</div>
-    <div id="publicUserPosts"><div class="empty">Loading posts...</div></div>
-  </div>
-
-</main>
-
-
-<!-- ================= NOTICE ================= -->
-
-<div id="notice" class="notice"></div>
-
-
-<!-- ================= BOTTOM NAV ================= -->
+</div>
 
 <nav class="bottom-nav">
 
-  <button
-    id="homeNavBtn"
-    class="nav-btn active"
-    type="button"
-    onclick="goHome()">
-
-    <span class="nav-icon">🏠</span>
-    <span>Home</span>
-
+  <button class="nav-btn active" onclick="goHome()">
+    <span class="icon">🏠</span>
+    Home
   </button>
 
-
-  <button
-    class="nav-btn"
-    type="button"
-    onclick="goPrivate()">
-
-    <span class="nav-icon">💬</span>
-    <span>Private</span>
-
+  <button class="nav-btn" onclick="goPrivate()">
+    <span class="icon">💬</span>
+    Private
   </button>
 
-
-  <button
-    id="profileNavBtn"
-    class="nav-btn"
-    type="button"
-    onclick="goProfile()">
-
-    <span class="nav-icon">👤</span>
-    <span>Profile</span>
-
+  <button class="nav-btn" onclick="goMehfil()">
+    <span class="icon">💬</span>
+    Mehfil
   </button>
 
-
-  <button
-    class="nav-btn"
-    type="button"
-    onclick="goNotifications()">
-
-    <span class="nav-icon">🔔</span>
-    <span>Notifications</span>
-
-  </button>
-
-
-  <button
-    class="nav-btn"
-    type="button"
-    onclick="goMore()">
-
-    <span class="nav-icon">☰</span>
-    <span>More</span>
-
+  <button class="nav-btn" onclick="goMore()">
+    <span class="icon">☰</span>
+    More
   </button>
 
 </nav>
 
-
 <script>
-
-/* =====================================================
-   SUPABASE
-===================================================== */
 
 const SUPABASE_URL =
   "https://szmauhxiyjffjhrcruee.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_-ys_eIxK2WuUucSGtoBdqw_nKWnIgep";
+  "YOUR_SUPABASE_ANON_KEY";
 
 const supabaseClient =
-  window.supabase.createClient(
+  supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY,
-    {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
+    SUPABASE_KEY
   );
 
-
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
-
 let currentUser = null;
-let currentUsername = "User";
 
-let mediaRecorder = null;
-let audioChunks = [];
-let isRecording = false;
-let feedLoadToken = 0;
+async function init(){
 
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-function escapeHtml(value){
-
-  if(value === null || value === undefined){
-    return "";
-  }
-
-  return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-
-function escapeAttr(value){
-
-  return escapeHtml(value)
-    .replace(/`/g,"&#096;");
-}
-
-
-function formatDate(date){
-  if(!date) return "";
-  const d = new Date(date);
-  if(Number.isNaN(d.getTime())) return "";
-  const seconds = Math.max(0, Math.floor((Date.now()-d.getTime())/1000));
-  if(seconds < 10) return "Just now";
-  if(seconds < 60) return seconds + " sec ago";
-  const minutes = Math.floor(seconds/60);
-  if(minutes < 60) return minutes + (minutes===1 ? " min ago" : " mins ago");
-  const hours = Math.floor(minutes/60);
-  if(hours < 24) return hours + (hours===1 ? " hour ago" : " hours ago");
-  const days = Math.floor(hours/24);
-  if(days < 7) return days + (days===1 ? " day ago" : " days ago");
-  return d.toLocaleDateString();
-}
-
-
-function showNotice(message){
-
-  const notice =
-    document.getElementById("notice");
-
-  if(!notice){
-    return;
-  }
-
-  notice.textContent = message;
-  notice.style.display = "block";
-
-  clearTimeout(window.noticeTimer);
-
-  window.noticeTimer =
-    setTimeout(() => {
-
-      notice.style.display = "none";
-
-    },3000);
-
-}
-
-
-/* =====================================================
-   AVATAR
-===================================================== */
-
-function renderUserAvatar(
-  username,
-  avatarUrl,
-  sizeClass = "feed-avatar"
-){
-
-  const safeName =
-    escapeHtml(username || "User");
-
-  const initial =
-    escapeHtml(
-      (username || "U")
-        .charAt(0)
-        .toUpperCase()
-    );
-
-
-  if(avatarUrl){
-
-    return `
-      <img
-        class="${sizeClass}"
-        src="${escapeAttr(avatarUrl)}"
-        alt=""
-        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-
-      <span
-        class="${sizeClass} avatar-fallback"
-        style="display:none;">
-        ${initial}
-      </span>
-    `;
-
-  }
-
-
-  return `
-    <span class="${sizeClass} avatar-fallback">
-      ${initial}
-    </span>
-  `;
-
-}
-
-
-/* =====================================================
-   CURRENT USER
-===================================================== */
-
-function setCurrentUser(user){
-
-  currentUser = user;
-
-  if(!user){
-
-    currentUsername = "User";
-
-    return;
-
-  }
-
-
-  currentUsername =
-    user.user_metadata?.username ||
-    user.user_metadata?.name ||
-    user.email?.split("@")[0] ||
-    "User";
-
-
-  const usernameElement =
-    document.getElementById(
-      "loggedInUsername"
-    );
-
-  if(usernameElement){
-
-    usernameElement.textContent =
-      currentUsername;
-
-  }
-
-}
-
-
-/* =====================================================
-   SYNC PROFILE
-===================================================== */
-
-async function syncMyProfile(){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  const metadata =
-    currentUser.user_metadata || {};
-
-
-  const username =
-    metadata.username ||
-    metadata.name ||
-    currentUser.email?.split("@")[0] ||
-    "User";
-
-
-  const name =
-    metadata.name ||
-    username;
-
-
-  const payload = {
-
-    id:
-      currentUser.id,
-
-    username:
-      username,
-
-    name:
-      name,
-
-    avatar_url:
-      metadata.avatar_url || null,
-
-    date_of_birth:
-      metadata.date_of_birth || null,
-
-    city:
-      metadata.city || null,
-
-    bio:
-      metadata.bio || null,
-
-    profile_privacy:
-      metadata.profile_privacy || "public",
-
-    updated_at:
-      new Date().toISOString()
-
-  };
-
-
-  const { error } =
-    await supabaseClient
-      .from("profiles")
-      .upsert(
-        payload,
-        {
-          onConflict:"id"
-        }
-      );
-
-
-  if(error){
-
-    console.error(
-      "PROFILE SYNC ERROR:",
-      error
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   CHECK USER
-===================================================== */
-
-async function checkUser(){
-
-  console.log("Checking Home Feed login session...");
-
-  for(let attempt=1; attempt<=8; attempt++){
-
-    try{
-
-      const {data,error} =
-        await supabaseClient.auth.getSession();
-
-      console.log("Session check",attempt,data,error);
-
-      if(
-        !error &&
-        data &&
-        data.session &&
-        data.session.user
-      ){
-
-        setCurrentUser(data.session.user);
-
-        try{
-          await syncMyProfile();
-        }catch(profileError){
-          console.warn("PROFILE SYNC SKIPPED:",profileError);
-        }
-
-        await loadFeed();
-        return;
-      }
-
-    }catch(error){
-
-      console.error("SESSION CHECK ERROR:",error);
-
+  const {
+    data:{
+      session
     }
+  } = await supabaseClient.auth.getSession();
 
-    if(attempt < 8){
-      await new Promise(resolve => setTimeout(resolve,750));
-    }
-
+  if(!session){
+    window.location.href="login.html";
+    return;
   }
 
-  try{
+  currentUser=session.user;
 
-    const {data,error} =
-      await supabaseClient.auth.getUser();
-
-    console.log("Final user check:",data,error);
-
-    if(!error && data && data.user){
-
-      setCurrentUser(data.user);
-
-      try{
-        await syncMyProfile();
-      }catch(profileError){
-        console.warn("PROFILE SYNC SKIPPED:",profileError);
-      }
-
-      await loadFeed();
-      return;
-    }
-
-  }catch(error){
-
-    console.error("FINAL USER CHECK ERROR:",error);
-
-  }
-
-  if(!currentUser){
-    window.location.replace("login.html");
-  }
-
+  loadFeed();
 }
-
-/* =====================================================
-   AUTH STATE
-===================================================== */
-
-supabaseClient.auth.onAuthStateChange(
-  async (event,session) => {
-
-    if(session?.user){
-
-      setCurrentUser(
-        session.user
-      );
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   ADD POST
-===================================================== */
-
-async function addPost(){
-
-  if(!currentUser){
-
-    showNotice(
-      "Please login first."
-    );
-
-    return;
-
-  }
-
-
-  const input =
-    document.getElementById(
-      "postInput"
-    );
-
-
-  if(!input){
-
-    showNotice(
-      "Post box nahi mila."
-    );
-
-    return;
-
-  }
-
-
-  const text =
-    input.value.trim();
-
-
-  if(!text){
-    return;
-  }
-
-  if(feedReplyTarget){
-    await sendFeedReply();
-    return;
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("posts")
-      .insert({
-
-        user_id:
-          currentUser.id,
-
-        username:
-          currentUsername,
-
-        content:
-          text
-
-      });
-
-
-  if(error){
-
-    console.error(
-      "POST ERROR:",
-      error
-    );
-
-    showNotice(
-      "Post send nahi hua: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  input.value = "";
-
-  await loadFeed();
-
-}
-
-
-/* =====================================================
-   LOAD FEED
-===================================================== */
 
 async function loadFeed(){
 
-  const loadToken = ++feedLoadToken;
+  const loading=
+    document.getElementById("loading");
 
-  const feed =
-    document.getElementById(
-      "homeFeed"
-    );
+  const feed=
+    document.getElementById("feed");
 
+  loading.style.display="block";
+  feed.innerHTML="";
 
-  if(!feed){
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("posts")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  loading.style.display="none";
+
+  if(error){
+
+    feed.innerHTML=
+      `<div class="empty">
+        Feed load nahi ho saki.<br>
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
 
+  if(!data || !data.length){
 
-  feed.innerHTML =
-    '<div class="loading">Loading feed...</div>';
+    feed.innerHTML=
+      `<div class="empty">
+        Abhi koi post nahi hai.
+      </div>`;
 
-
-  try{
-
-    let blockedIds = [];
-
-
-    /* ---------- BLOCKED USERS ---------- */
-
-    if(currentUser){
-
-      const blockedResult =
-        await supabaseClient
-          .from("user_blocks")
-          .select("blocked_id")
-          .eq(
-            "blocker_id",
-            currentUser.id
-          );
-
-
-      if(
-        !blockedResult.error &&
-        blockedResult.data
-      ){
-
-        blockedIds =
-          blockedResult.data.map(
-            row => row.blocked_id
-          );
-
-      }
-
-    }
-
-
-    /* ---------- POSTS ---------- */
-
-    const postsResult =
-      await supabaseClient
-        .from("posts")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(postsResult.error){
-
-      console.error(
-        "POST LOAD ERROR:",
-        postsResult.error
-      );
-
-    }
-
-
-    /* ---------- MESSAGES ---------- */
-
-    const messagesResult =
-      await supabaseClient
-        .from("home_messages")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(messagesResult.error){
-
-      console.error(
-        "MESSAGE LOAD ERROR:",
-        messagesResult.error
-      );
-
-    }
-
-
-    const posts =
-      postsResult.data || [];
-
-
-    const messages =
-      messagesResult.data || [];
-
-
-    if(loadToken !== feedLoadToken) return;
-
-    /* ---------- COMBINE ---------- */
-
-    let feedItems = [];
-
-
-    posts.forEach(post => {
-
-      if(
-        !blockedIds.includes(
-          post.user_id
-        )
-      ){
-
-        feedItems.push({
-
-          type:"post",
-          data:post
-
-        });
-
-      }
-
-    });
-
-
-    messages.forEach(message => {
-
-      if(
-        !blockedIds.includes(
-          message.user_id
-        )
-      ){
-
-        feedItems.push({
-
-          type:"message",
-          data:message
-
-        });
-
-      }
-
-    });
-
-
-    /* ---------- NEWEST FIRST: NEVER REVERSE ---------- */
-
-    feedItems.sort(
-      (a,b) =>
-        new Date(
-          b.data.created_at
-        ) -
-        new Date(
-          a.data.created_at
-        )
-    );
-
-
-    /* ---------- LOAD PROFILES ---------- */
-
-    const userIds =
-      [
-        ...new Set(
-          feedItems
-            .map(
-              item =>
-                item.data.user_id
-            )
-            .filter(Boolean)
-        )
-      ];
-
-
-    let profileMap = {};
-
-
-    if(userIds.length){
-
-      const {
-        data:profileRows,
-        error:profileError
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(
-            "id,avatar_url,username,name"
-          )
-          .in(
-            "id",
-            userIds
-          );
-
-
-      if(
-        !profileError &&
-        profileRows
-      ){
-
-        profileRows.forEach(
-          profile => {
-
-            profileMap[
-              profile.id
-            ] = profile;
-
-          }
-        );
-
-      }
-
-
-      if(profileError){
-
-        console.error(
-          "PROFILE LOAD ERROR:",
-          profileError
-        );
-
-      }
-
-    }
-
-
-    /* ---------- ADD AVATARS ---------- */
-
-    feedItems.forEach(item => {
-
-      const profile =
-        profileMap[
-          item.data.user_id
-        ];
-
-
-      item.data.avatar_url =
-        profile?.avatar_url || "";
-
-
-      if(!item.data.username){
-
-        item.data.username =
-          profile?.username ||
-          profile?.name ||
-          "User";
-
-      }
-
-    });
-
-
-    if(feedItems.length === 0){
-
-      feed.innerHTML =
-        '<div class="empty">No posts or messages yet.</div>';
-
-      return;
-
-    }
-
-
-    if(loadToken !== feedLoadToken) return;
-
-    feed.innerHTML =
-      feedItems
-        .map(item => {
-
-          if(item.type === "post"){
-
-            return renderPost(
-              item.data
-            );
-
-          }
-
-          return renderMessage(
-            item.data
-          );
-
-        })
-        .join("");
-
-
-    await loadPostActions();
-
-    await loadFollowStatus();
-
-  }catch(error){
-
-    console.error(
-      "FEED ERROR:",
-      error
-    );
-
-    feed.innerHTML =
-      '<div class="empty">Feed load nahi ho saki.</div>';
-
+    return;
   }
 
+  data.forEach(post=>{
+    feed.insertAdjacentHTML(
+      "beforeend",
+      renderPost(post)
+    );
+  });
 }
-
-
-/* =====================================================
-   RENDER POST
-===================================================== */
 
 function renderPost(post){
 
-  const isOwn =
+  const username=
+    post.username ||
+    "User";
+
+  const letter=
+    username.charAt(0).toUpperCase();
+
+  const own=
     currentUser &&
-    post.user_id ===
-    currentUser.id;
-
-
-  let buttons = "";
-
-
-  if(isOwn){
-
-    buttons += `
-      <button
-        class="action-btn delete-btn"
-        onclick="deletePost(${post.id})">
-        🗑️ Delete
-      </button>
-    `;
-
-  }else{
-
-    buttons += `
-      <button
-        class="action-btn block-btn"
-        onclick="blockUser('${escapeAttr(post.user_id)}')">
-        🚫 Block
-      </button>
-
-    `;
-
-  }
-
+    post.user_id===currentUser.id;
 
   return `
+    <article class="post">
 
-    <div
-      class="feed-item"
-      id="post-${post.id}">
+      <div class="post-user">
 
-      <div class="feed-head">
-
-        <div class="feed-user-wrap">
-          <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(post.user_id)}')" title="Open profile">
-            ${renderUserAvatar(
-              post.username || "User",
-              post.avatar_url
-            )}
-          </div>
-
-          <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(post.user_id)}')" title="Open profile">
-            ${escapeHtml(
-              post.username || "User"
-            )}
-          </div>
-
+        <div class="avatar">
+          ${letter}
         </div>
 
-        <div class="feed-date">
-          ${formatDate(post.created_at)}
+        <div>
+          <div class="username">
+            ${escapeHtml(username)}
+          </div>
+
+          <div class="date">
+            ${formatDate(post.created_at)}
+          </div>
         </div>
 
       </div>
 
-      <div class="feed-content">
-        ${escapeHtml(post.content)}
+      <div class="post-content">
+        ${escapeHtml(post.content || "")}
       </div>
 
-      <div class="feed-type">
-        📝 Post
-      </div>
+      <div class="post-actions">
 
-      <div class="action-row">
-
-        ${buttons}
-
-        <button
-          id="like-btn-${post.id}"
-          class="action-btn"
-          onclick="toggleLike(${post.id})">
-          ❤️ Like <span id="like-count-${post.id}">0</span>
+        <button onclick="likePost(${post.id})">
+          ❤️ Like
         </button>
 
-        <button
-          id="dislike-btn-${post.id}"
-          class="action-btn"
-          onclick="toggleDislike(${post.id})">
-          👎 Dislike <span id="dislike-count-${post.id}">0</span>
+        <button onclick="dislikePost(${post.id})">
+          👎 Dislike
         </button>
 
-        <button
-          class="action-btn"
-          onclick="toggleComments(${post.id})">
+        <button onclick="openComments(${post.id})">
           💬 Comments
         </button>
 
-        <button
-          class="action-btn"
-          onclick="startFeedReply(${post.id}, '${escapeAttr(post.username || "User")}')">
+        <button onclick="replyPost(${post.id})">
           ↩️ Reply
         </button>
 
-      </div>
-
-      <div
-        id="comments-${post.id}"
-        class="comments-box">
-
-        <div
-          id="comments-list-${post.id}">
-          Loading comments...
-        </div>
-
-        <div class="comment-input-row">
-
-          <input
-            id="comment-input-${post.id}"
-            class="comment-input"
-            type="text"
-            placeholder="Write a comment..."
-            autocomplete="off">
-
-          <button
-            class="comment-send"
-            onclick="addComment(${post.id})">
-            ➤
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   RENDER MESSAGE
-===================================================== */
-
-function renderMessage(message){
-
-  const isOwn =
-    currentUser &&
-    message.user_id ===
-    currentUser.id;
-
-
-  let buttons = "";
-
-
-  if(isOwn){
-
-    buttons += `
-      <button
-        class="action-btn delete-btn"
-        onclick="deleteHomeMessage(${message.id})">
-        🗑️ Delete
-      </button>
-    `;
-
-  }else{
-
-    buttons += `
-      <button
-        class="action-btn block-btn"
-        onclick="blockUser('${escapeAttr(message.user_id)}')">
-        🚫 Block
-      </button>
-
-    `;
-
-  }
-
-
-  return `
-
-    <div
-      class="feed-item"
-      id="message-${message.id}">
-
-      <div class="feed-head">
-
-        <div class="feed-user-wrap">
-          <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(message.user_id)}')" title="Open profile">
-            ${renderUserAvatar(
-              message.username || "User",
-              message.avatar_url
-            )}
-          </div>
-
-          <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(message.user_id)}')" title="Open profile">
-            ${escapeHtml(
-              message.username || "User"
-            )}
-          </div>
-
-        </div>
-
-        <div class="feed-date">
-          ${formatDate(message.created_at)}
-        </div>
-
-      </div>
-
-      <div class="feed-content">
-        ${escapeHtml(message.message)}
-      </div>
-
-      <div class="feed-type">
-        💬 Message
-      </div>
-
-      <div class="action-row">
-
-        ${buttons}
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   DELETE POST
-===================================================== */
-
-async function deletePost(postId){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  if(
-    !confirm(
-      "Delete this post?"
-    )
-  ){
-    return;
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("posts")
-      .delete()
-      .eq(
-        "id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-
-  if(error){
-
-    showNotice(
-      "Delete nahi hua: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  await loadFeed();
-
-}
-
-
-/* =====================================================
-   DELETE MESSAGE
-===================================================== */
-
-async function deleteHomeMessage(messageId){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  if(
-    !confirm(
-      "Delete this message?"
-    )
-  ){
-    return;
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("home_messages")
-      .delete()
-      .eq(
-        "id",
-        messageId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-
-  if(error){
-
-    showNotice(
-      "Message delete nahi hua: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  await loadFeed();
-
-}
-
-
-/* =====================================================
-   POST ACTIONS
-===================================================== */
-
-async function loadPostActions(){
-
-  const { data,error } =
-    await supabaseClient
-      .from("post_actions")
-      .select("*");
-
-
-  if(error){
-
-    console.error(
-      "ACTION LOAD ERROR:",
-      error
-    );
-
-    return;
-
-  }
-
-
-  const actions =
-    data || [];
-
-
-  document
-    .querySelectorAll(
-      "[id^='like-count-']"
-    )
-    .forEach(element => {
-
-      const postId =
-        Number(
-          element.id.replace(
-            "like-count-",
-            ""
-          )
-        );
-
-
-      const count =
-        actions.filter(
-          row =>
-            row.post_id === postId &&
-            row.action_type === "like"
-        ).length;
-
-
-      element.textContent =
-        count;
-
-    });
-
-
-  document
-    .querySelectorAll(
-      "[id^='dislike-count-']"
-    )
-    .forEach(element => {
-
-      const postId =
-        Number(
-          element.id.replace(
-            "dislike-count-",
-            ""
-          )
-        );
-
-
-      const count =
-        actions.filter(
-          row =>
-            row.post_id === postId &&
-            row.action_type === "dislike"
-        ).length;
-
-
-      element.textContent =
-        count;
-
-    });
-
-  if(currentUser){
-
-    const myActions =
-      actions.filter(
-        row => row.user_id === currentUser.id
-      );
-
-    document.querySelectorAll("[id^='like-btn-']").forEach(button => {
-      const postId = Number(button.id.replace("like-btn-",""));
-      const active = myActions.some(
-        row => row.post_id === postId &&
-               row.action_type === "like"
-      );
-      button.style.fontWeight = active ? "bold" : "normal";
-    });
-
-    document.querySelectorAll("[id^='dislike-btn-']").forEach(button => {
-      const postId = Number(button.id.replace("dislike-btn-",""));
-      const active = myActions.some(
-        row => row.post_id === postId &&
-               row.action_type === "dislike"
-      );
-      button.style.fontWeight = active ? "bold" : "normal";
-    });
-
-  }
-
-}
-
-
-/* =====================================================
-   SET POST ACTION
-===================================================== */
-
-async function setPostAction(postId, actionType){
-
-  if(!currentUser){
-    showNotice("Please login first.");
-    return;
-  }
-
-  const opposite =
-    actionType === "like" ? "dislike" : "like";
-
-  try{
-
-    const {data:existing,error:findError} =
-      await supabaseClient
-        .from("post_actions")
-        .select("id")
-        .eq("post_id",Number(postId))
-        .eq("user_id",currentUser.id)
-        .eq("action_type",actionType)
-        .limit(1)
-        .maybeSingle();
-
-    if(findError){
-      throw findError;
-    }
-
-    if(existing){
-
-      const {error:deleteError} =
-        await supabaseClient
-          .from("post_actions")
-          .delete()
-          .eq("id",existing.id);
-
-      if(deleteError){
-        throw deleteError;
-      }
-
-    }else{
-
-      const {error:oppositeError} =
-        await supabaseClient
-          .from("post_actions")
-          .delete()
-          .eq("post_id",Number(postId))
-          .eq("user_id",currentUser.id)
-          .eq("action_type",opposite);
-
-      if(oppositeError){
-        throw oppositeError;
-      }
-
-      const {error:insertError} =
-        await supabaseClient
-          .from("post_actions")
-          .insert({
-            post_id:Number(postId),
-            user_id:currentUser.id,
-            action_type:actionType
-          });
-
-      if(insertError){
-        throw insertError;
-      }
-
-    }
-
-    await loadPostActions();
-
-  }catch(error){
-
-    console.error("LIKE/DISLIKE ERROR:",error);
-
-    showNotice(
-      "Like/Dislike nahi ho saka: " +
-      (error?.message || "Database error")
-    );
-
-  }
-
-}
-
-/* =====================================================
-   LIKE / DISLIKE
-===================================================== */
-
-async function toggleLike(postId){
-
-  await setPostAction(
-    postId,
-    "like"
-  );
-
-}
-
-
-async function toggleDislike(postId){
-
-  await setPostAction(
-    postId,
-    "dislike"
-  );
-
-}
-
-
-/* =====================================================
-   FOLLOW
-===================================================== */
-
-async function loadFollowStatus(){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  const { data,error } =
-    await supabaseClient
-      .from("user_follows")
-      .select("*")
-      .eq(
-        "follower_id",
-        currentUser.id
-      );
-
-
-  if(error){
-
-    console.error(
-      "FOLLOW LOAD ERROR:",
-      error
-    );
-
-    return;
-
-  }
-
-
-  const follows =
-    data || [];
-
-
-  document
-    .querySelectorAll(
-      "[id^='follow-']"
-    )
-    .forEach(button => {
-
-      const userId =
-        button.id.replace(
-          "follow-",
-          ""
-        );
-
-
-      const following =
-        follows.some(
-          row =>
-            row.following_id === userId
-        );
-
-
-      button.textContent =
-        following
-          ? "Following"
-          : "Follow";
-
-    });
-
-}
-
-
-async function toggleFollow(userId){
-
-  if(!currentUser){
-
-    showNotice(
-      "Please login first."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    userId ===
-    currentUser.id
-  ){
-
-    return;
-
-  }
-
-
-  const { data,error } =
-    await supabaseClient
-      .from("user_follows")
-      .select("*")
-      .eq(
-        "follower_id",
-        currentUser.id
-      )
-      .eq(
-        "following_id",
-        userId
-      )
-      .maybeSingle();
-
-
-  if(error){
-
-    showNotice(
-      "Follow error: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  if(data){
-
-    await supabaseClient
-      .from("user_follows")
-      .delete()
-      .eq(
-        "follower_id",
-        currentUser.id
-      )
-      .eq(
-        "following_id",
-        userId
-      );
-
-  }else{
-
-    await supabaseClient
-      .from("user_follows")
-      .insert({
-
-        follower_id:
-          currentUser.id,
-
-        following_id:
-          userId
-
-      });
-
-  }
-
-
-  await loadFollowStatus();
-
-}
-
-
-
-/* =====================================================
-   FOLLOW COUNTS + LISTS
-===================================================== */
-
-async function getFollowCounts(userId){
-  const result = {followers:0,following:0};
-  if(!userId) return result;
-
-  const followersResult = await supabaseClient
-    .from("user_follows")
-    .select("*",{count:"exact",head:true})
-    .eq("following_id",userId);
-
-  const followingResult = await supabaseClient
-    .from("user_follows")
-    .select("*",{count:"exact",head:true})
-    .eq("follower_id",userId);
-
-  if(!followersResult.error) result.followers = followersResult.count || 0;
-  else console.error("FOLLOWERS COUNT ERROR:",followersResult.error);
-
-  if(!followingResult.error) result.following = followingResult.count || 0;
-  else console.error("FOLLOWING COUNT ERROR:",followingResult.error);
-
-  return result;
-}
-
-async function loadFollowCounts(){
-  if(!currentUser) return;
-  const counts = await getFollowCounts(currentUser.id);
-  const followers = document.getElementById("followersCount");
-  const following = document.getElementById("followingCount");
-  if(followers) followers.textContent = counts.followers;
-  if(following) following.textContent = counts.following;
-}
-
-async function loadFollowList(userId,type,contentId){
-  const content = document.getElementById(contentId);
-  if(!content || !userId) return;
-
-  content.innerHTML = '<div class="loading">Loading...</div>';
-
-  const column = type === "followers" ? "following_id" : "follower_id";
-  const otherColumn = type === "followers" ? "follower_id" : "following_id";
-
-  const {data,error} = await supabaseClient
-    .from("user_follows")
-    .select("follower_id,following_id")
-    .eq(column,userId);
-
-  if(error){
-    console.error("FOLLOW LIST ERROR:",error);
-    content.innerHTML = '<div class="empty">Follow list load nahi ho saki.</div>';
-    return;
-  }
-
-  const ids = (data || []).map(row => row[otherColumn]).filter(Boolean);
-
-  if(!ids.length){
-    content.innerHTML = '<div class="empty">Abhi koi user nahi.</div>';
-    return;
-  }
-
-  const {data:profiles,error:profileError} = await supabaseClient
-    .from("profiles")
-    .select("id,username,name,avatar_url")
-    .in("id",ids);
-
-  if(profileError){
-    console.error("FOLLOW PROFILE LIST ERROR:",profileError);
-    content.innerHTML = '<div class="empty">Profiles load nahi ho sake.</div>';
-    return;
-  }
-
-  const profileMap = {};
-  (profiles || []).forEach(profile => profileMap[profile.id] = profile);
-
-  content.innerHTML = ids.map(id => {
-    const profile = profileMap[id] || {};
-    const username = profile.username || profile.name || "User";
-    const name = profile.name || username;
-
-    return `
-      <div class="follow-user" onclick="openUserProfile('${escapeAttr(id)}')">
-        ${renderUserAvatar(username,profile.avatar_url,"feed-avatar")}
-        <div class="follow-user-info">
-          <div class="follow-user-name">${escapeHtml(name)}</div>
-          <div class="follow-user-username">@${escapeHtml(username)}</div>
-        </div>
-      </div>`;
-  }).join("");
-}
-
-function openOwnFollowList(type){
-  const box = document.getElementById("ownFollowListBox");
-  const title = document.getElementById("ownFollowListTitle");
-  if(!box || !currentUser) return;
-
-  if(title) title.textContent = type === "followers" ? "👥 Followers" : "➡️ Following";
-  box.style.display = "block";
-  loadFollowList(currentUser.id,type,"ownFollowListContent");
-}
-
-function closeOwnFollowList(){
-  const box = document.getElementById("ownFollowListBox");
-  if(box) box.style.display = "none";
-}
-
-async function loadPublicProfileCounts(userId){
-  const counts = await getFollowCounts(userId);
-  const followers = document.getElementById("publicFollowersCount");
-  const following = document.getElementById("publicFollowingCount");
-  if(followers) followers.textContent = counts.followers;
-  if(following) following.textContent = counts.following;
-}
-
-async function loadPublicProfileFollowStatus(userId){
-  const button = document.getElementById("publicProfileFollowBtn");
-  if(!button || !currentUser) return;
-
-  if(userId === currentUser.id){
-    button.style.display = "none";
-    return;
-  }
-
-  button.style.display = "inline-block";
-
-  const {data,error} = await supabaseClient
-    .from("user_follows")
-    .select("id")
-    .eq("follower_id",currentUser.id)
-    .eq("following_id",userId)
-    .maybeSingle();
-
-  if(error){
-    console.error("PUBLIC FOLLOW STATUS ERROR:",error);
-    button.textContent = "Follow";
-    return;
-  }
-
-  button.textContent = data ? "Following" : "Follow";
-}
-
-function openPublicFollowList(type){
-  const box = document.getElementById("publicFollowListBox");
-  const title = document.getElementById("publicFollowListTitle");
-  if(!box || !window.publicProfileUserId) return;
-
-  if(title) title.textContent = type === "followers" ? "👥 Followers" : "➡️ Following";
-  box.style.display = "block";
-  loadFollowList(window.publicProfileUserId,type,"publicFollowListContent");
-}
-
-function closePublicFollowList(){
-  const box = document.getElementById("publicFollowListBox");
-  if(box) box.style.display = "none";
-}
-
-async function togglePublicProfileFollow(){
-  if(!window.publicProfileUserId) return;
-  await toggleFollow(window.publicProfileUserId);
-  await loadPublicProfileFollowStatus(window.publicProfileUserId);
-  await loadPublicProfileCounts(window.publicProfileUserId);
-}
-
-/* =====================================================
-   OPEN USER PROFILE
-===================================================== */
-
-async function openUserProfile(userId){
-  if(!currentUser){
-    showNotice("Please login first.");
-    return;
-  }
-
-  if(!userId) return;
-
-  if(userId === currentUser.id){
-    goProfile();
-    return;
-  }
-
-  window.publicProfileUserId = userId;
-
-  document.getElementById("homePage").style.display = "none";
-  document.getElementById("profilePage").style.display = "none";
-  document.getElementById("publicProfilePage").style.display = "block";
-
-  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
-  window.scrollTo({top:0,behavior:"smooth"});
-
-  const avatar = document.getElementById("publicProfileAvatar");
-  const nameEl = document.getElementById("publicProfileName");
-  const usernameEl = document.getElementById("publicProfileUsername");
-  const info = document.getElementById("publicProfileInfo");
-  const postsBox = document.getElementById("publicUserPosts");
-
-  if(avatar) avatar.innerHTML = "👤";
-  if(nameEl) nameEl.textContent = "Loading...";
-  if(usernameEl) usernameEl.textContent = "";
-  if(info) info.innerHTML = '<div class="loading">Loading profile...</div>';
-  if(postsBox) postsBox.innerHTML = '<div class="loading">Loading posts...</div>';
-
-  const {data:profile,error} = await supabaseClient
-    .from("profiles")
-    .select("id,username,name,avatar_url,date_of_birth,city,bio,profile_privacy")
-    .eq("id",userId)
-    .maybeSingle();
-
-  if(error || !profile){
-    console.error("PUBLIC PROFILE ERROR:",error);
-    if(nameEl) nameEl.textContent = "User";
-    if(usernameEl) usernameEl.textContent = "@User";
-    if(info) info.innerHTML = '<div class="empty">Profile load nahi ho saki.</div>';
-    if(postsBox) postsBox.innerHTML = '<div class="empty">Posts load nahi ho sake.</div>';
-    return;
-  }
-
-  const username = profile.username || profile.name || "User";
-  const name = profile.name || username;
-  const privacy = profile.profile_privacy || "public";
-
-  if(nameEl) nameEl.textContent = name;
-  if(usernameEl) usernameEl.textContent = "@" + username;
-
-  if(avatar){
-    avatar.innerHTML = "";
-    if(profile.avatar_url){
-      const img = document.createElement("img");
-      img.src = profile.avatar_url;
-      img.alt = "Profile Picture";
-      img.onerror = () => { avatar.textContent = username.charAt(0).toUpperCase(); };
-      avatar.appendChild(img);
-    }else{
-      avatar.textContent = username.charAt(0).toUpperCase();
-    }
-  }
-
-  await loadPublicProfileFollowStatus(userId);
-  await loadPublicProfileCounts(userId);
-
-  if(info){
-    if(privacy === "private"){
-      info.innerHTML = `
-        <div class="profile-info-row">
-          <div class="profile-info-label">🔒 Profile</div>
-          <div class="profile-info-value">Private</div>
-        </div>
-        <div class="private-profile-note">🔒 This profile is private.</div>`;
-    }else{
-      info.innerHTML = `
-        <div class="profile-info-row">
-          <div class="profile-info-label">👤 Profile Name</div>
-          <div class="profile-info-value">${escapeHtml(name)}</div>
-        </div>
-        <div class="profile-info-row">
-          <div class="profile-info-label">🎂 Date of Birth</div>
-          <div class="profile-info-value">${escapeHtml(profile.date_of_birth || "—")}</div>
-        </div>
-        <div class="profile-info-row">
-          <div class="profile-info-label">📍 City</div>
-          <div class="profile-info-value">${escapeHtml(profile.city || "—")}</div>
-        </div>
-        <div class="profile-info-row">
-          <div class="profile-info-label">🔒 Profile</div>
-          <div class="profile-info-value">Public</div>
-        </div>
-        <div class="profile-info-row">
-          <div class="profile-info-label">📝 Bio</div>
-          <div class="profile-info-value">${escapeHtml(profile.bio || "—")}</div>
-        </div>`;
-    }
-  }
-
-  if(postsBox){
-    if(privacy === "private"){
-      postsBox.innerHTML = '<div class="empty">🔒 Posts are hidden because this profile is private.</div>';
-    }else{
-      const {data:posts,error:postsError} = await supabaseClient
-        .from("posts")
-        .select("*")
-        .eq("user_id",userId)
-        .order("created_at",{ascending:false});
-
-      if(postsError){
-        console.error("PUBLIC POSTS ERROR:",postsError);
-        postsBox.innerHTML = '<div class="empty">Posts load nahi ho sake.</div>';
-      }else if(!posts || posts.length === 0){
-        postsBox.innerHTML = '<div class="empty">Is user ne abhi koi post nahi ki.</div>';
-      }else{
-        postsBox.innerHTML = posts.map(post => `
-          <div class="feed-item">
-            <div class="feed-head">
-              <div class="feed-user-wrap">
-                <div class="clickable-profile" onclick="openUserProfile('${escapeAttr(userId)}')">
-                  ${renderUserAvatar(username,profile.avatar_url)}
-                </div>
-                <div class="feed-user clickable-profile" onclick="openUserProfile('${escapeAttr(userId)}')">
-                  ${escapeHtml(username)}
-                </div>
-              </div>
-              <div class="feed-date">${formatDate(post.created_at)}</div>
-            </div>
-            <div class="feed-content">${escapeHtml(post.content)}</div>
-            <div class="feed-type">📝 Post</div>
-          </div>
-        `).join("");
-      }
-    }
-  }
-}
-
-function closePublicProfile(){
-  window.publicProfileUserId = null;
-  document.getElementById("publicProfilePage").style.display = "none";
-  goHome();
-}
-
-/* =====================================================
-   BLOCK USER
-===================================================== */
-
-async function blockUser(userId){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  if(
-    userId ===
-    currentUser.id
-  ){
-    return;
-  }
-
-
-  if(
-    !confirm(
-      "Block this user?"
-    )
-  ){
-    return;
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("user_blocks")
-      .insert({
-
-        blocker_id:
-          currentUser.id,
-
-        blocked_id:
-          userId
-
-      });
-
-
-  if(error){
-
-    if(error.code === "23505"){
-
-      showNotice(
-        "User already blocked."
-      );
-
-    }else{
-
-      showNotice(
-        "Block nahi hua: " +
-        error.message
-      );
-
-    }
-
-    return;
-
-  }
-
-
-  showNotice(
-    "User blocked."
-  );
-
-
-  await loadFeed();
-
-}
-
-
-/* =====================================================
-   COMMENTS
-===================================================== */
-
-async function toggleComments(postId){
-
-  const box =
-    document.getElementById(
-      "comments-" + postId
-    );
-
-
-  if(!box){
-    return;
-  }
-
-
-  if(
-    box.style.display ===
-    "block"
-  ){
-
-    box.style.display =
-      "none";
-
-    return;
-
-  }
-
-
-  box.style.display =
-    "block";
-
-
-  await loadComments(
-    postId
-  );
-
-
-  setupCommentInput(
-    postId
-  );
-
-}
-
-
-async function loadComments(postId){
-
-  const list =
-    document.getElementById(
-      "comments-list-" + postId
-    );
-
-
-  if(!list){
-    return;
-  }
-
-
-  const { data,error } =
-    await supabaseClient
-      .from("comments")
-      .select("*")
-      .eq(
-        "post_id",
-        postId
-      )
-      .order(
-        "created_at",
-        {
-          ascending:true
+        ${
+          own
+          ?
+          `<button onclick="deletePost(${post.id})">
+             🗑️ Delete
+           </button>`
+          :
+          `<button onclick="blockUser('${post.user_id}')">
+             🚫 Block
+           </button>`
         }
-      );
 
+      </div>
 
-  if(error){
-
-    console.error(
-      "COMMENTS ERROR:",
-      error
-    );
-
-    list.innerHTML =
-      "<div>No comments found.</div>";
-
-    return;
-
-  }
-
-
-  const comments =
-    data || [];
-
-
-  if(comments.length === 0){
-
-    list.innerHTML =
-      '<div style="color:#999;font-size:12px;">No comments yet.</div>';
-
-    return;
-
-  }
-
-
-  list.innerHTML =
-    comments
-      .map(comment => `
-
-        <div
-          class="comment-item"
-          id="comment-${comment.id}">
-
-          <div class="comment-user">
-            @${escapeHtml(
-              comment.username || "User"
-            )}
-          </div>
-
-          <div class="comment-text">
-            ${escapeHtml(
-              comment.comment || comment.content || ""
-            )}
-          </div>
-
-          <div class="comment-actions">
-
-            <button
-              class="reply-btn"
-              onclick="showCommentReply(
-                ${comment.id},
-                '${escapeAttr(
-                  comment.username || "User"
-                )}'
-              )">
-              ↩ Reply
-            </button>
-
-          </div>
-
-          <div
-            id="reply-box-${comment.id}-${postId}"
-            class="reply-box">
-
-            <div class="reply-input-row">
-
-              <input
-                id="reply-input-${comment.id}-${postId}"
-                class="reply-input"
-                type="text"
-                placeholder="@${escapeAttr(
-                  comment.username || "User"
-                )}">
-
-              <button
-                class="reply-send"
-                onclick="sendCommentReply(
-                  ${comment.id},
-                  ${postId}
-                )">
-                ➤
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      `)
-      .join("");
-
+    </article>
+  `;
 }
 
+async function createPost(){
 
-function setupCommentInput(postId){
+  const input=
+    document.getElementById("postText");
 
-  const input =
-    document.getElementById(
-      "comment-input-" + postId
-    );
-
-
-  if(!input){
-    return;
-  }
-
-
-  input.onkeydown =
-    function(event){
-
-      if(
-        event.key ===
-        "Enter"
-      ){
-
-        event.preventDefault();
-
-        addComment(
-          postId
-        );
-
-      }
-
-    };
-
-}
-
-
-/* =====================================================
-   ADD COMMENT
-===================================================== */
-
-async function addComment(postId){
-
-  if(!currentUser){
-
-    showNotice(
-      "Please login first."
-    );
-
-    return;
-
-  }
-
-
-  const input =
-    document.getElementById(
-      "comment-input-" + postId
-    );
-
-
-  if(!input){
-
-    showNotice(
-      "Comment box nahi mila."
-    );
-
-    return;
-
-  }
-
-
-  const text =
+  const content=
     input.value.trim();
 
-
-  if(!text){
+  if(!content){
+    alert("Post likhein.");
     return;
   }
 
-
-  const { error } =
-    await supabaseClient
-      .from("comments")
-      .insert({
-
-        post_id:
-          postId,
-
-        user_id:
-          currentUser.id,
-
-        username:
-          currentUsername,
-
-        content:
-          text
-
-      });
-
-
-  if(error){
-
-    console.error(
-      "COMMENT ERROR:",
-      error
-    );
-
-    showNotice(
-      "Comment send nahi hua: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  input.value = "";
-
-  await loadComments(
-    postId
-  );
-
-}
-
-
-/* =====================================================
-   COMMENT REPLY
-===================================================== */
-
-function showCommentReply(
-  commentId,
-  username
-){
-
-  const boxes =
-    document.querySelectorAll(
-      '[id^="reply-box-"]'
-    );
-
-
-  boxes.forEach(box => {
-
-    box.style.display =
-      "none";
-
-  });
-
-
-  let targetBox = null;
-
-
-  boxes.forEach(box => {
-
-    if(
-      box.id.startsWith(
-        "reply-box-" +
-        commentId +
-        "-"
-      )
-    ){
-
-      targetBox =
-        box;
-
+  const {
+    data:{
+      user
     }
+  } =
+    await supabaseClient.auth.getUser();
 
-  });
-
-
-  if(!targetBox){
+  if(!user){
+    window.location.href="login.html";
     return;
   }
 
-
-  targetBox.style.display =
-    "block";
-
-
-  const input =
-    targetBox.querySelector(
-      "input"
-    );
-
-
-  if(input){
-
-    input.placeholder =
-      "@" + username;
-
-    input.focus();
-
-  }
-
-}
-
-
-/* =====================================================
-   SEND COMMENT REPLY
-===================================================== */
-
-async function sendCommentReply(
-  commentId,
-  postId
-){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  const input =
-    document.getElementById(
-      "reply-input-" +
-      commentId +
-      "-" +
-      postId
-    );
-
-
-  if(!input){
-    return;
-  }
-
-
-  const text =
-    input.value.trim();
-
-
-  if(!text){
-    return;
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("comments")
-      .insert({
-
-        post_id:
-          postId,
-
-        user_id:
-          currentUser.id,
-
-        username:
-          currentUsername,
-
-        content:
-          text
-
-      });
-
-
-  if(error){
-
-    console.error(
-      "REPLY ERROR:",
-      error
-    );
-
-    showNotice(
-      "Reply send nahi hui: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  input.value = "";
-
-  await loadComments(
-    postId
-  );
-
-}
-
-
-/* =====================================================
-   FEED REPLY — MEHFIL STYLE
-===================================================== */
-
-let feedReplyTarget = null;
-
-function startFeedReply(postId, username){
-  feedReplyTarget = {postId:String(postId), username:String(username || "User")};
-  const bar = document.getElementById("feedReplyBar");
-  const text = document.getElementById("feedReplyText");
-  const input = document.getElementById("postInput");
-  if(bar) bar.style.display = "block";
-  if(text) text.textContent = "↩️ Replying to @" + feedReplyTarget.username;
-  if(input){ input.placeholder = "Reply to @" + feedReplyTarget.username + "..."; input.focus(); }
-}
-
-function cancelFeedReply(){
-  feedReplyTarget = null;
-  const bar = document.getElementById("feedReplyBar");
-  const input = document.getElementById("postInput");
-  if(bar) bar.style.display = "none";
-  if(input){ input.placeholder = "Write a post..."; }
-}
-
-async function sendFeedReply(){
-  if(!currentUser || !feedReplyTarget) return false;
-  const input = document.getElementById("postInput");
-  if(!input) return false;
-  const text = input.value.trim();
-  if(!text) return false;
-  const message = "↩️ Reply to @" + feedReplyTarget.username + " — " + text;
-  const {error} = await supabaseClient.from("home_messages").insert({
-    user_id: currentUser.id,
-    username: currentUsername,
-    message: message,
-    created_at: new Date().toISOString()
-  });
-  if(error){ showNotice("Reply send nahi hui: " + error.message); return false; }
-  input.value = "";
-  cancelFeedReply();
-  await loadFeed();
-  return true;
-}
-
-/* =====================================================
-   POST IMAGE
-===================================================== */
-
-function chooseImage(){
-
-  const input =
-    document.getElementById(
-      "imageInput"
-    );
-
-
-  if(input){
-    input.click();
-  }
-
-}
-
-
-function sendImage(){
-
-  const input =
-    document.getElementById(
-      "imageInput"
-    );
-
-
-  if(
-    !input ||
-    !input.files ||
-    !input.files.length
-  ){
-
-    return;
-
-  }
-
-
-  showNotice(
-    "🖼️ Post image storage abhi setup nahi hai."
-  );
-
-
-  input.value = "";
-
-}
-
-
-/* =====================================================
-   VOICE
-===================================================== */
-
-async function toggleRecording(){
-
-  const voiceBtn =
-    document.getElementById(
-      "voiceBtn"
-    );
-
-
-  const status =
-    document.getElementById(
-      "recordStatus"
-    );
-
-
-  if(
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ){
-
-    showNotice(
-      "Voice recording browser mein available nahi."
-    );
-
-    return;
-
-  }
-
-
-  if(isRecording){
-
-    if(mediaRecorder){
-
-      mediaRecorder.stop();
-
-    }
-
-    return;
-
-  }
-
-
-  try{
-
-    const stream =
-      await navigator.mediaDevices
-        .getUserMedia({
-          audio:true
-        });
-
-
-    audioChunks = [];
-
-
-    mediaRecorder =
-      new MediaRecorder(
-        stream
-      );
-
-
-    mediaRecorder.ondataavailable =
-      event => {
-
-        if(
-          event.data &&
-          event.data.size > 0
-        ){
-
-          audioChunks.push(
-            event.data
-          );
-
-        }
-
-      };
-
-
-    mediaRecorder.onstop =
-      () => {
-
-        isRecording = false;
-
-
-        if(voiceBtn){
-
-          voiceBtn.textContent =
-            "🎤 Voice";
-
-        }
-
-
-        if(status){
-
-          status.style.display =
-            "none";
-
-        }
-
-
-        stream
-          .getTracks()
-          .forEach(
-            track =>
-              track.stop()
-          );
-
-
-        showNotice(
-          "🎤 Voice recording complete. Storage abhi setup nahi hai."
-        );
-
-      };
-
-
-    mediaRecorder.start();
-
-    isRecording = true;
-
-
-    if(voiceBtn){
-
-      voiceBtn.textContent =
-        "⏹️ Stop Voice";
-
-    }
-
-
-    if(status){
-
-      status.style.display =
-        "block";
-
-    }
-
-  }catch(error){
-
-    console.error(
-      "VOICE ERROR:",
-      error
-    );
-
-    showNotice(
-      "Microphone permission allow karein."
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   ONLINE USERS
-===================================================== */
-
-function toggleOnlineUsers(){
-
-  const popup =
-    document.getElementById(
-      "onlinePopup"
-    );
-
-
-  if(!popup){
-    return;
-  }
-
-
-  if(
-    popup.style.display ===
-    "block"
-  ){
-
-    popup.style.display =
-      "none";
-
-    return;
-
-  }
-
-
-  popup.style.display =
-    "block";
-
-
-  loadOnlineUsers();
-
-}
-
-
-async function loadOnlineUsers(){
-
-  const list =
-    document.getElementById(
-      "onlineUsersList"
-    );
-
-
-  if(!list){
-    return;
-  }
-
-
-  if(!currentUser){
-
-    list.innerHTML =
-      "No online users.";
-
-    return;
-
-  }
-
-
-  list.innerHTML = `
-
-    <div class="online-user">
-
-      <span class="online-dot">
-        🟢
-      </span>
-
-      ${escapeHtml(currentUsername)}
-      <small>(You)</small>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   PROFILE
-===================================================== */
-
-function goProfile(){
-
-  document.getElementById(
-    "homePage"
-  ).style.display = "none";
-
-  document.getElementById(
-    "publicProfilePage"
-  ).style.display = "none";
-
-
-  document.getElementById(
-    "profilePage"
-  ).style.display = "block";
-
-
-  setActiveNav("profile");
-
-  loadProfile();
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-}
-
-
-function loadProfile(){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  const metadata =
-    currentUser.user_metadata || {};
-
-
-  const name =
-    metadata.name ||
-    metadata.username ||
-    currentUser.email?.split("@")[0] ||
+  const username=
+    user.user_metadata?.username ||
+    user.email?.split("@")[0] ||
     "User";
 
-
-  const username =
-    metadata.username ||
-    name;
-
-
-  const dob =
-    metadata.date_of_birth ||
-    "";
-
-
-  const city =
-    metadata.city ||
-    "";
-
-
-  const privacy =
-    metadata.profile_privacy ||
-    "public";
-
-
-  const bio =
-    metadata.bio ||
-    "";
-
-
-  const avatarUrl =
-    metadata.avatar_url ||
-    "";
-
-
-  const nameDisplay =
-    document.getElementById(
-      "profileNameDisplay"
-    );
-
-
-  const usernameDisplay =
-    document.getElementById(
-      "profileUsernameDisplay"
-    );
-
-
-  const avatar =
-    document.getElementById(
-      "profileAvatar"
-    );
-
-
-  if(nameDisplay){
-
-    nameDisplay.textContent =
-      name;
-
-  }
-
-
-  if(usernameDisplay){
-
-    usernameDisplay.textContent =
-      "@" + username;
-
-  }
-
-
-  /* ---------- PROFILE PICTURE ---------- */
-
-  if(avatar){
-
-    avatar.innerHTML = "";
-
-
-    if(avatarUrl){
-
-      const img =
-        document.createElement(
-          "img"
-        );
-
-
-      img.src =
-        avatarUrl;
-
-
-      img.alt =
-        "Profile Picture";
-
-
-      img.onerror =
-        () => {
-
-          avatar.textContent =
-            name
-              .charAt(0)
-              .toUpperCase();
-
-        };
-
-
-      avatar.appendChild(
-        img
-      );
-
-    }else{
-
-      avatar.textContent =
-        name
-          .charAt(0)
-          .toUpperCase();
-
-    }
-
-  }
-
-
-  document.getElementById(
-    "profileNameValue"
-  ).textContent =
-    name || "—";
-
-
-  document.getElementById(
-    "profileDobValue"
-  ).textContent =
-    dob || "—";
-
-
-  document.getElementById(
-    "profileCityValue"
-  ).textContent =
-    city || "—";
-
-
-  document.getElementById(
-    "profilePrivacyValue"
-  ).textContent =
-    privacy === "private"
-      ? "Private"
-      : "Public";
-
-
-  document.getElementById(
-    "profileBioValue"
-  ).textContent =
-    bio || "—";
-
-
-  document.getElementById(
-    "editName"
-  ).value =
-    name === "User"
-      ? ""
-      : name;
-
-
-  document.getElementById(
-    "editDob"
-  ).value =
-    dob;
-
-
-  document.getElementById(
-    "editCity"
-  ).value =
-    city;
-
-
-  document.getElementById(
-    "editPrivacy"
-  ).value =
-    privacy;
-
-
-  document.getElementById(
-    "editBio"
-  ).value =
-    bio;
-
-
-  loadMyPosts();
-  loadFollowCounts();
-
-}
-
-
-/* =====================================================
-   CHOOSE PROFILE PICTURE
-===================================================== */
-
-function chooseProfilePicture(){
-
-  const input =
-    document.getElementById(
-      "profileImageInput"
-    );
-
-
-  if(input){
-
-    input.click();
-
-  }
-
-}
-
-
-/* =====================================================
-   UPLOAD PROFILE PICTURE
-===================================================== */
-
-async function uploadProfilePicture(){
-
-  if(!currentUser){
-
-    showNotice(
-      "Please login first."
-    );
-
-    return;
-
-  }
-
-
-  const input =
-    document.getElementById(
-      "profileImageInput"
-    );
-
-
-  const file =
-    input?.files?.[0];
-
-
-  if(!file){
-    return;
-  }
-
-
-  if(
-    !file.type.startsWith(
-      "image/"
-    )
-  ){
-
-    showNotice(
-      "Sirf image file select karein."
-    );
-
-    input.value = "";
-
-    return;
-
-  }
-
-
-  if(
-    file.size >
-    5 * 1024 * 1024
-  ){
-
-    showNotice(
-      "Image 5MB se chhoti honi chahiye."
-    );
-
-    input.value = "";
-
-    return;
-
-  }
-
-
-  showNotice(
-    "🖼️ Profile picture upload ho rahi hai..."
-  );
-
-
-  const ext =
-    (
-      file.name
-        .split(".")
-        .pop() ||
-      "jpg"
-    )
-      .toLowerCase()
-      .replace(
-        /[^a-z0-9]/g,
-        ""
-      );
-
-
-  const path =
-    `${currentUser.id}/avatar-${Date.now()}.${ext || "jpg"}`;
-
-
   const {
-    error:uploadError
-  } =
-    await supabaseClient
-      .storage
-      .from("avatars")
-      .upload(
-        path,
-        file,
-        {
-          cacheControl:"3600",
-          upsert:false,
-          contentType:file.type
-        }
-      );
-
-
-  if(uploadError){
-
-    console.error(
-      "AVATAR UPLOAD ERROR:",
-      uploadError
-    );
-
-    showNotice(
-      "Profile picture upload nahi hui: " +
-      uploadError.message
-    );
-
-    input.value = "";
-
-    return;
-
-  }
-
-
-  const {
-    data:publicData
-  } =
-    supabaseClient
-      .storage
-      .from("avatars")
-      .getPublicUrl(
-        path
-      );
-
-
-  const avatarUrl =
-    publicData?.publicUrl;
-
-
-  if(!avatarUrl){
-
-    showNotice(
-      "Profile picture URL nahi mili."
-    );
-
-    input.value = "";
-
-    return;
-
-  }
-
-
-  const oldMetadata =
-    currentUser.user_metadata || {};
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient.auth.updateUser({
-
-      data:{
-
-        ...oldMetadata,
-
-        avatar_url:
-          avatarUrl
-
-      }
-
-    });
-
-
-  if(error){
-
-    console.error(
-      "AVATAR PROFILE UPDATE ERROR:",
-      error
-    );
-
-    showNotice(
-      "Picture save nahi hui: " +
-      error.message
-    );
-
-    input.value = "";
-
-    return;
-
-  }
-
-
-  if(
-    data &&
-    data.user
-  ){
-
-    setCurrentUser(
-      data.user
-    );
-
-  }
-
-
-  await syncMyProfile();
-
-  loadProfile();
-
-  await loadFeed();
-
-  input.value = "";
-
-  showNotice(
-    "✅ Profile picture updated."
-  );
-
-}
-
-
-/* =====================================================
-   EDIT PROFILE
-===================================================== */
-
-function showEditProfile(){
-
-  const edit =
-    document.getElementById(
-      "profileEdit"
-    );
-
-
-  if(!edit){
-    return;
-  }
-
-
-  edit.style.display =
-    edit.style.display === "block"
-      ? "none"
-      : "block";
-
-}
-
-
-/* =====================================================
-   SAVE PROFILE
-===================================================== */
-
-async function saveProfile(){
-
-  if(!currentUser){
-
-    showNotice(
-      "Please login first."
-    );
-
-    return;
-
-  }
-
-
-  const name =
-    document.getElementById(
-      "editName"
-    ).value.trim();
-
-
-  const dob =
-    document.getElementById(
-      "editDob"
-    ).value;
-
-
-  const city =
-    document.getElementById(
-      "editCity"
-    ).value.trim();
-
-
-  const privacy =
-    document.getElementById(
-      "editPrivacy"
-    ).value;
-
-
-  const bio =
-    document.getElementById(
-      "editBio"
-    ).value.trim();
-
-
-  if(!name){
-
-    showNotice(
-      "Profile name zaroor likhein."
-    );
-
-    return;
-
-  }
-
-
-  const oldMetadata =
-    currentUser.user_metadata || {};
-
-
-  const username =
-    oldMetadata.username ||
-    name;
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient.auth.updateUser({
-
-      data:{
-
-        ...oldMetadata,
-
-        username:
-          username,
-
-        name:
-          name,
-
-        date_of_birth:
-          dob,
-
-        city:
-          city,
-
-        bio:
-          bio,
-
-        profile_privacy:
-          privacy
-
-      }
-
-    });
-
-
-  if(error){
-
-    console.error(
-      "PROFILE UPDATE ERROR:",
-      error
-    );
-
-    showNotice(
-      "Profile save nahi hua: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  if(
-    data &&
-    data.user
-  ){
-
-    setCurrentUser(
-      data.user
-    );
-
-  }
-
-
-  await syncMyProfile();
-
-
-  const edit =
-    document.getElementById(
-      "profileEdit"
-    );
-
-
-  if(edit){
-
-    edit.style.display =
-      "none";
-
-  }
-
-
-  loadProfile();
-
-  await loadFeed();
-
-
-  showNotice(
-    "✅ Profile successfully updated."
-  );
-
-}
-
-
-/* =====================================================
-   MY POSTS
-===================================================== */
-
-async function loadMyPosts(){
-
-  const container =
-    document.getElementById(
-      "myPosts"
-    );
-
-
-  if(!container){
-    return;
-  }
-
-
-  if(!currentUser){
-
-    container.innerHTML =
-      '<div class="empty">Please login first.</div>';
-
-    return;
-
-  }
-
-
-  container.innerHTML =
-    '<div class="loading">Loading your posts...</div>';
-
-
-  const {
-    data,
     error
   } =
     await supabaseClient
       .from("posts")
-      .select("*")
-      .eq(
-        "user_id",
-        currentUser.id
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
-
+      .insert({
+        user_id:user.id,
+        username:username,
+        content:content
+      });
 
   if(error){
-
-    console.error(
-      "MY POSTS ERROR:",
-      error
-    );
-
-    container.innerHTML =
-      '<div class="empty">My Posts load nahi ho sake.</div>';
-
+    alert(error.message);
     return;
-
   }
 
-
-  const posts =
-    data || [];
-
-
-  if(posts.length === 0){
-
-    container.innerHTML =
-      '<div class="empty">Aap ne abhi koi post nahi ki.</div>';
-
-    return;
-
-  }
-
-
-  const avatarUrl =
-    currentUser.user_metadata?.avatar_url ||
-    "";
-
-
-  container.innerHTML =
-    posts
-      .map(post => `
-
-        <div
-          class="feed-item">
-
-          <div class="feed-head">
-
-            <div class="feed-user-wrap">
-
-              ${renderUserAvatar(
-                post.username ||
-                currentUsername,
-                avatarUrl
-              )}
-
-              <div class="feed-user">
-                ${escapeHtml(
-                  post.username ||
-                  currentUsername
-                )}
-              </div>
-
-            </div>
-
-            <div class="feed-date">
-              ${formatDate(
-                post.created_at
-              )}
-            </div>
-
-          </div>
-
-          <div class="feed-content">
-            ${escapeHtml(
-              post.content
-            )}
-          </div>
-
-          <div class="feed-type">
-            📝 Post
-          </div>
-
-          <div class="action-row">
-
-            <button
-              class="action-btn delete-btn"
-              onclick="deletePostFromProfile(${post.id})">
-              🗑️ Delete
-            </button>
-
-          </div>
-
-        </div>
-
-      `)
-      .join("");
-
+  input.value="";
+  loadFeed();
 }
 
+async function deletePost(id){
 
-/* =====================================================
-   DELETE POST FROM PROFILE
-===================================================== */
-
-async function deletePostFromProfile(postId){
-
-  if(!currentUser){
+  if(!confirm("Apni post delete karni hai?"))
     return;
-  }
 
-
-  if(
-    !confirm(
-      "Delete this post?"
-    )
-  ){
-    return;
-  }
-
-
-  const { error } =
+  const {
+    error
+  } =
     await supabaseClient
       .from("posts")
       .delete()
-      .eq(
-        "id",
-        postId
-      )
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
+      .eq("id",id)
+      .eq("user_id",currentUser.id);
 
   if(error){
+    alert(error.message);
+    return;
+  }
 
-    showNotice(
-      "Delete nahi hua: " +
-      error.message
-    );
+  loadFeed();
+}
 
+function likePost(id){
+  alert("Like system yahan connect kiya ja sakta hai.");
+}
+
+function dislikePost(id){
+  alert("Dislike system yahan connect kiya ja sakta hai.");
+}
+
+function openComments(id){
+  alert("Comments: post #" + id);
+}
+
+function replyPost(id){
+  alert("Reply: post #" + id);
+}
+
+function blockUser(id){
+
+  if(!confirm("Is user ko block karna hai?"))
     return;
 
-  }
-
-
-  await loadMyPosts();
-
-  await loadFeed();
-
-
-  showNotice(
-    "Post deleted."
-  );
-
+  alert("Block option selected.");
 }
 
-
-/* =====================================================
-   HOME
-===================================================== */
-
-function goHome(){
-
-  document.getElementById(
-    "profilePage"
-  ).style.display = "none";
-
-  document.getElementById(
-    "publicProfilePage"
-  ).style.display = "none";
-
-
-  document.getElementById(
-    "homePage"
-  ).style.display = "block";
-
-
-  setActiveNav("home");
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
+function startVoice(){
+  alert("Voice option ready hai.");
 }
 
-
-function setActiveNav(type){
-
-  document
-    .querySelectorAll(
-      ".nav-btn"
-    )
-    .forEach(btn => {
-
-      btn.classList.remove(
-        "active"
-      );
-
-    });
-
-
-  if(type === "home"){
-
-    document
-      .getElementById(
-        "homeNavBtn"
-      )
-      .classList.add(
-        "active"
-      );
-
-  }
-
-
-  if(type === "profile"){
-
-    document
-      .getElementById(
-        "profileNavBtn"
-      )
-      .classList.add(
-        "active"
-      );
-
-  }
-
+function openTrending(){
+  alert("Trending Posts");
 }
 
-
-/* =====================================================
-   PRIVATE
-===================================================== */
-
-function goPrivate(){
-
-  window.location.href =
-    "private.html";
-
+function openStars(){
+  alert("⭐ Stars");
 }
 
-
-/* =====================================================
-   NOTIFICATIONS
-===================================================== */
-
-function goNotifications(){
-
-  showNotice(
-    "Notifications page abhi setup nahi hai."
-  );
-
+function openNotifications(){
+  window.location.href="notifications.html";
 }
 
-
-/* =====================================================
-   MORE
-===================================================== */
-
-function goMore(){
-
-  const logout =
-    confirm(
-      "Logout karna hai?"
-    );
-
-
-  if(logout){
-
-    signOut();
-
-  }
-
-}
-
-
-/* =====================================================
-   SIGN OUT
-===================================================== */
-
-async function signOut(){
-
-  try{
-
-    await supabaseClient
-      .auth
-      .signOut();
-
-  }finally{
-
-    window.location.href =
-      "login.html";
-
-  }
-
-}
-
-
-/* =====================================================
-   CLOSE ONLINE POPUP
-===================================================== */
-
-document.addEventListener(
-  "click",
-  function(event){
-
-    const popup =
-      document.getElementById(
-        "onlinePopup"
-      );
-
-
-    const button =
-      document.querySelector(
-        ".online-btn"
-      );
-
-
-    if(
-      popup &&
-      popup.style.display === "block" &&
-      !popup.contains(event.target) &&
-      button &&
-      !button.contains(event.target)
-    ){
-
-      popup.style.display =
-        "none";
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   DOM READY
-===================================================== */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  function(){
-
-    /* ---------- CREATE POST ---------- */
-
-    const postInput =
-      document.getElementById(
-        "postInput"
-      );
-
-
-    if(postInput){
-
-      postInput.addEventListener(
-        "keydown",
-        function(event){
-
-          if(
-            event.key === "Enter" &&
-            !event.shiftKey
-          ){
-
-            event.preventDefault();
-
-            addPost();
-
-          }
-
-        }
-      );
-
-    }
-
-
-    /* ---------- SEND POST ---------- */
-
-    const publishPostBtn =
-      document.getElementById(
-        "publishPostBtn"
-      );
-
-
-    if(publishPostBtn){
-
-      publishPostBtn.addEventListener(
-        "click",
-        addPost
-      );
-
-    }
-
-
-    /* ---------- POST IMAGE ---------- */
-
-    const uploadImageBtn =
-      document.getElementById(
-        "uploadImageBtn"
-      );
-
-
-    if(uploadImageBtn){
-
-      uploadImageBtn.addEventListener(
-        "click",
-        chooseImage
-      );
-
-    }
-
-
-    const imageInput =
-      document.getElementById(
-        "imageInput"
-      );
-
-
-    if(imageInput){
-
-      imageInput.addEventListener(
-        "change",
-        sendImage
-      );
-
-    }
-
-
-    /* ---------- PROFILE PICTURE ---------- */
-
-    const profileImageInput =
-      document.getElementById(
-        "profileImageInput"
-      );
-
-
-    if(profileImageInput){
-
-      profileImageInput.addEventListener(
-        "change",
-        uploadProfilePicture
-      );
-
-    }
-
-
-    /* ---------- VOICE ---------- */
-
-    const voiceBtn =
-      document.getElementById(
-        "voiceBtn"
-      );
-
-
-    if(voiceBtn){
-
-      voiceBtn.addEventListener(
-        "click",
-        toggleRecording
-      );
-
-    }
-
-
-    /* ---------- START ---------- */
-
-    checkUser();
-
-  }
-);
-
-</script>
-
-</body>
-</html>
+```
