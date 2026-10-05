@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -132,22 +131,12 @@ textarea{
 
 .feed-header{
   display:flex;
-  justify-content:space-between;
   align-items:center;
   padding:5px 12px;
 }
 
 .feed-header h3{
   margin:8px 0;
-}
-
-.refresh-btn{
-  border:0;
-  background:white;
-  border-radius:20px;
-  padding:8px 12px;
-  cursor:pointer;
-  box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 
 #feed{
@@ -406,10 +395,13 @@ textarea{
 
     <div id="replyBox" class="reply-box">
       <span id="replyText"></span>
+
       <button
         onclick="cancelReply()"
         style="float:right;border:0;background:none;color:#d00;"
-      >✕</button>
+      >
+        ✕
+      </button>
     </div>
 
     <textarea
@@ -457,9 +449,11 @@ textarea{
 
   </div>
 
-<div class="feed-header">
-  <h3>Home Feed</h3>
-</div>
+
+  <div class="feed-header">
+    <h3>Home Feed</h3>
+  </div>
+
 
   <div id="feed">
     <div class="loading">
@@ -469,15 +463,19 @@ textarea{
 
 </div>
 
+
 <div id="trendingBox" class="trending-box">
+
   <div class="trending-content">
 
     <div class="trending-header">
+
       <h3>🔥 Trending</h3>
 
       <button onclick="closeTrending()">
         ✕
       </button>
+
     </div>
 
     <div id="trendingList">
@@ -485,7 +483,9 @@ textarea{
     </div>
 
   </div>
+
 </div>
+
 
 <div class="bottom-nav">
 
@@ -510,6 +510,7 @@ textarea{
   </button>
 
 </div>
+
 
 <script>
 
@@ -590,23 +591,12 @@ async function loadFeed(){
   const feed =
     document.getElementById("feed");
 
-  /*
-    IMPORTANT:
-    Har refresh par pehle old DOM
-    completely clear hoga.
-  */
-
   feed.innerHTML =
     `<div class="loading">
       Loading feed...
     </div>`;
 
   try{
-
-    /*
-      Posts table mein username column NAHI hai.
-      Sirf actual columns use kar rahe hain.
-    */
 
     const {
       data,
@@ -637,12 +627,6 @@ async function loadFeed(){
       Array.isArray(data)
         ? data
         : [];
-
-    /*
-      Extra safety:
-      frontend par bhi EXACT
-      created_at DESC + id DESC.
-    */
 
     posts.sort((a,b)=>{
 
@@ -680,20 +664,15 @@ async function loadFeed(){
     }
 
 
-    /* =========================
-       LOAD PROFILES
-    ========================= */
-
     profileMap = {};
 
-    const userIds =
-      [
-        ...new Set(
-          posts
-            .map(p=>p.user_id)
-            .filter(Boolean)
-        )
-      ];
+    const userIds = [
+      ...new Set(
+        posts
+          .map(p=>p.user_id)
+          .filter(Boolean)
+      )
+    ];
 
     if(userIds.length){
 
@@ -727,11 +706,6 @@ async function loadFeed(){
 
     }
 
-
-    /*
-      Feed ko fresh render karna.
-      append old feed nahi karega.
-    */
 
     feed.innerHTML = "";
 
@@ -857,10 +831,12 @@ async function renderPost(post){
     }
 
   }catch(error){
+
     console.log(
       "Action count error",
       error
     );
+
   }
 
 
@@ -952,17 +928,20 @@ async function renderPost(post){
 
     menuHTML =
       `<div class="post-menu">
+
         <button
           onclick="deletePost(${Number(post.id)})"
         >
           ⋮
         </button>
+
       </div>`;
 
   }else{
 
     menuHTML =
       `<div class="post-menu">
+
         <button
           onclick="blockUser('${escapeJs(
             post.user_id
@@ -970,6 +949,7 @@ async function renderPost(post){
         >
           ⋮
         </button>
+
       </div>`;
 
   }
@@ -993,17 +973,29 @@ async function renderPost(post){
           <div>
 
             <div class="user-name">
+
               ${escapeHtml(
                 name || username
               )}
+
               ${
                 name &&
                 username
-                  ? ` <span style="color:#777;font-weight:normal;">
-                      @${escapeHtml(username)}
-                    </span>`
-                  : ""
+                ?
+                `
+                  <span
+                    style="
+                      color:#777;
+                      font-weight:normal;
+                    "
+                  >
+                    @${escapeHtml(username)}
+                  </span>
+                `
+                :
+                ""
               }
+
             </div>
 
             <div class="post-date">
@@ -1033,25 +1025,43 @@ async function renderPost(post){
       <div class="post-actions">
 
         <button
-          onclick="setPostAction(${Number(post.id)},'like')"
+          onclick="
+            setPostAction(
+              ${Number(post.id)},
+              'like'
+            )
+          "
         >
           👍 ${likeCount}
         </button>
 
         <button
-          onclick="setPostAction(${Number(post.id)},'dislike')"
+          onclick="
+            setPostAction(
+              ${Number(post.id)},
+              'dislike'
+            )
+          "
         >
           👎 ${dislikeCount}
         </button>
 
         <button
-          onclick="toggleComments(${Number(post.id)})"
+          onclick="
+            toggleComments(
+              ${Number(post.id)}
+            )
+          "
         >
           💬 ${commentCount}
         </button>
 
         <button
-          onclick="replyPost('${escapeJs(username)}')"
+          onclick="
+            replyPost(
+              '${escapeJs(username)}'
+            )
+          "
         >
           ↩️ Reply
         </button>
@@ -1084,7 +1094,11 @@ async function renderPost(post){
           >
 
           <button
-            onclick="addComment(${Number(post.id)})"
+            onclick="
+              addComment(
+                ${Number(post.id)}
+              )
+            "
           >
             Send
           </button>
@@ -1157,11 +1171,6 @@ async function createPost(){
     textarea.value = "";
 
     cancelReply();
-
-    /*
-      New post save hone ke baad
-      complete fresh feed load.
-    */
 
     await loadFeed();
 
@@ -1411,9 +1420,7 @@ async function setPostAction(
    COMMENTS
 ========================= */
 
-async function toggleComments(
-  postId
-){
+async function toggleComments(postId){
 
   const box =
     document.getElementById(
@@ -1446,9 +1453,11 @@ async function toggleComments(
 }
 
 
-async function loadComments(
-  postId
-){
+/* =========================
+   LOAD COMMENTS
+========================= */
+
+async function loadComments(postId){
 
   const list =
     document.getElementById(
@@ -1461,17 +1470,29 @@ async function loadComments(
   }
 
   list.innerHTML =
-    "Loading...";
+    `<div style="
+      color:#888;
+      font-size:12px;
+      padding:6px;
+    ">
+      Loading comments...
+    </div>`;
 
   try{
 
+    /*
+      IMPORTANT:
+      comments table mein username
+      column use nahi ho raha.
+    */
+
     const {
-      data,
+      data:comments,
       error
     } = await supabaseClient
       .from("comments")
       .select(
-        "id,post_id,user_id,username,comment,created_at"
+        "id,post_id,user_id,comment,created_at"
       )
       .eq(
         "post_id",
@@ -1488,16 +1509,18 @@ async function loadComments(
       throw error;
     }
 
+
     if(
-      !data ||
-      data.length === 0
+      !comments ||
+      comments.length === 0
     ){
 
       list.innerHTML =
         `<div style="
           color:#888;
           font-size:12px;
-          padding:6px;
+          padding:8px;
+          text-align:center;
         ">
           No comments yet.
         </div>`;
@@ -1505,56 +1528,222 @@ async function loadComments(
       return;
     }
 
-    list.innerHTML =
-      data.map(comment=>{
 
-        const own =
+    /*
+      Comment users ke profiles
+      alag se load honge.
+    */
+
+    const userIds = [
+      ...new Set(
+        comments
+          .map(c=>c.user_id)
+          .filter(Boolean)
+      )
+    ];
+
+    let commentProfiles = {};
+
+
+    if(userIds.length){
+
+      const {
+        data:profiles,
+        error:profileError
+      } = await supabaseClient
+        .from("profiles")
+        .select(
+          "id,username,name,avatar_url"
+        )
+        .in(
+          "id",
+          userIds
+        );
+
+      if(
+        !profileError &&
+        profiles
+      ){
+
+        profiles.forEach(profile=>{
+
+          commentProfiles[
+            profile.id
+          ] = profile;
+
+        });
+
+      }
+
+    }
+
+
+    list.innerHTML =
+      comments.map(comment=>{
+
+        const profile =
+          commentProfiles[
+            comment.user_id
+          ] || {};
+
+        let username =
+          profile.username ||
+          "";
+
+        let displayName =
+          profile.name ||
+          "";
+
+
+        if(
+          !username &&
+          currentUser &&
+          comment.user_id ===
+          currentUser.id
+        ){
+
+          username =
+            currentUser.user_metadata?.username ||
+            currentUser.email?.split("@")[0] ||
+            "User";
+
+        }
+
+
+        if(!username){
+          username = "User";
+        }
+
+
+        const isOwn =
           currentUser &&
           comment.user_id ===
           currentUser.id;
 
+
         return `
           <div class="comment-item">
 
-            <div class="comment-top">
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                gap:8px;
+              "
+            >
 
-              <span class="comment-user">
-                @${escapeHtml(
-                  comment.username ||
-                  "User"
-                )}
-              </span>
+              ${
+                profile.avatar_url
+                ?
+                `
+                <img
+                  src="${escapeAttribute(
+                    profile.avatar_url
+                  )}"
+                  style="
+                    width:32px;
+                    height:32px;
+                    border-radius:50%;
+                    object-fit:cover;
+                  "
+                  onerror="
+                    this.style.display='none'
+                  "
+                >
+                `
+                :
+                `
+                <div
+                  style="
+                    width:32px;
+                    height:32px;
+                    border-radius:50%;
+                    background:#ddd;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                  "
+                >
+                  👤
+                </div>
+                `
+              }
 
-              <span class="comment-date">
-                ${formatDate(
-                  comment.created_at
-                )}
-              </span>
+
+              <div>
+
+                <div class="comment-user">
+
+                  ${escapeHtml(
+                    displayName ||
+                    username
+                  )}
+
+                  ${
+                    displayName &&
+                    username
+                    ?
+                    `
+                    <span
+                      style="
+                        color:#777;
+                        font-weight:normal;
+                        font-size:11px;
+                      "
+                    >
+                      @${escapeHtml(
+                        username
+                      )}
+                    </span>
+                    `
+                    :
+                    ""
+                  }
+
+                </div>
+
+                <div class="comment-date">
+                  ${formatDate(
+                    comment.created_at
+                  )}
+                </div>
+
+              </div>
 
             </div>
 
-            <div style="margin-top:4px;">
+
+            <div
+              style="
+                margin-top:7px;
+                white-space:pre-wrap;
+                word-break:break-word;
+              "
+            >
               ${escapeHtml(
                 comment.comment || ""
               )}
             </div>
 
+
             ${
-              own
-              ? `
-                <button
-                  class="comment-delete"
-                  onclick="
-                    deleteComment(
-                      ${Number(comment.id)},
-                      ${Number(postId)}
-                    )
-                  "
-                >
-                  Delete
-                </button>
+              isOwn
+              ?
               `
-              : ""
+              <button
+                class="comment-delete"
+                onclick="
+                  deleteComment(
+                    ${Number(comment.id)},
+                    ${Number(postId)}
+                  )
+                "
+              >
+                Delete
+              </button>
+              `
+              :
+              ""
             }
 
           </div>
@@ -1562,13 +1751,26 @@ async function loadComments(
 
       }).join("");
 
+
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Comments error:",
+      error
+    );
 
     list.innerHTML =
-      `<div style="color:#d00;font-size:12px;">
-        Comments load nahi huay.
+      `<div style="
+        color:#d00;
+        font-size:12px;
+        padding:8px;
+      ">
+        Comments load nahi huay.<br>
+        <small>
+          ${escapeHtml(
+            error.message || ""
+          )}
+        </small>
       </div>`;
 
   }
@@ -1576,9 +1778,11 @@ async function loadComments(
 }
 
 
-async function addComment(
-  postId
-){
+/* =========================
+   ADD COMMENT
+========================= */
+
+async function addComment(postId){
 
   if(!currentUser){
 
@@ -1589,11 +1793,17 @@ async function addComment(
     return;
   }
 
+
   const input =
     document.getElementById(
       "comment-input-" +
       postId
     );
+
+  if(!input){
+    return;
+  }
+
 
   const comment =
     input.value.trim();
@@ -1602,12 +1812,14 @@ async function addComment(
     return;
   }
 
-  const username =
-    currentUser.user_metadata?.username ||
-    currentUser.email?.split("@")[0] ||
-    "User";
 
   try{
+
+    /*
+      IMPORTANT:
+      comments table mein username
+      column nahi hai.
+    */
 
     const {
       error
@@ -1621,9 +1833,6 @@ async function addComment(
         user_id:
           currentUser.id,
 
-        username:
-          username,
-
         comment:
           comment
 
@@ -1633,15 +1842,56 @@ async function addComment(
       throw error;
     }
 
+
     input.value = "";
+
+
+    /*
+      Pehle comments update
+    */
 
     await loadComments(
       postId
     );
 
+
+    /*
+      Phir feed ka comment count
+      update hoga.
+    */
+
     await loadFeed();
 
+
+    /*
+      Feed reload ke baad
+      comments automatically
+      dobara open.
+    */
+
+    const box =
+      document.getElementById(
+        "comments-" +
+        postId
+      );
+
+    if(box){
+
+      box.style.display =
+        "block";
+
+      await loadComments(
+        postId
+      );
+
+    }
+
   }catch(error){
+
+    console.error(
+      "Add comment error:",
+      error
+    );
 
     alert(
       "Comment send nahi hua:\n" +
@@ -1653,6 +1903,10 @@ async function addComment(
 }
 
 
+/* =========================
+   DELETE COMMENT
+========================= */
+
 async function deleteComment(
   commentId,
   postId
@@ -1662,7 +1916,23 @@ async function deleteComment(
     return;
   }
 
+
+  const ok =
+    confirm(
+      "Apna comment delete karna hai?"
+    );
+
+  if(!ok){
+    return;
+  }
+
+
   try{
+
+    /*
+      Sirf current user ka
+      apna comment delete hoga.
+    */
 
     const {
       error
@@ -1682,13 +1952,38 @@ async function deleteComment(
       throw error;
     }
 
+
     await loadComments(
       postId
     );
 
+
     await loadFeed();
 
+
+    const box =
+      document.getElementById(
+        "comments-" +
+        postId
+      );
+
+    if(box){
+
+      box.style.display =
+        "block";
+
+      await loadComments(
+        postId
+      );
+
+    }
+
   }catch(error){
+
+    console.error(
+      "Delete comment error:",
+      error
+    );
 
     alert(
       "Comment delete nahi hua:\n" +
@@ -1704,9 +1999,7 @@ async function deleteComment(
    BLOCK USER
 ========================= */
 
-async function blockUser(
-  userId
-){
+async function blockUser(userId){
 
   if(!currentUser){
     return;
@@ -2002,9 +2295,7 @@ function goNotifications(){
    DATE
 ========================= */
 
-function formatDate(
-  value
-){
+function formatDate(value){
 
   if(!value){
     return "";
