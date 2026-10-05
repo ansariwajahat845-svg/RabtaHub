@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,16 +10,12 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100%;
+*{
+  box-sizing:border-box;
 }
 
 body{
+  margin:0;
   font-family:Arial,sans-serif;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   min-height:100vh;
@@ -30,399 +27,286 @@ body{
   max-width:680px;
   margin:auto;
   min-height:100vh;
-  background:#f5f5f8;
-  padding-bottom:82px;
-  overflow-x:hidden;
+  background:#f5f5f5;
+  padding-bottom:75px;
 }
 
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:18px 15px 14px;
+  padding:14px;
   position:sticky;
   top:0;
   z-index:20;
 }
 
-.header-row{
+.header-top{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
 }
 
 .logo{
-  font-size:24px;
+  font-size:22px;
   font-weight:bold;
 }
 
-.header-actions{
+.header-buttons{
   display:flex;
-  gap:7px;
-  flex-shrink:0;
+  gap:6px;
 }
 
-.top-btn{
+.header-buttons button{
   border:0;
   background:rgba(255,255,255,.18);
   color:white;
-  border-radius:12px;
-  width:43px;
-  height:42px;
-  font-size:18px;
+  border-radius:20px;
+  padding:7px 9px;
   cursor:pointer;
 }
 
-.trending{
-  margin-top:13px;
-  background:rgba(255,255,255,.15);
-  border-radius:12px;
-  padding:10px 12px;
-  font-size:14px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.content{
-  width:100%;
-  padding:12px;
-  min-width:0;
-}
-
 .welcome{
-  width:100%;
   background:white;
-  border-radius:15px;
-  padding:16px;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px #00000012;
-}
-
-.welcome h2{
-  margin:0 0 5px;
-  font-size:20px;
+  margin:12px;
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+  font-weight:bold;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
 .create-box{
-  width:100%;
   background:white;
-  padding:14px;
-  border-radius:15px;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px #00000012;
-}
-
-textarea{
-  display:block;
-  width:100%;
-  min-width:0;
-  min-height:85px;
-  border:1px solid #ddd;
-  border-radius:12px;
+  margin:12px;
   padding:12px;
-  font-size:15px;
-  resize:vertical;
-  font-family:Arial,sans-serif;
-  outline:none;
-}
-
-textarea:focus{
-  border-color:#6c5ce7;
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
 .reply-box{
   display:none;
-  width:100%;
-  background:#f0ecff;
+  background:#f0edff;
   border-left:4px solid #6c5ce7;
-  border-radius:10px;
-  padding:9px 11px;
-  margin-bottom:9px;
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:8px;
   font-size:13px;
-  overflow:hidden;
 }
 
-.reply-box b{
-  color:#6c5ce7;
-}
-
-.reply-cancel{
-  float:right;
-  border:0;
-  background:none;
-  color:#777;
-  cursor:pointer;
+textarea{
+  width:100%;
+  min-height:80px;
+  resize:none;
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:12px;
+  font-size:15px;
+  outline:none;
 }
 
 .create-actions{
   display:flex;
-  gap:8px;
-  margin-top:10px;
+  gap:7px;
+  margin-top:8px;
   flex-wrap:wrap;
 }
 
-.action-btn{
+.create-actions button{
   border:0;
-  border-radius:10px;
-  padding:10px 13px;
+  border-radius:20px;
+  padding:9px 13px;
   cursor:pointer;
-  font-weight:bold;
 }
 
-.post-btn{
+.send-btn{
   background:#6c5ce7;
   color:white;
 }
 
-.secondary{
+.upload-btn{
   background:#eee;
 }
 
-.section-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin:14px 2px 9px;
+.voice-btn{
+  background:#eee;
 }
 
-.section-title{
-  font-weight:bold;
-  font-size:18px;
+.feed-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:5px 12px;
+}
+
+.feed-header h3{
+  margin:8px 0;
 }
 
 .refresh-btn{
   border:0;
   background:white;
-  border-radius:9px;
-  padding:7px 10px;
+  border-radius:20px;
+  padding:8px 12px;
   cursor:pointer;
-  flex-shrink:0;
-}
-
-#loading{
-  width:100%;
-  text-align:center;
-  padding:20px;
-  color:#777;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 
 #feed{
-  display:block;
-  width:100%;
-  max-width:100%;
-  min-width:0;
+  padding:0 12px;
 }
 
 .post{
-  display:block;
-  width:100%;
-  max-width:100%;
-  min-width:0;
   background:white;
-  border-radius:15px;
-  padding:14px;
-  margin:0 0 12px 0;
-  box-shadow:0 2px 8px #00000012;
-  overflow:hidden;
+  border-radius:14px;
+  margin:10px 0;
+  padding:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-.post-user{
+.post-head{
   display:flex;
   align-items:center;
-  gap:10px;
-  width:100%;
-  min-width:0;
-}
-
-.avatar{
-  width:43px;
-  height:43px;
-  min-width:43px;
-  max-width:43px;
-  border-radius:50%;
-  background:#6c5ce7;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  overflow:hidden;
-  flex-shrink:0;
-}
-
-.avatar img{
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:cover;
+  justify-content:space-between;
 }
 
 .user-info{
-  min-width:0;
-  flex:1;
-  overflow:hidden;
+  display:flex;
+  align-items:center;
+  gap:9px;
 }
 
-.username{
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#ddd;
+}
+
+.user-name{
   font-weight:bold;
-  overflow-wrap:anywhere;
-  word-break:break-word;
+  font-size:15px;
 }
 
-.date{
+.post-date{
+  font-size:11px;
   color:#888;
-  font-size:12px;
   margin-top:3px;
 }
 
+.post-menu{
+  position:relative;
+}
+
+.post-menu button{
+  border:0;
+  background:transparent;
+  font-size:20px;
+  cursor:pointer;
+}
+
 .post-content{
-  display:block;
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  margin:12px 0;
   white-space:pre-wrap;
-  line-height:1.45;
-  overflow-wrap:anywhere;
   word-break:break-word;
+  margin:12px 0;
+  line-height:1.45;
 }
 
 .post-image{
-  display:block;
   width:100%;
-  max-width:100%;
-  max-height:500px;
+  max-height:450px;
   object-fit:cover;
   border-radius:12px;
-  margin:10px 0;
+  margin-top:5px;
 }
 
 .post-actions{
   display:flex;
-  width:100%;
-  max-width:100%;
-  gap:6px;
+  gap:5px;
   flex-wrap:wrap;
   border-top:1px solid #eee;
-  padding-top:9px;
+  padding-top:8px;
 }
 
 .post-actions button{
+  flex:1;
+  min-width:70px;
   border:0;
-  background:#f1f1f4;
-  border-radius:9px;
-  padding:8px 10px;
+  background:#f3f3f3;
+  border-radius:10px;
+  padding:8px 5px;
   cursor:pointer;
-  font-size:13px;
-  max-width:100%;
 }
 
-.post-actions button.active{
-  background:#e5ddff;
-  color:#5b45d6;
-  font-weight:bold;
-}
-
-.comments-box{
+.comments{
   display:none;
-  width:100%;
-  min-width:0;
   margin-top:10px;
   border-top:1px solid #eee;
   padding-top:10px;
 }
 
 .comment-item{
-  width:100%;
-  min-width:0;
-  background:#f5f5f8;
+  background:#f5f5f5;
   border-radius:10px;
-  padding:9px;
-  margin-bottom:7px;
-  overflow:hidden;
+  padding:8px;
+  margin:6px 0;
+  font-size:13px;
 }
 
 .comment-top{
   display:flex;
   justify-content:space-between;
-  gap:8px;
 }
 
 .comment-user{
   font-weight:bold;
-  font-size:13px;
-  overflow-wrap:anywhere;
 }
 
 .comment-date{
   color:#888;
-  font-size:11px;
-}
-
-.comment-text{
-  margin-top:5px;
-  font-size:14px;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:break-word;
+  font-size:10px;
 }
 
 .comment-delete{
   border:0;
   background:none;
-  color:#d33;
+  color:#d00;
   font-size:11px;
   cursor:pointer;
-  flex-shrink:0;
 }
 
-.comment-form{
+.comment-input-row{
   display:flex;
-  width:100%;
-  min-width:0;
-  gap:7px;
+  gap:6px;
   margin-top:8px;
 }
 
-.comment-input{
+.comment-input-row input{
   flex:1;
-  min-width:0;
   border:1px solid #ddd;
-  border-radius:9px;
-  padding:9px;
+  border-radius:20px;
+  padding:9px 12px;
   outline:none;
 }
 
-.comment-send{
+.comment-input-row button{
   border:0;
+  border-radius:20px;
   background:#6c5ce7;
   color:white;
-  border-radius:9px;
-  padding:0 13px;
-  cursor:pointer;
-  flex-shrink:0;
+  padding:8px 14px;
 }
 
 .empty{
-  width:100%;
-  background:white;
-  border-radius:14px;
-  padding:22px;
   text-align:center;
+  padding:30px 10px;
   color:#777;
 }
 
-.error-box{
-  width:100%;
-  background:#fff0f0;
-  color:#b00020;
-  border-radius:14px;
-  padding:15px;
-  line-height:1.45;
-  overflow-wrap:anywhere;
-  word-break:break-word;
+.loading{
+  text-align:center;
+  padding:25px;
+  color:#777;
 }
 
 .bottom-nav{
@@ -436,215 +320,204 @@ textarea:focus{
   border-top:1px solid #ddd;
   display:flex;
   justify-content:space-around;
-  padding:7px 4px;
-  z-index:50;
+  padding:8px 3px;
+  z-index:30;
 }
 
-.nav-btn{
+.bottom-nav button{
   border:0;
   background:none;
-  color:#666;
   font-size:12px;
-  min-width:65px;
-  padding:6px 3px;
+  color:#555;
   cursor:pointer;
+  padding:5px;
 }
 
-.nav-btn .icon{
-  display:block;
-  font-size:21px;
-  margin-bottom:2px;
-}
-
-.nav-btn.active{
+.bottom-nav button:first-child{
   color:#6c5ce7;
   font-weight:bold;
 }
 
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:88px;
-  transform:translateX(-50%);
-  background:#222;
-  color:white;
-  padding:10px 15px;
-  border-radius:10px;
+.trending-box{
   display:none;
-  z-index:100;
-  max-width:90%;
-  text-align:center;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:50;
 }
 
-@media(max-width:480px){
+.trending-content{
+  width:92%;
+  max-width:600px;
+  max-height:80vh;
+  overflow:auto;
+  background:white;
+  border-radius:15px;
+  margin:10vh auto;
+  padding:15px;
+}
 
-  .content{
-    padding:10px;
-  }
+.trending-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 
-  .post{
-    padding:12px;
-    border-radius:13px;
-  }
+.trending-header button{
+  border:0;
+  background:#eee;
+  border-radius:20px;
+  padding:7px 12px;
+}
 
-  .post-actions button{
-    padding:8px 9px;
-    font-size:12px;
-  }
+.trend-item{
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
 
-  .create-actions{
-    gap:6px;
-  }
-
-  .action-btn{
-    padding:9px 10px;
-    font-size:13px;
-  }
+.hidden-input{
+  display:none;
 }
 </style>
-
 </head>
 
 <body>
 
 <div class="app">
 
-<header class="header">
+  <div class="header">
+    <div class="header-top">
 
-  <div class="header-row">
+      <div class="logo">RabtaHub</div>
 
-```
-<div class="logo">RabtaHub</div>
+      <div class="header-buttons">
+        <button onclick="showTrending()">🔥</button>
+        <button onclick="goStars()">⭐</button>
+        <button onclick="goNotifications()">🔔</button>
+      </div>
 
-<div class="header-actions">
-
-  <button class="top-btn"
-    onclick="openTrending()"
-    title="Trending">🔥</button>
-
-  <button class="top-btn"
-    onclick="openStars()"
-    title="Stars">⭐</button>
-
-  <button class="top-btn"
-    onclick="openNotifications()"
-    title="Notifications">🔔</button>
-
-</div>
-```
-
+    </div>
   </div>
-
-  <div class="trending" id="trendingBar">
-    🔥 Trending Posts
-  </div>
-
-</header>
-
-<main class="content">
 
   <div class="welcome">
-    <h2>Welcome to RabtaHub ❤️</h2>
-    <div>Connect • Share • Enjoy</div>
+    Welcome to RabtaHub ❤️
   </div>
 
   <div class="create-box">
 
-```
-<div class="reply-box" id="replyBox">
+    <div id="replyBox" class="reply-box">
+      <span id="replyText"></span>
+      <button
+        onclick="cancelReply()"
+        style="float:right;border:0;background:none;color:#d00;"
+      >✕</button>
+    </div>
 
-  <button class="reply-cancel"
-    onclick="cancelReply()">✕</button>
+    <textarea
+      id="postText"
+      placeholder="What's on your mind?"
+    ></textarea>
 
-  ↩️ Replying to
-  <b id="replyUsername"></b>
+    <div class="create-actions">
 
-</div>
+      <button
+        class="send-btn"
+        onclick="createPost()"
+      >
+        Send Post
+      </button>
 
-<textarea
-  id="postText"
-  placeholder="What's on your mind?"
-></textarea>
+      <button
+        class="upload-btn"
+        onclick="document.getElementById('imageInput').click()"
+      >
+        🖼️ Upload Image
+      </button>
 
-<div class="create-actions">
+      <button
+        class="voice-btn"
+        onclick="startVoice()"
+      >
+        🎤 Voice
+      </button>
 
-  <button
-    class="action-btn post-btn"
-    onclick="createPost()">
-    📝 Send Post
-  </button>
+    </div>
 
-  <button
-    class="action-btn secondary"
-    onclick="document.getElementById('imageInput').click()">
-    🖼️ Upload Image
-  </button>
+    <input
+      id="imageInput"
+      class="hidden-input"
+      type="file"
+      accept="image/*"
+      onchange="imageSelected()"
+    >
 
-  <button
-    class="action-btn secondary"
-    onclick="startVoice()">
-    🎤 Voice
-  </button>
-
-</div>
-
-<input
-  type="file"
-  id="imageInput"
-  accept="image/*"
-  hidden
->
-```
-
-  </div>
-
-  <div class="section-row">
-
-```
-<div class="section-title">
-  🏠 Home Feed
-</div>
-
-<button
-  class="refresh-btn"
-  onclick="loadFeed()">
-  🔄 Refresh
-</button>
-```
+    <div
+      id="selectedImageText"
+      style="font-size:12px;color:#777;margin-top:7px;"
+    ></div>
 
   </div>
 
-  <div id="loading">
-    Feed load ho rahi hai...
+  <div class="feed-header">
+    <h3>Home Feed</h3>
+
+    <button
+      class="refresh-btn"
+      onclick="loadFeed()"
+    >
+      🔄 Refresh
+    </button>
   </div>
 
-  <div id="feed"></div>
-
-</main>
+  <div id="feed">
+    <div class="loading">
+      Loading feed...
+    </div>
+  </div>
 
 </div>
 
-<nav class="bottom-nav">
+<div id="trendingBox" class="trending-box">
+  <div class="trending-content">
 
-<button class="nav-btn active"
- onclick="goHome()"> <span class="icon">🏠</span>
-Home </button>
+    <div class="trending-header">
+      <h3>🔥 Trending</h3>
 
-<button class="nav-btn"
- onclick="goPrivate()"> <span class="icon">💬</span>
-Private </button>
+      <button onclick="closeTrending()">
+        ✕
+      </button>
+    </div>
 
-<button class="nav-btn"
- onclick="goMehfil()"> <span class="icon">💬</span>
-Mehfil </button>
+    <div id="trendingList">
+      Loading...
+    </div>
 
-<button class="nav-btn"
- onclick="goMore()"> <span class="icon">☰</span>
-More </button>
+  </div>
+</div>
 
-</nav>
+<div class="bottom-nav">
 
-<div class="toast" id="toast"></div>
+  <button onclick="goHome()">
+    🏠<br>Home
+  </button>
+
+  <button onclick="goPrivate()">
+    💬<br>Private
+  </button>
+
+  <button onclick="goMehfil()">
+    👥<br>Mehfil
+  </button>
+
+  <button onclick="goProfile()">
+    👤<br>Profile
+  </button>
+
+  <button onclick="goMore()">
+    ☰<br>More
+  </button>
+
+</div>
 
 <script>
 
@@ -660,9 +533,10 @@ supabase.createClient(
   SUPABASE_KEY
 );
 
-let currentUser=null;
-let currentReply=null;
-let openCommentPost=null;
+let currentUser = null;
+let profileMap = {};
+let currentReplyUser = null;
+let currentPosts = [];
 
 
 /* =========================
@@ -676,31 +550,39 @@ async function init(){
     const {
       data,
       error
-    }=
-    await supabaseClient.auth.getSession();
+    } = await supabaseClient.auth.getSession();
 
     if(error){
-      showFatalError(error.message);
+      console.error(error);
       return;
     }
 
-    const session=data.session;
+    currentUser =
+      data.session?.user || null;
 
-    if(!session){
-      window.location.href="login.html";
+    if(!currentUser){
+
+      window.location.href =
+        "login.html";
+
       return;
     }
-
-    currentUser=session.user;
 
     await loadFeed();
 
-  }catch(err){
+  }catch(error){
 
-    showFatalError(
-      err?.message ||
-      "Home load nahi ho saki."
+    console.error(
+      "Init error:",
+      error
     );
+
+    document.getElementById(
+      "feed"
+    ).innerHTML =
+      `<div class="empty">
+        Feed load nahi ho saka.
+      </div>`;
 
   }
 
@@ -713,164 +595,189 @@ async function init(){
 
 async function loadFeed(){
 
-  const loading=
-  document.getElementById("loading");
+  const feed =
+    document.getElementById("feed");
 
-  const feed=
-  document.getElementById("feed");
+  /*
+    IMPORTANT:
+    Har refresh par pehle old DOM
+    completely clear hoga.
+  */
 
-  loading.style.display="block";
-  loading.textContent="Feed load ho rahi hai...";
-  feed.innerHTML="";
+  feed.innerHTML =
+    `<div class="loading">
+      Loading feed...
+    </div>`;
 
   try{
 
-    if(!currentUser){
-
-      const {
-        data
-      }=
-      await supabaseClient.auth.getUser();
-
-      currentUser=data.user;
-    }
-
-    if(!currentUser){
-
-      window.location.href="login.html";
-      return;
-    }
+    /*
+      Posts table mein username column NAHI hai.
+      Sirf actual columns use kar rahe hain.
+    */
 
     const {
       data,
       error
-    }=
-    await supabaseClient
-    .from("posts")
-    .select(
-      "id,user_id,content,created_at,post_type,category,image_url"
-    )
-    .order(
-      "created_at",
-      {ascending:false}
-    )
-    .order(
-      "id",
-      {ascending:false}
-    );
+    } = await supabaseClient
+      .from("posts")
+      .select(
+        "id,user_id,content,created_at,post_type,category,image_url"
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .order(
+        "id",
+        {
+          ascending:false
+        }
+      );
 
     if(error){
-
-      loading.style.display="none";
-
-      feed.innerHTML=
-      `<div class="error-box">
-        <b>Feed load nahi ho saki.</b><br><br>
-        ${escapeHtml(error.message)}
-      </div>`;
-
-      return;
+      throw error;
     }
 
-    loading.style.display="none";
+    let posts =
+      Array.isArray(data)
+        ? data
+        : [];
 
-    if(!data || data.length===0){
+    /*
+      Extra safety:
+      frontend par bhi EXACT
+      created_at DESC + id DESC.
+    */
 
-      feed.innerHTML=
-      `<div class="empty">
-        Abhi koi post nahi hai.<br><br>
-        Apni pehli post karein ❤️
-      </div>`;
+    posts.sort((a,b)=>{
 
-      updateTrending([]);
-      return;
-    }
+      const dateA =
+        new Date(
+          a.created_at || 0
+        ).getTime();
 
-    const posts=[...data].sort(
-      (a,b)=>{
+      const dateB =
+        new Date(
+          b.created_at || 0
+        ).getTime();
 
-        const timeA=
-        new Date(a.created_at || 0).getTime();
-
-        const timeB=
-        new Date(b.created_at || 0).getTime();
-
-        if(timeB!==timeA)
-          return timeB-timeA;
-
-        return Number(b.id || 0)-
-               Number(a.id || 0);
+      if(dateB !== dateA){
+        return dateB - dateA;
       }
-    );
 
-    const userIds=[
-      ...new Set(
-        posts
-        .map(p=>p.user_id)
-        .filter(Boolean)
-      )
-    ];
+      return (
+        Number(b.id || 0) -
+        Number(a.id || 0)
+      );
 
-    let profiles=[];
+    });
+
+    currentPosts = posts;
+
+    if(posts.length === 0){
+
+      feed.innerHTML =
+        `<div class="empty">
+          Abhi koi post nahi hai.
+        </div>`;
+
+      return;
+    }
+
+
+    /* =========================
+       LOAD PROFILES
+    ========================= */
+
+    profileMap = {};
+
+    const userIds =
+      [
+        ...new Set(
+          posts
+            .map(p=>p.user_id)
+            .filter(Boolean)
+        )
+      ];
 
     if(userIds.length){
 
-      const result=
-      await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url"
-      )
-      .in("id",userIds);
-
-      if(result.error){
-
-        console.warn(
-          "Profiles load error:",
-          result.error.message
+      const {
+        data:profiles,
+        error:profileError
+      } = await supabaseClient
+        .from("profiles")
+        .select(
+          "id,username,name,avatar_url"
+        )
+        .in(
+          "id",
+          userIds
         );
 
-      }else{
+      if(
+        !profileError &&
+        profiles
+      ){
 
-        profiles=result.data || [];
+        profiles.forEach(profile=>{
+
+          profileMap[
+            profile.id
+          ] = profile;
+
+        });
 
       }
+
     }
 
-    const profileMap={};
 
-    profiles.forEach(profile=>{
-      profileMap[profile.id]=profile;
-    });
+    /*
+      Feed ko fresh render karna.
+      append old feed nahi karega.
+    */
 
-    for(const post of posts){
+    feed.innerHTML = "";
 
-      const profile=
-      profileMap[post.user_id] || null;
+    for(
+      const post of posts
+    ){
 
-      const html=
-      await renderPost(post,profile);
+      const html =
+        await renderPost(
+          post
+        );
 
       feed.insertAdjacentHTML(
         "beforeend",
         html
       );
+
     }
 
-    updateTrending(posts,profileMap);
+    updateTrending(
+      posts,
+      profileMap
+    );
 
-  }catch(err){
+  }catch(error){
 
-    loading.style.display="none";
+    console.error(
+      "Feed error:",
+      error
+    );
 
-    feed.innerHTML=
-    `<div class="error-box">
-      <b>Feed error:</b><br><br>
-      ${escapeHtml(
-        err?.message ||
-        "Unknown error"
-      )}
-    </div>`;
+    feed.innerHTML =
+      `<div class="empty">
+        Feed load nahi ho saki.<br>
+        <small>${escapeHtml(
+          error.message || ""
+        )}</small>
+      </div>`;
 
   }
 
@@ -881,245 +788,322 @@ async function loadFeed(){
    RENDER POST
 ========================= */
 
-async function renderPost(post,profile){
+async function renderPost(post){
 
-  const username=
-  profile?.username ||
-  (
-    post.user_id===currentUser?.id
-    ?
-    (
+  const profile =
+    profileMap[
+      post.user_id
+    ] || {};
+
+  let username =
+    profile.username ||
+    "";
+
+  let name =
+    profile.name ||
+    "";
+
+  if(
+    !username &&
+    currentUser &&
+    post.user_id === currentUser.id
+  ){
+
+    username =
       currentUser.user_metadata?.username ||
       currentUser.email?.split("@")[0] ||
-      "User"
-    )
-    :
-    "User"
-  );
+      "User";
 
-  const avatarUrl=
-  profile?.avatar_url || "";
+  }
 
-  const letter=
-  username
-  .charAt(0)
-  .toUpperCase();
+  if(!username){
+    username = "User";
+  }
 
-  const own=
-  currentUser &&
-  post.user_id===currentUser.id;
+  const avatar =
+    profile.avatar_url ||
+    "";
 
-  let likeCount=0;
-  let dislikeCount=0;
-  let myAction="";
+  let likeCount = 0;
+  let dislikeCount = 0;
+  let commentCount = 0;
 
   try{
 
-    const result=
-    await supabaseClient
-    .from("post_actions")
-    .select(
-      "user_id,action_type"
-    )
-    .eq("post_id",post.id);
+    const {
+      data:actions
+    } = await supabaseClient
+      .from("post_actions")
+      .select(
+        "action_type,user_id"
+      )
+      .eq(
+        "post_id",
+        post.id
+      );
 
-    if(!result.error){
+    if(actions){
 
-      (result.data || [])
-      .forEach(action=>{
-
-        if(action.action_type==="like")
-          likeCount++;
-
-        if(action.action_type==="dislike")
-          dislikeCount++;
+      actions.forEach(action=>{
 
         if(
-          action.user_id===currentUser.id
+          action.action_type ===
+          "like"
         ){
-          myAction=action.action_type;
+          likeCount++;
+        }
+
+        if(
+          action.action_type ===
+          "dislike"
+        ){
+          dislikeCount++;
         }
 
       });
 
     }
 
-  }catch(e){}
+  }catch(error){
+    console.log(
+      "Action count error",
+      error
+    );
+  }
 
-  let commentCount=0;
 
   try{
 
-    const result=
-    await supabaseClient
-    .from("comments")
-    .select(
-      "id",
-      {count:"exact",head:true}
-    )
-    .eq("post_id",post.id);
+    const {
+      count
+    } = await supabaseClient
+      .from("comments")
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(
+        "post_id",
+        post.id
+      );
 
-    commentCount=
-    result.count || 0;
+    commentCount =
+      count || 0;
 
-  }catch(e){}
+  }catch(error){
+
+    console.log(
+      "Comment count error",
+      error
+    );
+
+  }
+
+
+  const isOwn =
+    currentUser &&
+    post.user_id ===
+    currentUser.id;
+
+
+  let avatarHTML;
+
+  if(avatar){
+
+    avatarHTML =
+      `<img
+        class="avatar"
+        src="${escapeAttribute(avatar)}"
+        onerror="this.style.display='none'"
+      >`;
+
+  }else{
+
+    avatarHTML =
+      `<div
+        class="avatar"
+        style="
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-size:20px;
+        "
+      >
+        👤
+      </div>`;
+
+  }
+
+
+  let imageHTML = "";
+
+  if(post.image_url){
+
+    imageHTML =
+      `<img
+        class="post-image"
+        src="${escapeAttribute(
+          post.image_url
+        )}"
+        alt="Post image"
+      >`;
+
+  }
+
+
+  let menuHTML = "";
+
+  if(isOwn){
+
+    menuHTML =
+      `<div class="post-menu">
+        <button
+          onclick="deletePost(${Number(post.id)})"
+        >
+          ⋮
+        </button>
+      </div>`;
+
+  }else{
+
+    menuHTML =
+      `<div class="post-menu">
+        <button
+          onclick="blockUser('${escapeJs(
+            post.user_id
+          )}')"
+        >
+          ⋮
+        </button>
+      </div>`;
+
+  }
+
 
   return `
-  <article
-    class="post"
-    id="post-${post.id}">
-
-    <div class="post-user">
-
-      <div class="avatar">
-
-        ${
-          avatarUrl
-          ?
-          `<img
-            src="${escapeAttribute(avatarUrl)}"
-            onerror="this.style.display='none'"
-          >`
-          :
-          escapeHtml(letter)
-        }
-
-      </div>
-
-      <div class="user-info">
-
-        <div class="username">
-          ${escapeHtml(username)}
-        </div>
-
-        <div class="date">
-          ${formatDate(post.created_at)}
-        </div>
-
-      </div>
-
-    </div>
-
-    ${
-      post.image_url
-      ?
-      `
-      <img
-        class="post-image"
-        src="${escapeAttribute(post.image_url)}"
-        alt="Post image"
-        onerror="this.style.display='none'"
-      >
-      `
-      :
-      ""
-    }
-
-    <div class="post-content">
-      ${escapeHtml(post.content || "")}
-    </div>
-
-    <div class="post-actions">
-
-      <button
-        class="${myAction==="like"?"active":""}"
-        onclick="likePost(${post.id})">
-
-        ❤️ Like
-        <span id="like-count-${post.id}">
-          ${likeCount}
-        </span>
-
-      </button>
-
-      <button
-        class="${myAction==="dislike"?"active":""}"
-        onclick="dislikePost(${post.id})">
-
-        👎 Dislike
-        <span id="dislike-count-${post.id}">
-          ${dislikeCount}
-        </span>
-
-      </button>
-
-      <button
-        onclick="toggleComments(${post.id})">
-
-        💬 Comments
-        <span id="comment-count-${post.id}">
-          ${commentCount}
-        </span>
-
-      </button>
-
-      <button
-        onclick="replyPost(
-          ${post.id},
-          '${escapeJs(username)}'
-        )">
-
-        ↩️ Reply
-
-      </button>
-
-      ${
-        own
-        ?
-        `
-        <button
-          onclick="deletePost(${post.id})">
-
-          🗑️ Delete
-
-        </button>
-        `
-        :
-        `
-        <button
-          onclick="blockUser(
-            '${escapeJs(post.user_id)}'
-          )">
-
-          🚫 Block
-
-        </button>
-        `
-      }
-
-    </div>
-
     <div
-      class="comments-box"
-      id="comments-${post.id}">
+      class="post"
+      id="post-${Number(post.id)}"
+      data-created="${escapeAttribute(
+        post.created_at || ""
+      )}"
+    >
+
+      <div class="post-head">
+
+        <div class="user-info">
+
+          ${avatarHTML}
+
+          <div>
+
+            <div class="user-name">
+              ${escapeHtml(
+                name || username
+              )}
+              ${
+                name &&
+                username
+                  ? ` <span style="color:#777;font-weight:normal;">
+                      @${escapeHtml(username)}
+                    </span>`
+                  : ""
+              }
+            </div>
+
+            <div class="post-date">
+              ${formatDate(
+                post.created_at
+              )}
+            </div>
+
+          </div>
+
+        </div>
+
+        ${menuHTML}
+
+      </div>
+
+
+      <div class="post-content">
+        ${escapeHtml(
+          post.content || ""
+        )}
+      </div>
+
+      ${imageHTML}
+
+
+      <div class="post-actions">
+
+        <button
+          onclick="setPostAction(${Number(post.id)},'like')"
+        >
+          👍 ${likeCount}
+        </button>
+
+        <button
+          onclick="setPostAction(${Number(post.id)},'dislike')"
+        >
+          👎 ${dislikeCount}
+        </button>
+
+        <button
+          onclick="toggleComments(${Number(post.id)})"
+        >
+          💬 ${commentCount}
+        </button>
+
+        <button
+          onclick="replyPost('${escapeJs(username)}')"
+        >
+          ↩️ Reply
+        </button>
+
+      </div>
+
 
       <div
-        id="comments-list-${post.id}">
-      </div>
+        class="comments"
+        id="comments-${Number(post.id)}"
+      >
 
-      <div class="comment-form">
-
-        <input
-          class="comment-input"
-          id="comment-input-${post.id}"
-          placeholder="Comment likhein..."
-          maxlength="500"
+        <div
+          id="comments-list-${Number(post.id)}"
         >
+          Loading...
+        </div>
 
-        <button
-          class="comment-send"
-          onclick="sendComment(${post.id})">
+        <div class="comment-input-row">
 
-          Send
+          <input
+            id="comment-input-${Number(post.id)}"
+            type="text"
+            placeholder="Write a comment..."
+            onkeydown="
+              if(event.key==='Enter'){
+                addComment(${Number(post.id)})
+              }
+            "
+          >
 
-        </button>
+          <button
+            onclick="addComment(${Number(post.id)})"
+          >
+            Send
+          </button>
+
+        </div>
 
       </div>
 
     </div>
-
-  </article>
   `;
+
 }
 
 
@@ -1129,70 +1113,76 @@ async function renderPost(post,profile){
 
 async function createPost(){
 
-  const input=
-  document.getElementById("postText");
+  const textarea =
+    document.getElementById(
+      "postText"
+    );
 
-  const content=
-  input.value.trim();
+  const content =
+    textarea.value.trim();
 
   if(!content){
 
-    showToast("Post likhein.");
-    input.focus();
+    alert(
+      "Pehle post likhein."
+    );
+
     return;
   }
 
   if(!currentUser){
 
-    window.location.href="login.html";
+    alert(
+      "Please login first."
+    );
+
     return;
   }
 
-  let finalContent=content;
+  try{
 
-  if(currentReply){
+    const {
+      error
+    } = await supabaseClient
+      .from("posts")
+      .insert({
 
-    finalContent=
-    "↩️ Reply to @" +
-    currentReply.username +
-    "\n\n" +
-    content;
+        user_id:
+          currentUser.id,
+
+        content:
+          content,
+
+        post_type:
+          "text"
+
+      });
+
+    if(error){
+      throw error;
+    }
+
+    textarea.value = "";
+
+    cancelReply();
+
+    /*
+      New post save hone ke baad
+      complete fresh feed load.
+    */
+
+    await loadFeed();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Post send nahi ho saki:\n" +
+      error.message
+    );
 
   }
-
-  /*
-    IMPORTANT:
-    posts table mein username column nahi hai.
-    Sirf actual columns use ho rahe hain.
-  */
-
-  const {
-    error
-  }=
-  await supabaseClient
-  .from("posts")
-  .insert({
-
-    user_id:currentUser.id,
-    content:finalContent,
-    post_type:"text"
-
-  });
-
-  if(error){
-
-    showToast(error.message);
-    return;
-
-  }
-
-  input.value="";
-
-  cancelReply();
-
-  showToast("Post send ho gayi ❤️");
-
-  await loadFeed();
 
 }
 
@@ -1201,43 +1191,52 @@ async function createPost(){
    REPLY
 ========================= */
 
-function replyPost(postId,username){
+function replyPost(username){
 
-  currentReply={
-    postId:postId,
-    username:username
-  };
+  currentReplyUser =
+    username;
 
-  document.getElementById(
-    "replyUsername"
-  ).textContent="@"+username;
+  const box =
+    document.getElementById(
+      "replyBox"
+    );
 
-  document.getElementById(
-    "replyBox"
-  ).style.display="block";
+  const text =
+    document.getElementById(
+      "replyText"
+    );
 
-  const input=
-  document.getElementById("postText");
+  text.textContent =
+    "↩️ Reply to @" +
+    username;
 
-  input.focus();
+  box.style.display =
+    "block";
 
-  input.scrollIntoView({
-    behavior:"smooth",
-    block:"center"
-  });
+  const textarea =
+    document.getElementById(
+      "postText"
+    );
+
+  textarea.focus();
+
+  textarea.value =
+    "↩️ Reply to @" +
+    username +
+    "\n\n";
 
 }
 
 
 function cancelReply(){
 
-  currentReply=null;
+  currentReplyUser =
+    null;
 
-  const box=
-  document.getElementById("replyBox");
-
-  if(box)
-    box.style.display="none";
+  document.getElementById(
+    "replyBox"
+  ).style.display =
+    "none";
 
 }
 
@@ -1246,75 +1245,57 @@ function cancelReply(){
    DELETE POST
 ========================= */
 
-async function deletePost(id){
+async function deletePost(postId){
 
-  if(!currentUser)
+  if(!currentUser){
     return;
+  }
 
-  const ok=
-  confirm(
-    "Apni post delete karni hai?"
-  );
+  const ok =
+    confirm(
+      "Apni post delete karni hai?"
+    );
 
-  if(!ok)
+  if(!ok){
     return;
+  }
 
-  const {
-    error
-  }=
-  await supabaseClient
-  .from("posts")
-  .delete()
-  .eq("id",id)
-  .eq(
-    "user_id",
-    currentUser.id
-  );
+  try{
 
-  if(error){
+    const {
+      error
+    } = await supabaseClient
+      .from("posts")
+      .delete()
+      .eq(
+        "id",
+        postId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
 
-    showToast(error.message);
-    return;
+    if(error){
+      throw error;
+    }
+
+    await loadFeed();
+
+  }catch(error){
+
+    alert(
+      "Delete nahi hui:\n" +
+      error.message
+    );
 
   }
 
-  showToast("Post delete ho gayi.");
-
-  await loadFeed();
-
 }
 
 
 /* =========================
-   LIKE
-========================= */
-
-async function likePost(postId){
-
-  await setPostAction(
-    postId,
-    "like"
-  );
-
-}
-
-
-/* =========================
-   DISLIKE
-========================= */
-
-async function dislikePost(postId){
-
-  await setPostAction(
-    postId,
-    "dislike"
-  );
-
-}
-
-
-/* =========================
-   POST ACTION
+   LIKE / DISLIKE
 ========================= */
 
 async function setPostAction(
@@ -1322,185 +1303,111 @@ async function setPostAction(
   actionType
 ){
 
-  if(!currentUser)
+  if(!currentUser){
+
+    alert(
+      "Please login first."
+    );
+
     return;
+  }
 
   try{
 
-    const existing=
-    await supabaseClient
-    .from("post_actions")
-    .select("id,action_type")
-    .eq("post_id",postId)
-    .eq(
-      "user_id",
-      currentUser.id
-    )
-    .maybeSingle();
-
-    if(existing.error){
-
-      showToast(existing.error.message);
-      return;
-
-    }
-
-    if(
-      existing.data &&
-      existing.data.action_type===actionType
-    ){
-
-      const result=
-      await supabaseClient
+    const {
+      data:existing
+    } = await supabaseClient
       .from("post_actions")
-      .delete()
+      .select(
+        "id,action_type"
+      )
       .eq(
-        "id",
-        existing.data.id
-      );
-
-      if(result.error){
-
-        showToast(result.error.message);
-        return;
-
-      }
-
-    }
-    else if(existing.data){
-
-      const result=
-      await supabaseClient
-      .from("post_actions")
-      .update({
-        action_type:actionType
-      })
+        "post_id",
+        postId
+      )
       .eq(
-        "id",
-        existing.data.id
-      );
+        "user_id",
+        currentUser.id
+      )
+      .maybeSingle();
 
-      if(result.error){
 
-        showToast(result.error.message);
-        return;
+    if(existing){
+
+      if(
+        existing.action_type ===
+        actionType
+      ){
+
+        const {
+          error
+        } = await supabaseClient
+          .from("post_actions")
+          .delete()
+          .eq(
+            "id",
+            existing.id
+          );
+
+        if(error){
+          throw error;
+        }
+
+      }else{
+
+        const {
+          error
+        } = await supabaseClient
+          .from("post_actions")
+          .update({
+            action_type:
+              actionType
+          })
+          .eq(
+            "id",
+            existing.id
+          );
+
+        if(error){
+          throw error;
+        }
 
       }
 
-    }
-    else{
+    }else{
 
-      const result=
-      await supabaseClient
-      .from("post_actions")
-      .insert({
+      const {
+        error
+      } = await supabaseClient
+        .from("post_actions")
+        .insert({
 
-        post_id:postId,
-        user_id:currentUser.id,
-        action_type:actionType
+          post_id:
+            postId,
 
-      });
+          user_id:
+            currentUser.id,
 
-      if(result.error){
+          action_type:
+            actionType
 
-        showToast(result.error.message);
-        return;
+        });
 
+      if(error){
+        throw error;
       }
 
     }
 
-    await refreshPostActions(postId);
+    await loadFeed();
 
-  }catch(err){
+  }catch(error){
 
-    showToast(
-      err?.message ||
-      "Action nahi ho saki."
-    );
+    console.error(error);
 
-  }
-
-}
-
-
-/* =========================
-   REFRESH ACTIONS
-========================= */
-
-async function refreshPostActions(postId){
-
-  const {
-    data,
-    error
-  }=
-  await supabaseClient
-  .from("post_actions")
-  .select(
-    "user_id,action_type"
-  )
-  .eq("post_id",postId);
-
-  if(error)
-    return;
-
-  let likes=0;
-  let dislikes=0;
-  let mine="";
-
-  (data || [])
-  .forEach(row=>{
-
-    if(row.action_type==="like")
-      likes++;
-
-    if(row.action_type==="dislike")
-      dislikes++;
-
-    if(
-      row.user_id===currentUser.id
-    ){
-      mine=row.action_type;
-    }
-
-  });
-
-  const likeCount=
-  document.getElementById(
-    "like-count-"+postId
-  );
-
-  const dislikeCount=
-  document.getElementById(
-    "dislike-count-"+postId
-  );
-
-  if(likeCount)
-    likeCount.textContent=likes;
-
-  if(dislikeCount)
-    dislikeCount.textContent=dislikes;
-
-  const post=
-  document.getElementById(
-    "post-"+postId
-  );
-
-  if(post){
-
-    const buttons=
-    post.querySelectorAll(
-      ".post-actions button"
-    );
-
-    buttons[0]?.classList.toggle(
-      "active",
-      mine==="like"
-    );
-
-    buttons[1]?.classList.toggle(
-      "active",
-      mine==="dislike"
+    alert(
+      "Action nahi ho saki:\n" +
+      error.message
     );
 
   }
@@ -1512,298 +1419,289 @@ async function refreshPostActions(postId){
    COMMENTS
 ========================= */
 
-async function toggleComments(postId){
+async function toggleComments(
+  postId
+){
 
-  const box=
-  document.getElementById(
-    "comments-"+postId
-  );
-
-  if(!box)
-    return;
-
-  if(
-    box.style.display==="block"
-  ){
-
-    box.style.display="none";
-    openCommentPost=null;
-    return;
-
-  }
-
-  box.style.display="block";
-  openCommentPost=postId;
-
-  await loadComments(postId);
-
-}
-
-
-async function openComments(postId){
-
-  await toggleComments(postId);
-
-}
-
-
-async function loadComments(postId){
-
-  const list=
-  document.getElementById(
-    "comments-list-"+postId
-  );
-
-  if(!list)
-    return;
-
-  list.innerHTML=
-  `<div style="color:#888;padding:7px">
-    Comments load ho rahe hain...
-  </div>`;
-
-  const {
-    data,
-    error
-  }=
-  await supabaseClient
-  .from("comments")
-  .select("*")
-  .eq("post_id",postId)
-  .order(
-    "created_at",
-    {ascending:true}
-  );
-
-  if(error){
-
-    list.innerHTML=
-    `<div style="color:#b00020;padding:7px">
-      ${escapeHtml(error.message)}
-    </div>`;
-
-    return;
-  }
-
-  if(!data || !data.length){
-
-    list.innerHTML=
-    `<div style="color:#888;padding:7px">
-      Abhi koi comment nahi.
-    </div>`;
-
-    return;
-
-  }
-
-  list.innerHTML="";
-
-  data.forEach(comment=>{
-
-    const own=
-    currentUser &&
-    comment.user_id===currentUser.id;
-
-    list.insertAdjacentHTML(
-      "beforeend",
-
-      `
-      <div class="comment-item">
-
-        <div class="comment-top">
-
-          <div>
-
-            <span class="comment-user">
-              ${escapeHtml(
-                comment.username || "User"
-              )}
-            </span>
-
-            <span class="comment-date">
-              · ${formatDate(
-                comment.created_at
-              )}
-            </span>
-
-          </div>
-
-          ${
-            own
-            ?
-            `
-            <button
-              class="comment-delete"
-              onclick="deleteComment(
-                ${comment.id},
-                ${postId}
-              )">
-
-              Delete
-
-            </button>
-            `
-            :
-            ""
-          }
-
-        </div>
-
-        <div class="comment-text">
-          ${escapeHtml(
-            comment.comment || ""
-          )}
-        </div>
-
-      </div>
-      `
+  const box =
+    document.getElementById(
+      "comments-" + postId
     );
 
-  });
+  if(!box){
+    return;
+  }
+
+  if(
+    box.style.display ===
+    "block"
+  ){
+
+    box.style.display =
+      "none";
+
+    return;
+
+  }
+
+  box.style.display =
+    "block";
+
+  await loadComments(
+    postId
+  );
 
 }
 
 
-/* =========================
-   SEND COMMENT
-========================= */
+async function loadComments(
+  postId
+){
 
-async function sendComment(postId){
+  const list =
+    document.getElementById(
+      "comments-list-" +
+      postId
+    );
 
-  const input=
-  document.getElementById(
-    "comment-input-"+postId
-  );
-
-  if(!input)
+  if(!list){
     return;
-
-  const text=
-  input.value.trim();
-
-  if(!text){
-
-    showToast("Comment likhein.");
-    return;
-
   }
 
-  if(!currentUser)
-    return;
+  list.innerHTML =
+    "Loading...";
 
-  const username=
-  currentUser.user_metadata?.username ||
-  currentUser.email?.split("@")[0] ||
-  "User";
+  try{
 
-  const {
-    error
-  }=
-  await supabaseClient
-  .from("comments")
-  .insert({
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("comments")
+      .select(
+        "id,post_id,user_id,username,comment,created_at"
+      )
+      .eq(
+        "post_id",
+        postId
+      )
+      .order(
+        "created_at",
+        {
+          ascending:true
+        }
+      );
 
-    post_id:postId,
-    user_id:currentUser.id,
-    username:username,
-    comment:text
+    if(error){
+      throw error;
+    }
 
-  });
+    if(
+      !data ||
+      data.length === 0
+    ){
 
-  if(error){
+      list.innerHTML =
+        `<div style="
+          color:#888;
+          font-size:12px;
+          padding:6px;
+        ">
+          No comments yet.
+        </div>`;
 
-    showToast(error.message);
-    return;
+      return;
+    }
 
-  }
+    list.innerHTML =
+      data.map(comment=>{
 
-  input.value="";
+        const own =
+          currentUser &&
+          comment.user_id ===
+          currentUser.id;
 
-  await loadComments(postId);
+        return `
+          <div class="comment-item">
 
-  const count=
-  document.getElementById(
-    "comment-count-"+postId
-  );
+            <div class="comment-top">
 
-  if(count){
+              <span class="comment-user">
+                @${escapeHtml(
+                  comment.username ||
+                  "User"
+                )}
+              </span>
 
-    const result=
-    await supabaseClient
-    .from("comments")
-    .select(
-      "id",
-      {count:"exact",head:true}
-    )
-    .eq("post_id",postId);
+              <span class="comment-date">
+                ${formatDate(
+                  comment.created_at
+                )}
+              </span>
 
-    count.textContent=
-    result.count || 0;
+            </div>
+
+            <div style="margin-top:4px;">
+              ${escapeHtml(
+                comment.comment || ""
+              )}
+            </div>
+
+            ${
+              own
+              ? `
+                <button
+                  class="comment-delete"
+                  onclick="
+                    deleteComment(
+                      ${Number(comment.id)},
+                      ${Number(postId)}
+                    )
+                  "
+                >
+                  Delete
+                </button>
+              `
+              : ""
+            }
+
+          </div>
+        `;
+
+      }).join("");
+
+  }catch(error){
+
+    console.error(error);
+
+    list.innerHTML =
+      `<div style="color:#d00;font-size:12px;">
+        Comments load nahi huay.
+      </div>`;
 
   }
 
 }
 
 
-/* =========================
-   DELETE COMMENT
-========================= */
+async function addComment(
+  postId
+){
+
+  if(!currentUser){
+
+    alert(
+      "Please login first."
+    );
+
+    return;
+  }
+
+  const input =
+    document.getElementById(
+      "comment-input-" +
+      postId
+    );
+
+  const comment =
+    input.value.trim();
+
+  if(!comment){
+    return;
+  }
+
+  const username =
+    currentUser.user_metadata?.username ||
+    currentUser.email?.split("@")[0] ||
+    "User";
+
+  try{
+
+    const {
+      error
+    } = await supabaseClient
+      .from("comments")
+      .insert({
+
+        post_id:
+          postId,
+
+        user_id:
+          currentUser.id,
+
+        username:
+          username,
+
+        comment:
+          comment
+
+      });
+
+    if(error){
+      throw error;
+    }
+
+    input.value = "";
+
+    await loadComments(
+      postId
+    );
+
+    await loadFeed();
+
+  }catch(error){
+
+    alert(
+      "Comment send nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
 
 async function deleteComment(
   commentId,
   postId
 ){
 
-  if(!currentUser)
+  if(!currentUser){
     return;
-
-  const ok=
-  confirm(
-    "Apna comment delete karna hai?"
-  );
-
-  if(!ok)
-    return;
-
-  const {
-    error
-  }=
-  await supabaseClient
-  .from("comments")
-  .delete()
-  .eq("id",commentId)
-  .eq(
-    "user_id",
-    currentUser.id
-  );
-
-  if(error){
-
-    showToast(error.message);
-    return;
-
   }
 
-  await loadComments(postId);
+  try{
 
-  const count=
-  document.getElementById(
-    "comment-count-"+postId
-  );
+    const {
+      error
+    } = await supabaseClient
+      .from("comments")
+      .delete()
+      .eq(
+        "id",
+        commentId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      );
 
-  if(count){
+    if(error){
+      throw error;
+    }
 
-    const result=
-    await supabaseClient
-    .from("comments")
-    .select(
-      "id",
-      {count:"exact",head:true}
-    )
-    .eq("post_id",postId);
+    await loadComments(
+      postId
+    );
 
-    count.textContent=
-    result.count || 0;
+    await loadFeed();
+
+  }catch(error){
+
+    alert(
+      "Comment delete nahi hua:\n" +
+      error.message
+    );
 
   }
 
@@ -1814,54 +1712,99 @@ async function deleteComment(
    BLOCK USER
 ========================= */
 
-async function blockUser(userId){
+async function blockUser(
+  userId
+){
 
-  if(!currentUser)
-    return;
-
-  if(userId===currentUser.id)
-    return;
-
-  const ok=
-  confirm(
-    "Is user ko block karna hai?"
-  );
-
-  if(!ok)
-    return;
-
-  const {
-    error
-  }=
-  await supabaseClient
-  .from("user_blocks")
-  .insert({
-
-    blocker_id:currentUser.id,
-    blocked_id:userId
-
-  });
-
-  if(error){
-
-    if(error.code==="23505"){
-
-      showToast(
-        "Ye user pehle se blocked hai."
-      );
-
-    }else{
-
-      showToast(error.message);
-
-    }
-
+  if(!currentUser){
     return;
   }
 
-  showToast("User block ho gaya.");
+  if(
+    userId ===
+    currentUser.id
+  ){
+    return;
+  }
 
-  await loadFeed();
+  const ok =
+    confirm(
+      "Is user ko block karna hai?"
+    );
+
+  if(!ok){
+    return;
+  }
+
+  try{
+
+    const {
+      error
+    } = await supabaseClient
+      .from("user_blocks")
+      .insert({
+
+        blocker_id:
+          currentUser.id,
+
+        blocked_id:
+          userId
+
+      });
+
+    if(error){
+      throw error;
+    }
+
+    alert(
+      "User blocked."
+    );
+
+    await loadFeed();
+
+  }catch(error){
+
+    alert(
+      "Block nahi ho saka:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   IMAGE
+========================= */
+
+function imageSelected(){
+
+  const input =
+    document.getElementById(
+      "imageInput"
+    );
+
+  const output =
+    document.getElementById(
+      "selectedImageText"
+    );
+
+  if(
+    input.files &&
+    input.files.length
+  ){
+
+    output.textContent =
+      "Selected: " +
+      input.files[0].name;
+
+  }else{
+
+    output.textContent =
+      "";
+
+  }
 
 }
 
@@ -1872,57 +1815,62 @@ async function blockUser(userId){
 
 function startVoice(){
 
-  if(
-    !("webkitSpeechRecognition" in window) &&
-    !("SpeechRecognition" in window)
-  ){
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
 
-    showToast(
-      "Voice typing is browser mein available nahi."
+  if(!SpeechRecognition){
+
+    alert(
+      "Voice typing is not supported in this browser."
     );
 
     return;
   }
 
-  const Recognition=
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+  const recognition =
+    new SpeechRecognition();
 
-  const recognition=
-  new Recognition();
+  recognition.lang =
+    "ur-PK";
 
-  recognition.lang="ur-PK";
-  recognition.interimResults=false;
-  recognition.continuous=false;
+  recognition.interimResults =
+    false;
 
-  showToast(
-    "🎤 Bolna shuru karein..."
-  );
+  recognition.continuous =
+    false;
+
+  recognition.onresult =
+    function(event){
+
+      const text =
+        event.results[0][0].transcript;
+
+      const textarea =
+        document.getElementById(
+          "postText"
+        );
+
+      textarea.value +=
+        (
+          textarea.value
+            ? "\n"
+            : ""
+        ) + text;
+
+    };
+
+  recognition.onerror =
+    function(event){
+
+      console.log(
+        "Voice error:",
+        event
+      );
+
+    };
 
   recognition.start();
-
-  recognition.onresult=function(event){
-
-    const text=
-    event.results[0][0].transcript;
-
-    const input=
-    document.getElementById("postText");
-
-    input.value +=
-    (
-      input.value ? "\n" : ""
-    ) + text;
-
-  };
-
-  recognition.onerror=function(){
-
-    showToast(
-      "Voice input nahi ho saka."
-    );
-
-  };
 
 }
 
@@ -1931,68 +1879,89 @@ function startVoice(){
    TRENDING
 ========================= */
 
-function updateTrending(posts,profileMap={}){
+function updateTrending(
+  posts,
+  profiles
+){
 
-  const bar=
-  document.getElementById(
-    "trendingBar"
-  );
+  const list =
+    document.getElementById(
+      "trendingList"
+    );
 
-  if(!posts.length){
+  if(
+    !posts ||
+    posts.length === 0
+  ){
 
-    bar.textContent=
-    "🔥 Trending Posts";
+    list.innerHTML =
+      `<div class="empty">
+        No posts yet.
+      </div>`;
 
     return;
   }
 
-  const newest=
-  posts[0];
+  list.innerHTML =
+    posts
+      .slice(0,10)
+      .map(post=>{
 
-  const profile=
-  profileMap[newest.user_id];
+        const profile =
+          profiles[
+            post.user_id
+          ] || {};
 
-  const username=
-  profile?.username ||
-  (
-    newest.user_id===currentUser?.id
-    ?
-    (
-      currentUser.user_metadata?.username ||
-      currentUser.email?.split("@")[0] ||
-      "User"
-    )
-    :
-    "User"
-  );
+        const username =
+          profile.username ||
+          "User";
 
-  bar.textContent=
-  "🔥 Latest: @" +
-  username;
+        return `
+          <div class="trend-item">
+
+            <b>
+              @${escapeHtml(
+                username
+              )}
+            </b>
+
+            <div style="margin-top:4px;">
+              ${escapeHtml(
+                post.content || ""
+              ).slice(0,160)}
+            </div>
+
+            <small style="color:#888;">
+              ${formatDate(
+                post.created_at
+              )}
+            </small>
+
+          </div>
+        `;
+
+      })
+      .join("");
 
 }
 
 
-function openTrending(){
+function showTrending(){
 
-  document.querySelector(
-    ".section-title"
-  )?.scrollIntoView({
-    behavior:"smooth"
-  });
-
-  showToast(
-    "🔥 Trending Posts"
-  );
+  document.getElementById(
+    "trendingBox"
+  ).style.display =
+    "block";
 
 }
 
 
-function openStars(){
+function closeTrending(){
 
-  showToast(
-    "⭐ Stars"
-  );
+  document.getElementById(
+    "trendingBox"
+  ).style.display =
+    "none";
 
 }
 
@@ -2002,33 +1971,38 @@ function openStars(){
 ========================= */
 
 function goHome(){
-
-  window.location.href="index.html";
-
+  window.location.href =
+    "index.html";
 }
 
 function goPrivate(){
-
-  window.location.href="private.html";
-
+  window.location.href =
+    "private.html";
 }
 
 function goMehfil(){
+  window.location.href =
+    "mehfil.html";
+}
 
-  window.location.href="mehfil.html";
-
+function goProfile(){
+  window.location.href =
+    "profile.html";
 }
 
 function goMore(){
-
-  window.location.href="more.html";
-
+  window.location.href =
+    "more.html";
 }
 
-function openNotifications(){
+function goStars(){
+  window.location.href =
+    "stars.html";
+}
 
-  window.location.href="notifications.html";
-
+function goNotifications(){
+  window.location.href =
+    "notifications.html";
 }
 
 
@@ -2036,56 +2010,91 @@ function openNotifications(){
    DATE
 ========================= */
 
-function formatDate(dateString){
+function formatDate(
+  value
+){
 
-  if(!dateString)
+  if(!value){
     return "";
+  }
 
-  const date=
-  new Date(dateString);
+  const date =
+    new Date(value);
 
-  const now=
-  new Date();
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+    return "";
+  }
 
-  const seconds=
-  Math.floor(
-    (now-date)/1000
-  );
+  const now =
+    new Date();
 
-  if(seconds<60)
+  const seconds =
+    Math.floor(
+      (
+        now.getTime() -
+        date.getTime()
+      ) / 1000
+    );
+
+  if(seconds < 10){
     return "Just now";
+  }
 
-  const minutes=
-  Math.floor(seconds/60);
+  if(seconds < 60){
+    return seconds +
+      " seconds ago";
+  }
 
-  if(minutes<60)
-    return minutes+
-      " minute"+
-      (minutes===1?"":"s")+
-      " ago";
+  const minutes =
+    Math.floor(
+      seconds / 60
+    );
 
-  const hours=
-  Math.floor(minutes/60);
+  if(minutes < 60){
 
-  if(hours<24)
-    return hours+
-      " hour"+
-      (hours===1?"":"s")+
-      " ago";
+    return minutes === 1
+      ? "1 minute ago"
+      : minutes +
+        " minutes ago";
 
-  const days=
-  Math.floor(hours/24);
+  }
 
-  if(days<7)
-    return days+
-      " day"+
-      (days===1?"":"s")+
-      " ago";
+  const hours =
+    Math.floor(
+      minutes / 60
+    );
+
+  if(hours < 24){
+
+    return hours === 1
+      ? "1 hour ago"
+      : hours +
+        " hours ago";
+
+  }
+
+  const days =
+    Math.floor(
+      hours / 24
+    );
+
+  if(days < 7){
+
+    return days === 1
+      ? "1 day ago"
+      : days +
+        " days ago";
+
+  }
 
   return date.toLocaleDateString(
-    "en-PK",
+    "en-GB",
     {
-      day:"numeric",
+      day:"2-digit",
       month:"short",
       year:"numeric"
     }
@@ -2095,76 +2104,68 @@ function formatDate(dateString){
 
 
 /* =========================
-   HELPERS
+   SECURITY HELPERS
 ========================= */
 
 function escapeHtml(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(
+    value ?? ""
+  )
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
 
 }
+
 
 function escapeAttribute(value){
 
-  return String(value ?? "")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
+  return escapeHtml(
+    value
+  );
 
 }
+
 
 function escapeJs(value){
 
-  return String(value ?? "")
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'")
-    .replace(/\n/g,"\\n")
-    .replace(/\r/g,"");
-
-}
-
-function showToast(message){
-
-  const toast=
-  document.getElementById("toast");
-
-  toast.textContent=message;
-  toast.style.display="block";
-
-  clearTimeout(
-    window.toastTimer
+  return String(
+    value ?? ""
+  )
+  .replaceAll(
+    "\\",
+    "\\\\"
+  )
+  .replaceAll(
+    "'",
+    "\\'"
+  )
+  .replaceAll(
+    "\n",
+    "\\n"
+  )
+  .replaceAll(
+    "\r",
+    "\\r"
   );
-
-  window.toastTimer=
-  setTimeout(()=>{
-
-    toast.style.display="none";
-
-  },2500);
-
-}
-
-function showFatalError(message){
-
-  const loading=
-  document.getElementById("loading");
-
-  const feed=
-  document.getElementById("feed");
-
-  loading.style.display="none";
-
-  feed.innerHTML=
-  `<div class="error-box">
-    <b>RabtaHub Home Error</b><br><br>
-    ${escapeHtml(message)}
-  </div>`;
 
 }
 
@@ -2179,3 +2180,4 @@ init();
 
 </body>
 </html>
+```
