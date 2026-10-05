@@ -9,10 +9,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
+html,
 body{
   margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+}
+
+body{
   font-family:Arial,sans-serif;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   min-height:100vh;
@@ -26,6 +35,7 @@ body{
   min-height:100vh;
   background:#f5f5f8;
   padding-bottom:82px;
+  overflow-x:hidden;
 }
 
 .header{
@@ -41,6 +51,7 @@ body{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:10px;
 }
 
 .logo{
@@ -51,6 +62,7 @@ body{
 .header-actions{
   display:flex;
   gap:7px;
+  flex-shrink:0;
 }
 
 .top-btn{
@@ -70,13 +82,19 @@ body{
   border-radius:12px;
   padding:10px 12px;
   font-size:14px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 .content{
+  width:100%;
   padding:12px;
+  min-width:0;
 }
 
 .welcome{
+  width:100%;
   background:white;
   border-radius:15px;
   padding:16px;
@@ -90,6 +108,7 @@ body{
 }
 
 .create-box{
+  width:100%;
   background:white;
   padding:14px;
   border-radius:15px;
@@ -98,7 +117,9 @@ body{
 }
 
 textarea{
+  display:block;
   width:100%;
+  min-width:0;
   min-height:85px;
   border:1px solid #ddd;
   border-radius:12px;
@@ -106,16 +127,23 @@ textarea{
   font-size:15px;
   resize:vertical;
   font-family:Arial,sans-serif;
+  outline:none;
+}
+
+textarea:focus{
+  border-color:#6c5ce7;
 }
 
 .reply-box{
   display:none;
+  width:100%;
   background:#f0ecff;
   border-left:4px solid #6c5ce7;
   border-radius:10px;
   padding:9px 11px;
   margin-bottom:9px;
   font-size:13px;
+  overflow:hidden;
 }
 
 .reply-box b{
@@ -158,6 +186,7 @@ textarea{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:10px;
   margin:14px 2px 9px;
 }
 
@@ -172,26 +201,53 @@ textarea{
   border-radius:9px;
   padding:7px 10px;
   cursor:pointer;
+  flex-shrink:0;
 }
 
+#loading{
+  width:100%;
+  text-align:center;
+  padding:20px;
+  color:#777;
+}
+
+#feed{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+
+/* =========================
+   POST FIX
+========================= */
+
 .post{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
   background:white;
   border-radius:15px;
   padding:14px;
-  margin-bottom:12px;
+  margin:0 0 12px 0;
   box-shadow:0 2px 8px #00000012;
+  overflow:hidden;
 }
 
 .post-user{
   display:flex;
   align-items:center;
   gap:10px;
+  width:100%;
+  min-width:0;
 }
 
 .avatar{
   width:43px;
   height:43px;
   min-width:43px;
+  max-width:43px;
   border-radius:50%;
   background:#6c5ce7;
   color:white;
@@ -200,9 +256,11 @@ textarea{
   justify-content:center;
   font-weight:bold;
   overflow:hidden;
+  flex-shrink:0;
 }
 
 .avatar img{
+  display:block;
   width:100%;
   height:100%;
   object-fit:cover;
@@ -210,10 +268,13 @@ textarea{
 
 .user-info{
   min-width:0;
+  flex:1;
+  overflow:hidden;
 }
 
 .username{
   font-weight:bold;
+  overflow-wrap:anywhere;
   word-break:break-word;
 }
 
@@ -224,14 +285,21 @@ textarea{
 }
 
 .post-content{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
   margin:12px 0;
   white-space:pre-wrap;
   line-height:1.45;
+  overflow-wrap:anywhere;
   word-break:break-word;
 }
 
 .post-actions{
   display:flex;
+  width:100%;
+  max-width:100%;
   gap:6px;
   flex-wrap:wrap;
   border-top:1px solid #eee;
@@ -245,6 +313,7 @@ textarea{
   padding:8px 10px;
   cursor:pointer;
   font-size:13px;
+  max-width:100%;
 }
 
 .post-actions button.active{
@@ -255,16 +324,21 @@ textarea{
 
 .comments-box{
   display:none;
+  width:100%;
+  min-width:0;
   margin-top:10px;
   border-top:1px solid #eee;
   padding-top:10px;
 }
 
 .comment-item{
+  width:100%;
+  min-width:0;
   background:#f5f5f8;
   border-radius:10px;
   padding:9px;
   margin-bottom:7px;
+  overflow:hidden;
 }
 
 .comment-top{
@@ -276,6 +350,7 @@ textarea{
 .comment-user{
   font-weight:bold;
   font-size:13px;
+  overflow-wrap:anywhere;
 }
 
 .comment-date{
@@ -287,6 +362,7 @@ textarea{
   margin-top:5px;
   font-size:14px;
   white-space:pre-wrap;
+  overflow-wrap:anywhere;
   word-break:break-word;
 }
 
@@ -296,16 +372,20 @@ textarea{
   color:#d33;
   font-size:11px;
   cursor:pointer;
+  flex-shrink:0;
 }
 
 .comment-form{
   display:flex;
+  width:100%;
+  min-width:0;
   gap:7px;
   margin-top:8px;
 }
 
 .comment-input{
   flex:1;
+  min-width:0;
   border:1px solid #ddd;
   border-radius:9px;
   padding:9px;
@@ -319,9 +399,11 @@ textarea{
   border-radius:9px;
   padding:0 13px;
   cursor:pointer;
+  flex-shrink:0;
 }
 
 .empty{
+  width:100%;
   background:white;
   border-radius:14px;
   padding:22px;
@@ -330,18 +412,14 @@ textarea{
 }
 
 .error-box{
+  width:100%;
   background:#fff0f0;
   color:#b00020;
   border-radius:14px;
   padding:15px;
   line-height:1.45;
+  overflow-wrap:anywhere;
   word-break:break-word;
-}
-
-#loading{
-  text-align:center;
-  padding:20px;
-  color:#777;
 }
 
 .bottom-nav{
@@ -394,6 +472,34 @@ textarea{
   max-width:90%;
   text-align:center;
 }
+
+/* MOBILE */
+@media(max-width:480px){
+
+  .content{
+    padding:10px;
+  }
+
+  .post{
+    padding:12px;
+    border-radius:13px;
+  }
+
+  .post-actions button{
+    padding:8px 9px;
+    font-size:12px;
+  }
+
+  .create-actions{
+    gap:6px;
+  }
+
+  .action-btn{
+    padding:9px 10px;
+    font-size:13px;
+  }
+
+}
 </style>
 </head>
 
@@ -411,21 +517,15 @@ textarea{
 
       <button class="top-btn"
         onclick="openTrending()"
-        title="Trending">
-        🔥
-      </button>
+        title="Trending">🔥</button>
 
       <button class="top-btn"
         onclick="openStars()"
-        title="Stars">
-        ⭐
-      </button>
+        title="Stars">⭐</button>
 
       <button class="top-btn"
         onclick="openNotifications()"
-        title="Notifications">
-        🔔
-      </button>
+        title="Notifications">🔔</button>
 
     </div>
 
@@ -498,7 +598,8 @@ textarea{
       🏠 Home Feed
     </div>
 
-    <button class="refresh-btn"
+    <button
+      class="refresh-btn"
       onclick="loadFeed()">
       🔄 Refresh
     </button>
@@ -607,6 +708,7 @@ async function init(){
 
 /* =========================
    LOAD FEED
+   NEWEST FIRST + STABLE ORDER
 ========================= */
 
 async function loadFeed(){
@@ -642,6 +744,11 @@ async function loadFeed(){
       return;
     }
 
+    /*
+      created_at DESC = newest first
+      id DESC = same-time posts mein stable order
+    */
+
     const {
       data,
       error
@@ -651,6 +758,10 @@ async function loadFeed(){
     .select("*")
     .order(
       "created_at",
+      {ascending:false}
+    )
+    .order(
+      "id",
       {ascending:false}
     );
 
@@ -680,7 +791,29 @@ async function loadFeed(){
       return;
     }
 
-    const posts=data;
+    /*
+      Extra client-side sorting:
+      newest created_at first.
+    */
+
+    const posts=[...data].sort(
+      (a,b)=>{
+
+        const timeA=
+        new Date(a.created_at || 0).getTime();
+
+        const timeB=
+        new Date(b.created_at || 0).getTime();
+
+        if(timeB!==timeA){
+          return timeB-timeA;
+        }
+
+        return Number(b.id || 0)-
+               Number(a.id || 0);
+
+      }
+    );
 
     const userIds=[
       ...new Set(
@@ -712,6 +845,10 @@ async function loadFeed(){
     profiles.forEach(profile=>{
       profileMap[profile.id]=profile;
     });
+
+    /*
+      Sequential render keeps exact feed order.
+    */
 
     for(const post of posts){
 
@@ -827,7 +964,8 @@ async function renderPost(post,profile){
   }catch(e){}
 
   return `
-  <article class="post"
+  <article
+    class="post"
     id="post-${post.id}">
 
     <div class="post-user">
@@ -1728,7 +1866,7 @@ function startVoice(){
     window.webkitSpeechRecognition;
 
   const recognition=
-    new Recognition();
+  new Recognition();
 
   recognition.lang="ur-PK";
   recognition.interimResults=false;
@@ -1847,11 +1985,6 @@ function goPrivate(){
 
 function goMehfil(){
 
-  /*
-    Tumhari existing purani Mehfil
-    ko yahin se open kiya jayega.
-  */
-
   window.location.href=
   "mehfil.html";
 
@@ -1859,11 +1992,6 @@ function goMehfil(){
 
 
 function goMore(){
-
-  /*
-    Agar tumhari More page ka naam
-    more.html hai to ye direct open hoga.
-  */
 
   window.location.href=
   "more.html";
