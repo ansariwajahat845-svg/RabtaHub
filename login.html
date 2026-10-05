@@ -97,6 +97,10 @@ input:focus{
   cursor:pointer;
 }
 
+.show-password:hover{
+  background:transparent;
+}
+
 .login-button{
   width:100%;
   border:0;
@@ -139,4 +143,318 @@ input:focus{
 
 </head>
 
-<body
+<body>
+
+<div class="login-box">
+
+  <div class="logo">
+    RabtaHub
+  </div>
+
+  <div class="tagline">
+    Connect. Share. Belong.
+  </div>
+
+  <h2>
+    Welcome Back
+  </h2>
+
+  <form id="loginForm">
+
+    <input
+      type="text"
+      id="username"
+      placeholder="Username"
+      maxlength="20"
+      autocomplete="username"
+      required
+    >
+
+    <div class="password-wrap">
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button
+        type="button"
+        class="show-password"
+        onclick="togglePassword()">
+
+        <span id="passwordIcon">
+          👁️
+        </span>
+
+      </button>
+
+    </div>
+
+    <button
+      type="submit"
+      id="loginBtn"
+      class="login-button">
+
+      Login
+
+    </button>
+
+  </form>
+
+  <div id="message"></div>
+
+  <div class="signup-link">
+
+    Don't have an account?
+
+    <a href="signup.html">
+      Create Account
+    </a>
+
+  </div>
+
+</div>
+
+<script>
+
+/* ========================================
+   SUPABASE
+======================================== */
+
+const SUPABASE_URL =
+  "https://szmauhxiyjffjhrcruee.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* ========================================
+   SHOW / HIDE PASSWORD
+======================================== */
+
+function togglePassword(){
+
+  const input =
+    document.getElementById("password");
+
+  const icon =
+    document.getElementById("passwordIcon");
+
+  if(input.type === "password"){
+
+    input.type = "text";
+    icon.textContent = "🙈";
+
+  }else{
+
+    input.type = "password";
+    icon.textContent = "👁️";
+
+  }
+
+}
+
+
+/* ========================================
+   LOGIN
+======================================== */
+
+document
+  .getElementById("loginForm")
+  .addEventListener(
+    "submit",
+    async function(e){
+
+      e.preventDefault();
+
+      let username =
+        document
+          .getElementById("username")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const password =
+        document
+          .getElementById("password")
+          .value;
+
+      const button =
+        document.getElementById("loginBtn");
+
+      const message =
+        document.getElementById("message");
+
+      message.textContent = "";
+      message.style.color = "#666";
+
+
+      /* USERNAME VALIDATION */
+
+      if(
+        username.length < 4 ||
+        username.length > 20
+      ){
+
+        message.style.color = "#d63031";
+
+        message.textContent =
+          "Username 4 se 20 characters ka hona chahiye.";
+
+        return;
+      }
+
+
+      if(
+        !/^[a-z0-9_]+$/.test(username)
+      ){
+
+        message.style.color = "#d63031";
+
+        message.textContent =
+          "Username valid nahi hai.";
+
+        return;
+      }
+
+
+      if(!password){
+
+        message.style.color = "#d63031";
+
+        message.textContent =
+          "Password enter karein.";
+
+        return;
+      }
+
+
+      button.disabled = true;
+      button.textContent = "Logging in...";
+
+
+      try{
+
+        /* FIND USERNAME */
+
+        const {
+          data: profile,
+          error: profileError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select("id,username")
+            .eq("username", username)
+            .maybeSingle();
+
+
+        if(profileError){
+
+          throw new Error(
+            "Username check failed: " +
+            profileError.message
+          );
+
+        }
+
+
+        if(!profile){
+
+          throw new Error(
+            "Username ya password ghalat hai."
+          );
+
+        }
+
+
+        /* HIDDEN SYSTEM EMAIL */
+
+        const systemEmail =
+          username +
+          "@rbtahub.local";
+
+
+        /* LOGIN */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signInWithPassword({
+
+            email: systemEmail,
+
+            password: password
+
+          });
+
+
+        if(error){
+
+          throw new Error(
+            "Username ya password ghalat hai."
+          );
+
+        }
+
+
+        if(!data.session){
+
+          throw new Error(
+            "Login session create nahi hui."
+          );
+
+        }
+
+
+        /* SUCCESS */
+
+        message.style.color = "#00a86b";
+
+        message.textContent =
+          "Login successful!";
+
+
+        setTimeout(function(){
+
+          window.location.href = "index.html";
+
+        },700);
+
+
+      }catch(error){
+
+        console.error(
+          "LOGIN ERROR:",
+          error
+        );
+
+        message.style.color = "#d63031";
+
+        message.textContent =
+          error.message ||
+          "Login failed.";
+
+      }finally{
+
+        button.disabled = false;
+        button.textContent = "Login";
+
+      }
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
