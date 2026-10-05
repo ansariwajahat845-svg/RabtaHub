@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -9,12 +10,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
-html,
-body{
+html,body{
   margin:0;
   padding:0;
   width:100%;
@@ -218,10 +216,6 @@ textarea:focus{
   min-width:0;
 }
 
-/* =========================
-   POST FIX
-========================= */
-
 .post{
   display:block;
   width:100%;
@@ -294,6 +288,16 @@ textarea:focus{
   line-height:1.45;
   overflow-wrap:anywhere;
   word-break:break-word;
+}
+
+.post-image{
+  display:block;
+  width:100%;
+  max-width:100%;
+  max-height:500px;
+  object-fit:cover;
+  border-radius:12px;
+  margin:10px 0;
 }
 
 .post-actions{
@@ -473,7 +477,6 @@ textarea:focus{
   text-align:center;
 }
 
-/* MOBILE */
 @media(max-width:480px){
 
   .content{
@@ -498,9 +501,9 @@ textarea:focus{
     padding:9px 10px;
     font-size:13px;
   }
-
 }
 </style>
+
 </head>
 
 <body>
@@ -511,23 +514,25 @@ textarea:focus{
 
   <div class="header-row">
 
-    <div class="logo">RabtaHub</div>
+```
+<div class="logo">RabtaHub</div>
 
-    <div class="header-actions">
+<div class="header-actions">
 
-      <button class="top-btn"
-        onclick="openTrending()"
-        title="Trending">🔥</button>
+  <button class="top-btn"
+    onclick="openTrending()"
+    title="Trending">🔥</button>
 
-      <button class="top-btn"
-        onclick="openStars()"
-        title="Stars">⭐</button>
+  <button class="top-btn"
+    onclick="openStars()"
+    title="Stars">⭐</button>
 
-      <button class="top-btn"
-        onclick="openNotifications()"
-        title="Notifications">🔔</button>
+  <button class="top-btn"
+    onclick="openNotifications()"
+    title="Notifications">🔔</button>
 
-    </div>
+</div>
+```
 
   </div>
 
@@ -546,63 +551,67 @@ textarea:focus{
 
   <div class="create-box">
 
-    <div class="reply-box" id="replyBox">
+```
+<div class="reply-box" id="replyBox">
 
-      <button class="reply-cancel"
-        onclick="cancelReply()">✕</button>
+  <button class="reply-cancel"
+    onclick="cancelReply()">✕</button>
 
-      ↩️ Replying to
-      <b id="replyUsername"></b>
+  ↩️ Replying to
+  <b id="replyUsername"></b>
 
-    </div>
+</div>
 
-    <textarea
-      id="postText"
-      placeholder="What's on your mind?"
-    ></textarea>
+<textarea
+  id="postText"
+  placeholder="What's on your mind?"
+></textarea>
 
-    <div class="create-actions">
+<div class="create-actions">
 
-      <button
-        class="action-btn post-btn"
-        onclick="createPost()">
-        📝 Send Post
-      </button>
+  <button
+    class="action-btn post-btn"
+    onclick="createPost()">
+    📝 Send Post
+  </button>
 
-      <button
-        class="action-btn secondary"
-        onclick="document.getElementById('imageInput').click()">
-        🖼️ Upload Image
-      </button>
+  <button
+    class="action-btn secondary"
+    onclick="document.getElementById('imageInput').click()">
+    🖼️ Upload Image
+  </button>
 
-      <button
-        class="action-btn secondary"
-        onclick="startVoice()">
-        🎤 Voice
-      </button>
+  <button
+    class="action-btn secondary"
+    onclick="startVoice()">
+    🎤 Voice
+  </button>
 
-    </div>
+</div>
 
-    <input
-      type="file"
-      id="imageInput"
-      accept="image/*"
-      hidden
-    >
+<input
+  type="file"
+  id="imageInput"
+  accept="image/*"
+  hidden
+>
+```
 
   </div>
 
   <div class="section-row">
 
-    <div class="section-title">
-      🏠 Home Feed
-    </div>
+```
+<div class="section-title">
+  🏠 Home Feed
+</div>
 
-    <button
-      class="refresh-btn"
-      onclick="loadFeed()">
-      🔄 Refresh
-    </button>
+<button
+  class="refresh-btn"
+  onclick="loadFeed()">
+  🔄 Refresh
+</button>
+```
 
   </div>
 
@@ -618,29 +627,21 @@ textarea:focus{
 
 <nav class="bottom-nav">
 
-  <button class="nav-btn active"
-    onclick="goHome()">
-    <span class="icon">🏠</span>
-    Home
-  </button>
+<button class="nav-btn active"
+ onclick="goHome()"> <span class="icon">🏠</span>
+Home </button>
 
-  <button class="nav-btn"
-    onclick="goPrivate()">
-    <span class="icon">💬</span>
-    Private
-  </button>
+<button class="nav-btn"
+ onclick="goPrivate()"> <span class="icon">💬</span>
+Private </button>
 
-  <button class="nav-btn"
-    onclick="goMehfil()">
-    <span class="icon">💬</span>
-    Mehfil
-  </button>
+<button class="nav-btn"
+ onclick="goMehfil()"> <span class="icon">💬</span>
+Mehfil </button>
 
-  <button class="nav-btn"
-    onclick="goMore()">
-    <span class="icon">☰</span>
-    More
-  </button>
+<button class="nav-btn"
+ onclick="goMore()"> <span class="icon">☰</span>
+More </button>
 
 </nav>
 
@@ -660,9 +661,9 @@ supabase.createClient(
   SUPABASE_KEY
 );
 
-let currentUser = null;
-let currentReply = null;
-let openCommentPost = null;
+let currentUser=null;
+let currentReply=null;
+let openCommentPost=null;
 
 
 /* =========================
@@ -676,7 +677,8 @@ async function init(){
     const {
       data,
       error
-    } = await supabaseClient.auth.getSession();
+    }=
+    await supabaseClient.auth.getSession();
 
     if(error){
       showFatalError(error.message);
@@ -708,7 +710,6 @@ async function init(){
 
 /* =========================
    LOAD FEED
-   NEWEST FIRST + STABLE ORDER
 ========================= */
 
 async function loadFeed(){
@@ -720,10 +721,7 @@ async function loadFeed(){
   document.getElementById("feed");
 
   loading.style.display="block";
-
-  loading.textContent=
-  "Feed load ho rahi hai...";
-
+  loading.textContent="Feed load ho rahi hai...";
   feed.innerHTML="";
 
   try{
@@ -744,18 +742,15 @@ async function loadFeed(){
       return;
     }
 
-    /*
-      created_at DESC = newest first
-      id DESC = same-time posts mein stable order
-    */
-
     const {
       data,
       error
     }=
     await supabaseClient
     .from("posts")
-    .select("*")
+    .select(
+      "id,user_id,content,created_at,post_type,category,image_url"
+    )
     .order(
       "created_at",
       {ascending:false}
@@ -788,13 +783,9 @@ async function loadFeed(){
         Apni pehli post karein ❤️
       </div>`;
 
+      updateTrending([]);
       return;
     }
-
-    /*
-      Extra client-side sorting:
-      newest created_at first.
-    */
 
     const posts=[...data].sort(
       (a,b)=>{
@@ -805,13 +796,11 @@ async function loadFeed(){
         const timeB=
         new Date(b.created_at || 0).getTime();
 
-        if(timeB!==timeA){
+        if(timeB!==timeA)
           return timeB-timeA;
-        }
 
         return Number(b.id || 0)-
                Number(a.id || 0);
-
       }
     );
 
@@ -835,8 +824,17 @@ async function loadFeed(){
       )
       .in("id",userIds);
 
-      if(!result.error){
+      if(result.error){
+
+        console.warn(
+          "Profiles load error:",
+          result.error.message
+        );
+
+      }else{
+
         profiles=result.data || [];
+
       }
     }
 
@@ -845,10 +843,6 @@ async function loadFeed(){
     profiles.forEach(profile=>{
       profileMap[profile.id]=profile;
     });
-
-    /*
-      Sequential render keeps exact feed order.
-    */
 
     for(const post of posts){
 
@@ -864,7 +858,7 @@ async function loadFeed(){
       );
     }
 
-    updateTrending(posts);
+    updateTrending(posts,profileMap);
 
   }catch(err){
 
@@ -892,8 +886,17 @@ async function renderPost(post,profile){
 
   const username=
   profile?.username ||
-  post.username ||
-  "User";
+  (
+    post.user_id===currentUser?.id
+    ?
+    (
+      currentUser.user_metadata?.username ||
+      currentUser.email?.split("@")[0] ||
+      "User"
+    )
+    :
+    "User"
+  );
 
   const avatarUrl=
   profile?.avatar_url || "";
@@ -935,8 +938,7 @@ async function renderPost(post,profile){
         if(
           action.user_id===currentUser.id
         ){
-          myAction=
-          action.action_type;
+          myAction=action.action_type;
         }
 
       });
@@ -998,6 +1000,21 @@ async function renderPost(post,profile){
       </div>
 
     </div>
+
+    ${
+      post.image_url
+      ?
+      `
+      <img
+        class="post-image"
+        src="${escapeAttribute(post.image_url)}"
+        alt="Post image"
+        onerror="this.style.display='none'"
+      >
+      `
+      :
+      ""
+    }
 
     <div class="post-content">
       ${escapeHtml(post.content || "")}
@@ -1062,7 +1079,7 @@ async function renderPost(post,profile){
         `
         <button
           onclick="blockUser(
-            '${escapeAttribute(post.user_id)}'
+            '${escapeJs(post.user_id)}'
           )">
 
           🚫 Block
@@ -1120,20 +1137,17 @@ async function createPost(){
   input.value.trim();
 
   if(!content){
+
     showToast("Post likhein.");
     input.focus();
     return;
   }
 
   if(!currentUser){
+
     window.location.href="login.html";
     return;
   }
-
-  const username=
-  currentUser.user_metadata?.username ||
-  currentUser.email?.split("@")[0] ||
-  "User";
 
   let finalContent=content;
 
@@ -1147,6 +1161,12 @@ async function createPost(){
 
   }
 
+  /*
+    IMPORTANT:
+    posts table mein username column nahi hai.
+    Sirf actual columns use ho rahe hain.
+  */
+
   const {
     error
   }=
@@ -1155,8 +1175,8 @@ async function createPost(){
   .insert({
 
     user_id:currentUser.id,
-    username:username,
-    content:finalContent
+    content:finalContent,
+    post_type:"text"
 
   });
 
@@ -1320,8 +1340,10 @@ async function setPostAction(
     .maybeSingle();
 
     if(existing.error){
+
       showToast(existing.error.message);
       return;
+
     }
 
     if(
@@ -1339,8 +1361,10 @@ async function setPostAction(
       );
 
       if(result.error){
+
         showToast(result.error.message);
         return;
+
       }
 
     }
@@ -1358,8 +1382,10 @@ async function setPostAction(
       );
 
       if(result.error){
+
         showToast(result.error.message);
         return;
+
       }
 
     }
@@ -1377,8 +1403,10 @@ async function setPostAction(
       });
 
       if(result.error){
+
         showToast(result.error.message);
         return;
+
       }
 
     }
@@ -1398,7 +1426,7 @@ async function setPostAction(
 
 
 /* =========================
-   REFRESH LIKE/DISLIKE
+   REFRESH ACTIONS
 ========================= */
 
 async function refreshPostActions(postId){
@@ -1655,8 +1683,10 @@ async function sendComment(postId){
   input.value.trim();
 
   if(!text){
+
     showToast("Comment likhein.");
     return;
+
   }
 
   if(!currentUser)
@@ -1815,9 +1845,7 @@ async function blockUser(userId){
 
   if(error){
 
-    if(
-      error.code==="23505"
-    ){
+    if(error.code==="23505"){
 
       showToast(
         "Ye user pehle se blocked hai."
@@ -1830,12 +1858,9 @@ async function blockUser(userId){
     }
 
     return;
-
   }
 
-  showToast(
-    "User block ho gaya."
-  );
+  showToast("User block ho gaya.");
 
   await loadFeed();
 
@@ -1858,7 +1883,6 @@ function startVoice(){
     );
 
     return;
-
   }
 
   const Recognition=
@@ -1884,9 +1908,7 @@ function startVoice(){
     event.results[0][0].transcript;
 
     const input=
-    document.getElementById(
-      "postText"
-    );
+    document.getElementById("postText");
 
     input.value +=
     (
@@ -1910,7 +1932,7 @@ function startVoice(){
    TRENDING
 ========================= */
 
-function updateTrending(posts){
+function updateTrending(posts,profileMap={}){
 
   const bar=
   document.getElementById(
@@ -1923,14 +1945,27 @@ function updateTrending(posts){
     "🔥 Trending Posts";
 
     return;
-
   }
 
   const newest=
   posts[0];
 
+  const profile=
+  profileMap[newest.user_id];
+
   const username=
-  newest.username || "User";
+  profile?.username ||
+  (
+    newest.user_id===currentUser?.id
+    ?
+    (
+      currentUser.user_metadata?.username ||
+      currentUser.email?.split("@")[0] ||
+      "User"
+    )
+    :
+    "User"
+  );
 
   bar.textContent=
   "🔥 Latest: @" +
@@ -1969,40 +2004,31 @@ function openStars(){
 
 function goHome(){
 
-  window.location.href=
-  "index.html";
+  window.location.href="index.html";
 
 }
-
 
 function goPrivate(){
 
-  window.location.href=
-  "private.html";
+  window.location.href="private.html";
 
 }
-
 
 function goMehfil(){
 
-  window.location.href=
-  "mehfil.html";
+  window.location.href="mehfil.html";
 
 }
-
 
 function goMore(){
 
-  window.location.href=
-  "more.html";
+  window.location.href="more.html";
 
 }
 
-
 function openNotifications(){
 
-  window.location.href=
-  "notifications.html";
+  window.location.href="notifications.html";
 
 }
 
@@ -2084,7 +2110,6 @@ function escapeHtml(value){
 
 }
 
-
 function escapeAttribute(value){
 
   return String(value ?? "")
@@ -2095,18 +2120,15 @@ function escapeAttribute(value){
 
 }
 
-
 function escapeJs(value){
 
   return String(value ?? "")
     .replace(/\\/g,"\\\\")
     .replace(/'/g,"\\'")
-    .replace(/"/g,"&quot;")
     .replace(/\n/g,"\\n")
     .replace(/\r/g,"");
 
 }
-
 
 function showToast(message){
 
@@ -2128,7 +2150,6 @@ function showToast(message){
   },2500);
 
 }
-
 
 function showFatalError(message){
 
