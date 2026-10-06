@@ -8,9 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
   margin:0;
@@ -35,9 +33,7 @@ body{
   padding-bottom:78px;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
@@ -85,7 +81,7 @@ body{
   background:rgba(255,255,255,.18);
   color:white;
   border-radius:18px;
-  padding:6px 6px;
+  padding:6px;
   font-size:10px;
   cursor:pointer;
   white-space:nowrap;
@@ -94,20 +90,17 @@ body{
 }
 
 .share-header-btn{
-  background:white !important;
-  color:#6c5ce7 !important;
+  background:white!important;
+  color:#6c5ce7!important;
   font-weight:bold;
-  padding:7px 8px !important;
-  box-shadow:0 2px 7px rgba(0,0,0,.15);
+  padding:7px 8px!important;
 }
 
 .header-buttons button:active{
   transform:scale(.96);
 }
 
-/* =========================
-   ONLINE USERS
-========================= */
+/* ONLINE */
 
 .online-section{
   background:white;
@@ -176,9 +169,7 @@ body{
   box-shadow:0 0 0 2px white;
 }
 
-/* =========================
-   WELCOME
-========================= */
+/* WELCOME */
 
 .welcome{
   background:white;
@@ -190,9 +181,7 @@ body{
   box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-/* =========================
-   CREATE BOX
-========================= */
+/* CREATE */
 
 .create-box{
   background:white;
@@ -242,14 +231,11 @@ textarea{
   color:white;
 }
 
-.upload-btn,
-.voice-btn{
+.upload-btn,.voice-btn{
   background:#eee;
 }
 
-/* =========================
-   FEED
-========================= */
+/* FEED */
 
 .feed-header{
   display:flex;
@@ -263,6 +249,7 @@ textarea{
 
 #feed{
   padding:0 12px;
+  min-height:50px;
 }
 
 .post{
@@ -340,9 +327,7 @@ textarea{
   margin-top:8px;
 }
 
-/* =========================
-   POST ACTIONS
-========================= */
+/* ACTIONS */
 
 .post-actions{
   display:flex;
@@ -370,20 +355,14 @@ textarea{
 }
 
 .delete-post-btn{
-  width:100% !important;
-  flex:1 1 100% !important;
-  background:#ffe5e5 !important;
+  width:100%!important;
+  flex:1 1 100%!important;
+  background:#ffe5e5!important;
   color:#d00000;
   font-weight:bold;
 }
 
-.delete-post-btn:active{
-  transform:scale(.98);
-}
-
-/* =========================
-   COMMENTS
-========================= */
+/* COMMENTS */
 
 .comments{
   display:none;
@@ -441,20 +420,15 @@ textarea{
   padding:8px 14px;
 }
 
-/* =========================
-   LOADING
-========================= */
+/* LOADING */
 
-.empty,
-.loading{
+.empty,.loading{
   text-align:center;
   padding:25px 10px;
   color:#777;
 }
 
-/* =========================
-   BOTTOM NAV
-========================= */
+/* BOTTOM NAV */
 
 .bottom-nav{
   position:fixed;
@@ -497,12 +471,9 @@ textarea{
   font-weight:bold;
 }
 
-/* =========================
-   TRENDING / SHARE
-========================= */
+/* POPUPS */
 
-.trending-box,
-.share-box{
+.trending-box,.share-box{
   display:none;
   position:fixed;
   inset:0;
@@ -510,8 +481,7 @@ textarea{
   z-index:50;
 }
 
-.trending-content,
-.share-content{
+.trending-content,.share-content{
   width:92%;
   max-width:600px;
   max-height:80vh;
@@ -522,15 +492,13 @@ textarea{
   padding:15px;
 }
 
-.trending-header,
-.share-header{
+.trending-header,.share-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-.trending-header button,
-.share-header button{
+.trending-header button,.share-header button{
   border:0;
   background:#eee;
   border-radius:20px;
@@ -542,9 +510,7 @@ textarea{
   border-bottom:1px solid #eee;
 }
 
-/* =========================
-   SHARE
-========================= */
+/* SHARE */
 
 .share-option{
   width:100%;
@@ -557,10 +523,6 @@ textarea{
   font-size:15px;
   font-weight:bold;
   cursor:pointer;
-}
-
-.share-option:active{
-  transform:scale(.98);
 }
 
 .share-form{
@@ -621,12 +583,9 @@ textarea{
   display:none;
 }
 
-/* =========================
-   MOBILE FIX
-========================= */
+/* MOBILE */
 
 @media(max-width:430px){
-
   .header{
     padding:9px 5px;
   }
@@ -646,12 +605,11 @@ textarea{
   .header-buttons button{
     font-size:8.5px;
     padding:6px 3px;
-    border-radius:15px;
   }
 
   .header-buttons .share-header-btn{
     font-size:8.5px;
-    padding:6px 4px !important;
+    padding:6px 4px!important;
   }
 
   .post-actions{
@@ -677,7 +635,6 @@ textarea{
 }
 
 @media(max-width:360px){
-
   .logo{
     font-size:14px;
   }
@@ -689,7 +646,7 @@ textarea{
 
   .header-buttons .share-header-btn{
     font-size:7.5px;
-    padding:6px 3px !important;
+    padding:6px 3px!important;
   }
 
   .bottom-nav button{
@@ -704,7 +661,6 @@ textarea{
 <div class="app">
 
 <div class="header">
-
   <div class="header-top">
 
     <div class="logo">
@@ -731,7 +687,6 @@ textarea{
     </div>
 
   </div>
-
 </div>
 
 <!-- ONLINE USERS -->
@@ -743,11 +698,9 @@ textarea{
   </div>
 
   <div id="onlineUsers" class="online-users">
-
     <div style="color:#888;font-size:12px;padding:5px">
       Online users loading...
     </div>
-
   </div>
 
 </div>
@@ -823,11 +776,9 @@ textarea{
 </div>
 
 <div id="feed">
-
   <div class="loading">
     Loading feed...
   </div>
-
 </div>
 
 </div>
@@ -892,39 +843,14 @@ textarea{
         id="imageCategory"
         class="category-select"
       >
-
-        <option value="">
-          Select category
-        </option>
-
-        <option value="General">
-          General
-        </option>
-
-        <option value="Funny">
-          Funny
-        </option>
-
-        <option value="News">
-          News
-        </option>
-
-        <option value="Islamic">
-          Islamic
-        </option>
-
-        <option value="Poetry">
-          Poetry
-        </option>
-
-        <option value="Help">
-          Help
-        </option>
-
-        <option value="Other">
-          Other
-        </option>
-
+        <option value="">Select category</option>
+        <option value="General">General</option>
+        <option value="Funny">Funny</option>
+        <option value="News">News</option>
+        <option value="Islamic">Islamic</option>
+        <option value="Poetry">Poetry</option>
+        <option value="Help">Help</option>
+        <option value="Other">Other</option>
       </select>
 
       <label class="category-label">
@@ -1072,7 +998,9 @@ async function init(){
     }
 
     await loadOnlineUsers();
-    await loadFeed();
+
+    /* Initial load only */
+    await loadFeed(false);
 
   }catch(error){
 
@@ -1312,15 +1240,11 @@ async function renderOnlineUsers(){
             class="online-user"
             onclick="openOnlineProfile('${escapeJs(id)}')"
           >
-
             ${avatarHTML}
-
             <span class="online-dot"></span>
-
             <span class="online-user-name">
               ${escapeHtml(username)}
             </span>
-
           </div>
         `;
 
@@ -1341,17 +1265,42 @@ function openOnlineProfile(userId){
 }
 
 
-/* FEED */
+/* FEED
+   IMPORTANT:
+   preserveScroll prevents the page from
+   jumping when a new post/action happens.
+*/
 
-async function loadFeed(){
+async function loadFeed(
+  preserveScroll=true
+){
 
   const feed =
     document.getElementById("feed");
 
-  feed.innerHTML =
-    `<div class="loading">
-      Loading feed...
-    </div>`;
+  /* Save exact current scroll */
+  const savedScrollY =
+    window.scrollY;
+
+  /*
+    Don't replace the existing feed with
+    "Loading feed..." every time.
+    That replacement was causing the jump.
+  */
+  const hasExistingPosts =
+    !!feed.querySelector(".post");
+
+  if(
+    !preserveScroll ||
+    !hasExistingPosts
+  ){
+
+    feed.innerHTML =
+      `<div class="loading">
+        Loading feed...
+      </div>`;
+
+  }
 
   try{
 
@@ -1388,6 +1337,19 @@ async function loadFeed(){
         `<div class="empty">
           Abhi koi post nahi hai.
         </div>`;
+
+      if(preserveScroll){
+
+        requestAnimationFrame(function(){
+
+          window.scrollTo(
+            0,
+            savedScrollY
+          );
+
+        });
+
+      }
 
       return;
 
@@ -1434,24 +1396,68 @@ async function loadFeed(){
 
     }
 
-    feed.innerHTML="";
+    /*
+      Build feed in a temporary container
+      instead of visibly showing Loading feed.
+    */
+    const temp =
+      document.createElement("div");
 
     for(const post of posts){
 
       const html =
         await renderPost(post);
 
-      feed.insertAdjacentHTML(
+      temp.insertAdjacentHTML(
         "beforeend",
         html
       );
 
     }
 
+    /*
+      Replace feed only after everything
+      is completely ready.
+    */
+    feed.innerHTML =
+      temp.innerHTML;
+
     updateTrending(
       posts,
       profileMap
     );
+
+    /*
+      Restore exact scroll position after
+      DOM replacement.
+    */
+    if(preserveScroll){
+
+      requestAnimationFrame(function(){
+
+        window.scrollTo({
+          top:savedScrollY,
+          left:0,
+          behavior:"auto"
+        });
+
+      });
+
+      /*
+        Second restore handles mobile
+        browser layout settling.
+      */
+      setTimeout(function(){
+
+        window.scrollTo({
+          top:savedScrollY,
+          left:0,
+          behavior:"auto"
+        });
+
+      },50);
+
+    }
 
   }catch(error){
 
@@ -1460,15 +1466,23 @@ async function loadFeed(){
       error
     );
 
-    feed.innerHTML =
-      `<div class="empty">
-        Feed load nahi ho saki.<br>
-        <small>
-          ${escapeHtml(
-            error.message || ""
-          )}
-        </small>
-      </div>`;
+    /*
+      Only show error if there wasn't
+      already a working feed.
+    */
+    if(!hasExistingPosts){
+
+      feed.innerHTML =
+        `<div class="empty">
+          Feed load nahi ho saki.<br>
+          <small>
+            ${escapeHtml(
+              error.message || ""
+            )}
+          </small>
+        </div>`;
+
+    }
 
   }
 
@@ -1606,9 +1620,7 @@ async function renderPost(post){
     imageHTML =
       `<img
         class="post-image"
-        src="${escapeAttribute(
-          post.image_url
-        )}"
+        src="${escapeAttribute(post.image_url)}"
         alt="Post image"
       >`;
 
@@ -1622,9 +1634,7 @@ async function renderPost(post){
       `<div class="post-menu">
 
         <button
-          onclick="blockUser('${escapeJs(
-            post.user_id
-          )}')"
+          onclick="blockUser('${escapeJs(post.user_id)}')"
         >
           ⋮
         </button>
@@ -1637,9 +1647,7 @@ async function renderPost(post){
     post.category
     ?
     `<div class="post-category">
-      #${escapeHtml(
-        post.category
-      )}
+      #${escapeHtml(post.category)}
     </div>`
     :
     "";
@@ -1673,9 +1681,7 @@ async function renderPost(post){
                     font-weight:normal
                   "
                 >
-                  @${escapeHtml(
-                    username
-                  )}
+                  @${escapeHtml(username)}
                 </span>`
                 :
                 ""
@@ -1684,9 +1690,7 @@ async function renderPost(post){
             </div>
 
             <div class="post-date">
-              ${formatDate(
-                post.created_at
-              )}
+              ${formatDate(post.created_at)}
             </div>
 
           </div>
@@ -1703,9 +1707,7 @@ async function renderPost(post){
         post.content
         ?
         `<div class="post-content">
-          ${escapeHtml(
-            post.content
-          )}
+          ${escapeHtml(post.content)}
         </div>`
         :
         ""
@@ -1721,9 +1723,7 @@ async function renderPost(post){
 
           <button
             class="delete-post-btn"
-            onclick="deletePost(
-              ${Number(post.id)}
-            )"
+            onclick="deletePost(${Number(post.id)})"
           >
             🗑️ Delete
           </button>
@@ -1797,9 +1797,7 @@ async function renderPost(post){
           >
 
           <button
-            onclick="addComment(
-              ${Number(post.id)}
-            )"
+            onclick="addComment(${Number(post.id)})"
           >
             Send
           </button>
@@ -1882,6 +1880,8 @@ function showImagePost(){
 }
 
 
+/* TEXT SHARE */
+
 async function submitTextPost(){
 
   if(!currentUser){
@@ -1901,10 +1901,7 @@ async function submitTextPost(){
 
   if(!content){
 
-    alert(
-      "Pehle text likhein."
-    );
-
+    alert("Pehle text likhein.");
     return;
 
   }
@@ -1915,11 +1912,9 @@ async function submitTextPost(){
       await supabaseClient
         .from("posts")
         .insert({
-
           user_id:currentUser.id,
           content:content,
           post_type:"text"
-
         });
 
     if(error) throw error;
@@ -1928,7 +1923,11 @@ async function submitTextPost(){
 
     closeShare();
 
-    await loadFeed();
+    /*
+      IMPORTANT:
+      preserveScroll=true prevents jumping.
+    */
+    await loadFeed(true);
 
   }catch(error){
 
@@ -1968,9 +1967,7 @@ function shareImageSelected(){
       !file.type.startsWith("image/")
     ){
 
-      alert(
-        "Sirf image select karein."
-      );
+      alert("Sirf image select karein.");
 
       input.value="";
       return;
@@ -2004,10 +2001,7 @@ async function submitImagePost(){
 
   if(!currentUser){
 
-    alert(
-      "Please login first."
-    );
-
+    alert("Please login first.");
     return;
 
   }
@@ -2042,10 +2036,7 @@ async function submitImagePost(){
     !input.files.length
   ){
 
-    alert(
-      "Pehle image select karein."
-    );
-
+    alert("Pehle image select karein.");
     return;
 
   }
@@ -2132,9 +2123,7 @@ async function submitImagePost(){
         });
 
     if(postError){
-
       throw postError;
-
     }
 
     document.getElementById(
@@ -2159,7 +2148,7 @@ async function submitImagePost(){
 
     closeShare();
 
-    await loadFeed();
+    await loadFeed(true);
 
   }catch(error){
 
@@ -2192,20 +2181,14 @@ async function createPost(){
 
   if(!content){
 
-    alert(
-      "Pehle post likhein."
-    );
-
+    alert("Pehle post likhein.");
     return;
 
   }
 
   if(!currentUser){
 
-    alert(
-      "Please login first."
-    );
-
+    alert("Please login first.");
     return;
 
   }
@@ -2229,7 +2212,7 @@ async function createPost(){
 
     cancelReply();
 
-    await loadFeed();
+    await loadFeed(true);
 
   }catch(error){
 
@@ -2264,8 +2247,7 @@ function replyPost(username){
     "↩️ Reply to @" +
     username;
 
-  box.style.display =
-    "block";
+  box.style.display="block";
 
   const textarea =
     document.getElementById(
@@ -2321,7 +2303,7 @@ async function deletePost(postId){
 
     if(error) throw error;
 
-    await loadFeed();
+    await loadFeed(true);
 
   }catch(error){
 
@@ -2344,10 +2326,7 @@ async function setPostAction(
 
   if(!currentUser){
 
-    alert(
-      "Please login first."
-    );
-
+    alert("Please login first.");
     return;
 
   }
@@ -2424,7 +2403,7 @@ async function setPostAction(
 
     }
 
-    await loadFeed();
+    await loadFeed(true);
 
   }catch(error){
 
@@ -2440,9 +2419,7 @@ async function setPostAction(
 
 /* COMMENTS */
 
-async function toggleComments(
-  postId
-){
+async function toggleComments(postId){
 
   const box =
     document.getElementById(
@@ -2462,16 +2439,12 @@ async function toggleComments(
 
   box.style.display="block";
 
-  await loadComments(
-    postId
-  );
+  await loadComments(postId);
 
 }
 
 
-async function loadComments(
-  postId
-){
+async function loadComments(postId){
 
   const list =
     document.getElementById(
@@ -2508,9 +2481,7 @@ async function loadComments(
         )
         .order(
           "created_at",
-          {
-            ascending:true
-          }
+          {ascending:true}
         );
 
     if(error) throw error;
@@ -2683,9 +2654,7 @@ async function loadComments(
                           font-size:11px
                         "
                       >
-                        @${escapeHtml(
-                          username
-                        )}
+                        @${escapeHtml(username)}
                       </span>`
                       :
                       ""
@@ -2760,16 +2729,11 @@ async function loadComments(
 }
 
 
-async function addComment(
-  postId
-){
+async function addComment(postId){
 
   if(!currentUser){
 
-    alert(
-      "Please login first."
-    );
-
+    alert("Please login first.");
     return;
 
   }
@@ -2803,9 +2767,7 @@ async function addComment(
 
     input.value="";
 
-    await loadComments(
-      postId
-    );
+    await loadComments(postId);
 
     const {count} =
       await supabaseClient
@@ -2829,10 +2791,8 @@ async function addComment(
       );
 
     if(btn){
-
       btn.textContent =
         "💬 "+(count || 0);
-
     }
 
   }catch(error){
@@ -2879,9 +2839,7 @@ async function deleteComment(
 
     if(error) throw error;
 
-    await loadComments(
-      postId
-    );
+    await loadComments(postId);
 
     const {count} =
       await supabaseClient
@@ -2905,10 +2863,8 @@ async function deleteComment(
       );
 
     if(btn){
-
       btn.textContent =
         "💬 "+(count || 0);
-
     }
 
   }catch(error){
@@ -2925,16 +2881,12 @@ async function deleteComment(
 
 /* BLOCK */
 
-async function blockUser(
-  userId
-){
+async function blockUser(userId){
 
   if(!currentUser)
     return;
 
-  if(
-    userId===currentUser.id
-  )
+  if(userId===currentUser.id)
     return;
 
   const ok =
@@ -2958,11 +2910,9 @@ async function blockUser(
 
     if(error) throw error;
 
-    alert(
-      "User blocked."
-    );
+    alert("User blocked.");
 
-    await loadFeed();
+    await loadFeed(true);
 
   }catch(error){
 
@@ -3105,9 +3055,7 @@ function updateTrending(
             <div class="trend-item">
 
               <b>
-                @${escapeHtml(
-                  username
-                )}
+                @${escapeHtml(username)}
               </b>
 
               ${
@@ -3128,17 +3076,13 @@ function updateTrending(
                 ""
               }
 
-              <div
-                style="margin-top:4px"
-              >
+              <div style="margin-top:4px">
                 ${escapeHtml(
                   post.content || ""
                 ).slice(0,160)}
               </div>
 
-              <small
-                style="color:#888"
-              >
+              <small style="color:#888">
                 ${formatDate(
                   post.created_at
                 )}
@@ -3238,9 +3182,7 @@ function formatDate(value){
       " seconds ago";
 
   const minutes =
-    Math.floor(
-      seconds/60
-    );
+    Math.floor(seconds/60);
 
   if(minutes<60)
     return minutes===1
@@ -3249,9 +3191,7 @@ function formatDate(value){
         " minutes ago";
 
   const hours =
-    Math.floor(
-      minutes/60
-    );
+    Math.floor(minutes/60);
 
   if(hours<24)
     return hours===1
@@ -3260,9 +3200,7 @@ function formatDate(value){
         " hours ago";
 
   const days =
-    Math.floor(
-      hours/24
-    );
+    Math.floor(hours/24);
 
   if(days<7)
     return days===1
@@ -3287,26 +3225,11 @@ function formatDate(value){
 function escapeHtml(value){
 
   return String(value ?? "")
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
@@ -3317,22 +3240,10 @@ function escapeAttribute(value){
 function escapeJs(value){
 
   return String(value ?? "")
-    .replaceAll(
-      "\\",
-      "\\\\"
-    )
-    .replaceAll(
-      "'",
-      "\\'"
-    )
-    .replaceAll(
-      "\n",
-      "\\n"
-    )
-    .replaceAll(
-      "\r",
-      "\\r"
-    );
+    .replaceAll("\\","\\\\")
+    .replaceAll("'","\\'")
+    .replaceAll("\n","\\n")
+    .replaceAll("\r","\\r");
 
 }
 
