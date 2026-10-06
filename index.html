@@ -2641,24 +2641,47 @@ function replyPost(username){
       "replyText"
     );
 
-  text.textContent =
-    "↩️ Reply to @" +
-    username;
-
-  box.style.display =
-    "block";
-
   const textarea =
     document.getElementById(
       "postText"
     );
 
-  textarea.focus();
+  /*
+     HOME POST REPLY:
+     Sirf @Username message box
+  */
 
-  textarea.value =
-    "↩️ Reply to @" +
-    username +
-    "\n\n";
+  if(text){
+
+    text.textContent =
+      "@" + username;
+
+  }
+
+  if(box){
+
+    box.style.display =
+      "block";
+
+  }
+
+  if(textarea){
+
+    textarea.value =
+      "@" + username + " ";
+
+    textarea.focus();
+
+    try{
+
+      textarea.setSelectionRange(
+        textarea.value.length,
+        textarea.value.length
+      );
+
+    }catch(e){}
+
+  }
 
 }
 
@@ -2668,10 +2691,17 @@ function cancelReply(){
   currentReplyUser =
     null;
 
-  document.getElementById(
-    "replyBox"
-  ).style.display =
-    "none";
+  const box =
+    document.getElementById(
+      "replyBox"
+    );
+
+  if(box){
+
+    box.style.display =
+      "none";
+
+  }
 
 }
 
