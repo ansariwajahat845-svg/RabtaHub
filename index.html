@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,6 +63,77 @@ body{
   cursor:pointer;
 }
 
+/* =========================
+   ONLINE USERS
+========================= */
+
+.online-section{
+  background:white;
+  margin:10px 12px 0;
+  padding:10px 12px;
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.online-title{
+  font-size:13px;
+  font-weight:bold;
+  color:#555;
+  margin-bottom:8px;
+}
+
+.online-users{
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  white-space:nowrap;
+  scrollbar-width:none;
+  padding-bottom:2px;
+}
+
+.online-users::-webkit-scrollbar{
+  display:none;
+}
+
+.online-user{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:#f5f5f5;
+  border-radius:22px;
+  padding:4px 10px 4px 4px;
+  cursor:pointer;
+}
+
+.online-user-avatar{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#ddd;
+  flex-shrink:0;
+}
+
+.online-user-name{
+  font-size:12px;
+  font-weight:bold;
+  max-width:90px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.online-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#22c55e;
+  flex-shrink:0;
+  box-shadow:0 0 0 2px white;
+}
+
 .welcome{
   background:white;
   margin:12px;
@@ -120,10 +192,7 @@ textarea{
   color:white;
 }
 
-.upload-btn{
-  background:#eee;
-}
-
+.upload-btn,
 .voice-btn{
   background:#eee;
 }
@@ -240,11 +309,6 @@ textarea{
   font-size:13px;
 }
 
-.comment-top{
-  display:flex;
-  justify-content:space-between;
-}
-
 .comment-user{
   font-weight:bold;
 }
@@ -284,15 +348,10 @@ textarea{
   padding:8px 14px;
 }
 
-.empty{
-  text-align:center;
-  padding:30px 10px;
-  color:#777;
-}
-
+.empty,
 .loading{
   text-align:center;
-  padding:25px;
+  padding:25px 10px;
   color:#777;
 }
 
@@ -373,40 +432,83 @@ textarea{
 <div class="app">
 
   <div class="header">
+
     <div class="header-top">
 
-      <div class="logo">ChatZone 💬</div>
+      <div class="logo">
+        ChatZone 💬
+      </div>
 
       <div class="header-buttons">
+
         <button onclick="showTrending()">🔥</button>
+
         <button onclick="goStars()">⭐</button>
+
         <button onclick="goNotifications()">🔔</button>
+
       </div>
 
     </div>
+
   </div>
+
+
+  <!-- ONLINE USERS -->
+
+  <div class="online-section">
+
+    <div class="online-title">
+      🟢 <span id="onlineCount">0</span> Users Online
+    </div>
+
+    <div
+      id="onlineUsers"
+      class="online-users"
+    >
+      <div style="
+        color:#888;
+        font-size:12px;
+        padding:5px;
+      ">
+        Online users loading...
+      </div>
+    </div>
+
+  </div>
+
 
   <div class="welcome">
     Welcome to ChatZone 💬 ❤️
   </div>
 
+
   <div class="create-box">
 
     <div id="replyBox" class="reply-box">
+
       <span id="replyText"></span>
 
       <button
         onclick="cancelReply()"
-        style="float:right;border:0;background:none;color:#d00;"
+        style="
+          float:right;
+          border:0;
+          background:none;
+          color:#d00;
+        "
       >
         ✕
       </button>
+
     </div>
+
 
     <textarea
       id="postText"
       placeholder="What's on your mind?"
     ></textarea>
+
 
     <div class="create-actions">
 
@@ -419,7 +521,11 @@ textarea{
 
       <button
         class="upload-btn"
-        onclick="document.getElementById('imageInput').click()"
+        onclick="
+          document
+          .getElementById('imageInput')
+          .click()
+        "
       >
         🖼️ Upload Image
       </button>
@@ -433,6 +539,7 @@ textarea{
 
     </div>
 
+
     <input
       id="imageInput"
       class="hidden-input"
@@ -441,9 +548,14 @@ textarea{
       onchange="imageSelected()"
     >
 
+
     <div
       id="selectedImageText"
-      style="font-size:12px;color:#777;margin-top:7px;"
+      style="
+        font-size:12px;
+        color:#777;
+        margin-top:7px;
+      "
     ></div>
 
   </div>
@@ -455,13 +567,17 @@ textarea{
 
 
   <div id="feed">
+
     <div class="loading">
       Loading feed...
     </div>
+
   </div>
 
 </div>
 
+
+<!-- TRENDING -->
 
 <div id="trendingBox" class="trending-box">
 
@@ -485,6 +601,8 @@ textarea{
 
 </div>
 
+
+<!-- BOTTOM NAV -->
 
 <div class="bottom-nav">
 
@@ -530,6 +648,8 @@ let profileMap = {};
 let currentReplyUser = null;
 let currentPosts = [];
 
+let onlineChannel = null;
+
 
 /* =========================
    INIT
@@ -560,6 +680,8 @@ async function init(){
       return;
     }
 
+    await loadOnlineUsers();
+
     await loadFeed();
 
   }catch(error){
@@ -582,13 +704,376 @@ async function init(){
 
 
 /* =========================
+   ONLINE USERS
+========================= */
+
+async function loadOnlineUsers(){
+
+  if(!currentUser){
+    return;
+  }
+
+  try{
+
+    if(onlineChannel){
+
+      try{
+        await supabaseClient
+          .removeChannel(
+            onlineChannel
+          );
+      }catch(e){}
+
+    }
+
+
+    onlineChannel =
+      supabaseClient.channel(
+        "chatzone-online-users",
+        {
+          config:{
+            presence:{
+              key:currentUser.id
+            }
+          }
+        }
+      );
+
+
+    onlineChannel
+      .on(
+        "presence",
+        {
+          event:"sync"
+        },
+        async function(){
+
+          await renderOnlineUsers();
+
+        }
+      )
+      .on(
+        "presence",
+        {
+          event:"join"
+        },
+        async function(){
+
+          await renderOnlineUsers();
+
+        }
+      )
+      .on(
+        "presence",
+        {
+          event:"leave"
+        },
+        async function(){
+
+          await renderOnlineUsers();
+
+        }
+      );
+
+
+    onlineChannel.subscribe(
+      async function(status){
+
+        if(
+          status ===
+          "SUBSCRIBED"
+        ){
+
+          await onlineChannel.track({
+
+            user_id:
+              currentUser.id,
+
+            online_at:
+              new Date().toISOString()
+
+          });
+
+          await renderOnlineUsers();
+
+        }
+
+      }
+    );
+
+  }catch(error){
+
+    console.error(
+      "Online system error:",
+      error
+    );
+
+    document.getElementById(
+      "onlineCount"
+    ).textContent = "0";
+
+  }
+
+}
+
+
+async function renderOnlineUsers(){
+
+  if(
+    !onlineChannel ||
+    !currentUser
+  ){
+    return;
+  }
+
+  const state =
+    onlineChannel.presenceState();
+
+  const ids = [];
+
+
+  Object.keys(state).forEach(
+    function(key){
+
+      const entries =
+        state[key] || [];
+
+      entries.forEach(
+        function(entry){
+
+          const id =
+            entry.user_id ||
+            key;
+
+          if(
+            id &&
+            !ids.includes(id)
+          ){
+
+            ids.push(id);
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+  if(
+    !ids.includes(
+      currentUser.id
+    )
+  ){
+
+    ids.push(
+      currentUser.id
+    );
+
+  }
+
+
+  document.getElementById(
+    "onlineCount"
+  ).textContent =
+    ids.length;
+
+
+  const container =
+    document.getElementById(
+      "onlineUsers"
+    );
+
+
+  if(
+    ids.length === 0
+  ){
+
+    container.innerHTML =
+      `<div style="
+        color:#888;
+        font-size:12px;
+        padding:5px;
+      ">
+        No users online
+      </div>`;
+
+    return;
+
+  }
+
+
+  let profiles = {};
+
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("profiles")
+      .select(
+        "id,username,name,avatar_url"
+      )
+      .in(
+        "id",
+        ids
+      );
+
+    if(
+      !error &&
+      data
+    ){
+
+      data.forEach(
+        function(profile){
+
+          profiles[
+            profile.id
+          ] = profile;
+
+        }
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "Online profiles error:",
+      error
+    );
+
+  }
+
+
+  container.innerHTML =
+    ids.map(
+      function(id){
+
+        const profile =
+          profiles[id] || {};
+
+        let username =
+          profile.username ||
+          profile.name ||
+          "";
+
+        if(
+          !username &&
+          id === currentUser.id
+        ){
+
+          username =
+            currentUser
+              .user_metadata
+              ?.username ||
+            currentUser.email
+              ?.split("@")[0] ||
+            "User";
+
+        }
+
+        if(!username){
+          username = "User";
+        }
+
+
+        const avatar =
+          profile.avatar_url ||
+          "";
+
+
+        const avatarHTML =
+          avatar
+          ?
+          `<img
+            class="online-user-avatar"
+            src="${escapeAttribute(
+              avatar
+            )}"
+            onerror="
+              this.outerHTML=
+              '<div class=&quot;online-user-avatar&quot;
+              style=&quot;display:flex;align-items:center;
+              justify-content:center;&quot;>👤</div>'
+            "
+          >`
+          :
+          `<div
+            class="online-user-avatar"
+            style="
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              font-size:18px;
+            "
+          >
+            👤
+          </div>`;
+
+
+        return `
+          <div
+            class="online-user"
+            onclick="
+              openOnlineProfile(
+                '${escapeJs(id)}'
+              )
+            "
+          >
+
+            ${avatarHTML}
+
+            <span class="online-dot"></span>
+
+            <span class="online-user-name">
+              ${escapeHtml(
+                username
+              )}
+            </span>
+
+          </div>
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+function openOnlineProfile(userId){
+
+  if(!userId){
+    return;
+  }
+
+  /*
+    Profile page ko user id ke saath
+    open karne ki koshish.
+  */
+
+  window.location.href =
+    "profile.html?user=" +
+    encodeURIComponent(
+      userId
+    );
+
+}
+
+
+/* =========================
    LOAD FEED
 ========================= */
 
 async function loadFeed(){
 
   const feed =
-    document.getElementById("feed");
+    document.getElementById(
+      "feed"
+    );
 
   feed.innerHTML =
     `<div class="loading">
@@ -627,32 +1112,45 @@ async function loadFeed(){
         ? data
         : [];
 
-    posts.sort((a,b)=>{
 
-      const dateA =
-        new Date(
-          a.created_at || 0
-        ).getTime();
+    posts.sort(
+      function(a,b){
 
-      const dateB =
-        new Date(
-          b.created_at || 0
-        ).getTime();
+        const dateA =
+          new Date(
+            a.created_at || 0
+          ).getTime();
 
-      if(dateB !== dateA){
-        return dateB - dateA;
+        const dateB =
+          new Date(
+            b.created_at || 0
+          ).getTime();
+
+        if(
+          dateB !== dateA
+        ){
+
+          return dateB -
+            dateA;
+
+        }
+
+        return (
+          Number(b.id || 0) -
+          Number(a.id || 0)
+        );
+
       }
+    );
 
-      return (
-        Number(b.id || 0) -
-        Number(a.id || 0)
-      );
 
-    });
+    currentPosts =
+      posts;
 
-    currentPosts = posts;
 
-    if(posts.length === 0){
+    if(
+      posts.length === 0
+    ){
 
       feed.innerHTML =
         `<div class="empty">
@@ -660,20 +1158,29 @@ async function loadFeed(){
         </div>`;
 
       return;
+
     }
 
 
     profileMap = {};
 
+
     const userIds = [
       ...new Set(
         posts
-          .map(p=>p.user_id)
+          .map(
+            function(p){
+              return p.user_id;
+            }
+          )
           .filter(Boolean)
       )
     ];
 
-    if(userIds.length){
+
+    if(
+      userIds.length
+    ){
 
       const {
         data:profiles,
@@ -688,18 +1195,21 @@ async function loadFeed(){
           userIds
         );
 
+
       if(
         !profileError &&
         profiles
       ){
 
-        profiles.forEach(profile=>{
+        profiles.forEach(
+          function(profile){
 
-          profileMap[
-            profile.id
-          ] = profile;
+            profileMap[
+              profile.id
+            ] = profile;
 
-        });
+          }
+        );
 
       }
 
@@ -707,6 +1217,7 @@ async function loadFeed(){
 
 
     feed.innerHTML = "";
+
 
     for(
       const post of posts
@@ -724,10 +1235,12 @@ async function loadFeed(){
 
     }
 
+
     updateTrending(
       posts,
       profileMap
     );
+
 
   }catch(error){
 
@@ -739,9 +1252,11 @@ async function loadFeed(){
     feed.innerHTML =
       `<div class="empty">
         Feed load nahi ho saki.<br>
-        <small>${escapeHtml(
-          error.message || ""
-        )}</small>
+        <small>
+          ${escapeHtml(
+            error.message || ""
+          )}
+        </small>
       </div>`;
 
   }
@@ -760,6 +1275,7 @@ async function renderPost(post){
       post.user_id
     ] || {};
 
+
   let username =
     profile.username ||
     "";
@@ -768,30 +1284,39 @@ async function renderPost(post){
     profile.name ||
     "";
 
+
   if(
     !username &&
     currentUser &&
-    post.user_id === currentUser.id
+    post.user_id ===
+    currentUser.id
   ){
 
     username =
-      currentUser.user_metadata?.username ||
-      currentUser.email?.split("@")[0] ||
+      currentUser
+        .user_metadata
+        ?.username ||
+      currentUser.email
+        ?.split("@")[0] ||
       "User";
 
   }
+
 
   if(!username){
     username = "User";
   }
 
+
   const avatar =
     profile.avatar_url ||
     "";
 
+
   let likeCount = 0;
   let dislikeCount = 0;
   let commentCount = 0;
+
 
   try{
 
@@ -807,25 +1332,32 @@ async function renderPost(post){
         post.id
       );
 
+
     if(actions){
 
-      actions.forEach(action=>{
+      actions.forEach(
+        function(action){
 
-        if(
-          action.action_type ===
-          "like"
-        ){
-          likeCount++;
+          if(
+            action.action_type ===
+            "like"
+          ){
+
+            likeCount++;
+
+          }
+
+          if(
+            action.action_type ===
+            "dislike"
+          ){
+
+            dislikeCount++;
+
+          }
+
         }
-
-        if(
-          action.action_type ===
-          "dislike"
-        ){
-          dislikeCount++;
-        }
-
-      });
+      );
 
     }
 
@@ -857,6 +1389,7 @@ async function renderPost(post){
         post.id
       );
 
+
     commentCount =
       count || 0;
 
@@ -878,13 +1411,18 @@ async function renderPost(post){
 
   let avatarHTML;
 
+
   if(avatar){
 
     avatarHTML =
       `<img
         class="avatar"
-        src="${escapeAttribute(avatar)}"
-        onerror="this.style.display='none'"
+        src="${escapeAttribute(
+          avatar
+        )}"
+        onerror="
+          this.style.display='none'
+        "
       >`;
 
   }else{
@@ -907,6 +1445,7 @@ async function renderPost(post){
 
   let imageHTML = "";
 
+
   if(post.image_url){
 
     imageHTML =
@@ -923,13 +1462,18 @@ async function renderPost(post){
 
   let menuHTML = "";
 
+
   if(isOwn){
 
     menuHTML =
       `<div class="post-menu">
 
         <button
-          onclick="deletePost(${Number(post.id)})"
+          onclick="
+            deletePost(
+              ${Number(post.id)}
+            )
+          "
         >
           ⋮
         </button>
@@ -942,9 +1486,13 @@ async function renderPost(post){
       `<div class="post-menu">
 
         <button
-          onclick="blockUser('${escapeJs(
-            post.user_id
-          )}')"
+          onclick="
+            blockUser(
+              '${escapeJs(
+                post.user_id
+              )}'
+            )
+          "
         >
           ⋮
         </button>
@@ -958,9 +1506,6 @@ async function renderPost(post){
     <div
       class="post"
       id="post-${Number(post.id)}"
-      data-created="${escapeAttribute(
-        post.created_at || ""
-      )}"
     >
 
       <div class="post-head">
@@ -988,7 +1533,9 @@ async function renderPost(post){
                       font-weight:normal;
                     "
                   >
-                    @${escapeHtml(username)}
+                    @${escapeHtml(
+                      username
+                    )}
                   </span>
                 `
                 :
@@ -1018,56 +1565,68 @@ async function renderPost(post){
         )}
       </div>
 
+
       ${imageHTML}
-      ${isOwn ? "" : `
 
 
-      <div class="post-actions">
+      ${
+        isOwn
+        ?
+        ""
+        :
+        `
+        <div class="post-actions">
 
-        <button
-          onclick="
-            setPostAction(
-              ${Number(post.id)},
-              'like'
-            )
-          "
-        >
-          👍 ${likeCount}
-        </button>
+          <button
+            onclick="
+              setPostAction(
+                ${Number(post.id)},
+                'like'
+              )
+            "
+          >
+            👍 ${likeCount}
+          </button>
 
-        <button
-          onclick="
-            setPostAction(
-              ${Number(post.id)},
-              'dislike'
-            )
-          "
-        >
-          👎 ${dislikeCount}
-        </button>
 
-        <button
-          onclick="
-            toggleComments(
-              ${Number(post.id)}
-            )
-          "
-        >
-          💬 ${commentCount}
-        </button>
+          <button
+            onclick="
+              setPostAction(
+                ${Number(post.id)},
+                'dislike'
+              )
+            "
+          >
+            👎 ${dislikeCount}
+          </button>
 
-        <button
-          onclick="
-            replyPost(
-              '${escapeJs(username)}'
-            )
-          "
-        >
-          ↩️ Reply
-        </button>
 
-      </div>
-      `}
+          <button
+            onclick="
+              toggleComments(
+                ${Number(post.id)}
+              )
+            "
+          >
+            💬 ${commentCount}
+          </button>
+
+
+          <button
+            onclick="
+              replyPost(
+                '${escapeJs(
+                  username
+                )}'
+              )
+            "
+          >
+            ↩️ Reply
+          </button>
+
+        </div>
+        `
+      }
 
 
       <div
@@ -1081,6 +1640,7 @@ async function renderPost(post){
           Loading...
         </div>
 
+
         <div class="comment-input-row">
 
           <input
@@ -1089,10 +1649,13 @@ async function renderPost(post){
             placeholder="Write a comment..."
             onkeydown="
               if(event.key==='Enter'){
-                addComment(${Number(post.id)})
+                addComment(
+                  ${Number(post.id)}
+                )
               }
             "
           >
+
 
           <button
             onclick="
@@ -1125,8 +1688,10 @@ async function createPost(){
       "postText"
     );
 
+
   const content =
     textarea.value.trim();
+
 
   if(!content){
 
@@ -1135,7 +1700,9 @@ async function createPost(){
     );
 
     return;
+
   }
+
 
   if(!currentUser){
 
@@ -1144,7 +1711,9 @@ async function createPost(){
     );
 
     return;
+
   }
+
 
   try{
 
@@ -1165,15 +1734,18 @@ async function createPost(){
 
       });
 
+
     if(error){
       throw error;
     }
+
 
     textarea.value = "";
 
     cancelReply();
 
     await loadFeed();
+
 
   }catch(error){
 
@@ -1198,29 +1770,36 @@ function replyPost(username){
   currentReplyUser =
     username;
 
+
   const box =
     document.getElementById(
       "replyBox"
     );
+
 
   const text =
     document.getElementById(
       "replyText"
     );
 
+
   text.textContent =
     "↩️ Reply to @" +
     username;
 
+
   box.style.display =
     "block";
+
 
   const textarea =
     document.getElementById(
       "postText"
     );
 
+
   textarea.focus();
+
 
   textarea.value =
     "↩️ Reply to @" +
@@ -1234,6 +1813,7 @@ function cancelReply(){
 
   currentReplyUser =
     null;
+
 
   document.getElementById(
     "replyBox"
@@ -1253,14 +1833,17 @@ async function deletePost(postId){
     return;
   }
 
+
   const ok =
     confirm(
       "Apni post delete karni hai?"
     );
 
+
   if(!ok){
     return;
   }
+
 
   try{
 
@@ -1278,11 +1861,14 @@ async function deletePost(postId){
         currentUser.id
       );
 
+
     if(error){
       throw error;
     }
 
+
     await loadFeed();
+
 
   }catch(error){
 
@@ -1312,7 +1898,9 @@ async function setPostAction(
     );
 
     return;
+
   }
+
 
   try{
 
@@ -1351,9 +1939,11 @@ async function setPostAction(
             existing.id
           );
 
+
         if(error){
           throw error;
         }
+
 
       }else{
 
@@ -1370,11 +1960,13 @@ async function setPostAction(
             existing.id
           );
 
+
         if(error){
           throw error;
         }
 
       }
+
 
     }else{
 
@@ -1395,13 +1987,16 @@ async function setPostAction(
 
         });
 
+
       if(error){
         throw error;
       }
 
     }
 
+
     await loadFeed();
+
 
   }catch(error){
 
@@ -1425,12 +2020,15 @@ async function toggleComments(postId){
 
   const box =
     document.getElementById(
-      "comments-" + postId
+      "comments-" +
+      postId
     );
+
 
   if(!box){
     return;
   }
+
 
   if(
     box.style.display ===
@@ -1444,8 +2042,10 @@ async function toggleComments(postId){
 
   }
 
+
   box.style.display =
     "block";
+
 
   await loadComments(
     postId
@@ -1453,10 +2053,6 @@ async function toggleComments(postId){
 
 }
 
-
-/* =========================
-   LOAD COMMENTS
-========================= */
 
 async function loadComments(postId){
 
@@ -1466,9 +2062,11 @@ async function loadComments(postId){
       postId
     );
 
+
   if(!list){
     return;
   }
+
 
   list.innerHTML =
     `<div style="
@@ -1479,13 +2077,8 @@ async function loadComments(postId){
       Loading comments...
     </div>`;
 
-  try{
 
-    /*
-      IMPORTANT:
-      comments table mein username
-      column use nahi ho raha.
-    */
+  try{
 
     const {
       data:comments,
@@ -1505,6 +2098,7 @@ async function loadComments(postId){
           ascending:true
         }
       );
+
 
     if(error){
       throw error;
@@ -1527,21 +2121,22 @@ async function loadComments(postId){
         </div>`;
 
       return;
+
     }
 
-
-    /*
-      Comment users ke profiles
-      alag se load honge.
-    */
 
     const userIds = [
       ...new Set(
         comments
-          .map(c=>c.user_id)
+          .map(
+            function(c){
+              return c.user_id;
+            }
+          )
           .filter(Boolean)
       )
     ];
+
 
     let commentProfiles = {};
 
@@ -1561,18 +2156,21 @@ async function loadComments(postId){
           userIds
         );
 
+
       if(
         !profileError &&
         profiles
       ){
 
-        profiles.forEach(profile=>{
+        profiles.forEach(
+          function(profile){
 
-          commentProfiles[
-            profile.id
-          ] = profile;
+            commentProfiles[
+              profile.id
+            ] = profile;
 
-        });
+          }
+        );
 
       }
 
@@ -1580,177 +2178,182 @@ async function loadComments(postId){
 
 
     list.innerHTML =
-      comments.map(comment=>{
+      comments.map(
+        function(comment){
 
-        const profile =
-          commentProfiles[
-            comment.user_id
-          ] || {};
-
-        let username =
-          profile.username ||
-          "";
-
-        let displayName =
-          profile.name ||
-          "";
+          const profile =
+            commentProfiles[
+              comment.user_id
+            ] || {};
 
 
-        if(
-          !username &&
-          currentUser &&
-          comment.user_id ===
-          currentUser.id
-        ){
-
-          username =
-            currentUser.user_metadata?.username ||
-            currentUser.email?.split("@")[0] ||
-            "User";
-
-        }
+          let username =
+            profile.username ||
+            "";
 
 
-        if(!username){
-          username = "User";
-        }
+          let displayName =
+            profile.name ||
+            "";
 
 
-        const isOwn =
-          currentUser &&
-          comment.user_id ===
-          currentUser.id;
+          if(
+            !username &&
+            currentUser &&
+            comment.user_id ===
+            currentUser.id
+          ){
+
+            username =
+              currentUser
+                .user_metadata
+                ?.username ||
+              currentUser.email
+                ?.split("@")[0] ||
+              "User";
+
+          }
 
 
-        return `
-          <div class="comment-item">
-
-            <div
-              style="
-                display:flex;
-                align-items:center;
-                gap:8px;
-              "
-            >
-
-              ${
-                profile.avatar_url
-                ?
-                `
-                <img
-                  src="${escapeAttribute(
-                    profile.avatar_url
-                  )}"
-                  style="
-                    width:32px;
-                    height:32px;
-                    border-radius:50%;
-                    object-fit:cover;
-                  "
-                  onerror="
-                    this.style.display='none'
-                  "
-                >
-                `
-                :
-                `
-                <div
-                  style="
-                    width:32px;
-                    height:32px;
-                    border-radius:50%;
-                    background:#ddd;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                  "
-                >
-                  👤
-                </div>
-                `
-              }
+          if(!username){
+            username = "User";
+          }
 
 
-              <div>
+          const isOwn =
+            currentUser &&
+            comment.user_id ===
+            currentUser.id;
 
-                <div class="comment-user">
 
-                  ${escapeHtml(
-                    displayName ||
-                    username
-                  )}
+          return `
+            <div class="comment-item">
 
-                  ${
-                    displayName &&
-                    username
-                    ?
-                    `
-                    <span
-                      style="
-                        color:#777;
-                        font-weight:normal;
-                        font-size:11px;
-                      "
-                    >
-                      @${escapeHtml(
-                        username
-                      )}
-                    </span>
-                    `
-                    :
-                    ""
-                  }
+              <div
+                style="
+                  display:flex;
+                  align-items:center;
+                  gap:8px;
+                "
+              >
 
-                </div>
+                ${
+                  profile.avatar_url
+                  ?
+                  `
+                  <img
+                    src="${escapeAttribute(
+                      profile.avatar_url
+                    )}"
+                    style="
+                      width:32px;
+                      height:32px;
+                      border-radius:50%;
+                      object-fit:cover;
+                    "
+                  >
+                  `
+                  :
+                  `
+                  <div
+                    style="
+                      width:32px;
+                      height:32px;
+                      border-radius:50%;
+                      background:#ddd;
+                      display:flex;
+                      align-items:center;
+                      justify-content:center;
+                    "
+                  >
+                    👤
+                  </div>
+                  `
+                }
 
-                <div class="comment-date">
-                  ${formatDate(
-                    comment.created_at
-                  )}
+
+                <div>
+
+                  <div class="comment-user">
+
+                    ${escapeHtml(
+                      displayName ||
+                      username
+                    )}
+
+                    ${
+                      displayName &&
+                      username
+                      ?
+                      `
+                      <span
+                        style="
+                          color:#777;
+                          font-weight:normal;
+                          font-size:11px;
+                        "
+                      >
+                        @${escapeHtml(
+                          username
+                        )}
+                      </span>
+                      `
+                      :
+                      ""
+                    }
+
+                  </div>
+
+
+                  <div class="comment-date">
+                    ${formatDate(
+                      comment.created_at
+                    )}
+                  </div>
+
                 </div>
 
               </div>
 
-            </div>
 
-
-            <div
-              style="
-                margin-top:7px;
-                white-space:pre-wrap;
-                word-break:break-word;
-              "
-            >
-              ${escapeHtml(
-                comment.comment || ""
-              )}
-            </div>
-
-
-            ${
-              isOwn
-              ?
-              `
-              <button
-                class="comment-delete"
-                onclick="
-                  deleteComment(
-                    ${Number(comment.id)},
-                    ${Number(postId)}
-                  )
+              <div
+                style="
+                  margin-top:7px;
+                  white-space:pre-wrap;
+                  word-break:break-word;
                 "
               >
-                Delete
-              </button>
-              `
-              :
-              ""
-            }
+                ${escapeHtml(
+                  comment.comment || ""
+                )}
+              </div>
 
-          </div>
-        `;
 
-      }).join("");
+              ${
+                isOwn
+                ?
+                `
+                <button
+                  class="comment-delete"
+                  onclick="
+                    deleteComment(
+                      ${Number(comment.id)},
+                      ${Number(postId)}
+                    )
+                  "
+                >
+                  Delete
+                </button>
+                `
+                :
+                ""
+              }
+
+            </div>
+          `;
+
+        }
+      ).join("");
 
 
   }catch(error){
@@ -1759,6 +2362,7 @@ async function loadComments(postId){
       "Comments error:",
       error
     );
+
 
     list.innerHTML =
       `<div style="
@@ -1792,6 +2396,7 @@ async function addComment(postId){
     );
 
     return;
+
   }
 
 
@@ -1801,6 +2406,7 @@ async function addComment(postId){
       postId
     );
 
+
   if(!input){
     return;
   }
@@ -1809,18 +2415,13 @@ async function addComment(postId){
   const comment =
     input.value.trim();
 
+
   if(!comment){
     return;
   }
 
 
   try{
-
-    /*
-      IMPORTANT:
-      comments table mein username
-      column nahi hai.
-    */
 
     const {
       error
@@ -1839,6 +2440,7 @@ async function addComment(postId){
 
       });
 
+
     if(error){
       throw error;
     }
@@ -1847,30 +2449,44 @@ async function addComment(postId){
     input.value = "";
 
 
-    /*
-      Pehle comments update
-    */
-
     await loadComments(
       postId
     );
 
 
-    /*
-      Phir feed ka comment count
-      update hoga.
-    */
-
-    const { count } = await supabaseClient
+    const {
+      count
+    } = await supabaseClient
       .from("comments")
-      .select("id", { count:"exact", head:true })
-      .eq("post_id", postId);
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(
+        "post_id",
+        postId
+      );
 
-    const box = document.getElementById("comments-" + postId);
-    if(box) box.style.display = "block";
 
-    const btn = document.querySelector("#post-" + postId + " .post-actions button:nth-child(3)");
-    if(btn) btn.textContent = "💬 " + (count || 0);
+    const btn =
+      document.querySelector(
+        "#post-" +
+        postId +
+        " .post-actions button:nth-child(3)"
+      );
+
+
+    if(btn){
+
+      btn.textContent =
+        "💬 " +
+        (count || 0);
+
+    }
+
 
   }catch(error){
 
@@ -1878,6 +2494,7 @@ async function addComment(postId){
       "Add comment error:",
       error
     );
+
 
     alert(
       "Comment send nahi hua:\n" +
@@ -1908,17 +2525,13 @@ async function deleteComment(
       "Apna comment delete karna hai?"
     );
 
+
   if(!ok){
     return;
   }
 
 
   try{
-
-    /*
-      Sirf current user ka
-      apna comment delete hoga.
-    */
 
     const {
       error
@@ -1934,6 +2547,7 @@ async function deleteComment(
         currentUser.id
       );
 
+
     if(error){
       throw error;
     }
@@ -1944,16 +2558,39 @@ async function deleteComment(
     );
 
 
-    const { count } = await supabaseClient
+    const {
+      count
+    } = await supabaseClient
       .from("comments")
-      .select("id", { count:"exact", head:true })
-      .eq("post_id", postId);
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(
+        "post_id",
+        postId
+      );
 
-    const box = document.getElementById("comments-" + postId);
-    if(box) box.style.display = "block";
 
-    const btn = document.querySelector("#post-" + postId + " .post-actions button:nth-child(3)");
-    if(btn) btn.textContent = "💬 " + (count || 0);
+    const btn =
+      document.querySelector(
+        "#post-" +
+        postId +
+        " .post-actions button:nth-child(3)"
+      );
+
+
+    if(btn){
+
+      btn.textContent =
+        "💬 " +
+        (count || 0);
+
+    }
+
 
   }catch(error){
 
@@ -1961,6 +2598,7 @@ async function deleteComment(
       "Delete comment error:",
       error
     );
+
 
     alert(
       "Comment delete nahi hua:\n" +
@@ -1982,21 +2620,27 @@ async function blockUser(userId){
     return;
   }
 
+
   if(
     userId ===
     currentUser.id
   ){
+
     return;
+
   }
+
 
   const ok =
     confirm(
       "Is user ko block karna hai?"
     );
 
+
   if(!ok){
     return;
   }
+
 
   try{
 
@@ -2014,15 +2658,19 @@ async function blockUser(userId){
 
       });
 
+
     if(error){
       throw error;
     }
+
 
     alert(
       "User blocked."
     );
 
+
     await loadFeed();
+
 
   }catch(error){
 
@@ -2047,10 +2695,12 @@ function imageSelected(){
       "imageInput"
     );
 
+
   const output =
     document.getElementById(
       "selectedImageText"
     );
+
 
   if(
     input.files &&
@@ -2081,6 +2731,7 @@ function startVoice(){
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
 
+
   if(!SpeechRecognition){
 
     alert(
@@ -2088,39 +2739,50 @@ function startVoice(){
     );
 
     return;
+
   }
+
 
   const recognition =
     new SpeechRecognition();
 
+
   recognition.lang =
     "ur-PK";
+
 
   recognition.interimResults =
     false;
 
+
   recognition.continuous =
     false;
+
 
   recognition.onresult =
     function(event){
 
       const text =
-        event.results[0][0].transcript;
+        event.results[0][0]
+          .transcript;
+
 
       const textarea =
         document.getElementById(
           "postText"
         );
 
+
       textarea.value +=
         (
           textarea.value
             ? "\n"
             : ""
-        ) + text;
+        ) +
+        text;
 
     };
+
 
   recognition.onerror =
     function(event){
@@ -2131,6 +2793,7 @@ function startVoice(){
       );
 
     };
+
 
   recognition.start();
 
@@ -2151,6 +2814,7 @@ function updateTrending(
       "trendingList"
     );
 
+
   if(
     !posts ||
     posts.length === 0
@@ -2162,47 +2826,60 @@ function updateTrending(
       </div>`;
 
     return;
+
   }
+
 
   list.innerHTML =
     posts
       .slice(0,10)
-      .map(post=>{
+      .map(
+        function(post){
 
-        const profile =
-          profiles[
-            post.user_id
-          ] || {};
+          const profile =
+            profiles[
+              post.user_id
+            ] || {};
 
-        const username =
-          profile.username ||
-          "User";
 
-        return `
-          <div class="trend-item">
+          const username =
+            profile.username ||
+            "User";
 
-            <b>
-              @${escapeHtml(
-                username
-              )}
-            </b>
 
-            <div style="margin-top:4px;">
-              ${escapeHtml(
-                post.content || ""
-              ).slice(0,160)}
+          return `
+            <div class="trend-item">
+
+              <b>
+                @${escapeHtml(
+                  username
+                )}
+              </b>
+
+              <div
+                style="margin-top:4px;"
+              >
+                ${escapeHtml(
+                  post.content || ""
+                ).slice(
+                  0,
+                  160
+                )}
+              </div>
+
+              <small
+                style="color:#888;"
+              >
+                ${formatDate(
+                  post.created_at
+                )}
+              </small>
+
             </div>
+          `;
 
-            <small style="color:#888;">
-              ${formatDate(
-                post.created_at
-              )}
-            </small>
-
-          </div>
-        `;
-
-      })
+        }
+      )
       .join("");
 
 }
@@ -2233,38 +2910,58 @@ function closeTrending(){
 ========================= */
 
 function goHome(){
+
   window.location.href =
     "index.html";
+
 }
+
 
 function goPrivate(){
+
   window.location.href =
     "private.html";
+
 }
+
 
 function goMehfil(){
+
   window.location.href =
     "mehfil.html";
+
 }
+
 
 function goProfile(){
+
   window.location.href =
     "profile.html";
+
 }
+
 
 function goMore(){
+
   window.location.href =
     "more.html";
+
 }
+
 
 function goStars(){
+
   window.location.href =
     "stars.html";
+
 }
 
+
 function goNotifications(){
+
   window.location.href =
     "notifications.html";
+
 }
 
 
@@ -2278,41 +2975,56 @@ function formatDate(value){
     return "";
   }
 
+
   const date =
     new Date(value);
+
 
   if(
     Number.isNaN(
       date.getTime()
     )
   ){
+
     return "";
+
   }
+
 
   const now =
     new Date();
+
 
   const seconds =
     Math.floor(
       (
         now.getTime() -
         date.getTime()
-      ) / 1000
+      ) /
+      1000
     );
 
+
   if(seconds < 10){
+
     return "Just now";
+
   }
 
+
   if(seconds < 60){
+
     return seconds +
       " seconds ago";
+
   }
+
 
   const minutes =
     Math.floor(
       seconds / 60
     );
+
 
   if(minutes < 60){
 
@@ -2323,10 +3035,12 @@ function formatDate(value){
 
   }
 
+
   const hours =
     Math.floor(
       minutes / 60
     );
+
 
   if(hours < 24){
 
@@ -2337,10 +3051,12 @@ function formatDate(value){
 
   }
 
+
   const days =
     Math.floor(
       hours / 24
     );
+
 
   if(days < 7){
 
@@ -2350,6 +3066,7 @@ function formatDate(value){
         " days ago";
 
   }
+
 
   return date.toLocaleDateString(
     "en-GB",
@@ -2364,7 +3081,7 @@ function formatDate(value){
 
 
 /* =========================
-   SECURITY HELPERS
+   SECURITY
 ========================= */
 
 function escapeHtml(value){
@@ -2428,6 +3145,28 @@ function escapeJs(value){
   );
 
 }
+
+
+/* =========================
+   CLEANUP
+========================= */
+
+window.addEventListener(
+  "beforeunload",
+  function(){
+
+    if(onlineChannel){
+
+      try{
+
+        onlineChannel.untrack();
+
+      }catch(error){}
+
+    }
+
+  }
+);
 
 
 /* =========================
