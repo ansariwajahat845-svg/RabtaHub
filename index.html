@@ -8,10 +8,18 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  overflow-x:hidden;
+}
 
 body{
-  margin:0;
   font-family:Arial,sans-serif;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   min-height:100vh;
@@ -24,60 +32,82 @@ body{
   margin:auto;
   min-height:100vh;
   background:#f5f5f5;
-  padding-bottom:75px;
+  padding-bottom:78px;
 }
+
+/* =========================
+   HEADER
+========================= */
 
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:14px;
+  padding:10px 7px;
   position:sticky;
   top:0;
   z-index:20;
+  width:100%;
 }
 
 .header-top{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:8px;
+  width:100%;
+  gap:4px;
+  flex-wrap:nowrap;
+  overflow:hidden;
 }
 
 .logo{
-  font-size:22px;
+  flex:0 0 auto;
+  min-width:0;
+  font-size:20px;
   font-weight:bold;
   white-space:nowrap;
 }
 
 .header-buttons{
   display:flex;
-  gap:6px;
   align-items:center;
+  justify-content:flex-end;
+  gap:3px;
+  flex:1 1 auto;
+  min-width:0;
+  flex-wrap:nowrap;
+  overflow:hidden;
 }
 
 .header-buttons button{
+  flex:1 1 auto;
+  min-width:0;
+  max-width:120px;
   border:0;
   background:rgba(255,255,255,.18);
   color:white;
-  border-radius:20px;
-  padding:7px 9px;
+  border-radius:18px;
+  padding:6px 6px;
+  font-size:10px;
   cursor:pointer;
   white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .share-header-btn{
   background:white !important;
   color:#6c5ce7 !important;
   font-weight:bold;
-  padding:8px 12px !important;
+  padding:7px 8px !important;
   box-shadow:0 2px 7px rgba(0,0,0,.15);
 }
 
-.share-header-btn:active{
+.header-buttons button:active{
   transform:scale(.96);
 }
 
-/* ONLINE */
+/* =========================
+   ONLINE USERS
+========================= */
 
 .online-section{
   background:white;
@@ -104,7 +134,9 @@ body{
   padding-bottom:2px;
 }
 
-.online-users::-webkit-scrollbar{display:none}
+.online-users::-webkit-scrollbar{
+  display:none;
+}
 
 .online-user{
   flex:0 0 auto;
@@ -144,6 +176,10 @@ body{
   box-shadow:0 0 0 2px white;
 }
 
+/* =========================
+   WELCOME
+========================= */
+
 .welcome{
   background:white;
   margin:12px;
@@ -153,6 +189,10 @@ body{
   font-weight:bold;
   box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
+
+/* =========================
+   CREATE BOX
+========================= */
 
 .create-box{
   background:white;
@@ -207,6 +247,10 @@ textarea{
   background:#eee;
 }
 
+/* =========================
+   FEED
+========================= */
+
 .feed-header{
   display:flex;
   align-items:center;
@@ -217,7 +261,9 @@ textarea{
   margin:8px 0;
 }
 
-#feed{padding:0 12px}
+#feed{
+  padding:0 12px;
+}
 
 .post{
   background:white;
@@ -237,6 +283,7 @@ textarea{
   display:flex;
   align-items:center;
   gap:9px;
+  min-width:0;
 }
 
 .avatar{
@@ -245,11 +292,13 @@ textarea{
   border-radius:50%;
   object-fit:cover;
   background:#ddd;
+  flex-shrink:0;
 }
 
 .user-name{
   font-weight:bold;
   font-size:15px;
+  word-break:break-word;
 }
 
 .post-date{
@@ -291,23 +340,33 @@ textarea{
   margin-top:8px;
 }
 
+/* =========================
+   POST ACTIONS
+========================= */
+
 .post-actions{
   display:flex;
   gap:5px;
-  flex-wrap:wrap;
+  width:100%;
   border-top:1px solid #eee;
   padding-top:8px;
   margin-top:8px;
+  flex-wrap:nowrap;
 }
 
 .post-actions button{
-  flex:1;
-  min-width:70px;
+  flex:1 1 0;
+  min-width:0;
+  width:25%;
   border:0;
   background:#f3f3f3;
   border-radius:10px;
-  padding:8px 5px;
+  padding:8px 3px;
   cursor:pointer;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .delete-post-btn{
@@ -321,6 +380,10 @@ textarea{
 .delete-post-btn:active{
   transform:scale(.98);
 }
+
+/* =========================
+   COMMENTS
+========================= */
 
 .comments{
   display:none;
@@ -337,7 +400,9 @@ textarea{
   font-size:13px;
 }
 
-.comment-user{font-weight:bold}
+.comment-user{
+  font-weight:bold;
+}
 
 .comment-date{
   color:#888;
@@ -360,6 +425,7 @@ textarea{
 
 .comment-input-row input{
   flex:1;
+  min-width:0;
   border:1px solid #ddd;
   border-radius:20px;
   padding:9px 12px;
@@ -367,6 +433,7 @@ textarea{
 }
 
 .comment-input-row button{
+  flex:0 0 auto;
   border:0;
   border-radius:20px;
   background:#6c5ce7;
@@ -374,11 +441,20 @@ textarea{
   padding:8px 14px;
 }
 
-.empty,.loading{
+/* =========================
+   LOADING
+========================= */
+
+.empty,
+.loading{
   text-align:center;
   padding:25px 10px;
   color:#777;
 }
+
+/* =========================
+   BOTTOM NAV
+========================= */
 
 .bottom-nav{
   position:fixed;
@@ -387,21 +463,33 @@ textarea{
   transform:translateX(-50%);
   width:100%;
   max-width:680px;
+  height:64px;
   background:white;
   border-top:1px solid #ddd;
   display:flex;
+  align-items:center;
   justify-content:space-around;
-  padding:8px 3px;
+  padding:4px 2px;
+  gap:0;
+  overflow:hidden;
   z-index:30;
 }
 
 .bottom-nav button{
   border:0;
   background:none;
-  font-size:12px;
+  flex:1 1 0;
+  min-width:0;
+  width:20%;
+  height:56px;
   color:#555;
   cursor:pointer;
-  padding:5px;
+  padding:3px 1px;
+  font-size:11px;
+  line-height:17px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .bottom-nav button:first-child{
@@ -409,7 +497,9 @@ textarea{
   font-weight:bold;
 }
 
-/* TRENDING */
+/* =========================
+   TRENDING / SHARE
+========================= */
 
 .trending-box,
 .share-box{
@@ -452,7 +542,9 @@ textarea{
   border-bottom:1px solid #eee;
 }
 
-/* SHARE */
+/* =========================
+   SHARE
+========================= */
 
 .share-option{
   width:100%;
@@ -525,16 +617,86 @@ textarea{
   cursor:pointer;
 }
 
-.hidden-input{display:none}
+.hidden-input{
+  display:none;
+}
+
+/* =========================
+   MOBILE FIX
+========================= */
 
 @media(max-width:430px){
-  .logo{font-size:19px}
-  .header-buttons{gap:4px}
-  .header-buttons button{padding:7px 8px}
-  .share-header-btn{padding:7px 10px !important}
+
+  .header{
+    padding:9px 5px;
+  }
+
+  .header-top{
+    gap:3px;
+  }
+
+  .logo{
+    font-size:15px;
+  }
+
+  .header-buttons{
+    gap:2px;
+  }
+
+  .header-buttons button{
+    font-size:8.5px;
+    padding:6px 3px;
+    border-radius:15px;
+  }
+
+  .header-buttons .share-header-btn{
+    font-size:8.5px;
+    padding:6px 4px !important;
+  }
+
+  .post-actions{
+    gap:4px;
+  }
+
+  .post-actions button{
+    font-size:10px;
+    padding:8px 2px;
+  }
+
+  .bottom-nav{
+    height:62px;
+    padding:3px 1px;
+  }
+
+  .bottom-nav button{
+    height:56px;
+    font-size:9px;
+    line-height:16px;
+    padding:2px 0;
+  }
+}
+
+@media(max-width:360px){
+
+  .logo{
+    font-size:14px;
+  }
+
+  .header-buttons button{
+    font-size:7.5px;
+    padding:6px 2px;
+  }
+
+  .header-buttons .share-header-btn{
+    font-size:7.5px;
+    padding:6px 3px !important;
+  }
+
+  .bottom-nav button{
+    font-size:8px;
+  }
 }
 </style>
-
 </head>
 
 <body>
@@ -545,30 +707,28 @@ textarea{
 
   <div class="header-top">
 
-```
-<div class="logo">
-  ChatZone 💬
-</div>
+    <div class="logo">
+      ChatZone 💬
+    </div>
 
-<div class="header-buttons">
+    <div class="header-buttons">
 
-  <button onclick="showTrending()">
-    🔥 Trending
-  </button>
+      <button onclick="showTrending()">
+        🔥 Trending
+      </button>
 
-  <button
-    class="share-header-btn"
-    onclick="showShare()"
-  >
-    + Share
-  </button>
+      <button
+        class="share-header-btn"
+        onclick="showShare()"
+      >
+        + Share
+      </button>
 
-  <button onclick="goStars()">⭐</button>
+      <button onclick="goStars()">⭐</button>
 
-  <button onclick="goNotifications()">🔔</button>
+      <button onclick="goNotifications()">🔔</button>
 
-</div>
-```
+    </div>
 
   </div>
 
@@ -583,9 +743,11 @@ textarea{
   </div>
 
   <div id="onlineUsers" class="online-users">
+
     <div style="color:#888;font-size:12px;padding:5px">
       Online users loading...
     </div>
+
   </div>
 
 </div>
@@ -594,22 +756,20 @@ textarea{
   Welcome to ChatZone 💬 ❤️
 </div>
 
-<!-- OLD CREATE BOX HIDDEN FROM NORMAL VIEW -->
+<!-- CREATE BOX -->
 
 <div class="create-box">
 
   <div id="replyBox" class="reply-box">
 
-```
-<span id="replyText"></span>
+    <span id="replyText"></span>
 
-<button
-  onclick="cancelReply()"
-  style="float:right;border:0;background:none;color:#d00"
->
-  ✕
-</button>
-```
+    <button
+      onclick="cancelReply()"
+      style="float:right;border:0;background:none;color:#d00"
+    >
+      ✕
+    </button>
 
   </div>
 
@@ -620,33 +780,36 @@ textarea{
 
   <div class="create-actions">
 
-```
-<button class="send-btn" onclick="createPost()">
-  Send Post
-</button>
+    <button
+      class="send-btn"
+      onclick="createPost()"
+    >
+      Send Post
+    </button>
 
-<button
-  class="upload-btn"
-  onclick="showImagePost()"
->
-  🖼️ Image Post
-</button>
+    <button
+      class="upload-btn"
+      onclick="showImagePost()"
+    >
+      🖼️ Image Post
+    </button>
 
-<button class="voice-btn" onclick="startVoice()">
-  🎤 Voice
-</button>
-```
+    <button
+      class="voice-btn"
+      onclick="startVoice()"
+    >
+      🎤 Voice
+    </button>
 
   </div>
 
-<input
-id="imageInput"
-class="hidden-input"
-type="file"
-accept="image/*"
-onchange="imageSelected()"
-
->
+  <input
+    id="imageInput"
+    class="hidden-input"
+    type="file"
+    accept="image/*"
+    onchange="imageSelected()"
+  >
 
   <div
     id="selectedImageText"
@@ -660,9 +823,11 @@ onchange="imageSelected()"
 </div>
 
 <div id="feed">
+
   <div class="loading">
     Loading feed...
   </div>
+
 </div>
 
 </div>
@@ -673,152 +838,141 @@ onchange="imageSelected()"
 
   <div class="share-content">
 
-```
-<div class="share-header">
+    <div class="share-header">
 
-  <h3>📤 Create Post</h3>
+      <h3>📤 Create Post</h3>
 
-  <button onclick="closeShare()">✕</button>
+      <button onclick="closeShare()">✕</button>
 
-</div>
+    </div>
 
-<button
-  class="share-option"
-  onclick="showTextPost()"
->
-  📝 Text Post
-</button>
+    <button
+      class="share-option"
+      onclick="showTextPost()"
+    >
+      📝 Text Post
+    </button>
 
-<button
-  class="share-option"
-  onclick="showImagePost()"
->
-  🖼️ Image Post
-</button>
+    <button
+      class="share-option"
+      onclick="showImagePost()"
+    >
+      🖼️ Image Post
+    </button>
 
-<!-- TEXT FORM -->
+    <div
+      id="textPostForm"
+      class="share-form"
+    >
 
-<div
-  id="textPostForm"
-  class="share-form"
->
+      <textarea
+        id="shareText"
+        placeholder="What's on your mind?"
+      ></textarea>
 
-  <textarea
-    id="shareText"
-    placeholder="What's on your mind?"
-  ></textarea>
+      <button
+        class="share-submit"
+        onclick="submitTextPost()"
+      >
+        📤 Share Text Post
+      </button>
 
-  <button
-    class="share-submit"
-    onclick="submitTextPost()"
-  >
-    📤 Share Text Post
-  </button>
+    </div>
 
-</div>
+    <div
+      id="imagePostForm"
+      class="share-form"
+    >
 
+      <label class="category-label">
+        Select Category *
+      </label>
 
-<!-- IMAGE FORM -->
+      <select
+        id="imageCategory"
+        class="category-select"
+      >
 
-<div
-  id="imagePostForm"
-  class="share-form"
->
+        <option value="">
+          Select category
+        </option>
 
-  <label class="category-label">
-    Select Category *
-  </label>
+        <option value="General">
+          General
+        </option>
 
-  <select
-    id="imageCategory"
-    class="category-select"
-  >
+        <option value="Funny">
+          Funny
+        </option>
 
-    <option value="">
-      Select category
-    </option>
+        <option value="News">
+          News
+        </option>
 
-    <option value="General">
-      General
-    </option>
+        <option value="Islamic">
+          Islamic
+        </option>
 
-    <option value="Funny">
-      Funny
-    </option>
+        <option value="Poetry">
+          Poetry
+        </option>
 
-    <option value="News">
-      News
-    </option>
+        <option value="Help">
+          Help
+        </option>
 
-    <option value="Islamic">
-      Islamic
-    </option>
+        <option value="Other">
+          Other
+        </option>
 
-    <option value="Poetry">
-      Poetry
-    </option>
+      </select>
 
-    <option value="Help">
-      Help
-    </option>
+      <label class="category-label">
+        Image *
+      </label>
 
-    <option value="Other">
-      Other
-    </option>
+      <button
+        class="share-option"
+        onclick="document.getElementById('shareImageInput').click()"
+      >
+        🖼️ Select Image
+      </button>
 
-  </select>
+      <input
+        id="shareImageInput"
+        class="hidden-input"
+        type="file"
+        accept="image/*"
+        onchange="shareImageSelected()"
+      >
 
+      <img
+        id="shareImagePreview"
+        class="image-preview"
+        alt="Preview"
+      >
 
-  <label class="category-label">
-    Image *
-  </label>
+      <textarea
+        id="imageCaption"
+        placeholder="Write a caption (optional)..."
+        style="margin-top:10px"
+      ></textarea>
 
-  <button
-    class="share-option"
-    onclick="document.getElementById('shareImageInput').click()"
-  >
-    🖼️ Select Image
-  </button>
+      <button
+        class="share-submit"
+        onclick="submitImagePost()"
+      >
+        🖼️ Share Image Post
+      </button>
 
-  <input
-    id="shareImageInput"
-    class="hidden-input"
-    type="file"
-    accept="image/*"
-    onchange="shareImageSelected()"
-  >
+    </div>
 
-
-  <img
-    id="shareImagePreview"
-    class="image-preview"
-    alt="Preview"
-  >
-
-
-  <textarea
-    id="imageCaption"
-    placeholder="Write a caption (optional)..."
-    style="margin-top:10px"
-  ></textarea>
-
-
-  <button
-    class="share-submit"
-    onclick="submitImagePost()"
-  >
-    🖼️ Share Image Post
-  </button>
-
-</div>
-
-<button
-  class="cancel-share"
-  onclick="closeShare()"
->
-  Cancel
-</button>
-```
+    <button
+      class="cancel-share"
+      onclick="closeShare()"
+    >
+      Cancel
+    </button>
 
   </div>
 
@@ -830,19 +984,17 @@ onchange="imageSelected()"
 
   <div class="trending-content">
 
-```
-<div class="trending-header">
+    <div class="trending-header">
 
-  <h3>🔥 Trending</h3>
+      <h3>🔥 Trending</h3>
 
-  <button onclick="closeTrending()">✕</button>
+      <button onclick="closeTrending()">✕</button>
 
-</div>
+    </div>
 
-<div id="trendingList">
-  Loading...
-</div>
-```
+    <div id="trendingList">
+      Loading...
+    </div>
 
   </div>
 
@@ -888,11 +1040,11 @@ supabase.createClient(
   SUPABASE_KEY
 );
 
-let currentUser = null;
-let profileMap = {};
-let currentReplyUser = null;
-let currentPosts = [];
-let onlineChannel = null;
+let currentUser=null;
+let profileMap={};
+let currentReplyUser=null;
+let currentPosts=[];
+let onlineChannel=null;
 
 
 /* INIT */
@@ -904,7 +1056,8 @@ async function init(){
     const {
       data,
       error
-    } = await supabaseClient.auth.getSession();
+    } =
+      await supabaseClient.auth.getSession();
 
     if(error) throw error;
 
@@ -946,7 +1099,9 @@ async function loadOnlineUsers(){
     if(onlineChannel){
 
       try{
-        await supabaseClient.removeChannel(onlineChannel);
+        await supabaseClient.removeChannel(
+          onlineChannel
+        );
       }catch(e){}
 
     }
@@ -1005,7 +1160,10 @@ async function loadOnlineUsers(){
 
   }catch(error){
 
-    console.error("Online system error:",error);
+    console.error(
+      "Online system error:",
+      error
+    );
 
   }
 
@@ -1014,118 +1172,160 @@ async function loadOnlineUsers(){
 
 async function renderOnlineUsers(){
 
-  if(!onlineChannel || !currentUser) return;
+  if(!onlineChannel || !currentUser)
+    return;
 
   const state =
     onlineChannel.presenceState();
 
   const ids=[];
 
-  Object.keys(state).forEach(function(key){
+  Object.keys(state).forEach(
+    function(key){
 
-    const entries=state[key] || [];
+      const entries =
+        state[key] || [];
 
-    entries.forEach(function(entry){
+      entries.forEach(
+        function(entry){
 
-      const id=entry.user_id || key;
+          const id =
+            entry.user_id || key;
 
-      if(id && !ids.includes(id)){
-        ids.push(id);
-      }
+          if(
+            id &&
+            !ids.includes(id)
+          ){
 
-    });
+            ids.push(id);
 
-  });
+          }
+
+        }
+      );
+
+    }
+  );
 
   if(!ids.includes(currentUser.id)){
     ids.push(currentUser.id);
   }
 
-  document.getElementById("onlineCount").textContent =
-    ids.length;
+  document.getElementById(
+    "onlineCount"
+  ).textContent=ids.length;
 
   const container =
-    document.getElementById("onlineUsers");
+    document.getElementById(
+      "onlineUsers"
+    );
 
   let profiles={};
 
   try{
 
-    const {data,error} =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("profiles")
-        .select("id,username,name,avatar_url")
+        .select(
+          "id,username,name,avatar_url"
+        )
         .in("id",ids);
 
     if(!error && data){
 
-      data.forEach(function(profile){
-        profiles[profile.id]=profile;
-      });
+      data.forEach(
+        function(profile){
+
+          profiles[profile.id]=profile;
+
+        }
+      );
 
     }
 
   }catch(error){
+
     console.error(error);
+
   }
 
   container.innerHTML =
-    ids.map(function(id){
+    ids.map(
+      function(id){
 
-      const profile=profiles[id] || {};
+        const profile =
+          profiles[id] || {};
 
-      let username =
-        profile.username ||
-        profile.name ||
-        "";
+        let username =
+          profile.username ||
+          profile.name ||
+          "";
 
-      if(!username && id===currentUser.id){
+        if(
+          !username &&
+          id===currentUser.id
+        ){
 
-        username =
-          currentUser.user_metadata?.username ||
-          currentUser.email?.split("@")[0] ||
-          "User";
+          username =
+            currentUser
+              .user_metadata
+              ?.username ||
+            currentUser
+              .email
+              ?.split("@")[0] ||
+            "User";
+
+        }
+
+        if(!username)
+          username="User";
+
+        const avatar =
+          profile.avatar_url || "";
+
+        const avatarHTML =
+          avatar
+          ?
+          `<img
+            class="online-user-avatar"
+            src="${escapeAttribute(avatar)}"
+            onerror="this.style.display='none'"
+          >`
+          :
+          `<div
+            class="online-user-avatar"
+            style="
+              display:flex;
+              align-items:center;
+              justify-content:center
+            "
+          >
+            👤
+          </div>`;
+
+        return `
+          <div
+            class="online-user"
+            onclick="openOnlineProfile('${escapeJs(id)}')"
+          >
+
+            ${avatarHTML}
+
+            <span class="online-dot"></span>
+
+            <span class="online-user-name">
+              ${escapeHtml(username)}
+            </span>
+
+          </div>
+        `;
 
       }
-
-      if(!username) username="User";
-
-      const avatar=profile.avatar_url || "";
-
-      const avatarHTML =
-        avatar
-        ?
-        `<img
-          class="online-user-avatar"
-          src="${escapeAttribute(avatar)}"
-          onerror="this.style.display='none'"
-        >`
-        :
-        `<div
-          class="online-user-avatar"
-          style="display:flex;align-items:center;justify-content:center"
-        >
-          👤
-        </div>`;
-
-      return `
-        <div
-          class="online-user"
-          onclick="openOnlineProfile('${escapeJs(id)}')"
-        >
-
-          ${avatarHTML}
-
-          <span class="online-dot"></span>
-
-          <span class="online-user-name">
-            ${escapeHtml(username)}
-          </span>
-
-        </div>
-      `;
-
-    }).join("");
+    ).join("");
 
 }
 
@@ -1155,19 +1355,30 @@ async function loadFeed(){
 
   try{
 
-    const {data,error} =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("posts")
         .select(
           "id,user_id,content,created_at,post_type,category,image_url"
         )
-        .order("created_at",{ascending:false})
-        .order("id",{ascending:false});
+        .order(
+          "created_at",
+          {ascending:false}
+        )
+        .order(
+          "id",
+          {ascending:false}
+        );
 
     if(error) throw error;
 
     const posts =
-      Array.isArray(data) ? data : [];
+      Array.isArray(data)
+      ? data
+      : [];
 
     currentPosts=posts;
 
@@ -1186,7 +1397,9 @@ async function loadFeed(){
 
     const userIds=[
       ...new Set(
-        posts.map(p=>p.user_id).filter(Boolean)
+        posts
+          .map(p=>p.user_id)
+          .filter(Boolean)
       )
     ];
 
@@ -1198,14 +1411,24 @@ async function loadFeed(){
       } =
         await supabaseClient
           .from("profiles")
-          .select("id,username,name,avatar_url")
+          .select(
+            "id,username,name,avatar_url"
+          )
           .in("id",userIds);
 
-      if(!profileError && profiles){
+      if(
+        !profileError &&
+        profiles
+      ){
 
-        profiles.forEach(function(profile){
-          profileMap[profile.id]=profile;
-        });
+        profiles.forEach(
+          function(profile){
+
+            profileMap[profile.id]=
+              profile;
+
+          }
+        );
 
       }
 
@@ -1225,16 +1448,26 @@ async function loadFeed(){
 
     }
 
-    updateTrending(posts,profileMap);
+    updateTrending(
+      posts,
+      profileMap
+    );
 
   }catch(error){
 
-    console.error("Feed error:",error);
+    console.error(
+      "Feed error:",
+      error
+    );
 
     feed.innerHTML =
       `<div class="empty">
         Feed load nahi ho saki.<br>
-        <small>${escapeHtml(error.message || "")}</small>
+        <small>
+          ${escapeHtml(
+            error.message || ""
+          )}
+        </small>
       </div>`;
 
   }
@@ -1249,8 +1482,11 @@ async function renderPost(post){
   const profile =
     profileMap[post.user_id] || {};
 
-  let username=profile.username || "";
-  let name=profile.name || "";
+  let username =
+    profile.username || "";
+
+  let name =
+    profile.name || "";
 
   if(
     !username &&
@@ -1259,15 +1495,21 @@ async function renderPost(post){
   ){
 
     username =
-      currentUser.user_metadata?.username ||
-      currentUser.email?.split("@")[0] ||
+      currentUser
+        .user_metadata
+        ?.username ||
+      currentUser
+        .email
+        ?.split("@")[0] ||
       "User";
 
   }
 
-  if(!username) username="User";
+  if(!username)
+    username="User";
 
-  const avatar=profile.avatar_url || "";
+  const avatar =
+    profile.avatar_url || "";
 
   let likeCount=0;
   let dislikeCount=0;
@@ -1275,23 +1517,36 @@ async function renderPost(post){
 
   try{
 
-    const {data:actions} =
+    const {
+      data:actions
+    } =
       await supabaseClient
         .from("post_actions")
-        .select("action_type,user_id")
-        .eq("post_id",post.id);
+        .select(
+          "action_type,user_id"
+        )
+        .eq(
+          "post_id",
+          post.id
+        );
 
     if(actions){
 
-      actions.forEach(function(action){
+      actions.forEach(
+        function(action){
 
-        if(action.action_type==="like")
-          likeCount++;
+          if(
+            action.action_type==="like"
+          )
+            likeCount++;
 
-        if(action.action_type==="dislike")
-          dislikeCount++;
+          if(
+            action.action_type==="dislike"
+          )
+            dislikeCount++;
 
-      });
+        }
+      );
 
     }
 
@@ -1302,10 +1557,20 @@ async function renderPost(post){
     const {count} =
       await supabaseClient
         .from("comments")
-        .select("id",{count:"exact",head:true})
-        .eq("post_id",post.id);
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        )
+        .eq(
+          "post_id",
+          post.id
+        );
 
-    commentCount=count || 0;
+    commentCount =
+      count || 0;
 
   }catch(error){}
 
@@ -1324,7 +1589,12 @@ async function renderPost(post){
     :
     `<div
       class="avatar"
-      style="display:flex;align-items:center;justify-content:center;font-size:20px"
+      style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:20px
+      "
     >
       👤
     </div>`;
@@ -1336,7 +1606,9 @@ async function renderPost(post){
     imageHTML =
       `<img
         class="post-image"
-        src="${escapeAttribute(post.image_url)}"
+        src="${escapeAttribute(
+          post.image_url
+        )}"
         alt="Post image"
       >`;
 
@@ -1350,7 +1622,9 @@ async function renderPost(post){
       `<div class="post-menu">
 
         <button
-          onclick="blockUser('${escapeJs(post.user_id)}')"
+          onclick="blockUser('${escapeJs(
+            post.user_id
+          )}')"
         >
           ⋮
         </button>
@@ -1363,13 +1637,18 @@ async function renderPost(post){
     post.category
     ?
     `<div class="post-category">
-      #${escapeHtml(post.category)}
+      #${escapeHtml(
+        post.category
+      )}
     </div>`
     :
     "";
 
   return `
-    <div class="post" id="post-${Number(post.id)}">
+    <div
+      class="post"
+      id="post-${Number(post.id)}"
+    >
 
       <div class="post-head">
 
@@ -1381,15 +1660,22 @@ async function renderPost(post){
 
             <div class="user-name">
 
-              ${escapeHtml(name || username)}
+              ${escapeHtml(
+                name || username
+              )}
 
               ${
                 name && username
                 ?
                 `<span
-                  style="color:#777;font-weight:normal"
+                  style="
+                    color:#777;
+                    font-weight:normal
+                  "
                 >
-                  @${escapeHtml(username)}
+                  @${escapeHtml(
+                    username
+                  )}
                 </span>`
                 :
                 ""
@@ -1398,7 +1684,9 @@ async function renderPost(post){
             </div>
 
             <div class="post-date">
-              ${formatDate(post.created_at)}
+              ${formatDate(
+                post.created_at
+              )}
             </div>
 
           </div>
@@ -1415,7 +1703,9 @@ async function renderPost(post){
         post.content
         ?
         `<div class="post-content">
-          ${escapeHtml(post.content)}
+          ${escapeHtml(
+            post.content
+          )}
         </div>`
         :
         ""
@@ -1431,7 +1721,9 @@ async function renderPost(post){
 
           <button
             class="delete-post-btn"
-            onclick="deletePost(${Number(post.id)})"
+            onclick="deletePost(
+              ${Number(post.id)}
+            )"
           >
             🗑️ Delete
           </button>
@@ -1443,25 +1735,35 @@ async function renderPost(post){
         <div class="post-actions">
 
           <button
-            onclick="setPostAction(${Number(post.id)},'like')"
+            onclick="setPostAction(
+              ${Number(post.id)},
+              'like'
+            )"
           >
             👍 ${likeCount}
           </button>
 
           <button
-            onclick="setPostAction(${Number(post.id)},'dislike')"
+            onclick="setPostAction(
+              ${Number(post.id)},
+              'dislike'
+            )"
           >
             👎 ${dislikeCount}
           </button>
 
           <button
-            onclick="toggleComments(${Number(post.id)})"
+            onclick="toggleComments(
+              ${Number(post.id)}
+            )"
           >
             💬 ${commentCount}
           </button>
 
           <button
-            onclick="replyPost('${escapeJs(username)}')"
+            onclick="replyPost(
+              '${escapeJs(username)}'
+            )"
           >
             ↩️ Reply
           </button>
@@ -1475,7 +1777,9 @@ async function renderPost(post){
         id="comments-${Number(post.id)}"
       >
 
-        <div id="comments-list-${Number(post.id)}">
+        <div
+          id="comments-list-${Number(post.id)}"
+        >
           Loading...
         </div>
 
@@ -1493,7 +1797,9 @@ async function renderPost(post){
           >
 
           <button
-            onclick="addComment(${Number(post.id)})"
+            onclick="addComment(
+              ${Number(post.id)}
+            )"
           >
             Send
           </button>
@@ -1508,37 +1814,55 @@ async function renderPost(post){
 }
 
 
-/* SHARE POPUP */
+/* SHARE */
 
 function showShare(){
 
-  document.getElementById("shareBox").style.display="block";
+  document.getElementById(
+    "shareBox"
+  ).style.display="block";
 
-  document.getElementById("textPostForm").style.display="none";
+  document.getElementById(
+    "textPostForm"
+  ).style.display="none";
 
-  document.getElementById("imagePostForm").style.display="none";
+  document.getElementById(
+    "imagePostForm"
+  ).style.display="none";
 
 }
 
 
 function closeShare(){
 
-  document.getElementById("shareBox").style.display="none";
+  document.getElementById(
+    "shareBox"
+  ).style.display="none";
 
-  document.getElementById("textPostForm").style.display="none";
+  document.getElementById(
+    "textPostForm"
+  ).style.display="none";
 
-  document.getElementById("imagePostForm").style.display="none";
+  document.getElementById(
+    "imagePostForm"
+  ).style.display="none";
 
 }
 
 
 function showTextPost(){
 
-  document.getElementById("textPostForm").style.display="block";
+  document.getElementById(
+    "textPostForm"
+  ).style.display="block";
 
-  document.getElementById("imagePostForm").style.display="none";
+  document.getElementById(
+    "imagePostForm"
+  ).style.display="none";
 
-  document.getElementById("shareText").focus();
+  document.getElementById(
+    "shareText"
+  ).focus();
 
 }
 
@@ -1547,9 +1871,13 @@ function showImagePost(){
 
   showShare();
 
-  document.getElementById("textPostForm").style.display="none";
+  document.getElementById(
+    "textPostForm"
+  ).style.display="none";
 
-  document.getElementById("imagePostForm").style.display="block";
+  document.getElementById(
+    "imagePostForm"
+  ).style.display="block";
 
 }
 
@@ -1564,14 +1892,19 @@ async function submitTextPost(){
   }
 
   const input =
-    document.getElementById("shareText");
+    document.getElementById(
+      "shareText"
+    );
 
   const content =
     input.value.trim();
 
   if(!content){
 
-    alert("Pehle text likhein.");
+    alert(
+      "Pehle text likhein."
+    );
+
     return;
 
   }
@@ -1614,21 +1947,30 @@ async function submitTextPost(){
 function shareImageSelected(){
 
   const input =
-    document.getElementById("shareImageInput");
+    document.getElementById(
+      "shareImageInput"
+    );
 
   const preview =
-    document.getElementById("shareImagePreview");
+    document.getElementById(
+      "shareImagePreview"
+    );
 
   if(
     input.files &&
     input.files.length
   ){
 
-    const file=input.files[0];
+    const file =
+      input.files[0];
 
-    if(!file.type.startsWith("image/")){
+    if(
+      !file.type.startsWith("image/")
+    ){
 
-      alert("Sirf image select karein.");
+      alert(
+        "Sirf image select karein."
+      );
 
       input.value="";
       return;
@@ -1638,12 +1980,16 @@ function shareImageSelected(){
     const reader =
       new FileReader();
 
-    reader.onload=function(event){
+    reader.onload =
+      function(event){
 
-      preview.src=event.target.result;
-      preview.style.display="block";
+        preview.src =
+          event.target.result;
 
-    };
+        preview.style.display =
+          "block";
+
+      };
 
     reader.readAsDataURL(file);
 
@@ -1658,23 +2004,35 @@ async function submitImagePost(){
 
   if(!currentUser){
 
-    alert("Please login first.");
+    alert(
+      "Please login first."
+    );
+
     return;
 
   }
 
   const category =
-    document.getElementById("imageCategory").value;
+    document.getElementById(
+      "imageCategory"
+    ).value;
 
   const input =
-    document.getElementById("shareImageInput");
+    document.getElementById(
+      "shareImageInput"
+    );
 
   const caption =
-    document.getElementById("imageCaption").value.trim();
+    document.getElementById(
+      "imageCaption"
+    ).value.trim();
 
   if(!category){
 
-    alert("Image post ke liye category select karna zaroori hai.");
+    alert(
+      "Image post ke liye category select karna zaroori hai."
+    );
+
     return;
 
   }
@@ -1684,17 +2042,23 @@ async function submitImagePost(){
     !input.files.length
   ){
 
-    alert("Pehle image select karein.");
+    alert(
+      "Pehle image select karein."
+    );
+
     return;
 
   }
 
-  const file=input.files[0];
+  const file =
+    input.files[0];
 
   try{
 
     const fileExt =
-      file.name.split(".").pop();
+      file.name
+        .split(".")
+        .pop();
 
     const fileName =
       currentUser.id +
@@ -1707,16 +2071,11 @@ async function submitImagePost(){
       "posts/" +
       fileName;
 
-
-    /*
-      Supabase Storage bucket:
-      post-images
-    */
-
     const {
       error:uploadError
     } =
-      await supabaseClient.storage
+      await supabaseClient
+        .storage
         .from("post-images")
         .upload(
           filePath,
@@ -1736,18 +2095,18 @@ async function submitImagePost(){
 
     }
 
-
     const {
       data:publicData
     } =
-      supabaseClient.storage
+      supabaseClient
+        .storage
         .from("post-images")
-        .getPublicUrl(filePath);
-
+        .getPublicUrl(
+          filePath
+        );
 
     const imageUrl =
       publicData?.publicUrl || "";
-
 
     if(!imageUrl){
 
@@ -1757,7 +2116,6 @@ async function submitImagePost(){
 
     }
 
-
     const {
       error:postError
     } =
@@ -1766,17 +2124,12 @@ async function submitImagePost(){
         .insert({
 
           user_id:currentUser.id,
-
           content:caption,
-
           post_type:"image",
-
           category:category,
-
           image_url:imageUrl
 
         });
-
 
     if(postError){
 
@@ -1784,21 +2137,29 @@ async function submitImagePost(){
 
     }
 
+    document.getElementById(
+      "imageCategory"
+    ).value="";
 
-    document.getElementById("imageCategory").value="";
+    document.getElementById(
+      "shareImageInput"
+    ).value="";
 
-    document.getElementById("shareImageInput").value="";
+    document.getElementById(
+      "imageCaption"
+    ).value="";
 
-    document.getElementById("imageCaption").value="";
+    document.getElementById(
+      "shareImagePreview"
+    ).style.display="none";
 
-    document.getElementById("shareImagePreview").style.display="none";
-
-    document.getElementById("shareImagePreview").src="";
+    document.getElementById(
+      "shareImagePreview"
+    ).src="";
 
     closeShare();
 
     await loadFeed();
-
 
   }catch(error){
 
@@ -1822,21 +2183,29 @@ async function submitImagePost(){
 async function createPost(){
 
   const textarea =
-    document.getElementById("postText");
+    document.getElementById(
+      "postText"
+    );
 
   const content =
     textarea.value.trim();
 
   if(!content){
 
-    alert("Pehle post likhein.");
+    alert(
+      "Pehle post likhein."
+    );
+
     return;
 
   }
 
   if(!currentUser){
 
-    alert("Please login first.");
+    alert(
+      "Please login first."
+    );
+
     return;
 
   }
@@ -1878,21 +2247,30 @@ async function createPost(){
 
 function replyPost(username){
 
-  currentReplyUser=username;
+  currentReplyUser =
+    username;
 
   const box =
-    document.getElementById("replyBox");
+    document.getElementById(
+      "replyBox"
+    );
 
   const text =
-    document.getElementById("replyText");
+    document.getElementById(
+      "replyText"
+    );
 
   text.textContent =
-    "↩️ Reply to @" + username;
+    "↩️ Reply to @" +
+    username;
 
-  box.style.display="block";
+  box.style.display =
+    "block";
 
   const textarea =
-    document.getElementById("postText");
+    document.getElementById(
+      "postText"
+    );
 
   textarea.focus();
 
@@ -1908,19 +2286,24 @@ function cancelReply(){
 
   currentReplyUser=null;
 
-  document.getElementById("replyBox").style.display="none";
+  document.getElementById(
+    "replyBox"
+  ).style.display="none";
 
 }
 
 
-/* DELETE POST */
+/* DELETE */
 
 async function deletePost(postId){
 
-  if(!currentUser) return;
+  if(!currentUser)
+    return;
 
   const ok =
-    confirm("Apni post delete karni hai?");
+    confirm(
+      "Apni post delete karni hai?"
+    );
 
   if(!ok) return;
 
@@ -1931,7 +2314,10 @@ async function deletePost(postId){
         .from("posts")
         .delete()
         .eq("id",postId)
-        .eq("user_id",currentUser.id);
+        .eq(
+          "user_id",
+          currentUser.id
+        );
 
     if(error) throw error;
 
@@ -1949,7 +2335,7 @@ async function deletePost(postId){
 }
 
 
-/* LIKE DISLIKE */
+/* LIKE / DISLIKE */
 
 async function setPostAction(
   postId,
@@ -1958,30 +2344,49 @@ async function setPostAction(
 
   if(!currentUser){
 
-    alert("Please login first.");
+    alert(
+      "Please login first."
+    );
+
     return;
 
   }
 
   try{
 
-    const {data:existing} =
+    const {
+      data:existing
+    } =
       await supabaseClient
         .from("post_actions")
-        .select("id,action_type")
-        .eq("post_id",postId)
-        .eq("user_id",currentUser.id)
+        .select(
+          "id,action_type"
+        )
+        .eq(
+          "post_id",
+          postId
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
         .maybeSingle();
 
     if(existing){
 
-      if(existing.action_type===actionType){
+      if(
+        existing.action_type===
+        actionType
+      ){
 
         const {error} =
           await supabaseClient
             .from("post_actions")
             .delete()
-            .eq("id",existing.id);
+            .eq(
+              "id",
+              existing.id
+            );
 
         if(error) throw error;
 
@@ -1993,7 +2398,10 @@ async function setPostAction(
             .update({
               action_type:actionType
             })
-            .eq("id",existing.id);
+            .eq(
+              "id",
+              existing.id
+            );
 
         if(error) throw error;
 
@@ -2032,7 +2440,9 @@ async function setPostAction(
 
 /* COMMENTS */
 
-async function toggleComments(postId){
+async function toggleComments(
+  postId
+){
 
   const box =
     document.getElementById(
@@ -2041,7 +2451,9 @@ async function toggleComments(postId){
 
   if(!box) return;
 
-  if(box.style.display==="block"){
+  if(
+    box.style.display==="block"
+  ){
 
     box.style.display="none";
     return;
@@ -2050,12 +2462,16 @@ async function toggleComments(postId){
 
   box.style.display="block";
 
-  await loadComments(postId);
+  await loadComments(
+    postId
+  );
 
 }
 
 
-async function loadComments(postId){
+async function loadComments(
+  postId
+){
 
   const list =
     document.getElementById(
@@ -2065,7 +2481,13 @@ async function loadComments(postId){
   if(!list) return;
 
   list.innerHTML =
-    `<div style="color:#888;font-size:12px;padding:6px">
+    `<div
+      style="
+        color:#888;
+        font-size:12px;
+        padding:6px
+      "
+    >
       Loading comments...
     </div>`;
 
@@ -2080,18 +2502,33 @@ async function loadComments(postId){
         .select(
           "id,post_id,user_id,comment,created_at"
         )
-        .eq("post_id",postId)
+        .eq(
+          "post_id",
+          postId
+        )
         .order(
           "created_at",
-          {ascending:true}
+          {
+            ascending:true
+          }
         );
 
     if(error) throw error;
 
-    if(!comments || comments.length===0){
+    if(
+      !comments ||
+      comments.length===0
+    ){
 
       list.innerHTML =
-        `<div style="color:#888;font-size:12px;padding:8px;text-align:center">
+        `<div
+          style="
+            color:#888;
+            font-size:12px;
+            padding:8px;
+            text-align:center
+          "
+        >
           No comments yet.
         </div>`;
 
@@ -2120,129 +2557,202 @@ async function loadComments(postId){
           .select(
             "id,username,name,avatar_url"
           )
-          .in("id",userIds);
+          .in(
+            "id",
+            userIds
+          );
 
-      if(!profileError && profiles){
+      if(
+        !profileError &&
+        profiles
+      ){
 
-        profiles.forEach(function(profile){
-          commentProfiles[profile.id]=profile;
-        });
+        profiles.forEach(
+          function(profile){
+
+            commentProfiles[
+              profile.id
+            ]=profile;
+
+          }
+        );
 
       }
 
     }
 
     list.innerHTML =
-      comments.map(function(comment){
+      comments.map(
+        function(comment){
 
-        const profile =
-          commentProfiles[comment.user_id] || {};
+          const profile =
+            commentProfiles[
+              comment.user_id
+            ] || {};
 
-        let username =
-          profile.username || "";
+          let username =
+            profile.username || "";
 
-        let displayName =
-          profile.name || "";
+          let displayName =
+            profile.name || "";
 
-        if(
-          !username &&
-          currentUser &&
-          comment.user_id===currentUser.id
-        ){
+          if(
+            !username &&
+            currentUser &&
+            comment.user_id===
+            currentUser.id
+          ){
 
-          username =
-            currentUser.user_metadata?.username ||
-            currentUser.email?.split("@")[0] ||
-            "User";
+            username =
+              currentUser
+                .user_metadata
+                ?.username ||
+              currentUser
+                .email
+                ?.split("@")[0] ||
+              "User";
 
-        }
+          }
 
-        if(!username) username="User";
+          if(!username)
+            username="User";
 
-        const isOwn =
-          currentUser &&
-          comment.user_id===currentUser.id;
+          const isOwn =
+            currentUser &&
+            comment.user_id===
+            currentUser.id;
 
-        return `
-          <div class="comment-item">
+          return `
+            <div class="comment-item">
 
-            <div
-              style="display:flex;align-items:center;gap:8px"
-            >
+              <div
+                style="
+                  display:flex;
+                  align-items:center;
+                  gap:8px
+                "
+              >
 
-              ${
-                profile.avatar_url
-                ?
-                `<img
-                  src="${escapeAttribute(profile.avatar_url)}"
-                  style="width:32px;height:32px;border-radius:50%;object-fit:cover"
-                >`
-                :
-                `<div
-                  style="width:32px;height:32px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center"
-                >
-                  👤
-                </div>`
-              }
+                ${
+                  profile.avatar_url
+                  ?
+                  `<img
+                    src="${escapeAttribute(
+                      profile.avatar_url
+                    )}"
+                    style="
+                      width:32px;
+                      height:32px;
+                      border-radius:50%;
+                      object-fit:cover
+                    "
+                  >`
+                  :
+                  `<div
+                    style="
+                      width:32px;
+                      height:32px;
+                      border-radius:50%;
+                      background:#ddd;
+                      display:flex;
+                      align-items:center;
+                      justify-content:center
+                    "
+                  >
+                    👤
+                  </div>`
+                }
 
-              <div>
+                <div>
 
-                <div class="comment-user">
+                  <div class="comment-user">
 
-                  ${escapeHtml(displayName || username)}
+                    ${escapeHtml(
+                      displayName ||
+                      username
+                    )}
 
-                  ${
-                    displayName && username
-                    ?
-                    `<span
-                      style="color:#777;font-weight:normal;font-size:11px"
-                    >
-                      @${escapeHtml(username)}
-                    </span>`
-                    :
-                    ""
-                  }
+                    ${
+                      displayName &&
+                      username
+                      ?
+                      `<span
+                        style="
+                          color:#777;
+                          font-weight:normal;
+                          font-size:11px
+                        "
+                      >
+                        @${escapeHtml(
+                          username
+                        )}
+                      </span>`
+                      :
+                      ""
+                    }
 
-                </div>
+                  </div>
 
-                <div class="comment-date">
-                  ${formatDate(comment.created_at)}
+                  <div class="comment-date">
+                    ${formatDate(
+                      comment.created_at
+                    )}
+                  </div>
+
                 </div>
 
               </div>
 
-            </div>
-
-            <div
-              style="margin-top:7px;white-space:pre-wrap;word-break:break-word"
-            >
-              ${escapeHtml(comment.comment || "")}
-            </div>
-
-            ${
-              isOwn
-              ?
-              `<button
-                class="comment-delete"
-                onclick="deleteComment(${Number(comment.id)},${Number(postId)})"
+              <div
+                style="
+                  margin-top:7px;
+                  white-space:pre-wrap;
+                  word-break:break-word
+                "
               >
-                Delete
-              </button>`
-              :
-              ""
-            }
+                ${escapeHtml(
+                  comment.comment || ""
+                )}
+              </div>
 
-          </div>
-        `;
+              ${
+                isOwn
+                ?
+                `<button
+                  class="comment-delete"
+                  onclick="deleteComment(
+                    ${Number(comment.id)},
+                    ${Number(postId)}
+                  )"
+                >
+                  Delete
+                </button>`
+                :
+                ""
+              }
 
-      }).join("");
+            </div>
+          `;
+
+        }
+      ).join("");
 
   }catch(error){
 
     list.innerHTML =
-      `<div style="color:#d00;font-size:12px;padding:8px">
+      `<div
+        style="
+          color:#d00;
+          font-size:12px;
+          padding:8px
+        "
+      >
         Comments load nahi huay.<br>
-        <small>${escapeHtml(error.message || "")}</small>
+        <small>
+          ${escapeHtml(
+            error.message || ""
+          )}
+        </small>
       </div>`;
 
   }
@@ -2250,11 +2760,16 @@ async function loadComments(postId){
 }
 
 
-async function addComment(postId){
+async function addComment(
+  postId
+){
 
   if(!currentUser){
 
-    alert("Please login first.");
+    alert(
+      "Please login first."
+    );
+
     return;
 
   }
@@ -2288,13 +2803,24 @@ async function addComment(postId){
 
     input.value="";
 
-    await loadComments(postId);
+    await loadComments(
+      postId
+    );
 
     const {count} =
       await supabaseClient
         .from("comments")
-        .select("id",{count:"exact",head:true})
-        .eq("post_id",postId);
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        )
+        .eq(
+          "post_id",
+          postId
+        );
 
     const btn =
       document.querySelector(
@@ -2303,7 +2829,10 @@ async function addComment(postId){
       );
 
     if(btn){
-      btn.textContent="💬 "+(count || 0);
+
+      btn.textContent =
+        "💬 "+(count || 0);
+
     }
 
   }catch(error){
@@ -2323,7 +2852,8 @@ async function deleteComment(
   postId
 ){
 
-  if(!currentUser) return;
+  if(!currentUser)
+    return;
 
   const ok =
     confirm(
@@ -2338,18 +2868,35 @@ async function deleteComment(
       await supabaseClient
         .from("comments")
         .delete()
-        .eq("id",commentId)
-        .eq("user_id",currentUser.id);
+        .eq(
+          "id",
+          commentId
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        );
 
     if(error) throw error;
 
-    await loadComments(postId);
+    await loadComments(
+      postId
+    );
 
     const {count} =
       await supabaseClient
         .from("comments")
-        .select("id",{count:"exact",head:true})
-        .eq("post_id",postId);
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        )
+        .eq(
+          "post_id",
+          postId
+        );
 
     const btn =
       document.querySelector(
@@ -2358,7 +2905,10 @@ async function deleteComment(
       );
 
     if(btn){
-      btn.textContent="💬 "+(count || 0);
+
+      btn.textContent =
+        "💬 "+(count || 0);
+
     }
 
   }catch(error){
@@ -2375,11 +2925,17 @@ async function deleteComment(
 
 /* BLOCK */
 
-async function blockUser(userId){
+async function blockUser(
+  userId
+){
 
-  if(!currentUser) return;
+  if(!currentUser)
+    return;
 
-  if(userId===currentUser.id) return;
+  if(
+    userId===currentUser.id
+  )
+    return;
 
   const ok =
     confirm(
@@ -2402,7 +2958,9 @@ async function blockUser(userId){
 
     if(error) throw error;
 
-    alert("User blocked.");
+    alert(
+      "User blocked."
+    );
 
     await loadFeed();
 
@@ -2423,12 +2981,19 @@ async function blockUser(userId){
 function imageSelected(){
 
   const input =
-    document.getElementById("imageInput");
+    document.getElementById(
+      "imageInput"
+    );
 
   const output =
-    document.getElementById("selectedImageText");
+    document.getElementById(
+      "selectedImageText"
+    );
 
-  if(input.files && input.files.length){
+  if(
+    input.files &&
+    input.files.length
+  ){
 
     output.textContent =
       "Selected: " +
@@ -2468,19 +3033,27 @@ function startVoice(){
   recognition.interimResults=false;
   recognition.continuous=false;
 
-  recognition.onresult=function(event){
+  recognition.onresult =
+    function(event){
 
-    const text =
-      event.results[0][0].transcript;
+      const text =
+        event.results[0][0]
+          .transcript;
 
-    const textarea =
-      document.getElementById("postText");
+      const textarea =
+        document.getElementById(
+          "postText"
+        );
 
-    textarea.value +=
-      (textarea.value ? "\n" : "") +
-      text;
+      textarea.value +=
+        (
+          textarea.value
+          ? "\n"
+          : ""
+        ) +
+        text;
 
-  };
+    };
 
   recognition.start();
 
@@ -2495,9 +3068,14 @@ function updateTrending(
 ){
 
   const list =
-    document.getElementById("trendingList");
+    document.getElementById(
+      "trendingList"
+    );
 
-  if(!posts || posts.length===0){
+  if(
+    !posts ||
+    posts.length===0
+  ){
 
     list.innerHTML =
       `<div class="empty">
@@ -2509,45 +3087,69 @@ function updateTrending(
   }
 
   list.innerHTML =
-    posts.slice(0,10).map(function(post){
+    posts
+      .slice(0,10)
+      .map(
+        function(post){
 
-      const profile =
-        profiles[post.user_id] || {};
+          const profile =
+            profiles[
+              post.user_id
+            ] || {};
 
-      const username =
-        profile.username || "User";
+          const username =
+            profile.username ||
+            "User";
 
-      return `
-        <div class="trend-item">
+          return `
+            <div class="trend-item">
 
-          <b>
-            @${escapeHtml(username)}
-          </b>
+              <b>
+                @${escapeHtml(
+                  username
+                )}
+              </b>
 
-          ${
-            post.category
-            ?
-            `<div
-              style="color:#6c5ce7;font-size:11px;margin-top:3px"
-            >
-              #${escapeHtml(post.category)}
-            </div>`
-            :
-            ""
-          }
+              ${
+                post.category
+                ?
+                `<div
+                  style="
+                    color:#6c5ce7;
+                    font-size:11px;
+                    margin-top:3px
+                  "
+                >
+                  #${escapeHtml(
+                    post.category
+                  )}
+                </div>`
+                :
+                ""
+              }
 
-          <div style="margin-top:4px">
-            ${escapeHtml(post.content || "").slice(0,160)}
-          </div>
+              <div
+                style="margin-top:4px"
+              >
+                ${escapeHtml(
+                  post.content || ""
+                ).slice(0,160)}
+              </div>
 
-          <small style="color:#888">
-            ${formatDate(post.created_at)}
-          </small>
+              <small
+                style="color:#888"
+              >
+                ${formatDate(
+                  post.created_at
+                )}
+              </small>
 
-        </div>
-      `;
+            </div>
+          `;
 
-    }).join("");
+        }
+      )
+      .join("");
 
 }
 
@@ -2607,47 +3209,66 @@ function formatDate(value){
 
   if(!value) return "";
 
-  const date=new Date(value);
+  const date =
+    new Date(value);
 
-  if(Number.isNaN(date.getTime()))
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  )
     return "";
 
-  const now=new Date();
+  const now =
+    new Date();
 
-  const seconds=
+  const seconds =
     Math.floor(
-      (now.getTime()-date.getTime())/1000
+      (
+        now.getTime() -
+        date.getTime()
+      ) / 1000
     );
 
   if(seconds<10)
     return "Just now";
 
   if(seconds<60)
-    return seconds+" seconds ago";
+    return seconds +
+      " seconds ago";
 
-  const minutes=
-    Math.floor(seconds/60);
+  const minutes =
+    Math.floor(
+      seconds/60
+    );
 
   if(minutes<60)
     return minutes===1
       ? "1 minute ago"
-      : minutes+" minutes ago";
+      : minutes +
+        " minutes ago";
 
-  const hours=
-    Math.floor(minutes/60);
+  const hours =
+    Math.floor(
+      minutes/60
+    );
 
   if(hours<24)
     return hours===1
       ? "1 hour ago"
-      : hours+" hours ago";
+      : hours +
+        " hours ago";
 
-  const days=
-    Math.floor(hours/24);
+  const days =
+    Math.floor(
+      hours/24
+    );
 
   if(days<7)
     return days===1
       ? "1 day ago"
-      : days+" days ago";
+      : days +
+        " days ago";
 
   return date.toLocaleDateString(
     "en-GB",
@@ -2666,11 +3287,26 @@ function formatDate(value){
 function escapeHtml(value){
 
   return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
@@ -2681,10 +3317,22 @@ function escapeAttribute(value){
 function escapeJs(value){
 
   return String(value ?? "")
-    .replaceAll("\\","\\\\")
-    .replaceAll("'","\\'")
-    .replaceAll("\n","\\n")
-    .replaceAll("\r","\\r");
+    .replaceAll(
+      "\\",
+      "\\\\"
+    )
+    .replaceAll(
+      "'",
+      "\\'"
+    )
+    .replaceAll(
+      "\n",
+      "\\n"
+    )
+    .replaceAll(
+      "\r",
+      "\\r"
+    );
 
 }
 
