@@ -1019,6 +1019,7 @@ async function renderPost(post){
       </div>
 
       ${imageHTML}
+      ${isOwn ? "" : `
 
 
       <div class="post-actions">
@@ -1066,6 +1067,7 @@ async function renderPost(post){
         </button>
 
       </div>
+      `}
 
 
       <div
@@ -1859,31 +1861,16 @@ async function addComment(postId){
       update hoga.
     */
 
-    await loadFeed();
+    const { count } = await supabaseClient
+      .from("comments")
+      .select("id", { count:"exact", head:true })
+      .eq("post_id", postId);
 
+    const box = document.getElementById("comments-" + postId);
+    if(box) box.style.display = "block";
 
-    /*
-      Feed reload ke baad
-      comments automatically
-      dobara open.
-    */
-
-    const box =
-      document.getElementById(
-        "comments-" +
-        postId
-      );
-
-    if(box){
-
-      box.style.display =
-        "block";
-
-      await loadComments(
-        postId
-      );
-
-    }
+    const btn = document.querySelector("#post-" + postId + " .post-actions button:nth-child(3)");
+    if(btn) btn.textContent = "💬 " + (count || 0);
 
   }catch(error){
 
@@ -1957,25 +1944,16 @@ async function deleteComment(
     );
 
 
-    await loadFeed();
+    const { count } = await supabaseClient
+      .from("comments")
+      .select("id", { count:"exact", head:true })
+      .eq("post_id", postId);
 
+    const box = document.getElementById("comments-" + postId);
+    if(box) box.style.display = "block";
 
-    const box =
-      document.getElementById(
-        "comments-" +
-        postId
-      );
-
-    if(box){
-
-      box.style.display =
-        "block";
-
-      await loadComments(
-        postId
-      );
-
-    }
+    const btn = document.querySelector("#post-" + postId + " .post-actions button:nth-child(3)");
+    if(btn) btn.textContent = "💬 " + (count || 0);
 
   }catch(error){
 
