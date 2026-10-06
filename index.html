@@ -8,7 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 html,body{
   margin:0;
@@ -231,7 +233,8 @@ textarea{
   color:white;
 }
 
-.upload-btn,.voice-btn{
+.upload-btn,
+.voice-btn{
   background:#eee;
 }
 
@@ -342,7 +345,7 @@ textarea{
 .post-actions button{
   flex:1 1 0;
   min-width:0;
-  width:25%;
+  width:auto;
   border:0;
   background:#f3f3f3;
   border-radius:10px;
@@ -355,8 +358,6 @@ textarea{
 }
 
 .delete-post-btn{
-  width:100%!important;
-  flex:1 1 100%!important;
   background:#ffe5e5!important;
   color:#d00000;
   font-weight:bold;
@@ -379,6 +380,12 @@ textarea{
   font-size:13px;
 }
 
+.nested-comment{
+  margin-left:22px;
+  border-left:3px solid #d8d2ff;
+  background:#faf9ff;
+}
+
 .comment-user{
   font-weight:bold;
 }
@@ -393,6 +400,40 @@ textarea{
   background:none;
   color:#d00;
   font-size:11px;
+  cursor:pointer;
+  padding:4px 0;
+}
+
+.comment-reply{
+  border:0;
+  background:#eee;
+  color:#6c5ce7;
+  border-radius:14px;
+  padding:5px 9px;
+  font-size:11px;
+  cursor:pointer;
+  margin-top:5px;
+}
+
+.comment-reply:hover{
+  background:#e7e2ff;
+}
+
+.comment-reply-box{
+  display:none;
+  background:#f0edff;
+  border-left:4px solid #6c5ce7;
+  border-radius:8px;
+  padding:7px 9px;
+  margin-top:8px;
+  font-size:12px;
+}
+
+.comment-reply-box button{
+  float:right;
+  border:0;
+  background:none;
+  color:#d00;
   cursor:pointer;
 }
 
@@ -422,7 +463,8 @@ textarea{
 
 /* LOADING */
 
-.empty,.loading{
+.empty,
+.loading{
   text-align:center;
   padding:25px 10px;
   color:#777;
@@ -473,7 +515,8 @@ textarea{
 
 /* POPUPS */
 
-.trending-box,.share-box{
+.trending-box,
+.share-box{
   display:none;
   position:fixed;
   inset:0;
@@ -481,7 +524,8 @@ textarea{
   z-index:50;
 }
 
-.trending-content,.share-content{
+.trending-content,
+.share-content{
   width:92%;
   max-width:600px;
   max-height:80vh;
@@ -492,13 +536,15 @@ textarea{
   padding:15px;
 }
 
-.trending-header,.share-header{
+.trending-header,
+.share-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-.trending-header button,.share-header button{
+.trending-header button,
+.share-header button{
   border:0;
   background:#eee;
   border-radius:20px;
@@ -634,6 +680,10 @@ textarea{
     padding:2px 0;
   }
 
+  .nested-comment{
+    margin-left:12px;
+  }
+
 }
 
 @media(max-width:360px){
@@ -713,7 +763,6 @@ textarea{
     id="onlineUsers"
     class="online-users"
   >
-
     <div
       style="
         color:#888;
@@ -723,7 +772,6 @@ textarea{
     >
       Online users loading...
     </div>
-
   </div>
 
 </div>
@@ -1057,6 +1105,12 @@ let currentReplyUser = null;
 let currentPosts = [];
 let onlineChannel = null;
 
+let activeCommentReply = {
+  postId:null,
+  commentId:null,
+  username:null
+};
+
 
 /* INIT */
 
@@ -1085,11 +1139,7 @@ async function init(){
       return;
     }
 
-    /* Online system does not block feed */
-
     loadOnlineUsers();
-
-    /* Load feed immediately */
 
     await loadFeed(false);
 
@@ -1166,27 +1216,21 @@ async function loadOnlineUsers(){
         "presence",
         {event:"sync"},
         function(){
-
           renderOnlineUsers();
-
         }
       )
       .on(
         "presence",
         {event:"join"},
         function(){
-
           renderOnlineUsers();
-
         }
       )
       .on(
         "presence",
         {event:"leave"},
         function(){
-
           renderOnlineUsers();
-
         }
       );
 
@@ -1199,7 +1243,8 @@ async function loadOnlineUsers(){
 
             await onlineChannel.track({
 
-              user_id:currentUser.id,
+              user_id:
+                currentUser.id,
 
               online_at:
                 new Date()
@@ -1470,10 +1515,6 @@ async function loadFeed(
 
   try{
 
-    /*
-      POSTS
-    */
-
     const {
       data:posts,
       error:postsError
@@ -1521,9 +1562,7 @@ async function loadFeed(
       return;
     }
 
-    /*
-      PROFILES
-    */
+    /* PROFILES */
 
     const userIds = [
       ...new Set(
@@ -1571,9 +1610,7 @@ async function loadFeed(
 
     }
 
-    /*
-      ACTION COUNTS
-    */
+    /* ACTION COUNTS */
 
     const actionCounts = {};
 
@@ -1643,9 +1680,7 @@ async function loadFeed(
 
     }
 
-    /*
-      COMMENT COUNTS
-    */
+    /* COMMENT COUNTS */
 
     const commentCounts = {};
 
@@ -1687,9 +1722,7 @@ async function loadFeed(
 
     }
 
-    /*
-      BUILD FEED
-    */
+    /* BUILD FEED */
 
     let html = "";
 
@@ -1719,10 +1752,6 @@ async function loadFeed(
       safePosts,
       profileMap
     );
-
-    /*
-      Restore scroll only when needed
-    */
 
     if(preserveScroll){
 
@@ -1987,6 +2016,17 @@ function renderPost(
               🗑️ Delete
             </button>
 
+            <button
+              id="comment-count-${Number(post.id)}"
+              onclick="
+                toggleComments(
+                  ${Number(post.id)}
+                )
+              "
+            >
+              💬 ${commentCount}
+            </button>
+
           </div>
         `
         :
@@ -2016,6 +2056,7 @@ function renderPost(
             </button>
 
             <button
+              id="comment-count-${Number(post.id)}"
               onclick="
                 toggleComments(
                   ${Number(post.id)}
@@ -2048,6 +2089,29 @@ function renderPost(
           id="comments-list-${Number(post.id)}"
         >
           Loading...
+        </div>
+
+        <div
+          id="comment-reply-box-${Number(post.id)}"
+          class="comment-reply-box"
+        >
+
+          <span
+            id="comment-reply-text-${Number(post.id)}"
+          ></span>
+
+          <button
+            onclick="
+              cancelCommentReply(
+                ${Number(post.id)}
+              )
+            "
+          >
+            ✕
+          </button>
+
+          <div style="clear:both"></div>
+
         </div>
 
         <div class="comment-input-row">
@@ -2559,7 +2623,7 @@ async function createPost(){
 
 
 /* =================================================
-   REPLY
+   POST REPLY
    ================================================= */
 
 function replyPost(username){
@@ -2739,10 +2803,8 @@ async function setPostAction(
         await supabaseClient
           .from("post_actions")
           .update({
-
             action_type:
               actionType
-
           })
           .eq(
             "id",
@@ -2796,7 +2858,7 @@ async function setPostAction(
 
 
 /* =================================================
-   COMMENTS
+   COMMENTS OPEN / CLOSE
    ================================================= */
 
 async function toggleComments(
@@ -2822,6 +2884,7 @@ async function toggleComments(
       "none";
 
     return;
+
   }
 
   box.style.display =
@@ -2833,6 +2896,10 @@ async function toggleComments(
 
 }
 
+
+/* =================================================
+   LOAD COMMENTS + REPLIES
+   ================================================= */
 
 async function loadComments(
   postId
@@ -2869,7 +2936,7 @@ async function loadComments(
     await supabaseClient
       .from("comments")
       .select(
-        "id,post_id,user_id,comment,created_at"
+        "id,post_id,user_id,comment,created_at,parent_id"
       )
       .eq(
         "post_id",
@@ -2954,172 +3021,275 @@ async function loadComments(
 
     }
 
-    list.innerHTML =
-      comments.map(
-        function(comment){
+    /* CHILDREN MAP */
 
-          const profile =
-            commentProfiles[
-              comment.user_id
-            ] || {};
+    const childrenMap = {};
 
-          let username =
-            profile.username || "";
+    comments.forEach(
+      function(comment){
 
-          let displayName =
-            profile.name || "";
+        const parentId =
+          comment.parent_id || 0;
 
-          if(
-            !username &&
-            currentUser &&
-            comment.user_id ===
-            currentUser.id
-          ){
+        if(
+          !childrenMap[parentId]
+        ){
 
-            username =
-              currentUser
-                .user_metadata
-                ?.username ||
-              currentUser
-                .email
-                ?.split("@")[0] ||
-              "User";
+          childrenMap[parentId] = [];
 
-          }
+        }
 
-          if(!username){
-            username = "User";
-          }
+        childrenMap[parentId]
+          .push(comment);
 
-          const isOwn =
-            currentUser &&
-            comment.user_id ===
-            currentUser.id;
+      }
+    );
 
-          return `
-            <div class="comment-item">
 
-              <div
-                style="
-                  display:flex;
-                  align-items:center;
-                  gap:8px
-                "
-              >
+    /* RENDER ONE COMMENT */
+
+    function renderComment(
+      comment,
+      level = 0
+    ){
+
+      const profile =
+        commentProfiles[
+          comment.user_id
+        ] || {};
+
+      let username =
+        profile.username || "";
+
+      let displayName =
+        profile.name || "";
+
+      if(
+        !username &&
+        currentUser &&
+        comment.user_id ===
+        currentUser.id
+      ){
+
+        username =
+          currentUser
+            .user_metadata
+            ?.username ||
+          currentUser
+            .email
+            ?.split("@")[0] ||
+          "User";
+
+      }
+
+      if(!username){
+        username = "User";
+      }
+
+      const isOwn =
+        currentUser &&
+        comment.user_id ===
+        currentUser.id;
+
+      const children =
+        childrenMap[
+          comment.id
+        ] || [];
+
+      const nestedClass =
+        level > 0
+        ?
+        "nested-comment"
+        :
+        "";
+
+      const avatar =
+        profile.avatar_url || "";
+
+      const avatarHTML =
+        avatar
+        ?
+        `
+          <img
+            src="${escapeAttribute(
+              avatar
+            )}"
+            style="
+              width:32px;
+              height:32px;
+              border-radius:50%;
+              object-fit:cover
+            "
+            onerror="
+              this.style.display='none'
+            "
+          >
+        `
+        :
+        `
+          <div
+            style="
+              width:32px;
+              height:32px;
+              border-radius:50%;
+              background:#ddd;
+              display:flex;
+              align-items:center;
+              justify-content:center
+            "
+          >
+            👤
+          </div>
+        `;
+
+      return `
+        <div
+          class="comment-item ${nestedClass}"
+        >
+
+          <div
+            style="
+              display:flex;
+              align-items:center;
+              gap:8px
+            "
+          >
+
+            ${avatarHTML}
+
+            <div>
+
+              <div class="comment-user">
+
+                ${escapeHtml(
+                  displayName ||
+                  username
+                )}
 
                 ${
-                  profile.avatar_url
+                  displayName &&
+                  username
                   ?
                   `
-                    <img
-                      src="${escapeAttribute(
-                        profile.avatar_url
-                      )}"
+                    <span
                       style="
-                        width:32px;
-                        height:32px;
-                        border-radius:50%;
-                        object-fit:cover
+                        color:#777;
+                        font-weight:normal;
+                        font-size:11px
                       "
                     >
+                      @${escapeHtml(
+                        username
+                      )}
+                    </span>
                   `
                   :
-                  `
-                    <div
-                      style="
-                        width:32px;
-                        height:32px;
-                        border-radius:50%;
-                        background:#ddd;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center
-                      "
-                    >
-                      👤
-                    </div>
-                  `
+                  ""
                 }
-
-                <div>
-
-                  <div class="comment-user">
-
-                    ${escapeHtml(
-                      displayName ||
-                      username
-                    )}
-
-                    ${
-                      displayName &&
-                      username
-                      ?
-                      `
-                        <span
-                          style="
-                            color:#777;
-                            font-weight:normal;
-                            font-size:11px
-                          "
-                        >
-                          @${escapeHtml(
-                            username
-                          )}
-                        </span>
-                      `
-                      :
-                      ""
-                    }
-
-                  </div>
-
-                  <div class="comment-date">
-                    ${formatDate(
-                      comment.created_at
-                    )}
-                  </div>
-
-                </div>
 
               </div>
 
-              <div
-                style="
-                  margin-top:7px;
-                  white-space:pre-wrap;
-                  word-break:break-word
-                "
-              >
-                ${escapeHtml(
-                  comment.comment || ""
+              <div class="comment-date">
+                ${formatDate(
+                  comment.created_at
                 )}
               </div>
 
-              ${
-                isOwn
-                ?
-                `
-                  <button
-                    class="comment-delete"
-                    onclick="
-                      deleteComment(
-                        ${Number(comment.id)},
-                        ${Number(postId)}
-                      )
-                    "
-                  >
-                    Delete
-                  </button>
-                `
-                :
-                ""
-              }
-
             </div>
-          `;
 
-        }
-      ).join("");
+          </div>
+
+          <div
+            style="
+              margin-top:7px;
+              white-space:pre-wrap;
+              word-break:break-word
+            "
+          >
+            ${escapeHtml(
+              comment.comment || ""
+            )}
+          </div>
+
+          <div
+            style="
+              display:flex;
+              align-items:center;
+              gap:8px;
+              flex-wrap:wrap
+            "
+          >
+
+            <button
+              class="comment-reply"
+              onclick="
+                replyToComment(
+                  ${Number(postId)},
+                  ${Number(comment.id)},
+                  '${escapeJs(username)}'
+                )
+              "
+            >
+              ↩️ Reply
+            </button>
+
+            ${
+              isOwn
+              ?
+              `
+                <button
+                  class="comment-delete"
+                  onclick="
+                    deleteComment(
+                      ${Number(comment.id)},
+                      ${Number(postId)}
+                    )
+                  "
+                >
+                  🗑️ Delete
+                </button>
+              `
+              :
+              ""
+            }
+
+          </div>
+
+          ${
+            children.length
+            ?
+            children
+              .map(
+                child =>
+                  renderComment(
+                    child,
+                    level + 1
+                  )
+              )
+              .join("")
+            :
+            ""
+          }
+
+        </div>
+      `;
+
+    }
+
+
+    const topComments =
+      childrenMap[0] || [];
+
+    list.innerHTML =
+      topComments
+        .map(
+          comment =>
+            renderComment(
+              comment,
+              0
+            )
+        )
+        .join("");
 
   }catch(error){
 
@@ -3147,6 +3317,129 @@ async function loadComments(
 
 }
 
+
+/* =================================================
+   COMMENT REPLY
+   ================================================= */
+
+function replyToComment(
+  postId,
+  commentId,
+  username
+){
+
+  activeCommentReply = {
+
+    postId:
+      Number(postId),
+
+    commentId:
+      Number(commentId),
+
+    username:
+      username
+
+  };
+
+  const box =
+    document.getElementById(
+      "comment-reply-box-" +
+      postId
+    );
+
+  const text =
+    document.getElementById(
+      "comment-reply-text-" +
+      postId
+    );
+
+  const input =
+    document.getElementById(
+      "comment-input-" +
+      postId
+    );
+
+  if(box){
+
+    box.style.display =
+      "block";
+
+  }
+
+  if(text){
+
+    text.textContent =
+      "↩️ Reply to @" +
+      username;
+
+  }
+
+  if(input){
+
+    input.value =
+      "@" +
+      username +
+      " ";
+
+    input.focus();
+
+    try{
+
+      input.setSelectionRange(
+        input.value.length,
+        input.value.length
+      );
+
+    }catch(e){}
+
+  }
+
+}
+
+
+function cancelCommentReply(
+  postId
+){
+
+  activeCommentReply = {
+
+    postId:null,
+    commentId:null,
+    username:null
+
+  };
+
+  const box =
+    document.getElementById(
+      "comment-reply-box-" +
+      postId
+    );
+
+  const input =
+    document.getElementById(
+      "comment-input-" +
+      postId
+    );
+
+  if(box){
+
+    box.style.display =
+      "none";
+
+  }
+
+  if(input){
+
+    input.value = "";
+
+  }
+
+}
+
+
+/* =================================================
+   ADD COMMENT / REPLY
+   ================================================= */
 
 async function addComment(
   postId
@@ -3178,25 +3471,47 @@ async function addComment(
     return;
   }
 
+  let parentId = null;
+
+  if(
+    activeCommentReply.postId ===
+      Number(postId) &&
+    activeCommentReply.commentId
+  ){
+
+    parentId =
+      Number(
+        activeCommentReply.commentId
+      );
+
+  }
+
   try{
+
+    const insertData = {
+
+      post_id:
+        Number(postId),
+
+      user_id:
+        currentUser.id,
+
+      comment:
+        comment,
+
+      parent_id:
+        parentId
+
+    };
 
     const {
       error
     } =
     await supabaseClient
       .from("comments")
-      .insert({
-
-        post_id:
-          postId,
-
-        user_id:
-          currentUser.id,
-
-        comment:
-          comment
-
-      });
+      .insert(
+        insertData
+      );
 
     if(error){
       throw error;
@@ -3204,12 +3519,43 @@ async function addComment(
 
     input.value = "";
 
+    cancelCommentReply(
+      postId
+    );
+
     await loadComments(
       postId
     );
 
+    updateCommentCount(
+      postId
+    );
+
+  }catch(error){
+
+    alert(
+      "Comment send nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =================================================
+   UPDATE COMMENT COUNT
+   ================================================= */
+
+async function updateCommentCount(
+  postId
+){
+
+  try{
+
     const {
-      count
+      count,
+      error
     } =
     await supabaseClient
       .from("comments")
@@ -3225,11 +3571,14 @@ async function addComment(
         postId
       );
 
+    if(error){
+      throw error;
+    }
+
     const btn =
-      document.querySelector(
-        "#post-" +
-        postId +
-        " .post-actions button:nth-child(3)"
+      document.getElementById(
+        "comment-count-" +
+        postId
       );
 
     if(btn){
@@ -3242,15 +3591,19 @@ async function addComment(
 
   }catch(error){
 
-    alert(
-      "Comment send nahi hua:\n" +
-      error.message
+    console.error(
+      "Comment count error:",
+      error
     );
 
   }
 
 }
 
+
+/* =================================================
+   DELETE COMMENT
+   ================================================= */
 
 async function deleteComment(
   commentId,
@@ -3295,37 +3648,9 @@ async function deleteComment(
       postId
     );
 
-    const {
-      count
-    } =
-    await supabaseClient
-      .from("comments")
-      .select(
-        "id",
-        {
-          count:"exact",
-          head:true
-        }
-      )
-      .eq(
-        "post_id",
-        postId
-      );
-
-    const btn =
-      document.querySelector(
-        "#post-" +
-        postId +
-        " .post-actions button:nth-child(3)"
-      );
-
-    if(btn){
-
-      btn.textContent =
-        "💬 " +
-        (count || 0);
-
-    }
+    await updateCommentCount(
+      postId
+    );
 
   }catch(error){
 
@@ -3896,4 +4221,3 @@ init();
 
 </body>
 </html>
-```
