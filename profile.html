@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,7 +57,7 @@ body{
   padding:9px 12px;
 }
 
-/* CARD */
+/* PROFILE CARD */
 .profile-card{
   margin:15px;
   background:white;
@@ -71,29 +70,30 @@ body{
   text-align:center;
 }
 
-/* DP */
+/* LARGE DP */
 .avatar-wrap{
   position:relative;
-  width:110px;
-  height:110px;
-  margin:0 auto 12px;
+  width:220px;
+  height:260px;
+  margin:0 auto 15px;
 }
 
 .avatar{
-  width:110px;
-  height:110px;
-  border-radius:50%;
+  width:220px;
+  height:260px;
+  border-radius:20px;
   object-fit:cover;
   border:4px solid #6c5ce7;
   background:#eee;
+  display:block;
 }
 
 .online-dot{
   position:absolute;
-  right:5px;
+  right:4px;
   bottom:7px;
-  width:19px;
-  height:19px;
+  width:21px;
+  height:21px;
   border-radius:50%;
   background:#20c997;
   border:3px solid white;
@@ -239,11 +239,12 @@ body{
 }
 
 .edit-preview{
-  width:90px;
-  height:90px;
-  border-radius:50%;
+  width:150px;
+  height:180px;
+  border-radius:18px;
   object-fit:cover;
   border:3px solid #6c5ce7;
+  background:#eee;
 }
 
 .file-input{
@@ -402,6 +403,21 @@ textarea.input{
   color:#6c5ce7;
   font-weight:bold;
 }
+
+/* MOBILE */
+@media(max-width:400px){
+
+  .avatar-wrap{
+    width:200px;
+    height:240px;
+  }
+
+  .avatar{
+    width:200px;
+    height:240px;
+  }
+
+}
 </style>
 </head>
 
@@ -427,19 +443,29 @@ textarea.input{
       <div class="profile-top">
 
         <div class="avatar-wrap">
-          <img id="avatar"
-               class="avatar"
-               src="https://via.placeholder.com/110?text=👤"
-               onerror="this.src='https://via.placeholder.com/110?text=👤'">
 
-          <div id="onlineDot"
-               class="online-dot"
-               style="display:none;"></div>
+          <img
+            id="avatar"
+            class="avatar"
+            src="https://via.placeholder.com/220x260?text=User"
+            onerror="this.src='https://via.placeholder.com/220x260?text=User'"
+          >
+
+          <div
+            id="onlineDot"
+            class="online-dot"
+            style="display:none;">
+          </div>
+
         </div>
 
-        <div id="name" class="name">User</div>
+        <div id="name" class="name">
+          User
+        </div>
 
-        <div id="username" class="username">@user</div>
+        <div id="username" class="username">
+          @user
+        </div>
 
         <div id="bio" class="bio"></div>
 
@@ -447,25 +473,26 @@ textarea.input{
 
         <div class="actions">
 
-          <!-- OWN PROFILE -->
-          <button id="editBtn"
-                  class="action-btn edit-btn"
-                  onclick="toggleEdit()">
+          <button
+            id="editBtn"
+            class="action-btn edit-btn"
+            onclick="toggleEdit()">
             ✏️ Edit Profile
           </button>
 
-          <!-- OTHER USER -->
-          <button id="followBtn"
-                  class="action-btn follow-btn"
-                  style="display:none;"
-                  onclick="toggleFollow()">
+          <button
+            id="followBtn"
+            class="action-btn follow-btn"
+            style="display:none;"
+            onclick="toggleFollow()">
             ➕ Follow
           </button>
 
-          <button id="chatBtn"
-                  class="action-btn chat-btn"
-                  style="display:none;"
-                  onclick="openPrivateChat()">
+          <button
+            id="chatBtn"
+            class="action-btn chat-btn"
+            style="display:none;"
+            onclick="openPrivateChat()">
             💬 1-on-1
           </button>
 
@@ -498,7 +525,9 @@ textarea.input{
           <div class="info-icon">🏙️</div>
           <div>
             <div class="info-label">City</div>
-            <div id="city" class="info-value">Not added</div>
+            <div id="city" class="info-value">
+              Not added
+            </div>
           </div>
         </div>
 
@@ -506,7 +535,9 @@ textarea.input{
           <div class="info-icon">🎂</div>
           <div>
             <div class="info-label">Date of Birth</div>
-            <div id="dob" class="info-value">Not added</div>
+            <div id="dob" class="info-value">
+              Not added
+            </div>
           </div>
         </div>
 
@@ -514,67 +545,106 @@ textarea.input{
           <div class="info-icon">⚧️</div>
           <div>
             <div class="info-label">Gender</div>
-            <div id="gender" class="info-value">Not added</div>
+            <div id="gender" class="info-value">
+              Not added
+            </div>
           </div>
         </div>
 
       </div>
 
       <!-- EDIT PROFILE -->
+
       <div id="editPanel" class="edit-panel">
 
         <div class="edit-dp">
 
-          <img id="editPreview"
-               class="edit-preview"
-               src="https://via.placeholder.com/90?text=👤">
+          <img
+            id="editPreview"
+            class="edit-preview"
+            src="https://via.placeholder.com/150x180?text=User"
+          >
 
-          <input id="avatarFile"
-                 class="file-input"
-                 type="file"
-                 accept="image/*"
-                 onchange="previewDP(event)">
+          <input
+            id="avatarFile"
+            class="file-input"
+            type="file"
+            accept="image/*"
+            onchange="previewDP(event)"
+          >
 
         </div>
 
-        <input id="editName"
-               class="input"
-               placeholder="Your name">
+        <input
+          id="editName"
+          class="input"
+          placeholder="Your name"
+        >
 
-        <textarea id="editBio"
-                  class="input"
-                  maxlength="250"
-                  placeholder="📝 Write your bio..."></textarea>
+        <textarea
+          id="editBio"
+          class="input"
+          maxlength="250"
+          placeholder="📝 Write your bio..."
+        ></textarea>
 
-        <input id="editCity"
-               class="input"
-               placeholder="🏙️ City">
+        <input
+          id="editCity"
+          class="input"
+          placeholder="🏙️ City"
+        >
 
         <label style="display:block;font-size:12px;color:#777;margin-bottom:5px;">
           🎂 Date of Birth
         </label>
 
-        <input id="editDob"
-               class="input"
-               type="date">
+        <input
+          id="editDob"
+          class="input"
+          type="date"
+        >
 
         <select id="editGender" class="input">
-          <option value="">⚧️ Select gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
+
+          <option value="">
+            ⚧️ Select gender
+          </option>
+
+          <option value="Male">
+            Male
+          </option>
+
+          <option value="Female">
+            Female
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
         </select>
 
         <select id="editPrivacy" class="input">
-          <option value="public">🌐 Public</option>
-          <option value="private">🔒 Private</option>
+
+          <option value="public">
+            🌐 Public
+          </option>
+
+          <option value="private">
+            🔒 Private
+          </option>
+
         </select>
 
-        <button class="save-btn" onclick="saveProfile()">
+        <button
+          class="save-btn"
+          onclick="saveProfile()">
           💾 Save Profile
         </button>
 
-        <button class="cancel-btn" onclick="toggleEdit()">
+        <button
+          class="cancel-btn"
+          onclick="toggleEdit()">
           Cancel
         </button>
 
@@ -582,12 +652,17 @@ textarea.input{
 
     </div>
 
-    <!-- PRIVATE PROFILE MESSAGE -->
-    <div id="privateBox"
-         class="private-box"
-         style="display:none;">
 
-      <div class="private-icon">🔒</div>
+    <!-- PRIVATE PROFILE -->
+
+    <div
+      id="privateBox"
+      class="private-box"
+      style="display:none;">
+
+      <div class="private-icon">
+        🔒
+      </div>
 
       <div class="private-title">
         Private Profile
@@ -599,7 +674,9 @@ textarea.input{
 
     </div>
 
+
     <!-- POSTS -->
+
     <div id="postsSection">
 
       <div class="section-title">
@@ -677,11 +754,11 @@ supabase.createClient(
 );
 
 
-let currentUser = null;
-let profileUser = null;
-let isOwner = false;
-let isPrivate = false;
-let isFollowing = false;
+let currentUser=null;
+let profileUser=null;
+let isOwner=false;
+let isPrivate=false;
+let isFollowing=false;
 
 
 /* =========================
@@ -704,6 +781,7 @@ async function init(){
 
       window.location.href="login.html";
       return;
+
     }
 
     const params =
@@ -759,18 +837,21 @@ async function loadProfile(userId){
 
     showError("Profile nahi mili.");
     return;
+
   }
 
   profileUser=data;
 
   isOwner =
-    currentUser.id === data.id;
+    currentUser.id===data.id;
 
   isPrivate =
-    String(data.profile_privacy || "public")
-      .toLowerCase() === "private";
+    String(
+      data.profile_privacy || "public"
+    ).toLowerCase()==="private";
 
   renderProfile();
+
 
   if(!isOwner){
 
@@ -784,13 +865,6 @@ async function loadProfile(userId){
 
   }
 
-  /*
-    Owner ko apni private profile
-    poori nazar aayegi.
-
-    Doosre users ko private profile
-    par posts/stats/info hide honge.
-  */
 
   if(isOwner || !isPrivate){
 
@@ -813,16 +887,18 @@ async function loadProfile(userId){
 
   }
 
+
   document.getElementById("loading")
     .style.display="none";
 
   document.getElementById("profileArea")
     .style.display="block";
+
 }
 
 
 /* =========================
-   RENDER
+   RENDER PROFILE
 ========================= */
 
 function renderProfile(){
@@ -833,37 +909,49 @@ function renderProfile(){
     profileUser.username ||
     "User";
 
+
   document.getElementById("username")
     .textContent =
     "@" +
-    (profileUser.username || "user");
+    (
+      profileUser.username ||
+      "user"
+    );
+
 
   document.getElementById("avatar").src =
     profileUser.avatar_url ||
-    "https://via.placeholder.com/110?text=👤";
+    "https://via.placeholder.com/220x260?text=User";
+
 
   document.getElementById("bio")
     .textContent =
     profileUser.bio || "";
 
+
   document.getElementById("city")
     .textContent =
-    profileUser.city || "Not added";
+    profileUser.city ||
+    "Not added";
+
 
   document.getElementById("dob")
     .textContent =
-    profileUser.dob || "Not added";
+    profileUser.dob ||
+    "Not added";
+
 
   document.getElementById("gender")
     .textContent =
-    profileUser.gender || "Not added";
+    profileUser.gender ||
+    "Not added";
 
 
   if(isPrivate){
 
     document.getElementById(
       "privacyBadge"
-    ).innerHTML =
+    ).innerHTML=
       `<span class="badge private-badge">
         🔒 Private
       </span>`;
@@ -872,7 +960,7 @@ function renderProfile(){
 
     document.getElementById(
       "privacyBadge"
-    ).innerHTML =
+    ).innerHTML=
       `<span class="badge public-badge">
         🌐 Public
       </span>`;
@@ -908,7 +996,7 @@ function renderProfile(){
 
 
 /* =========================
-   EDIT PANEL
+   EDIT
 ========================= */
 
 function toggleEdit(){
@@ -916,35 +1004,48 @@ function toggleEdit(){
   const panel =
     document.getElementById("editPanel");
 
+
   if(panel.style.display==="block"){
 
     panel.style.display="none";
     return;
+
   }
+
 
   document.getElementById("editName").value =
     profileUser.name || "";
 
+
   document.getElementById("editBio").value =
     profileUser.bio || "";
+
 
   document.getElementById("editCity").value =
     profileUser.city || "";
 
+
   document.getElementById("editDob").value =
     profileUser.dob || "";
+
 
   document.getElementById("editGender").value =
     profileUser.gender || "";
 
+
   document.getElementById("editPrivacy").value =
-    isPrivate ? "private" : "public";
+    isPrivate ?
+    "private" :
+    "public";
+
 
   document.getElementById("editPreview").src =
     profileUser.avatar_url ||
-    "https://via.placeholder.com/90?text=👤";
+    "https://via.placeholder.com/150x180?text=User";
+
 
   panel.style.display="block";
+
 }
 
 
@@ -959,15 +1060,22 @@ function previewDP(event){
 
   if(!file) return;
 
+
   if(!file.type.startsWith("image/")){
 
-    alert("Sirf image select karein.");
+    alert(
+      "Sirf image select karein."
+    );
+
     event.target.value="";
     return;
+
   }
+
 
   const reader =
     new FileReader();
+
 
   reader.onload=function(e){
 
@@ -977,7 +1085,9 @@ function previewDP(event){
 
   };
 
+
   reader.readAsDataURL(file);
+
 }
 
 
@@ -990,29 +1100,36 @@ async function saveProfile(){
   try{
 
     const saveBtn =
-      document.querySelector(".save-btn");
+      document.querySelector(
+        ".save-btn"
+      );
 
     saveBtn.disabled=true;
     saveBtn.textContent="Saving...";
 
 
     let avatarUrl =
-      profileUser.avatar_url || null;
+      profileUser.avatar_url ||
+      null;
 
-
-    /* DP UPLOAD */
 
     const fileInput =
-      document.getElementById("avatarFile");
+      document.getElementById(
+        "avatarFile"
+      );
 
     const file =
       fileInput.files[0];
 
+
     if(file){
 
       const extension =
-        file.name.split(".").pop()
-          .toLowerCase();
+        file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
 
       const fileName =
         currentUser.id +
@@ -1021,15 +1138,13 @@ async function saveProfile(){
         "." +
         extension;
 
-      const filePath =
-        fileName;
 
       const upload =
         await supabaseClient
         .storage
         .from("avatars")
         .upload(
-          filePath,
+          fileName,
           file,
           {
             upsert:true,
@@ -1037,22 +1152,29 @@ async function saveProfile(){
           }
         );
 
+
       if(upload.error){
 
         throw new Error(
           "DP upload nahi hui: " +
           upload.error.message
         );
+
       }
+
 
       const publicData =
         supabaseClient
         .storage
         .from("avatars")
-        .getPublicUrl(filePath);
+        .getPublicUrl(
+          fileName
+        );
+
 
       avatarUrl =
         publicData.data.publicUrl;
+
     }
 
 
@@ -1061,25 +1183,30 @@ async function saveProfile(){
         "editName"
       ).value.trim();
 
+
     const bio =
       document.getElementById(
         "editBio"
       ).value.trim();
+
 
     const city =
       document.getElementById(
         "editCity"
       ).value.trim();
 
+
     const dob =
       document.getElementById(
         "editDob"
       ).value;
 
+
     const gender =
       document.getElementById(
         "editGender"
       ).value;
+
 
     const privacy =
       document.getElementById(
@@ -1099,9 +1226,13 @@ async function saveProfile(){
         profile_privacy:privacy,
         avatar_url:avatarUrl
       })
-      .eq("id",currentUser.id)
+      .eq(
+        "id",
+        currentUser.id
+      )
       .select()
       .maybeSingle();
+
 
     if(error) throw error;
 
@@ -1120,7 +1251,7 @@ async function saveProfile(){
 
 
     isPrivate =
-      privacy === "private";
+      privacy==="private";
 
 
     renderProfile();
@@ -1130,11 +1261,6 @@ async function saveProfile(){
       "editPanel"
     ).style.display="none";
 
-
-    /*
-      Owner ke liye private profile ka
-      content hamesha visible rahega.
-    */
 
     document.getElementById("stats")
       .style.display="flex";
@@ -1153,7 +1279,10 @@ async function saveProfile(){
     await loadPosts();
 
 
-    alert("✅ Profile updated successfully!");
+    alert(
+      "✅ Profile updated successfully!"
+    );
+
 
   }catch(error){
 
@@ -1162,13 +1291,18 @@ async function saveProfile(){
       error.message
     );
 
+
   }finally{
 
     const saveBtn =
-      document.querySelector(".save-btn");
+      document.querySelector(
+        ".save-btn"
+      );
 
     saveBtn.disabled=false;
-    saveBtn.textContent="💾 Save Profile";
+
+    saveBtn.textContent=
+      "💾 Save Profile";
 
   }
 
@@ -1185,9 +1319,16 @@ async function loadFollowStatus(){
     await supabaseClient
     .from("user_follows")
     .select("id")
-    .eq("follower_id",currentUser.id)
-    .eq("following_id",profileUser.id)
+    .eq(
+      "follower_id",
+      currentUser.id
+    )
+    .eq(
+      "following_id",
+      profileUser.id
+    )
     .maybeSingle();
+
 
   if(!error){
 
@@ -1207,15 +1348,11 @@ function updateFollowButton(){
       "followBtn"
     );
 
-  if(isFollowing){
 
-    btn.textContent="✓ Following";
-
-  }else{
-
-    btn.textContent="➕ Follow";
-
-  }
+  btn.textContent =
+    isFollowing ?
+    "✓ Following" :
+    "➕ Follow";
 
 }
 
@@ -1232,8 +1369,15 @@ async function toggleFollow(){
       await supabaseClient
       .from("user_follows")
       .delete()
-      .eq("follower_id",currentUser.id)
-      .eq("following_id",profileUser.id);
+      .eq(
+        "follower_id",
+        currentUser.id
+      )
+      .eq(
+        "following_id",
+        profileUser.id
+      );
+
 
     if(error){
 
@@ -1243,9 +1387,12 @@ async function toggleFollow(){
       );
 
       return;
+
     }
 
+
     isFollowing=false;
+
 
   }else{
 
@@ -1253,9 +1400,12 @@ async function toggleFollow(){
       await supabaseClient
       .from("user_follows")
       .insert({
-        follower_id:currentUser.id,
-        following_id:profileUser.id
+        follower_id:
+          currentUser.id,
+        following_id:
+          profileUser.id
       });
+
 
     if(error){
 
@@ -1265,15 +1415,19 @@ async function toggleFollow(){
       );
 
       return;
+
     }
+
 
     isFollowing=true;
 
   }
 
+
   updateFollowButton();
 
   await loadStats();
+
 }
 
 
@@ -1286,15 +1440,25 @@ async function loadStats(){
   const posts =
     await supabaseClient
     .from("posts")
-    .select("id",{count:"exact",head:true})
-    .eq("user_id",profileUser.id);
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "user_id",
+      profileUser.id
+    );
+
 
   if(!posts.error){
 
     document.getElementById(
       "postCount"
     ).textContent =
-    posts.count || 0;
+      posts.count || 0;
 
   }
 
@@ -1302,15 +1466,25 @@ async function loadStats(){
   const followers =
     await supabaseClient
     .from("user_follows")
-    .select("id",{count:"exact",head:true})
-    .eq("following_id",profileUser.id);
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "following_id",
+      profileUser.id
+    );
+
 
   if(!followers.error){
 
     document.getElementById(
       "followersCount"
     ).textContent =
-    followers.count || 0;
+      followers.count || 0;
 
   }
 
@@ -1318,15 +1492,25 @@ async function loadStats(){
   const following =
     await supabaseClient
     .from("user_follows")
-    .select("id",{count:"exact",head:true})
-    .eq("follower_id",profileUser.id);
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "follower_id",
+      profileUser.id
+    );
+
 
   if(!following.error){
 
     document.getElementById(
       "followingCount"
     ).textContent =
-    following.count || 0;
+      following.count || 0;
 
   }
 
@@ -1348,20 +1532,29 @@ async function loadPosts(){
       created_at,
       image_url
     `)
-    .eq("user_id",profileUser.id)
-    .order("created_at",{ascending:false});
+    .eq(
+      "user_id",
+      profileUser.id
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
 
 
   if(error){
 
     document.getElementById(
       "postsList"
-    ).innerHTML =
+    ).innerHTML=
       `<div class="post-card">
         Posts load nahi ho sakin.
       </div>`;
 
     return;
+
   }
 
 
@@ -1373,12 +1566,13 @@ async function loadPosts(){
 
   if(!data || data.length===0){
 
-    list.innerHTML =
+    list.innerHTML=
       `<div class="post-card">
         Abhi koi post nahi hai.
       </div>`;
 
     return;
+
   }
 
 
@@ -1387,14 +1581,20 @@ async function loadPosts(){
 
       let image="";
 
+
       if(post.image_url){
 
-        image =
-        `<img class="post-image"
-              src="${escapeHtml(post.image_url)}"
-              onerror="this.style.display='none'">`;
+        image=
+          `<img
+            class="post-image"
+            src="${escapeHtml(
+              post.image_url
+            )}"
+            onerror="this.style.display='none'"
+          >`;
 
       }
+
 
       return `
         <div class="post-card">
@@ -1408,7 +1608,9 @@ async function loadPosts(){
           ${image}
 
           <div class="post-date">
-            ${formatDate(post.created_at)}
+            ${formatDate(
+              post.created_at
+            )}
           </div>
 
         </div>
@@ -1420,7 +1622,7 @@ async function loadPosts(){
 
 
 /* =========================
-   1-ON-1 CHAT
+   1-ON-1
 ========================= */
 
 function openPrivateChat(){
@@ -1430,6 +1632,7 @@ function openPrivateChat(){
 
   if(isOwner)
     return;
+
 
   window.location.href =
     "private-chat.html?user=" +
@@ -1468,7 +1671,8 @@ function goBack(){
 
   }else{
 
-    window.location.href="index.html";
+    window.location.href=
+      "index.html";
 
   }
 
@@ -1484,6 +1688,7 @@ function formatDate(date){
   if(!date) return "";
 
   const d=new Date(date);
+
   const now=new Date();
 
   const seconds =
@@ -1491,48 +1696,77 @@ function formatDate(date){
       (now-d)/1000
     );
 
+
   if(seconds<60)
     return "Just now";
 
+
   const minutes =
-    Math.floor(seconds/60);
+    Math.floor(
+      seconds/60
+    );
+
 
   if(minutes<60)
     return minutes +
       " minute" +
-      (minutes===1?"":"s") +
+      (
+        minutes===1 ?
+        "" :
+        "s"
+      ) +
       " ago";
 
+
   const hours =
-    Math.floor(minutes/60);
+    Math.floor(
+      minutes/60
+    );
+
 
   if(hours<24)
     return hours +
       " hour" +
-      (hours===1?"":"s") +
+      (
+        hours===1 ?
+        "" :
+        "s"
+      ) +
       " ago";
 
+
   const days =
-    Math.floor(hours/24);
+    Math.floor(
+      hours/24
+    );
+
 
   if(days<7)
     return days +
       " day" +
-      (days===1?"":"s") +
+      (
+        days===1 ?
+        "" :
+        "s"
+      ) +
       " ago";
 
+
   return d.toLocaleDateString();
+
 }
 
 
 function escapeHtml(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(
+    value ?? ""
+  )
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
 
 }
 
@@ -1543,18 +1777,23 @@ function showError(message){
     "loading"
   ).style.display="none";
 
+
   const box =
     document.getElementById(
       "errorBox"
     );
 
+
   box.textContent=message;
+
   box.style.display="block";
 
 }
 
 
-/* START */
+/* =========================
+   START
+========================= */
 
 init();
 
@@ -1562,4 +1801,3 @@ init();
 
 </body>
 </html>
-```
