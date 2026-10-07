@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
@@ -180,19 +179,7 @@ body{
   font-weight:bold;
 }
 
-.notice{
-  display:none;
-  background:white;
-  padding:11px;
-  border-radius:12px;
-  text-align:center;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-  font-weight:bold;
-}
-
 </style>
-
 </head>
 
 
@@ -221,12 +208,6 @@ body{
 
 
 <main class="container">
-
-  <div
-    id="notice"
-    class="notice">
-  </div>
-
 
   <button
     class="refresh-btn"
@@ -348,48 +329,37 @@ let currentUser = null;
 
 
 /* =====================================================
-   SESSION CHECK
+   GET SESSION
 ===================================================== */
 
-async function getCurrentSession(){
+async function getUserSession(){
 
-  for(let attempt = 1; attempt <= 4; attempt++){
+  try{
 
-    try{
+    const result =
+      await supabaseClient.auth.getSession();
 
-      const result =
-        await supabaseClient
-          .auth
-          .getSession();
 
-      if(
-        result &&
-        result.data &&
-        result.data.session
-      ){
+    if(
+      result &&
+      result.data &&
+      result.data.session &&
+      result.data.session.user
+    ){
 
-        return result.data.session;
-
-      }
-
-    }catch(error){
-
-      console.error(
-        "SESSION CHECK ERROR:",
-        error
-      );
+      return result.data.session;
 
     }
 
-    await new Promise(
-      resolve =>
-        setTimeout(
-          resolve,
-          500
-        )
+  }catch(error){
+
+    console.error(
+      "SESSION ERROR:",
+      error
     );
 
   }
+
 
   return null;
 
@@ -402,49 +372,51 @@ async function getCurrentSession(){
 
 async function init(){
 
-  const chatList =
+  const list =
     document.getElementById(
       "chatList"
     );
 
 
-  chatList.innerHTML = `
+  list.innerHTML = `
 
     <div class="loading">
-      🔄 Login session check ho rahi hai...
+      🔄 Session check ho rahi hai...
     </div>
 
   `;
 
 
+  /*
+     Thoda wait taake
+     Supabase local session restore
+     kar sake.
+  */
+
+  await new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        700
+      )
+  );
+
+
   const session =
-    await getCurrentSession();
+    await getUserSession();
 
 
   if(!session){
 
-    chatList.innerHTML = `
+    list.innerHTML = `
 
       <div class="empty">
 
-        🔒 Login session nahi mili.
+        🔒 Session available nahi hai.
 
         <br><br>
 
-        <button
-          onclick="goLogin()"
-          style="
-            border:0;
-            background:#6c5ce7;
-            color:white;
-            padding:10px 18px;
-            border-radius:10px;
-            font-weight:bold;
-          ">
-
-          Login
-
-        </button>
+        Page ko ek baar refresh karein.
 
       </div>
 
@@ -460,7 +432,7 @@ async function init(){
 
 
   console.log(
-    "PRIVATE SESSION OK:",
+    "Private user:",
     currentUser.id
   );
 
@@ -479,7 +451,8 @@ async function loadPrivateChats(){
   if(!currentUser){
 
     const session =
-      await getCurrentSession();
+      await getUserSession();
+
 
     if(!session){
 
@@ -489,24 +462,11 @@ async function loadPrivateChats(){
 
         <div class="empty">
 
-          🔒 Login session nahi mili.
+          🔒 Session available nahi hai.
 
           <br><br>
 
-          <button
-            onclick="goLogin()"
-            style="
-              border:0;
-              background:#6c5ce7;
-              color:white;
-              padding:10px 18px;
-              border-radius:10px;
-              font-weight:bold;
-            ">
-
-            Login
-
-          </button>
+          Page ko ek baar refresh karein.
 
         </div>
 
@@ -515,6 +475,7 @@ async function loadPrivateChats(){
       return;
 
     }
+
 
     currentUser =
       session.user;
@@ -531,11 +492,15 @@ async function loadPrivateChats(){
   list.innerHTML = `
 
     <div class="loading">
+
       Private chats load ho rahi hain...
+
     </div>
 
   `;
 
+
+  /* ACCEPTED REQUESTS */
 
   const {
     data:requests,
@@ -615,6 +580,8 @@ async function loadPrivateChats(){
   }
 
 
+  /* OTHER USERS */
+
   const otherIds =
     [
       ...new Set(
@@ -645,7 +612,9 @@ async function loadPrivateChats(){
     list.innerHTML = `
 
       <div class="empty">
+
         🔒 Abhi koi private chat nahi hai.
+
       </div>
 
     `;
@@ -655,9 +624,10 @@ async function loadPrivateChats(){
   }
 
 
+  /* PROFILES */
+
   const {
-    data:profiles,
-    error:profileError
+    data:profiles
   } =
   await supabaseClient
     .from("profiles")
@@ -668,16 +638,6 @@ async function loadPrivateChats(){
       "id",
       otherIds
     );
-
-
-  if(profileError){
-
-    console.error(
-      "PROFILE ERROR:",
-      profileError
-    );
-
-  }
 
 
   const profileMap = {};
@@ -695,9 +655,10 @@ async function loadPrivateChats(){
     );
 
 
+  /* LATEST MESSAGES */
+
   const {
-    data:messages,
-    error:messageError
+    data:messages
   } =
   await supabaseClient
     .from("private_messages")
@@ -714,16 +675,6 @@ async function loadPrivateChats(){
       }
     )
     .limit(100);
-
-
-  if(messageError){
-
-    console.error(
-      "MESSAGE ERROR:",
-      messageError
-    );
-
-  }
 
 
   const latestMessages = {};
@@ -757,6 +708,8 @@ async function loadPrivateChats(){
       }
     );
 
+
+  /* RENDER */
 
   list.innerHTML =
     otherIds
@@ -990,8 +943,7 @@ function formatDate(date){
 
 
   if(minutes < 60){
-    return minutes +
-      " min ago";
+    return minutes + " min ago";
   }
 
 
@@ -1002,8 +954,7 @@ function formatDate(date){
 
 
   if(hours < 24){
-    return hours +
-      " hours ago";
+    return hours + " hours ago";
   }
 
 
@@ -1014,8 +965,7 @@ function formatDate(date){
 
 
   if(days < 7){
-    return days +
-      " days ago";
+    return days + " days ago";
   }
 
 
@@ -1033,26 +983,11 @@ function escapeHtml(value){
   return String(
     value ?? ""
   )
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /'/g,
-    "&#039;"
-  );
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
 
 }
 
@@ -1085,6 +1020,7 @@ function goPrivate(){
   ){
 
     loadPrivateChats();
+
     return;
 
   }
@@ -1128,36 +1064,25 @@ function goMore(){
 }
 
 
-function goLogin(){
-
-  window.location.href =
-    "login.html";
-
-}
-
-
 /* =====================================================
-   IMPORTANT:
-   NO AUTOMATIC SIGNED_OUT REDIRECT HERE
+   AUTH STATE
 ===================================================== */
 
 supabaseClient
   .auth
   .onAuthStateChange(
-    function(event, session){
+    function(event,session){
 
       console.log(
         "AUTH EVENT:",
         event
       );
 
-      /*
-        Yahan jaan-boojh kar
-        login.html redirect nahi hai.
 
-        Is se Private page par
-        false session event ki wajah se
-        user logout nahi hoga.
+      /*
+        Yahan koi logout redirect nahi.
+        Private page khud login.html
+        par nahi bhejega.
       */
 
       if(
