@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
   margin:0;
@@ -19,7 +18,6 @@ html,body{
   min-height:100%;
   font-family:Arial,sans-serif;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
-  color:#222;
 }
 
 body{
@@ -38,7 +36,7 @@ body{
   position:sticky;
   top:0;
   z-index:20;
-  background:rgba(108,92,231,.97);
+  background:rgba(108,92,231,.98);
   color:white;
   padding:15px;
   display:flex;
@@ -52,16 +50,15 @@ body{
   font-weight:bold;
 }
 
-.header-btn{
+.back-btn{
   border:0;
   background:rgba(255,255,255,.18);
   color:white;
   border-radius:10px;
   padding:9px 12px;
-  font-size:14px;
 }
 
-/* PROFILE */
+/* CARD */
 .profile-card{
   margin:15px;
   background:white;
@@ -74,16 +71,17 @@ body{
   text-align:center;
 }
 
+/* DP */
 .avatar-wrap{
   position:relative;
-  width:105px;
-  height:105px;
+  width:110px;
+  height:110px;
   margin:0 auto 12px;
 }
 
 .avatar{
-  width:105px;
-  height:105px;
+  width:110px;
+  height:110px;
   border-radius:50%;
   object-fit:cover;
   border:4px solid #6c5ce7;
@@ -107,22 +105,21 @@ body{
 }
 
 .username{
-  margin-top:4px;
   color:#777;
-  font-size:15px;
+  margin-top:4px;
 }
 
 .bio{
   margin:12px auto 0;
   color:#555;
   line-height:1.5;
-  max-width:500px;
+  white-space:pre-wrap;
 }
 
 .badge{
   display:inline-block;
   margin-top:10px;
-  padding:7px 12px;
+  padding:7px 13px;
   border-radius:20px;
   font-size:13px;
   font-weight:bold;
@@ -138,18 +135,18 @@ body{
   color:#6046c7;
 }
 
-/* BUTTONS */
+/* ACTIONS */
 .actions{
   display:flex;
   gap:8px;
-  margin-top:17px;
+  margin-top:18px;
 }
 
 .action-btn{
   flex:1;
   border:0;
   border-radius:12px;
-  padding:12px 8px;
+  padding:12px 7px;
   font-size:14px;
   font-weight:bold;
   cursor:pointer;
@@ -165,7 +162,7 @@ body{
   color:white;
 }
 
-.message-btn{
+.chat-btn{
   background:#eeeaff;
   color:#5b43c7;
 }
@@ -181,7 +178,6 @@ body{
 
 .stat{
   text-align:center;
-  cursor:pointer;
 }
 
 .stat-number{
@@ -228,6 +224,98 @@ body{
   margin-top:2px;
 }
 
+/* EDIT */
+.edit-panel{
+  display:none;
+  margin-top:15px;
+  background:#fafafa;
+  border-radius:15px;
+  padding:15px;
+}
+
+.edit-dp{
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.edit-preview{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #6c5ce7;
+}
+
+.file-input{
+  display:block;
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:white;
+}
+
+.input{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:14px;
+  outline:none;
+  background:white;
+}
+
+textarea.input{
+  min-height:90px;
+  resize:vertical;
+}
+
+.save-btn{
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:11px;
+  background:#6c5ce7;
+  color:white;
+  font-weight:bold;
+}
+
+.cancel-btn{
+  width:100%;
+  padding:11px;
+  margin-top:8px;
+  border:0;
+  border-radius:11px;
+  background:#eee;
+}
+
+/* PRIVATE */
+.private-box{
+  margin:15px;
+  background:white;
+  border-radius:18px;
+  padding:30px 20px;
+  text-align:center;
+  box-shadow:0 5px 18px rgba(0,0,0,.16);
+}
+
+.private-icon{
+  font-size:48px;
+}
+
+.private-title{
+  font-size:20px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.private-text{
+  color:#777;
+  margin-top:8px;
+}
+
 /* POSTS */
 .section-title{
   margin:18px 15px 10px;
@@ -258,74 +346,22 @@ body{
   margin-top:10px;
 }
 
-.private-box{
+/* LOADING */
+.loading{
+  color:white;
+  text-align:center;
+  padding:40px 15px;
+}
+
+.error{
   margin:15px;
   background:white;
-  border-radius:18px;
-  padding:30px 20px;
-  text-align:center;
-  box-shadow:0 5px 18px rgba(0,0,0,.16);
-}
-
-.private-icon{
-  font-size:48px;
-}
-
-.private-title{
-  font-size:20px;
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.private-text{
-  color:#777;
-  margin-top:7px;
-}
-
-/* EDIT */
-.edit-panel{
-  display:none;
-  margin-top:15px;
-  background:#fafafa;
-  border-radius:15px;
+  color:#d63031;
   padding:15px;
+  border-radius:12px;
 }
 
-.input{
-  width:100%;
-  padding:12px;
-  margin-bottom:10px;
-  border:1px solid #ddd;
-  border-radius:10px;
-  font-size:14px;
-  outline:none;
-}
-
-textarea.input{
-  min-height:90px;
-  resize:vertical;
-}
-
-.save-btn{
-  width:100%;
-  padding:12px;
-  border:0;
-  border-radius:11px;
-  background:#6c5ce7;
-  color:white;
-  font-weight:bold;
-}
-
-.cancel-btn{
-  width:100%;
-  padding:11px;
-  margin-top:8px;
-  border:0;
-  border-radius:11px;
-  background:#eee;
-}
-
-/* BOTTOM NAV */
+/* NAV */
 .bottom-nav{
   position:fixed;
   left:0;
@@ -366,21 +402,6 @@ textarea.input{
   color:#6c5ce7;
   font-weight:bold;
 }
-
-/* LOADING */
-.loading{
-  text-align:center;
-  color:white;
-  padding:40px 15px;
-}
-
-.error{
-  margin:15px;
-  background:white;
-  color:#d63031;
-  padding:15px;
-  border-radius:12px;
-}
 </style>
 </head>
 
@@ -390,12 +411,14 @@ textarea.input{
 
   <div class="header">
     <div class="header-title">👤 Profile</div>
-    <button class="header-btn" onclick="goBack()">← Back</button>
+    <button class="back-btn" onclick="goBack()">← Back</button>
   </div>
 
   <div id="loading" class="loading">
     Profile load ho rahi hai...
   </div>
+
+  <div id="errorBox" class="error" style="display:none;"></div>
 
   <div id="profileArea" style="display:none;">
 
@@ -406,8 +429,8 @@ textarea.input{
         <div class="avatar-wrap">
           <img id="avatar"
                class="avatar"
-               src=""
-               onerror="this.src='https://via.placeholder.com/105?text=👤'">
+               src="https://via.placeholder.com/110?text=👤"
+               onerror="this.src='https://via.placeholder.com/110?text=👤'">
 
           <div id="onlineDot"
                class="online-dot"
@@ -415,6 +438,7 @@ textarea.input{
         </div>
 
         <div id="name" class="name">User</div>
+
         <div id="username" class="username">@user</div>
 
         <div id="bio" class="bio"></div>
@@ -423,24 +447,26 @@ textarea.input{
 
         <div class="actions">
 
+          <!-- OWN PROFILE -->
           <button id="editBtn"
                   class="action-btn edit-btn"
                   onclick="toggleEdit()">
             ✏️ Edit Profile
           </button>
 
+          <!-- OTHER USER -->
           <button id="followBtn"
                   class="action-btn follow-btn"
                   style="display:none;"
                   onclick="toggleFollow()">
-            + Follow
+            ➕ Follow
           </button>
 
-          <button id="messageBtn"
-                  class="action-btn message-btn"
+          <button id="chatBtn"
+                  class="action-btn chat-btn"
                   style="display:none;"
                   onclick="openPrivateChat()">
-            💬 Message
+            💬 1-on-1
           </button>
 
         </div>
@@ -494,7 +520,22 @@ textarea.input{
 
       </div>
 
+      <!-- EDIT PROFILE -->
       <div id="editPanel" class="edit-panel">
+
+        <div class="edit-dp">
+
+          <img id="editPreview"
+               class="edit-preview"
+               src="https://via.placeholder.com/90?text=👤">
+
+          <input id="avatarFile"
+                 class="file-input"
+                 type="file"
+                 accept="image/*"
+                 onchange="previewDP(event)">
+
+        </div>
 
         <input id="editName"
                class="input"
@@ -502,14 +543,23 @@ textarea.input{
 
         <textarea id="editBio"
                   class="input"
-                  placeholder="Write your bio..."></textarea>
+                  maxlength="250"
+                  placeholder="📝 Write your bio..."></textarea>
 
         <input id="editCity"
                class="input"
-               placeholder="City">
+               placeholder="🏙️ City">
+
+        <label style="display:block;font-size:12px;color:#777;margin-bottom:5px;">
+          🎂 Date of Birth
+        </label>
+
+        <input id="editDob"
+               class="input"
+               type="date">
 
         <select id="editGender" class="input">
-          <option value="">Select gender</option>
+          <option value="">⚧️ Select gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
           <option value="Other">Other</option>
@@ -532,6 +582,7 @@ textarea.input{
 
     </div>
 
+    <!-- PRIVATE PROFILE MESSAGE -->
     <div id="privateBox"
          class="private-box"
          style="display:none;">
@@ -548,6 +599,7 @@ textarea.input{
 
     </div>
 
+    <!-- POSTS -->
     <div id="postsSection">
 
       <div class="section-title">
@@ -560,11 +612,6 @@ textarea.input{
 
   </div>
 
-  <div id="errorBox"
-       class="error"
-       style="display:none;">
-  </div>
-
 </div>
 
 
@@ -574,20 +621,17 @@ textarea.input{
 
   <div class="nav-inner">
 
-    <div class="nav-item"
-         onclick="goHome()">
+    <div class="nav-item" onclick="goHome()">
       <span class="icon">🏠</span>
       Home
     </div>
 
-    <div class="nav-item"
-         onclick="goPrivate()">
+    <div class="nav-item" onclick="goPrivate()">
       <span class="icon">💬</span>
       Private
     </div>
 
-    <div class="nav-item"
-         onclick="goMehfil()">
+    <div class="nav-item" onclick="goMehfil()">
       <span class="icon">👥</span>
       Mehfil
     </div>
@@ -597,8 +641,7 @@ textarea.input{
       Profile
     </div>
 
-    <div class="nav-item"
-         onclick="goMore()">
+    <div class="nav-item" onclick="goMore()">
       <span class="icon">☰</span>
       More
     </div>
@@ -609,6 +652,10 @@ textarea.input{
 
 
 <script>
+
+/* =========================
+   SUPABASE
+========================= */
 
 const SUPABASE_URL =
 "https://jhcpqjmxiovvqbghpxbf.supabase.co";
@@ -629,6 +676,7 @@ supabase.createClient(
   }
 );
 
+
 let currentUser = null;
 let profileUser = null;
 let isOwner = false;
@@ -637,7 +685,7 @@ let isFollowing = false;
 
 
 /* =========================
-   START
+   INIT
 ========================= */
 
 async function init(){
@@ -666,15 +714,9 @@ async function init(){
     const profileId =
       params.get("user");
 
-    if(profileId){
-
-      await loadProfile(profileId);
-
-    }else{
-
-      await loadProfile(currentUser.id);
-
-    }
+    await loadProfile(
+      profileId || currentUser.id
+    );
 
   }catch(error){
 
@@ -719,7 +761,7 @@ async function loadProfile(userId){
     return;
   }
 
-  profileUser = data;
+  profileUser=data;
 
   isOwner =
     currentUser.id === data.id;
@@ -732,16 +774,22 @@ async function loadProfile(userId){
 
   if(!isOwner){
 
+    document.getElementById("followBtn")
+      .style.display="block";
+
+    document.getElementById("chatBtn")
+      .style.display="block";
+
     await loadFollowStatus();
 
   }
 
   /*
-    Owner ko private profile ka complete
-    content dikhega.
+    Owner ko apni private profile
+    poori nazar aayegi.
 
-    Doosre user ko private profile par
-    sirf basic profile + Private badge.
+    Doosre users ko private profile
+    par posts/stats/info hide honge.
   */
 
   if(isOwner || !isPrivate){
@@ -751,36 +799,30 @@ async function loadProfile(userId){
 
   }else{
 
-    document.getElementById(
-      "stats"
-    ).style.display="none";
+    document.getElementById("stats")
+      .style.display="none";
 
-    document.getElementById(
-      "infoCard"
-    ).style.display="none";
+    document.getElementById("infoCard")
+      .style.display="none";
 
-    document.getElementById(
-      "privateBox"
-    ).style.display="block";
+    document.getElementById("postsSection")
+      .style.display="none";
 
-    document.getElementById(
-      "postsSection"
-    ).style.display="none";
+    document.getElementById("privateBox")
+      .style.display="block";
 
   }
 
-  document.getElementById(
-    "loading"
-  ).style.display="none";
+  document.getElementById("loading")
+    .style.display="none";
 
-  document.getElementById(
-    "profileArea"
-  ).style.display="block";
+  document.getElementById("profileArea")
+    .style.display="block";
 }
 
 
 /* =========================
-   RENDER PROFILE
+   RENDER
 ========================= */
 
 function renderProfile(){
@@ -798,7 +840,7 @@ function renderProfile(){
 
   document.getElementById("avatar").src =
     profileUser.avatar_url ||
-    "https://via.placeholder.com/105?text=👤";
+    "https://via.placeholder.com/110?text=👤";
 
   document.getElementById("bio")
     .textContent =
@@ -817,21 +859,20 @@ function renderProfile(){
     profileUser.gender || "Not added";
 
 
-  const badge =
-    document.getElementById(
-      "privacyBadge"
-    );
-
   if(isPrivate){
 
-    badge.innerHTML =
+    document.getElementById(
+      "privacyBadge"
+    ).innerHTML =
       `<span class="badge private-badge">
         🔒 Private
       </span>`;
 
   }else{
 
-    badge.innerHTML =
+    document.getElementById(
+      "privacyBadge"
+    ).innerHTML =
       `<span class="badge public-badge">
         🌐 Public
       </span>`;
@@ -841,34 +882,398 @@ function renderProfile(){
 
   if(isOwner){
 
-    document.getElementById(
-      "editBtn"
-    ).style.display="block";
+    document.getElementById("editBtn")
+      .style.display="block";
 
-    document.getElementById(
-      "followBtn"
-    ).style.display="none";
+    document.getElementById("followBtn")
+      .style.display="none";
 
-    document.getElementById(
-      "messageBtn"
-    ).style.display="none";
+    document.getElementById("chatBtn")
+      .style.display="none";
 
   }else{
 
-    document.getElementById(
-      "editBtn"
-    ).style.display="none";
+    document.getElementById("editBtn")
+      .style.display="none";
 
-    document.getElementById(
-      "followBtn"
-    ).style.display="block";
+    document.getElementById("followBtn")
+      .style.display="block";
 
-    document.getElementById(
-      "messageBtn"
-    ).style.display="block";
+    document.getElementById("chatBtn")
+      .style.display="block";
 
   }
 
+}
+
+
+/* =========================
+   EDIT PANEL
+========================= */
+
+function toggleEdit(){
+
+  const panel =
+    document.getElementById("editPanel");
+
+  if(panel.style.display==="block"){
+
+    panel.style.display="none";
+    return;
+  }
+
+  document.getElementById("editName").value =
+    profileUser.name || "";
+
+  document.getElementById("editBio").value =
+    profileUser.bio || "";
+
+  document.getElementById("editCity").value =
+    profileUser.city || "";
+
+  document.getElementById("editDob").value =
+    profileUser.dob || "";
+
+  document.getElementById("editGender").value =
+    profileUser.gender || "";
+
+  document.getElementById("editPrivacy").value =
+    isPrivate ? "private" : "public";
+
+  document.getElementById("editPreview").src =
+    profileUser.avatar_url ||
+    "https://via.placeholder.com/90?text=👤";
+
+  panel.style.display="block";
+}
+
+
+/* =========================
+   DP PREVIEW
+========================= */
+
+function previewDP(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file) return;
+
+  if(!file.type.startsWith("image/")){
+
+    alert("Sirf image select karein.");
+    event.target.value="";
+    return;
+  }
+
+  const reader =
+    new FileReader();
+
+  reader.onload=function(e){
+
+    document.getElementById(
+      "editPreview"
+    ).src=e.target.result;
+
+  };
+
+  reader.readAsDataURL(file);
+}
+
+
+/* =========================
+   SAVE PROFILE
+========================= */
+
+async function saveProfile(){
+
+  try{
+
+    const saveBtn =
+      document.querySelector(".save-btn");
+
+    saveBtn.disabled=true;
+    saveBtn.textContent="Saving...";
+
+
+    let avatarUrl =
+      profileUser.avatar_url || null;
+
+
+    /* DP UPLOAD */
+
+    const fileInput =
+      document.getElementById("avatarFile");
+
+    const file =
+      fileInput.files[0];
+
+    if(file){
+
+      const extension =
+        file.name.split(".").pop()
+          .toLowerCase();
+
+      const fileName =
+        currentUser.id +
+        "_" +
+        Date.now() +
+        "." +
+        extension;
+
+      const filePath =
+        fileName;
+
+      const upload =
+        await supabaseClient
+        .storage
+        .from("avatars")
+        .upload(
+          filePath,
+          file,
+          {
+            upsert:true,
+            contentType:file.type
+          }
+        );
+
+      if(upload.error){
+
+        throw new Error(
+          "DP upload nahi hui: " +
+          upload.error.message
+        );
+      }
+
+      const publicData =
+        supabaseClient
+        .storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      avatarUrl =
+        publicData.data.publicUrl;
+    }
+
+
+    const name =
+      document.getElementById(
+        "editName"
+      ).value.trim();
+
+    const bio =
+      document.getElementById(
+        "editBio"
+      ).value.trim();
+
+    const city =
+      document.getElementById(
+        "editCity"
+      ).value.trim();
+
+    const dob =
+      document.getElementById(
+        "editDob"
+      ).value;
+
+    const gender =
+      document.getElementById(
+        "editGender"
+      ).value;
+
+    const privacy =
+      document.getElementById(
+        "editPrivacy"
+      ).value;
+
+
+    const {data,error} =
+      await supabaseClient
+      .from("profiles")
+      .update({
+        name:name || null,
+        bio:bio || null,
+        city:city || null,
+        dob:dob || null,
+        gender:gender || null,
+        profile_privacy:privacy,
+        avatar_url:avatarUrl
+      })
+      .eq("id",currentUser.id)
+      .select()
+      .maybeSingle();
+
+    if(error) throw error;
+
+
+    profileUser =
+      data || {
+        ...profileUser,
+        name:name || null,
+        bio:bio || null,
+        city:city || null,
+        dob:dob || null,
+        gender:gender || null,
+        profile_privacy:privacy,
+        avatar_url:avatarUrl
+      };
+
+
+    isPrivate =
+      privacy === "private";
+
+
+    renderProfile();
+
+
+    document.getElementById(
+      "editPanel"
+    ).style.display="none";
+
+
+    /*
+      Owner ke liye private profile ka
+      content hamesha visible rahega.
+    */
+
+    document.getElementById("stats")
+      .style.display="flex";
+
+    document.getElementById("infoCard")
+      .style.display="block";
+
+    document.getElementById("postsSection")
+      .style.display="block";
+
+    document.getElementById("privateBox")
+      .style.display="none";
+
+
+    await loadStats();
+    await loadPosts();
+
+
+    alert("✅ Profile updated successfully!");
+
+  }catch(error){
+
+    alert(
+      "Profile save nahi hui:\n" +
+      error.message
+    );
+
+  }finally{
+
+    const saveBtn =
+      document.querySelector(".save-btn");
+
+    saveBtn.disabled=false;
+    saveBtn.textContent="💾 Save Profile";
+
+  }
+
+}
+
+
+/* =========================
+   FOLLOW
+========================= */
+
+async function loadFollowStatus(){
+
+  const {data,error} =
+    await supabaseClient
+    .from("user_follows")
+    .select("id")
+    .eq("follower_id",currentUser.id)
+    .eq("following_id",profileUser.id)
+    .maybeSingle();
+
+  if(!error){
+
+    isFollowing=!!data;
+
+    updateFollowButton();
+
+  }
+
+}
+
+
+function updateFollowButton(){
+
+  const btn =
+    document.getElementById(
+      "followBtn"
+    );
+
+  if(isFollowing){
+
+    btn.textContent="✓ Following";
+
+  }else{
+
+    btn.textContent="➕ Follow";
+
+  }
+
+}
+
+
+async function toggleFollow(){
+
+  if(!profileUser || isOwner)
+    return;
+
+
+  if(isFollowing){
+
+    const {error} =
+      await supabaseClient
+      .from("user_follows")
+      .delete()
+      .eq("follower_id",currentUser.id)
+      .eq("following_id",profileUser.id);
+
+    if(error){
+
+      alert(
+        "Unfollow nahi ho saka:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    isFollowing=false;
+
+  }else{
+
+    const {error} =
+      await supabaseClient
+      .from("user_follows")
+      .insert({
+        follower_id:currentUser.id,
+        following_id:profileUser.id
+      });
+
+    if(error){
+
+      alert(
+        "Follow nahi ho saka:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    isFollowing=true;
+
+  }
+
+  updateFollowButton();
+
+  await loadStats();
 }
 
 
@@ -878,50 +1283,50 @@ function renderProfile(){
 
 async function loadStats(){
 
-  const postResult =
+  const posts =
     await supabaseClient
     .from("posts")
     .select("id",{count:"exact",head:true})
     .eq("user_id",profileUser.id);
 
-  if(!postResult.error){
+  if(!posts.error){
 
     document.getElementById(
       "postCount"
     ).textContent =
-    postResult.count || 0;
+    posts.count || 0;
 
   }
 
 
-  const followerResult =
+  const followers =
     await supabaseClient
     .from("user_follows")
     .select("id",{count:"exact",head:true})
     .eq("following_id",profileUser.id);
 
-  if(!followerResult.error){
+  if(!followers.error){
 
     document.getElementById(
       "followersCount"
     ).textContent =
-    followerResult.count || 0;
+    followers.count || 0;
 
   }
 
 
-  const followingResult =
+  const following =
     await supabaseClient
     .from("user_follows")
     .select("id",{count:"exact",head:true})
     .eq("follower_id",profileUser.id);
 
-  if(!followingResult.error){
+  if(!following.error){
 
     document.getElementById(
       "followingCount"
     ).textContent =
-    followingResult.count || 0;
+    following.count || 0;
 
   }
 
@@ -946,6 +1351,7 @@ async function loadPosts(){
     .eq("user_id",profileUser.id)
     .order("created_at",{ascending:false});
 
+
   if(error){
 
     document.getElementById(
@@ -958,10 +1364,12 @@ async function loadPosts(){
     return;
   }
 
+
   const list =
     document.getElementById(
       "postsList"
     );
+
 
   if(!data || data.length===0){
 
@@ -972,6 +1380,7 @@ async function loadPosts(){
 
     return;
   }
+
 
   list.innerHTML =
     data.map(post=>{
@@ -991,7 +1400,9 @@ async function loadPosts(){
         <div class="post-card">
 
           <div>
-            ${escapeHtml(post.content || "")}
+            ${escapeHtml(
+              post.content || ""
+            )}
           </div>
 
           ${image}
@@ -1009,245 +1420,22 @@ async function loadPosts(){
 
 
 /* =========================
-   FOLLOW
-========================= */
-
-async function loadFollowStatus(){
-
-  const {data,error} =
-    await supabaseClient
-    .from("user_follows")
-    .select("id")
-    .eq("follower_id",currentUser.id)
-    .eq("following_id",profileUser.id)
-    .maybeSingle();
-
-  if(!error){
-
-    isFollowing = !!data;
-
-    updateFollowButton();
-
-  }
-
-}
-
-
-function updateFollowButton(){
-
-  const btn =
-    document.getElementById(
-      "followBtn"
-    );
-
-  btn.textContent =
-    isFollowing
-      ? "✓ Following"
-      : "+ Follow";
-}
-
-
-async function toggleFollow(){
-
-  if(!profileUser) return;
-
-  if(isFollowing){
-
-    const {error} =
-      await supabaseClient
-      .from("user_follows")
-      .delete()
-      .eq("follower_id",currentUser.id)
-      .eq("following_id",profileUser.id);
-
-    if(error){
-
-      alert(error.message);
-      return;
-    }
-
-    isFollowing=false;
-
-  }else{
-
-    const {error} =
-      await supabaseClient
-      .from("user_follows")
-      .insert({
-        follower_id:currentUser.id,
-        following_id:profileUser.id
-      });
-
-    if(error){
-
-      alert(error.message);
-      return;
-    }
-
-    isFollowing=true;
-
-  }
-
-  updateFollowButton();
-}
-
-
-/* =========================
-   EDIT PROFILE
-========================= */
-
-function toggleEdit(){
-
-  const panel =
-    document.getElementById(
-      "editPanel"
-    );
-
-  if(panel.style.display==="block"){
-
-    panel.style.display="none";
-    return;
-  }
-
-  document.getElementById(
-    "editName"
-  ).value =
-    profileUser.name || "";
-
-  document.getElementById(
-    "editBio"
-  ).value =
-    profileUser.bio || "";
-
-  document.getElementById(
-    "editCity"
-  ).value =
-    profileUser.city || "";
-
-  document.getElementById(
-    "editGender"
-  ).value =
-    profileUser.gender || "";
-
-  document.getElementById(
-    "editPrivacy"
-  ).value =
-    isPrivate
-      ? "private"
-      : "public";
-
-  panel.style.display="block";
-
-}
-
-
-async function saveProfile(){
-
-  const name =
-    document.getElementById(
-      "editName"
-    ).value.trim();
-
-  const bio =
-    document.getElementById(
-      "editBio"
-    ).value.trim();
-
-  const city =
-    document.getElementById(
-      "editCity"
-    ).value.trim();
-
-  const gender =
-    document.getElementById(
-      "editGender"
-    ).value;
-
-  const privacy =
-    document.getElementById(
-      "editPrivacy"
-    ).value;
-
-
-  const {data,error} =
-    await supabaseClient
-    .from("profiles")
-    .update({
-      name:name || null,
-      bio:bio || null,
-      city:city || null,
-      gender:gender || null,
-      profile_privacy:privacy
-    })
-    .eq("id",currentUser.id)
-    .select()
-    .maybeSingle();
-
-  if(error){
-
-    alert(
-      "Profile save nahi hui:\n" +
-      error.message
-    );
-
-    return;
-  }
-
-  if(data){
-
-    profileUser=data;
-
-  }else{
-
-    profileUser.name=name;
-    profileUser.bio=bio;
-    profileUser.city=city;
-    profileUser.gender=gender;
-    profileUser.profile_privacy=privacy;
-
-  }
-
-  isPrivate =
-    privacy === "private";
-
-  renderProfile();
-
-  document.getElementById(
-    "editPanel"
-  ).style.display="none";
-
-  /*
-    Privacy change ke baad page ko
-    fresh state mein dobara render karte hain.
-  */
-
-  if(isPrivate){
-
-    document.getElementById(
-      "stats"
-    ).style.display="flex";
-
-    await loadStats();
-    await loadPosts();
-
-  }
-
-  alert("✅ Profile updated!");
-
-}
-
-
-/* =========================
-   PRIVATE CHAT
+   1-ON-1 CHAT
 ========================= */
 
 function openPrivateChat(){
 
-  if(!profileUser) return;
+  if(!profileUser)
+    return;
+
+  if(isOwner)
+    return;
 
   window.location.href =
     "private-chat.html?user=" +
-    encodeURIComponent(profileUser.id);
+    encodeURIComponent(
+      profileUser.id
+    );
 
 }
 
@@ -1295,24 +1483,21 @@ function formatDate(date){
 
   if(!date) return "";
 
-  const d =
-    new Date(date);
-
-  const now =
-    new Date();
+  const d=new Date(date);
+  const now=new Date();
 
   const seconds =
     Math.floor(
       (now-d)/1000
     );
 
-  if(seconds < 60)
+  if(seconds<60)
     return "Just now";
 
   const minutes =
     Math.floor(seconds/60);
 
-  if(minutes < 60)
+  if(minutes<60)
     return minutes +
       " minute" +
       (minutes===1?"":"s") +
@@ -1321,7 +1506,7 @@ function formatDate(date){
   const hours =
     Math.floor(minutes/60);
 
-  if(hours < 24)
+  if(hours<24)
     return hours +
       " hour" +
       (hours===1?"":"s") +
@@ -1330,14 +1515,13 @@ function formatDate(date){
   const days =
     Math.floor(hours/24);
 
-  if(days < 7)
+  if(days<7)
     return days +
       " day" +
       (days===1?"":"s") +
       " ago";
 
   return d.toLocaleDateString();
-
 }
 
 
@@ -1378,3 +1562,4 @@ init();
 
 </body>
 </html>
+```
