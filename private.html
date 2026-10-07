@@ -1,1 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+<title>Private - ChatZone 💬</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  min-height:100vh;
+  color:#222;
+}
+
+.app{
+  width:100%;
+  max-width:680px;
+  margin:auto;
+  min-height:100vh;
+  background:#f7f7fb;
+}
+
+.header{
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:white;
+  padding:18px 15px 14px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.header h1{
+  margin:0;
+  font-size:23px;
+}
+
+.header p{
+  margin:5px 0 0;
+  font-size:13px;
+  opacity:.9;
+}
+
+.back{
+  position:absolute;
+  left:12px;
+  top:17px;
+  border:0;
+  background:rgba(255,255,255,.18);
+  color:white;
+  border-radius:50%;
+  width:38px;
+  height:38px;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.content{
+  padding:14px;
+  padding-bottom:80px;
+}
+
+.search{
+  width:100%;
+  padding:13px 15px;
+  border:1px solid #ddd;
+  border-radius:25px;
+  outline:none;
+  font-size:15px;
+  margin-bottom:14px;
+}
+
+.section{
+  background:white;
+  border-radius:15px;
+  margin-bottom:15px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+  overflow:hidden;
+}
+
+.section-title{
+  padding:14px;
+  font-weight:bold;
+  font-size:16px;
+  border-bottom:1px solid #eee;
+}
+
+.request{
+  display:flex;
+  align-items:center;
+  padding:12px;
+  gap:10px;
+  border-bottom:1px solid #eee;
+}
+
+.request:last-child{
+  border-bottom:0;
+}
+
+.avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#ddd;
+  flex-shrink:0;
+}
+
+.user-info{
+  flex:1;
+  min-width:0;
+}
+
+.username{
+  font-weight:bold;
+  font-size:15px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.status{
+  font-size:12px;
+  margin-top:4px;
+  color:#888;
+}
+
+.online{
+  color:#18a957;
+}
+
+.dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  background:#18c96b;
+  border-radius:50%;
+  margin-right:4px;
+}
+
+.buttons{
+  display:flex;
+  gap:6px;
+}
+
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:8px 10px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.accept{
+  background:#20a65a;
+}
+
+.decline{
+  background:#e74c3c;
+}
+
+.chat-btn{
+  background:#6c5ce7;
+}
+
+.empty{
+  padding:18px;
+  text-align:center;
+  color:#888;
+  font-size:14px;
+}
+
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:680px;
+  background:white;
+  border-top:1px solid #ddd;
+  display:flex;
+  z-index:20;
+}
+
+.nav{
+  flex:1;
+  border:0;
+  background:white;
+  padding:10px 4px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.nav span{
+  display:block;
+  font-size:20px;
+  margin-bottom:2px;
+}
+
+.nav.active{
+  color:#6c5ce7;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <button class="back" onclick="goBack()">‹</button>
+    <h1>🔒 Private</h1>
+    <p>Private Requests & Chats</p>
+  </div>
+
+  <div class="content">
+
+    <input
+      id="searchInput"
+      class="search"
+      placeholder="🔎 Username search karein..."
+      oninput="searchUsers()"
+    >
+
+    <div class="section">
+      <div class="section-title">
+        📩 Private Requests
+        <span id="requestCount"></span>
+      </div>
+
+      <div id="requests">
+        <div class="empty">Requests load ho rahi hain...</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        🟢 Online Users
+      </div>
+
+      <div id="onlineUsers">
+        <div class="empty">Online users load ho rahe hain...</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        👥 Users
+      </div>
+
+      <div id="users">
+        <div class="empty">Users load ho rahe hain...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bottom">
+
+    <button class="nav" onclick="location.href='index.html'">
+      <span>🏠</span>
+      Home
+    </button>
+
+    <button class="nav active">
+      <span>🔒</span>
+      Private
+    </button>
+
+    <button class="nav" onclick="location.href='profile.html'">
+      <span>👤</span>
+      Profile
+    </button>
+
+    <button class="nav" onclick="location.href='notifications.html'">
+      <span>🔔</span>
+      Notifications
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://jhcpqjmxiovvqbghpxbf.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentUser = null;
+let allUsers = [];
+
+async function init(){
+
+  const {
+    data:{
+      user
+    }
+  } = await supabaseClient.auth.getUser();
+
+  if(!user){
+    location.href="login.html";
+    return;
+  }
+
+  currentUser = user;
+
+  await loadRequests();
+  await loadUsers();
+  await updateOnlineStatus();
+
+  setInterval(updateOnlineStatus,30000);
+}
+
+async function updateOnlineStatus(){
+
+  if(!currentUser) return;
+
+  /*
+    Agar profiles table mein last_seen column
+    maujood ho to current user's activity update hogi.
+  */
+
+  try{
+
+    await supabaseClient
+      .from("profiles")
+      .update({
+        last_seen:new Date().toISOString()
+      })
+      .eq("id",currentUser.id);
+
+  }catch(e){
+
+    console.log("Online status update:",e);
+
+  }
+}
+
+async function loadRequests(){
+
+  const box =
+    document.getElementById("requests");
+
+  box.innerHTML =
+    `<div class="empty">Requests load ho rahi hain...</div>`;
+
+  /*
+    Agar tumhare database mein private_requests table
+    hai to ye section automatically use karega.
+  */
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("private_requests")
+    .select("*")
+    .eq("receiver_id",currentUser.id)
+    .eq("status","pending")
+    .order("created_at",{ascending:false});
+
+  if(error){
+
+    console.log(error);
+
+    box.innerHTML =
+      `<div class="empty">
+        📩 Abhi koi private request nahi.
+      </div>`;
+
+    return;
+  }
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        📩 Abhi koi private request nahi.
+      </div>`;
+
+    document.getElementById("requestCount").textContent="";
+    return;
+  }
+
+  document.getElementById("requestCount").textContent =
+    ` (${data.length})`;
+
+  box.innerHTML="";
+
+  for(const request of data){
+
+    let profile = null;
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .select("id,username,name,avatar_url")
+        .eq("id",request.sender_id)
+        .maybeSingle();
+
+    profile=result.data;
+
+    if(!profile) continue;
+
+    box.innerHTML += `
+      <div class="request">
+
+        <img
+          class="avatar"
+          src="${profile.avatar_url || ''}"
+          onerror="this.style.display='none'"
+        >
+
+        <div class="user-info">
+
+          <div class="username">
+            ${escapeHtml(
+              profile.username ||
+              profile.name ||
+              "User"
+            )}
+          </div>
+
+          <div class="status">
+            📩 Private request
+          </div>
+
+        </div>
+
+        <div class="buttons">
+
+          <button
+            class="btn accept"
+            onclick="acceptRequest('${request.id}')">
+            ✓
+          </button>
+
+          <button
+            class="btn decline"
+            onclick="declineRequest('${request.id}')">
+            ✕
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  }
+}
+
+async function acceptRequest(id){
+
+  const {
+    error
+  } = await supabaseClient
+    .from("private_requests")
+    .update({
+      status:"accepted"
+    })
+    .eq("id",id);
+
+  if(error){
+
+    alert("Request accept nahi hui: "+error.message);
+    return;
+  }
+
+  await loadRequests();
+}
+
+async function declineRequest(id){
+
+  const {
+    error
+  } = await supabaseClient
+    .from("private_requests")
+    .update({
+      status:"declined"
+    })
+    .eq("id",id);
+
+  if(error){
+
+    alert("Request decline nahi hui: "+error.message);
+    return;
+  }
+
+  await loadRequests();
+}
+
+async function loadUsers(){
+
+  const box =
+    document.getElementById("users");
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("profiles")
+    .select("id,username,name,avatar_url,last_seen")
+    .neq("id",currentUser.id)
+    .order("username",{ascending:true});
+
+  if(error){
+
+    console.log(error);
+
+    box.innerHTML =
+      `<div class="empty">
+        Users load nahi ho sake.
+      </div>`;
+
+    return;
+  }
+
+  allUsers=data || [];
+
+  renderUsers(allUsers);
+  renderOnlineUsers(allUsers);
+}
+
+function renderUsers(users){
+
+  const box =
+    document.getElementById("users");
+
+  if(!users.length){
+
+    box.innerHTML =
+      `<div class="empty">
+        Koi user nahi mila.
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML="";
+
+  users.forEach(user=>{
+
+    const online =
+      isOnline(user.last_seen);
+
+    box.innerHTML += `
+      <div class="request">
+
+        <img
+          class="avatar"
+          src="${user.avatar_url || ''}"
+          onerror="this.style.display='none'"
+        >
+
+        <div class="user-info">
+
+          <div class="username">
+            ${escapeHtml(
+              user.username ||
+              user.name ||
+              "User"
+            )}
+          </div>
+
+          <div class="status ${online ? 'online':''}">
+            ${
+              online
+              ? '<span class="dot"></span>Online'
+              : 'Offline'
+            }
+          </div>
+
+        </div>
+
+        <button
+          class="btn chat-btn"
+          onclick="openPrivate('${user.id}')">
+          💬
+        </button>
+
+      </div>
+    `;
+  });
+}
+
+function renderOnlineUsers(users){
+
+  const box =
+    document.getElementById("onlineUsers");
+
+  const online =
+    users.filter(u=>isOnline(u.last_seen));
+
+  if(!online.length){
+
+    box.innerHTML =
+      `<div class="empty">
+        🟢 Abhi koi user online nahi.
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML="";
+
+  online.forEach(user=>{
+
+    box.innerHTML += `
+      <div class="request">
+
+        <img
+          class="avatar"
+          src="${user.avatar_url || ''}"
+          onerror="this.style.display='none'"
+        >
+
+        <div class="user-info">
+
+          <div class="username">
+            ${escapeHtml(
+              user.username ||
+              user.name ||
+              "User"
+            )}
+          </div>
+
+          <div class="status online">
+            <span class="dot"></span>
+            Online
+          </div>
+
+        </div>
+
+        <button
+          class="btn chat-btn"
+          onclick="openPrivate('${user.id}')">
+          💬
+        </button>
+
+      </div>
+    `;
+  });
+}
+
+function searchUsers(){
+
+  const value =
+    document
+      .getElementById("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const filtered =
+    allUsers.filter(user=>{
+
+      const username =
+        (user.username || "").toLowerCase();
+
+      const name =
+        (user.name || "").toLowerCase();
+
+      return username.includes(value) ||
+             name.includes(value);
+    });
+
+  renderUsers(filtered);
+}
+
+function isOnline(lastSeen){
+
+  if(!lastSeen) return false;
+
+  const time =
+    new Date(lastSeen).getTime();
+
+  if(isNaN(time)) return false;
+
+  /*
+    2 minutes ke andar activity = online
+  */
+
+  return Date.now()-time < 120000;
+}
+
+function openPrivate(userId){
+
+  location.href =
+    "private-chat.html?user="+
+    encodeURIComponent(userId);
+}
+
+function goBack(){
+
+  if(history.length>1){
+    history.back();
+  }else{
+    location.href="index.html";
+  }
+}
+
+function escapeHtml(value){
+
+  return String(value || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+init();
+
+</script>
+
+</body>
+</html>
