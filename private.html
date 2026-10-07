@@ -1,16 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Private - RabtaHub</title>
+<title>ChatZone 💬</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 html,body{
   margin:0;
@@ -197,10 +198,21 @@ body{
   cursor:pointer;
 }
 
-.accept{background:#27ae60}
-.decline{background:#e74c3c}
-.chat-btn{background:#6c5ce7}
-.private-btn{background:#8e44ad}
+.accept{
+  background:#27ae60;
+}
+
+.decline{
+  background:#e74c3c;
+}
+
+.chat-btn{
+  background:#6c5ce7;
+}
+
+.private-btn{
+  background:#8e44ad;
+}
 
 .refresh{
   width:100%;
@@ -224,9 +236,18 @@ body{
 }
 
 @media(max-width:430px){
-  .content{padding:12px}
-  .card{padding:13px}
-  .username{font-size:15px}
+
+  .content{
+    padding:12px;
+  }
+
+  .card{
+    padding:13px;
+  }
+
+  .username{
+    font-size:15px;
+  }
 
   .accept,
   .decline,
@@ -235,6 +256,7 @@ body{
     padding:8px 9px;
     font-size:12px;
   }
+
 }
 </style>
 </head>
@@ -244,59 +266,119 @@ body{
 <div class="container">
 
   <div class="header">
+
     <div class="header-row">
 
-      <button type="button" class="back" onclick="goBack()">‹</button>
+      <button
+        type="button"
+        class="back"
+        onclick="goBack()">
+        ‹
+      </button>
 
       <div class="header-title">
-        <h2>🔒 Private</h2>
-        <small>Private Requests & Chats</small>
+
+        <h2>🔒 ChatZone Private</h2>
+
+        <small>
+          Private Requests & Chats
+        </small>
+
       </div>
 
-      <button type="button" class="refresh-top" onclick="loadEverything()">↻</button>
+      <button
+        type="button"
+        class="refresh-top"
+        onclick="loadEverything()">
+        ↻
+      </button>
 
     </div>
+
   </div>
+
 
   <div class="content">
 
-    <div id="errorBox" class="error"></div>
+    <div
+      id="errorBox"
+      class="error">
+    </div>
+
+
+    <!-- PRIVATE REQUESTS -->
 
     <div class="card">
-      <div class="section-title">📩 Private Requests</div>
+
+      <div class="section-title">
+        📩 Private Requests
+      </div>
 
       <div id="requestsList">
-        <div class="loading">Requests load ho rahi hain...</div>
+
+        <div class="loading">
+          Requests load ho rahi hain...
+        </div>
+
       </div>
+
     </div>
 
+
+    <!-- PRIVATE CHATS -->
+
     <div class="card">
-      <div class="section-title">💬 Private Chats</div>
+
+      <div class="section-title">
+        💬 Private Chats
+      </div>
 
       <div id="chatsList">
-        <div class="loading">Private chats load ho rahi hain...</div>
+
+        <div class="loading">
+          Private chats load ho rahi hain...
+        </div>
+
       </div>
+
     </div>
 
-    <div class="card">
-      <div class="section-title">🟢 Online Users</div>
 
-      <div id="onlineUsers">
-        <div class="loading">Online users load ho rahe hain...</div>
+    <!-- ONLINE USERS -->
+
+    <div class="card">
+
+      <div class="section-title">
+        🟢 Online Users
       </div>
 
-      <button type="button" class="refresh" onclick="loadEverything()">
+      <div id="onlineUsers">
+
+        <div class="loading">
+          Online users load ho rahe hain...
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="refresh"
+        onclick="loadEverything()">
         🔄 Refresh
       </button>
+
     </div>
 
   </div>
+
 </div>
+
 
 <script>
 
 /* =====================================================
    SUPABASE
+   SAME LOGIN SESSION USE HOGI
 ===================================================== */
 
 const SUPABASE_URL =
@@ -313,7 +395,6 @@ supabase.createClient(
     auth:{
       persistSession:true,
       autoRefreshToken:true,
-      storageKey:"rabtahub-auth",
       detectSessionInUrl:false
     }
   }
@@ -327,15 +408,23 @@ let currentUser = null;
 ===================================================== */
 
 function showError(message){
-  const box=document.getElementById("errorBox");
-  box.textContent=message;
-  box.style.display="block";
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent = message;
+  box.style.display = "block";
+
 }
 
 function hideError(){
-  const box=document.getElementById("errorBox");
-  box.textContent="";
-  box.style.display="none";
+
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent = "";
+  box.style.display = "none";
+
 }
 
 
@@ -349,33 +438,50 @@ function goBack(){
     document.referrer &&
     document.referrer !== window.location.href
   ){
+
     window.history.back();
+
   }else{
-    window.location.href="index.html";
+
+    window.location.href =
+      "index.html";
+
   }
 
 }
 
 
 /* =====================================================
-   SESSION
+   CURRENT USER
 ===================================================== */
 
 async function getCurrentUser(){
 
   try{
 
-    const result =
-      await supabaseClient.auth.getSession();
+    const {
+      data,
+      error
+    } =
+    await supabaseClient.auth.getUser();
+
+    if(error){
+
+      console.log(
+        "User check:",
+        error.message
+      );
+
+      return null;
+
+    }
 
     if(
-      result &&
-      result.data &&
-      result.data.session &&
-      result.data.session.user
+      data &&
+      data.user
     ){
 
-      return result.data.session.user;
+      return data.user;
 
     }
 
@@ -383,7 +489,11 @@ async function getCurrentUser(){
 
   }catch(error){
 
-    console.error("Session error:",error);
+    console.log(
+      "Auth error:",
+      error
+    );
+
     return null;
 
   }
@@ -392,7 +502,7 @@ async function getCurrentUser(){
 
 
 /* =====================================================
-   START
+   START PAGE
 ===================================================== */
 
 async function startPage(){
@@ -404,35 +514,45 @@ async function startPage(){
 
   if(!currentUser){
 
-    document.getElementById("requestsList").innerHTML=`
+    document.getElementById(
+      "requestsList"
+    ).innerHTML = `
       <div class="empty">
+
         🔐 Login session nahi mili.
+
         <br><br>
+
         <button
           type="button"
           class="chat-btn"
           onclick="goLogin()">
           Login
         </button>
+
       </div>
     `;
 
-    document.getElementById("chatsList").innerHTML=`
+    document.getElementById(
+      "chatsList"
+    ).innerHTML = `
       <div class="empty">
         Login required.
       </div>
     `;
 
-    document.getElementById("onlineUsers").innerHTML=`
+    document.getElementById(
+      "onlineUsers"
+    ).innerHTML = `
       <div class="empty">
         Login required.
       </div>
     `;
 
     return;
+
   }
 
-  await updateLastSeen();
   await loadEverything();
 
 }
@@ -443,7 +563,10 @@ async function startPage(){
 ===================================================== */
 
 function goLogin(){
-  window.location.href="login.html";
+
+  window.location.href =
+    "login.html";
+
 }
 
 
@@ -460,8 +583,11 @@ async function loadEverything(){
   hideError();
 
   await updateLastSeen();
+
   await loadRequests();
+
   await loadAcceptedChats();
+
   await loadOnlineUsers();
 
 }
@@ -477,16 +603,27 @@ async function updateLastSeen(){
     return;
   }
 
-  const {error} =
-    await supabaseClient
-      .from("profiles")
-      .update({
-        last_seen:new Date().toISOString()
-      })
-      .eq("id",currentUser.id);
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .update({
+      last_seen:
+        new Date().toISOString()
+    })
+    .eq(
+      "id",
+      currentUser.id
+    );
 
   if(error){
-    console.log("Last seen:",error.message);
+
+    console.log(
+      "Last seen:",
+      error.message
+    );
+
   }
 
 }
@@ -498,18 +635,30 @@ async function updateLastSeen(){
 
 async function getProfile(userId){
 
-  const {data,error} =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url,last_seen"
-      )
-      .eq("id",userId)
-      .maybeSingle();
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "id,username,name,avatar_url,last_seen"
+    )
+    .eq(
+      "id",
+      userId
+    )
+    .maybeSingle();
 
   if(error){
-    console.log("Profile error:",error.message);
+
+    console.log(
+      "Profile error:",
+      error.message
+    );
+
     return null;
+
   }
 
   return data;
@@ -526,6 +675,7 @@ function avatarHTML(url){
   if(url){
 
     return `
+
       <img
         class="avatar"
         src="${escapeHtml(url)}"
@@ -540,21 +690,24 @@ function avatarHTML(url){
         style="display:none;">
         👤
       </div>
+
     `;
 
   }
 
   return `
+
     <div class="avatar-placeholder">
       👤
     </div>
+
   `;
 
 }
 
 
 /* =====================================================
-   REQUESTS
+   PRIVATE REQUESTS
 ===================================================== */
 
 async function loadRequests(){
@@ -564,70 +717,107 @@ async function loadRequests(){
   }
 
   const box =
-    document.getElementById("requestsList");
+    document.getElementById(
+      "requestsList"
+    );
 
-  box.innerHTML=`
+  box.innerHTML = `
     <div class="loading">
       Requests load ho rahi hain...
     </div>
   `;
 
-  const {data,error} =
-    await supabaseClient
-      .from("private_requests")
-      .select("*")
-      .eq("receiver_id",currentUser.id)
-      .eq("status","pending")
-      .order("created_at",{ascending:false});
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select("*")
+    .eq(
+      "receiver_id",
+      currentUser.id
+    )
+    .eq(
+      "status",
+      "pending"
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
 
   if(error){
 
-    box.innerHTML=`
+    box.innerHTML = `
       <div class="empty">
         📭 Requests load nahi ho saki.
       </div>
     `;
 
     showError(
-      "Requests: "+error.message
+      "Requests: " +
+      error.message
     );
 
     return;
+
   }
 
-  if(!data || data.length===0){
 
-    box.innerHTML=`
+  if(
+    !data ||
+    data.length === 0
+  ){
+
+    box.innerHTML = `
       <div class="empty">
         📭 Koi pending request nahi.
       </div>
     `;
 
     return;
+
   }
 
-  box.innerHTML="";
+
+  box.innerHTML = "";
+
 
   for(const request of data){
 
     const profile =
-      await getProfile(request.sender_id);
+      await getProfile(
+        request.sender_id
+      );
 
     const username =
-      profile?.username || "Unknown User";
+      profile?.username ||
+      "Unknown User";
 
     const name =
-      profile?.name || "";
+      profile?.name ||
+      "";
 
     const avatar =
-      profile?.avatar_url || "";
+      profile?.avatar_url ||
+      "";
+
 
     const row =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
-    row.className="request";
+    row.className =
+      "request";
 
-    row.innerHTML=`
+
+    row.innerHTML = `
 
       ${avatarHTML(avatar)}
 
@@ -640,9 +830,11 @@ async function loadRequests(){
         ${
           name
           ?
-          `<div class="name">
+          `
+          <div class="name">
             ${escapeHtml(name)}
-          </div>`
+          </div>
+          `
           :
           ""
         }
@@ -670,16 +862,18 @@ async function loadRequests(){
         </button>
 
       </div>
+
     `;
 
     box.appendChild(row);
+
   }
 
 }
 
 
 /* =====================================================
-   ACCEPT
+   ACCEPT REQUEST
 ===================================================== */
 
 async function acceptRequest(requestId){
@@ -688,34 +882,50 @@ async function acceptRequest(requestId){
     return;
   }
 
-  const {error} =
-    await supabaseClient
-      .from("private_requests")
-      .update({
-        status:"accepted"
-      })
-      .eq("id",requestId)
-      .eq("receiver_id",currentUser.id);
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .update({
+      status:"accepted"
+    })
+    .eq(
+      "id",
+      requestId
+    )
+    .eq(
+      "receiver_id",
+      currentUser.id
+    );
+
 
   if(error){
 
     showError(
-      "Accept nahi hui: "+error.message
+      "Accept nahi hui: " +
+      error.message
     );
 
     return;
+
   }
 
-  alert("✅ Private request accepted!");
+
+  alert(
+    "✅ Private request accepted!"
+  );
+
 
   await loadRequests();
+
   await loadAcceptedChats();
 
 }
 
 
 /* =====================================================
-   DECLINE
+   DECLINE REQUEST
 ===================================================== */
 
 async function declineRequest(requestId){
@@ -724,23 +934,35 @@ async function declineRequest(requestId){
     return;
   }
 
-  const {error} =
-    await supabaseClient
-      .from("private_requests")
-      .update({
-        status:"declined"
-      })
-      .eq("id",requestId)
-      .eq("receiver_id",currentUser.id);
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .update({
+      status:"declined"
+    })
+    .eq(
+      "id",
+      requestId
+    )
+    .eq(
+      "receiver_id",
+      currentUser.id
+    );
+
 
   if(error){
 
     showError(
-      "Decline nahi hui: "+error.message
+      "Decline nahi hui: " +
+      error.message
     );
 
     return;
+
   }
+
 
   await loadRequests();
 
@@ -758,55 +980,83 @@ async function loadAcceptedChats(){
   }
 
   const box =
-    document.getElementById("chatsList");
+    document.getElementById(
+      "chatsList"
+    );
 
-  box.innerHTML=`
+  box.innerHTML = `
     <div class="loading">
       Private chats load ho rahi hain...
     </div>
   `;
 
-  const {data,error} =
-    await supabaseClient
-      .from("private_requests")
-      .select("*")
-      .or(
-        `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
-      )
-      .eq("status","accepted")
-      .order("created_at",{ascending:false});
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select("*")
+    .or(
+      `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
+    )
+    .eq(
+      "status",
+      "accepted"
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
 
   if(error){
 
-    box.innerHTML=`
+    box.innerHTML = `
       <div class="empty">
         💬 Chats load nahi ho sakin.
       </div>
     `;
 
     return;
+
   }
 
-  if(!data || data.length===0){
 
-    box.innerHTML=`
+  if(
+    !data ||
+    data.length === 0
+  ){
+
+    box.innerHTML = `
       <div class="empty">
         💬 Abhi koi private chat nahi.
       </div>
     `;
 
     return;
+
   }
 
-  const seen=new Set();
-  const chats=[];
+
+  const seen =
+    new Set();
+
+  const chats = [];
+
 
   for(const item of data){
 
     const otherId =
-      item.sender_id===currentUser.id
-      ? item.receiver_id
-      : item.sender_id;
+      item.sender_id === currentUser.id
+      ?
+      item.receiver_id
+      :
+      item.sender_id;
+
 
     if(!seen.has(otherId)){
 
@@ -820,28 +1070,40 @@ async function loadAcceptedChats(){
 
   }
 
-  box.innerHTML="";
+
+  box.innerHTML = "";
+
 
   for(const chat of chats){
 
     const profile =
-      await getProfile(chat.otherId);
+      await getProfile(
+        chat.otherId
+      );
 
     const username =
-      profile?.username || "User";
+      profile?.username ||
+      "User";
 
     const name =
-      profile?.name || "";
+      profile?.name ||
+      "";
 
     const avatar =
-      profile?.avatar_url || "";
+      profile?.avatar_url ||
+      "";
+
 
     const row =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
-    row.className="user-row";
+    row.className =
+      "user-row";
 
-    row.innerHTML=`
+
+    row.innerHTML = `
 
       ${avatarHTML(avatar)}
 
@@ -854,9 +1116,11 @@ async function loadAcceptedChats(){
         ${
           name
           ?
-          `<div class="name">
+          `
+          <div class="name">
             ${escapeHtml(name)}
-          </div>`
+          </div>
+          `
           :
           ""
         }
@@ -873,16 +1137,18 @@ async function loadAcceptedChats(){
         onclick="openChat('${chat.otherId}')">
         Chat
       </button>
+
     `;
 
     box.appendChild(row);
+
   }
 
 }
 
 
 /* =====================================================
-   OPEN CHAT
+   OPEN PRIVATE CHAT
 ===================================================== */
 
 function openChat(userId){
@@ -892,7 +1158,7 @@ function openChat(userId){
   }
 
   window.location.href =
-    "private-chat.html?user="+
+    "private-chat.html?user=" +
     encodeURIComponent(userId);
 
 }
@@ -909,83 +1175,124 @@ async function loadOnlineUsers(){
   }
 
   const box =
-    document.getElementById("onlineUsers");
+    document.getElementById(
+      "onlineUsers"
+    );
 
-  box.innerHTML=`
+  box.innerHTML = `
     <div class="loading">
       Online users load ho rahe hain...
     </div>
   `;
 
+
   const fiveMinutesAgo =
     new Date(
-      Date.now()-5*60*1000
+      Date.now() -
+      5 * 60 * 1000
     ).toISOString();
 
-  const {data,error} =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,username,name,avatar_url,last_seen"
-      )
-      .neq("id",currentUser.id)
-      .gte("last_seen",fiveMinutesAgo)
-      .order("last_seen",{ascending:false});
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "id,username,name,avatar_url,last_seen"
+    )
+    .neq(
+      "id",
+      currentUser.id
+    )
+    .gte(
+      "last_seen",
+      fiveMinutesAgo
+    )
+    .order(
+      "last_seen",
+      {
+        ascending:false
+      }
+    );
+
 
   if(error){
 
-    box.innerHTML=`
+    box.innerHTML = `
       <div class="empty">
         💤 Online users load nahi ho sake.
       </div>
     `;
 
     return;
+
   }
 
-  if(!data || data.length===0){
 
-    box.innerHTML=`
+  if(
+    !data ||
+    data.length === 0
+  ){
+
+    box.innerHTML = `
       <div class="empty">
         💤 Abhi koi aur online nahi.
       </div>
     `;
 
     return;
+
   }
 
-  box.innerHTML="";
+
+  box.innerHTML = "";
+
 
   for(const user of data){
 
     const row =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
-    row.className="user-row";
+    row.className =
+      "user-row";
 
-    row.innerHTML=`
 
-      ${avatarHTML(user.avatar_url || "")}
+    row.innerHTML = `
+
+      ${avatarHTML(
+        user.avatar_url || ""
+      )}
 
       <div class="user-info">
 
         <div class="username">
-          @${escapeHtml(user.username || "User")}
+          @${escapeHtml(
+            user.username || "User"
+          )}
         </div>
 
         ${
           user.name
           ?
-          `<div class="name">
+          `
+          <div class="name">
             ${escapeHtml(user.name)}
-          </div>`
+          </div>
+          `
           :
           ""
         }
 
         <div class="status">
+
           <span class="online-dot"></span>
+
           Online
+
         </div>
 
       </div>
@@ -996,6 +1303,7 @@ async function loadOnlineUsers(){
         onclick="sendRequest('${user.id}')">
         Private
       </button>
+
     `;
 
     box.appendChild(row);
@@ -1006,7 +1314,7 @@ async function loadOnlineUsers(){
 
 
 /* =====================================================
-   SEND REQUEST
+   SEND PRIVATE REQUEST
 ===================================================== */
 
 async function sendRequest(receiverId){
@@ -1018,49 +1326,81 @@ async function sendRequest(receiverId){
     );
 
     return;
+
   }
+
 
   if(
     !receiverId ||
-    receiverId===currentUser.id
+    receiverId === currentUser.id
   ){
+
     return;
+
   }
 
-  const {data:existing,error:checkError} =
-    await supabaseClient
-      .from("private_requests")
-      .select(
-        "id,status,sender_id,receiver_id,created_at"
-      )
-      .or(
-        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${currentUser.id})`
-      )
-      .order("created_at",{ascending:false})
-      .limit(1);
+
+  const {
+    data:existing,
+    error:checkError
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select(
+      "id,status,sender_id,receiver_id,created_at"
+    )
+    .or(
+      `and(sender_id.eq.${currentUser.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${currentUser.id})`
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    )
+    .limit(1);
+
 
   if(checkError){
 
     showError(
-      "Request check error: "+
+      "Request check error: " +
       checkError.message
     );
 
     return;
+
   }
 
-  if(existing && existing.length>0){
 
-    const request=existing[0];
+  if(
+    existing &&
+    existing.length > 0
+  ){
 
-    if(request.status==="accepted"){
+    const request =
+      existing[0];
+
+
+    if(
+      request.status === "accepted"
+    ){
+
       openChat(receiverId);
+
       return;
+
     }
 
-    if(request.status==="pending"){
 
-      if(request.sender_id===currentUser.id){
+    if(
+      request.status === "pending"
+    ){
+
+      if(
+        request.sender_id ===
+        currentUser.id
+      ){
 
         alert(
           "📩 Request pehle hi bheji ja chuki hai."
@@ -1075,60 +1415,85 @@ async function sendRequest(receiverId){
       }
 
       return;
+
     }
 
+
     if(
-      request.status==="declined" &&
-      request.sender_id===currentUser.id
+      request.status === "declined" &&
+      request.sender_id ===
+      currentUser.id
     ){
 
-      const {error} =
-        await supabaseClient
-          .from("private_requests")
-          .update({
-            status:"pending",
-            created_at:new Date().toISOString()
-          })
-          .eq("id",request.id)
-          .eq("sender_id",currentUser.id);
+      const {
+        error
+      } =
+      await supabaseClient
+        .from("private_requests")
+        .update({
+          status:"pending",
+          created_at:
+            new Date().toISOString()
+        })
+        .eq(
+          "id",
+          request.id
+        )
+        .eq(
+          "sender_id",
+          currentUser.id
+        );
+
 
       if(error){
 
         showError(
-          "Request dobara nahi bheji ja saki: "+
+          "Request dobara nahi bheji ja saki: " +
           error.message
         );
 
         return;
+
       }
+
 
       alert(
         "📩 Private request dobara bhej di gayi."
       );
 
       return;
+
     }
 
   }
 
-  const {error} =
-    await supabaseClient
-      .from("private_requests")
-      .insert({
-        sender_id:currentUser.id,
-        receiver_id:receiverId,
-        status:"pending"
-      });
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .insert({
+      sender_id:
+        currentUser.id,
+      receiver_id:
+        receiverId,
+      status:
+        "pending"
+    });
+
 
   if(error){
 
     showError(
-      "Request send nahi hui: "+
+      "Request send nahi hui: " +
       error.message
     );
 
     return;
+
   }
+
 
   alert(
     "📩 Private request send ho gayi!"
@@ -1138,21 +1503,42 @@ async function sendRequest(receiverId){
 
 
 /* =====================================================
-   ESCAPE
+   ESCAPE HTML
 ===================================================== */
 
 function escapeHtml(value){
 
-  if(value===null || value===undefined){
+  if(
+    value === null ||
+    value === undefined
+  ){
+
     return "";
+
   }
 
+
   return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
