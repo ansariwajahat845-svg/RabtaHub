@@ -1,10 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Private - ChatZone 💬</title>
+<title>Private - RabtaHub</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -21,7 +22,7 @@ body{
   color:#222;
 }
 
-.app{
+.container{
   width:100%;
   max-width:680px;
   margin:auto;
@@ -32,73 +33,69 @@ body{
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:18px 15px 14px;
-  text-align:center;
+  padding:16px;
   position:sticky;
   top:0;
   z-index:10;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
 }
 
-.header h1{
-  margin:0;
-  font-size:23px;
-}
-
-.header p{
-  margin:5px 0 0;
-  font-size:13px;
-  opacity:.9;
+.header-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
 .back{
-  position:absolute;
-  left:12px;
-  top:17px;
   border:0;
   background:rgba(255,255,255,.18);
   color:white;
+  width:40px;
+  height:40px;
   border-radius:50%;
-  width:38px;
-  height:38px;
   font-size:20px;
   cursor:pointer;
 }
 
+.header h2{
+  margin:0;
+  font-size:21px;
+}
+
+.header small{
+  opacity:.9;
+}
+
 .content{
-  padding:14px;
-  padding-bottom:80px;
+  padding:15px;
+  padding-bottom:30px;
 }
 
-.search{
-  width:100%;
-  padding:13px 15px;
-  border:1px solid #ddd;
-  border-radius:25px;
-  outline:none;
-  font-size:15px;
-  margin-bottom:14px;
-}
-
-.section{
+.card{
   background:white;
   border-radius:15px;
+  padding:15px;
   margin-bottom:15px;
   box-shadow:0 3px 12px rgba(0,0,0,.08);
-  overflow:hidden;
 }
 
 .section-title{
-  padding:14px;
+  font-size:18px;
   font-weight:bold;
-  font-size:16px;
-  border-bottom:1px solid #eee;
+  margin-bottom:12px;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:20px 10px;
 }
 
 .request{
   display:flex;
   align-items:center;
-  padding:12px;
-  gap:10px;
+  gap:12px;
+  padding:12px 0;
   border-bottom:1px solid #eee;
 }
 
@@ -122,29 +119,13 @@ body{
 
 .username{
   font-weight:bold;
-  font-size:15px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  font-size:16px;
 }
 
 .status{
   font-size:12px;
-  margin-top:4px;
-  color:#888;
-}
-
-.online{
-  color:#18a957;
-}
-
-.dot{
-  display:inline-block;
-  width:8px;
-  height:8px;
-  background:#18c96b;
-  border-radius:50%;
-  margin-right:4px;
+  color:#777;
+  margin-top:3px;
 }
 
 .buttons{
@@ -152,194 +133,271 @@ body{
   gap:6px;
 }
 
-.btn{
-  border:0;
-  border-radius:9px;
-  padding:8px 10px;
-  color:white;
-  font-weight:bold;
+button{
   cursor:pointer;
 }
 
+.accept,
+.decline,
+.chat-btn,
+.request-btn{
+  border:0;
+  border-radius:9px;
+  padding:8px 11px;
+  font-weight:bold;
+}
+
 .accept{
-  background:#20a65a;
+  background:#27ae60;
+  color:white;
 }
 
 .decline{
   background:#e74c3c;
+  color:white;
 }
 
 .chat-btn{
   background:#6c5ce7;
+  color:white;
 }
 
-.empty{
-  padding:18px;
-  text-align:center;
-  color:#888;
-  font-size:14px;
-}
-
-.bottom{
-  position:fixed;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
+.request-btn{
   width:100%;
-  max-width:680px;
-  background:white;
-  border-top:1px solid #ddd;
+  background:#6c5ce7;
+  color:white;
+  padding:12px;
+  font-size:15px;
+}
+
+.sent{
+  color:#777;
+  font-size:13px;
+  background:#f1f1f5;
+  padding:9px;
+  border-radius:9px;
+}
+
+.user-row{
   display:flex;
-  z-index:20;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
 }
 
-.nav{
-  flex:1;
+.user-row:last-child{
+  border-bottom:0;
+}
+
+.online-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#27ae60;
+  display:inline-block;
+  margin-right:5px;
+}
+
+.offline-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#aaa;
+  display:inline-block;
+  margin-right:5px;
+}
+
+.refresh{
+  width:100%;
   border:0;
-  background:white;
-  padding:10px 4px;
-  font-size:12px;
-  cursor:pointer;
-}
-
-.nav span{
-  display:block;
-  font-size:20px;
-  margin-bottom:2px;
-}
-
-.nav.active{
-  color:#6c5ce7;
+  background:#eee;
+  padding:10px;
+  border-radius:10px;
   font-weight:bold;
+  margin-top:5px;
+}
+
+.error{
+  background:#ffe5e5;
+  color:#c0392b;
+  padding:10px;
+  border-radius:10px;
+  font-size:13px;
+  margin-bottom:12px;
+  display:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
   <div class="header">
-    <button class="back" onclick="goBack()">‹</button>
-    <h1>🔒 Private</h1>
-    <p>Private Requests & Chats</p>
+    <div class="header-row">
+      <button class="back" onclick="goBack()">‹</button>
+
+      <div>
+        <h2>🔒 Private</h2>
+        <small>Private Requests & Chats</small>
+      </div>
+    </div>
   </div>
 
   <div class="content">
 
-    <input
-      id="searchInput"
-      class="search"
-      placeholder="🔎 Username search karein..."
-      oninput="searchUsers()"
-    >
+    <div id="errorBox" class="error"></div>
 
-    <div class="section">
+    <!-- REQUESTS -->
+    <div class="card">
       <div class="section-title">
         📩 Private Requests
-        <span id="requestCount"></span>
       </div>
 
-      <div id="requests">
-        <div class="empty">Requests load ho rahi hain...</div>
+      <div id="requestsList">
+        <div class="empty">
+          Requests load ho rahi hain...
+        </div>
       </div>
     </div>
 
-    <div class="section">
+    <!-- ACCEPTED CHATS -->
+    <div class="card">
+      <div class="section-title">
+        💬 Private Chats
+      </div>
+
+      <div id="chatsList">
+        <div class="empty">
+          Private chats load ho rahi hain...
+        </div>
+      </div>
+    </div>
+
+    <!-- ONLINE USERS -->
+    <div class="card">
       <div class="section-title">
         🟢 Online Users
       </div>
 
       <div id="onlineUsers">
-        <div class="empty">Online users load ho rahe hain...</div>
+        <div class="empty">
+          Online users load ho rahe hain...
+        </div>
       </div>
+
+      <button class="refresh" onclick="loadEverything()">
+        🔄 Refresh
+      </button>
     </div>
-
-    <div class="section">
-      <div class="section-title">
-        👥 Users
-      </div>
-
-      <div id="users">
-        <div class="empty">Users load ho rahe hain...</div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="bottom">
-
-    <button class="nav" onclick="location.href='index.html'">
-      <span>🏠</span>
-      Home
-    </button>
-
-    <button class="nav active">
-      <span>🔒</span>
-      Private
-    </button>
-
-    <button class="nav" onclick="location.href='profile.html'">
-      <span>👤</span>
-      Profile
-    </button>
-
-    <button class="nav" onclick="location.href='notifications.html'">
-      <span>🔔</span>
-      Notifications
-    </button>
 
   </div>
 
 </div>
 
+
 <script>
 
 const SUPABASE_URL =
-"https://jhcpqjmxiovvqbghpxbf.supabase.co";
+"https://szmauhxiyjffjhrcruee.supabase.co";
 
-const SUPABASE_KEY =
-"sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+const SUPABASE_ANON_KEY =
+"YOUR_SUPABASE_ANON_KEY";
 
 const supabaseClient =
 supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_KEY
+  SUPABASE_ANON_KEY
 );
 
 let currentUser = null;
-let allUsers = [];
 
-async function init(){
 
-  const {
-    data:{
-      user
-    }
-  } = await supabaseClient.auth.getUser();
+/* =========================
+   ERROR
+========================= */
 
-  if(!user){
-    location.href="login.html";
-    return;
-  }
+function showError(message){
 
-  currentUser = user;
+  const box =
+    document.getElementById("errorBox");
 
-  await loadRequests();
-  await loadUsers();
-  await updateOnlineStatus();
-
-  setInterval(updateOnlineStatus,30000);
+  box.textContent = message;
+  box.style.display = "block";
 }
 
-async function updateOnlineStatus(){
+function hideError(){
+
+  document.getElementById(
+    "errorBox"
+  ).style.display = "none";
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack(){
+
+  window.history.back();
+
+}
+
+
+/* =========================
+   CURRENT USER
+========================= */
+
+async function getCurrentUser(){
+
+  const {
+    data,
+    error
+  } = await supabaseClient.auth.getUser();
+
+  if(error || !data.user){
+
+    window.location.href =
+      "login.html";
+
+    return null;
+  }
+
+  return data.user;
+}
+
+
+/* =========================
+   LOAD EVERYTHING
+========================= */
+
+async function loadEverything(){
+
+  hideError();
+
+  currentUser =
+    await getCurrentUser();
 
   if(!currentUser) return;
 
-  /*
-    Agar profiles table mein last_seen column
-    maujood ho to current user's activity update hogi.
-  */
+  await updateLastSeen();
+
+  await loadRequests();
+
+  await loadAcceptedChats();
+
+  await loadOnlineUsers();
+
+}
+
+
+/* =========================
+   LAST SEEN
+========================= */
+
+async function updateLastSeen(){
 
   try{
 
@@ -352,386 +410,736 @@ async function updateOnlineStatus(){
 
   }catch(e){
 
-    console.log("Online status update:",e);
+    console.log(
+      "Last seen error:",
+      e
+    );
 
   }
+
 }
+
+
+/* =========================
+   REQUESTS
+========================= */
 
 async function loadRequests(){
 
   const box =
-    document.getElementById("requests");
+    document.getElementById(
+      "requestsList"
+    );
 
   box.innerHTML =
-    `<div class="empty">Requests load ho rahi hain...</div>`;
-
-  /*
-    Agar tumhare database mein private_requests table
-    hai to ye section automatically use karega.
-  */
+    `<div class="empty">
+      Requests load ho rahi hain...
+    </div>`;
 
   const {
     data,
     error
-  } = await supabaseClient
+  } =
+  await supabaseClient
     .from("private_requests")
     .select("*")
     .eq("receiver_id",currentUser.id)
     .eq("status","pending")
-    .order("created_at",{ascending:false});
+    .order("created_at",{
+      ascending:false
+    });
 
   if(error){
 
-    console.log(error);
+    console.error(error);
 
     box.innerHTML =
       `<div class="empty">
-        📩 Abhi koi private request nahi.
+        Requests load nahi ho saki.
+      </div>`;
+
+    showError(error.message);
+
+    return;
+  }
+
+  if(!data || data.length === 0){
+
+    box.innerHTML =
+      `<div class="empty">
+        📭 Koi pending request nahi.
       </div>`;
 
     return;
   }
 
-  if(!data || data.length===0){
-
-    box.innerHTML =
-      `<div class="empty">
-        📩 Abhi koi private request nahi.
-      </div>`;
-
-    document.getElementById("requestCount").textContent="";
-    return;
-  }
-
-  document.getElementById("requestCount").textContent =
-    ` (${data.length})`;
-
-  box.innerHTML="";
+  box.innerHTML = "";
 
   for(const request of data){
 
-    let profile = null;
+    const profile =
+      await getProfile(
+        request.sender_id
+      );
 
-    const result =
-      await supabaseClient
-        .from("profiles")
-        .select("id,username,name,avatar_url")
-        .eq("id",request.sender_id)
-        .maybeSingle();
+    const username =
+      profile?.username ||
+      "Unknown User";
 
-    profile=result.data;
+    const avatar =
+      profile?.avatar_url ||
+      "";
 
-    if(!profile) continue;
+    const row =
+      document.createElement("div");
 
-    box.innerHTML += `
-      <div class="request">
+    row.className =
+      "request";
 
-        <img
+    row.innerHTML = `
+
+      ${
+        avatar
+        ?
+        `<img
           class="avatar"
-          src="${profile.avatar_url || ''}"
-          onerror="this.style.display='none'"
-        >
+          src="${escapeHtml(avatar)}"
+        >`
+        :
+        `<div class="avatar"></div>`
+      }
 
-        <div class="user-info">
+      <div class="user-info">
 
-          <div class="username">
-            ${escapeHtml(
-              profile.username ||
-              profile.name ||
-              "User"
-            )}
-          </div>
-
-          <div class="status">
-            📩 Private request
-          </div>
-
+        <div class="username">
+          @${escapeHtml(username)}
         </div>
 
-        <div class="buttons">
-
-          <button
-            class="btn accept"
-            onclick="acceptRequest('${request.id}')">
-            ✓
-          </button>
-
-          <button
-            class="btn decline"
-            onclick="declineRequest('${request.id}')">
-            ✕
-          </button>
-
+        <div class="status">
+          Private request
         </div>
 
       </div>
+
+      <div class="buttons">
+
+        <button
+          class="accept"
+          onclick="acceptRequest('${request.id}')">
+          ✓
+        </button>
+
+        <button
+          class="decline"
+          onclick="declineRequest('${request.id}')">
+          ✕
+        </button>
+
+      </div>
     `;
-  }
-}
 
-async function acceptRequest(id){
+    box.appendChild(row);
 
-  const {
-    error
-  } = await supabaseClient
-    .from("private_requests")
-    .update({
-      status:"accepted"
-    })
-    .eq("id",id);
-
-  if(error){
-
-    alert("Request accept nahi hui: "+error.message);
-    return;
   }
 
-  await loadRequests();
 }
 
-async function declineRequest(id){
 
-  const {
-    error
-  } = await supabaseClient
-    .from("private_requests")
-    .update({
-      status:"declined"
-    })
-    .eq("id",id);
+/* =========================
+   PROFILE
+========================= */
 
-  if(error){
-
-    alert("Request decline nahi hui: "+error.message);
-    return;
-  }
-
-  await loadRequests();
-}
-
-async function loadUsers(){
-
-  const box =
-    document.getElementById("users");
+async function getProfile(userId){
 
   const {
     data,
     error
-  } = await supabaseClient
+  } =
+  await supabaseClient
     .from("profiles")
-    .select("id,username,name,avatar_url,last_seen")
-    .neq("id",currentUser.id)
-    .order("username",{ascending:true});
+    .select(
+      "id,username,name,avatar_url,last_seen"
+    )
+    .eq("id",userId)
+    .maybeSingle();
 
   if(error){
 
-    console.log(error);
+    console.log(
+      "Profile error:",
+      error
+    );
 
-    box.innerHTML =
-      `<div class="empty">
-        Users load nahi ho sake.
-      </div>`;
+    return null;
+  }
+
+  return data;
+
+}
+
+
+/* =========================
+   ACCEPT
+========================= */
+
+async function acceptRequest(requestId){
+
+  if(!confirm(
+    "Private request accept karni hai?"
+  )){
+    return;
+  }
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .update({
+      status:"accepted"
+    })
+    .eq("id",requestId)
+    .eq("receiver_id",currentUser.id)
+    .select()
+    .single();
+
+  if(error){
+
+    showError(
+      "Request accept nahi hui: "
+      + error.message
+    );
 
     return;
   }
 
-  allUsers=data || [];
+  alert(
+    "✅ Private request accepted!"
+  );
 
-  renderUsers(allUsers);
-  renderOnlineUsers(allUsers);
+  await loadEverything();
+
 }
 
-function renderUsers(users){
+
+/* =========================
+   DECLINE
+========================= */
+
+async function declineRequest(requestId){
+
+  if(!confirm(
+    "Private request decline karni hai?"
+  )){
+    return;
+  }
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .update({
+      status:"declined"
+    })
+    .eq("id",requestId)
+    .eq("receiver_id",currentUser.id);
+
+  if(error){
+
+    showError(
+      "Request decline nahi hui: "
+      + error.message
+    );
+
+    return;
+  }
+
+  await loadEverything();
+
+}
+
+
+/* =========================
+   ACCEPTED CHATS
+========================= */
+
+async function loadAcceptedChats(){
 
   const box =
-    document.getElementById("users");
+    document.getElementById(
+      "chatsList"
+    );
 
-  if(!users.length){
+  box.innerHTML =
+    `<div class="empty">
+      Chats load ho rahi hain...
+    </div>`;
 
-    box.innerHTML =
-      `<div class="empty">
-        Koi user nahi mila.
-      </div>`;
-
-    return;
-  }
-
-  box.innerHTML="";
-
-  users.forEach(user=>{
-
-    const online =
-      isOnline(user.last_seen);
-
-    box.innerHTML += `
-      <div class="request">
-
-        <img
-          class="avatar"
-          src="${user.avatar_url || ''}"
-          onerror="this.style.display='none'"
-        >
-
-        <div class="user-info">
-
-          <div class="username">
-            ${escapeHtml(
-              user.username ||
-              user.name ||
-              "User"
-            )}
-          </div>
-
-          <div class="status ${online ? 'online':''}">
-            ${
-              online
-              ? '<span class="dot"></span>Online'
-              : 'Offline'
-            }
-          </div>
-
-        </div>
-
-        <button
-          class="btn chat-btn"
-          onclick="openPrivate('${user.id}')">
-          💬
-        </button>
-
-      </div>
-    `;
-  });
-}
-
-function renderOnlineUsers(users){
-
-  const box =
-    document.getElementById("onlineUsers");
-
-  const online =
-    users.filter(u=>isOnline(u.last_seen));
-
-  if(!online.length){
-
-    box.innerHTML =
-      `<div class="empty">
-        🟢 Abhi koi user online nahi.
-      </div>`;
-
-    return;
-  }
-
-  box.innerHTML="";
-
-  online.forEach(user=>{
-
-    box.innerHTML += `
-      <div class="request">
-
-        <img
-          class="avatar"
-          src="${user.avatar_url || ''}"
-          onerror="this.style.display='none'"
-        >
-
-        <div class="user-info">
-
-          <div class="username">
-            ${escapeHtml(
-              user.username ||
-              user.name ||
-              "User"
-            )}
-          </div>
-
-          <div class="status online">
-            <span class="dot"></span>
-            Online
-          </div>
-
-        </div>
-
-        <button
-          class="btn chat-btn"
-          onclick="openPrivate('${user.id}')">
-          💬
-        </button>
-
-      </div>
-    `;
-  });
-}
-
-function searchUsers(){
-
-  const value =
-    document
-      .getElementById("searchInput")
-      .value
-      .trim()
-      .toLowerCase();
-
-  const filtered =
-    allUsers.filter(user=>{
-
-      const username =
-        (user.username || "").toLowerCase();
-
-      const name =
-        (user.name || "").toLowerCase();
-
-      return username.includes(value) ||
-             name.includes(value);
+  const {
+    data:sent,
+    error:sentError
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select("*")
+    .eq("sender_id",currentUser.id)
+    .eq("status","accepted")
+    .order("created_at",{
+      ascending:false
     });
 
-  renderUsers(filtered);
+  const {
+    data:received,
+    error:receivedError
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select("*")
+    .eq("receiver_id",currentUser.id)
+    .eq("status","accepted")
+    .order("created_at",{
+      ascending:false
+    });
+
+  if(sentError || receivedError){
+
+    box.innerHTML =
+      `<div class="empty">
+        Chats load nahi ho sakin.
+      </div>`;
+
+    return;
+  }
+
+  const all = [
+    ...(sent || []).map(x => ({
+      ...x,
+      other_id:x.receiver_id
+    })),
+    ...(received || []).map(x => ({
+      ...x,
+      other_id:x.sender_id
+    }))
+  ];
+
+  const unique = [];
+
+  const seen = new Set();
+
+  for(const item of all){
+
+    if(!seen.has(item.other_id)){
+
+      seen.add(item.other_id);
+
+      unique.push(item);
+
+    }
+
+  }
+
+  if(unique.length === 0){
+
+    box.innerHTML =
+      `<div class="empty">
+        💬 Abhi koi private chat nahi.
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML = "";
+
+  for(const item of unique){
+
+    const profile =
+      await getProfile(
+        item.other_id
+      );
+
+    const username =
+      profile?.username ||
+      "User";
+
+    const avatar =
+      profile?.avatar_url ||
+      "";
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "user-row";
+
+    row.innerHTML = `
+
+      ${
+        avatar
+        ?
+        `<img
+          class="avatar"
+          src="${escapeHtml(avatar)}"
+        >`
+        :
+        `<div class="avatar"></div>`
+      }
+
+      <div class="user-info">
+
+        <div class="username">
+          @${escapeHtml(username)}
+        </div>
+
+        <div class="status">
+          🔒 Private chat
+        </div>
+
+      </div>
+
+      <button
+        class="chat-btn"
+        onclick="openChat('${item.other_id}')">
+        Chat
+      </button>
+
+    `;
+
+    box.appendChild(row);
+
+  }
+
 }
 
-function isOnline(lastSeen){
 
-  if(!lastSeen) return false;
+/* =========================
+   OPEN CHAT
+========================= */
 
-  const time =
-    new Date(lastSeen).getTime();
+function openChat(userId){
 
-  if(isNaN(time)) return false;
+  window.location.href =
+    "private-chat.html?user="
+    + encodeURIComponent(userId);
+
+}
+
+
+/* =========================
+   ONLINE USERS
+========================= */
+
+async function loadOnlineUsers(){
+
+  const box =
+    document.getElementById(
+      "onlineUsers"
+    );
+
+  box.innerHTML =
+    `<div class="empty">
+      Online users load ho rahe hain...
+    </div>`;
 
   /*
-    2 minutes ke andar activity = online
+    5 minutes ke andar last_seen
+    = online
   */
 
-  return Date.now()-time < 120000;
-}
+  const fiveMinutesAgo =
+    new Date(
+      Date.now() -
+      5 * 60 * 1000
+    ).toISOString();
 
-function openPrivate(userId){
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "id,username,name,avatar_url,last_seen"
+    )
+    .neq("id",currentUser.id)
+    .gte(
+      "last_seen",
+      fiveMinutesAgo
+    )
+    .order("last_seen",{
+      ascending:false
+    });
 
-  location.href =
-    "private-chat.html?user="+
-    encodeURIComponent(userId);
-}
+  if(error){
 
-function goBack(){
+    console.log(
+      "Online error:",
+      error
+    );
 
-  if(history.length>1){
-    history.back();
-  }else{
-    location.href="index.html";
+    box.innerHTML =
+      `<div class="empty">
+        Online users load nahi ho sake.
+      </div>`;
+
+    return;
   }
+
+  if(!data || data.length === 0){
+
+    box.innerHTML =
+      `<div class="empty">
+        💤 Abhi koi aur online nahi.
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML = "";
+
+  for(const user of data){
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "user-row";
+
+    row.innerHTML = `
+
+      ${
+        user.avatar_url
+        ?
+        `<img
+          class="avatar"
+          src="${escapeHtml(user.avatar_url)}"
+        >`
+        :
+        `<div class="avatar"></div>`
+      }
+
+      <div class="user-info">
+
+        <div class="username">
+          @${escapeHtml(
+            user.username || "User"
+          )}
+        </div>
+
+        <div class="status">
+          <span class="online-dot"></span>
+          Online
+        </div>
+
+      </div>
+
+      <button
+        class="chat-btn"
+        onclick="sendRequest('${user.id}')">
+        Private
+      </button>
+
+    `;
+
+    box.appendChild(row);
+
+  }
+
 }
+
+
+/* =========================
+   SEND REQUEST
+========================= */
+
+async function sendRequest(receiverId){
+
+  if(
+    !receiverId ||
+    receiverId === currentUser.id
+  ){
+    return;
+  }
+
+  /*
+    Check existing request
+  */
+
+  const {
+    data:existing,
+    error:checkError
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select(
+      "id,status,sender_id,receiver_id"
+    )
+    .or(
+      `and(sender_id.eq.${currentUser.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${currentUser.id})`
+    )
+    .order("created_at",{
+      ascending:false
+    })
+    .limit(1);
+
+  if(checkError){
+
+    showError(
+      checkError.message
+    );
+
+    return;
+  }
+
+  if(existing && existing.length){
+
+    const r =
+      existing[0];
+
+    if(r.status === "accepted"){
+
+      openChat(receiverId);
+
+      return;
+    }
+
+    if(r.status === "pending"){
+
+      alert(
+        r.sender_id === currentUser.id
+        ?
+        "📩 Request pehle hi bheji ja chuki hai."
+        :
+        "📩 Is user ki request tumhare paas pending hai."
+      );
+
+      return;
+    }
+
+    /*
+      Declined request ko dobara bhejne
+      ke liye purani row ko pending
+      karne ki koshish.
+    */
+
+    if(
+      r.sender_id === currentUser.id
+    ){
+
+      const {
+        error
+      } =
+      await supabaseClient
+        .from("private_requests")
+        .update({
+          status:"pending",
+          created_at:new Date().toISOString()
+        })
+        .eq("id",r.id)
+        .eq(
+          "sender_id",
+          currentUser.id
+        );
+
+      if(error){
+
+        showError(
+          error.message
+        );
+
+        return;
+      }
+
+      alert(
+        "📩 Private request dobara bhej di gayi."
+      );
+
+      return;
+    }
+
+  }
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .insert({
+      sender_id:currentUser.id,
+      receiver_id:receiverId,
+      status:"pending"
+    });
+
+  if(error){
+
+    showError(
+      "Request send nahi hui: "
+      + error.message
+    );
+
+    return;
+  }
+
+  alert(
+    "📩 Private request send ho gayi!"
+  );
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
 
 function escapeHtml(value){
 
-  return String(value || "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  if(!value){
+    return "";
+  }
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
 }
 
-init();
+
+/* =========================
+   START
+========================= */
+
+loadEverything();
+
+
+/* =========================
+   AUTO REFRESH
+========================= */
+
+setInterval(
+  async function(){
+
+    if(currentUser){
+
+      await updateLastSeen();
+
+      await loadRequests();
+
+      await loadAcceptedChats();
+
+      await loadOnlineUsers();
+
+    }
+
+  },
+  30000
+);
 
 </script>
 
 </body>
 </html>
+```
