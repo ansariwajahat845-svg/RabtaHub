@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,30 +14,35 @@
   box-sizing:border-box;
 }
 
-body{
+html,body{
   margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+}
+
+body{
   font-family:Arial,sans-serif;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
-  min-height:100vh;
   color:#222;
 }
 
 .container{
   width:100%;
   max-width:680px;
-  margin:auto;
   min-height:100vh;
+  margin:auto;
   background:#f7f7fb;
 }
 
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:16px;
+  padding:15px;
   position:sticky;
   top:0;
-  z-index:10;
-  box-shadow:0 2px 8px rgba(0,0,0,.2);
+  z-index:20;
+  box-shadow:0 2px 8px rgba(0,0,0,.20);
 }
 
 .header-row{
@@ -46,28 +52,43 @@ body{
 }
 
 .back{
-  border:0;
-  background:rgba(255,255,255,.18);
-  color:white;
   width:40px;
   height:40px;
+  border:0;
   border-radius:50%;
-  font-size:20px;
-  cursor:pointer;
+  background:rgba(255,255,255,.18);
+  color:white;
+  font-size:27px;
+  line-height:40px;
+  padding:0;
 }
 
-.header h2{
+.header-title{
+  flex:1;
+}
+
+.header-title h2{
   margin:0;
   font-size:21px;
 }
 
-.header small{
+.header-title small{
   opacity:.9;
+}
+
+.refresh-top{
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  color:white;
+  font-size:18px;
 }
 
 .content{
   padding:15px;
-  padding-bottom:30px;
+  padding-bottom:35px;
 }
 
 .card{
@@ -87,28 +108,54 @@ body{
 .empty{
   text-align:center;
   color:#777;
-  padding:20px 10px;
+  padding:20px 8px;
+  font-size:14px;
 }
 
-.request{
+.error{
+  display:none;
+  background:#ffe6e6;
+  color:#c0392b;
+  border-radius:10px;
+  padding:11px;
+  margin-bottom:15px;
+  font-size:13px;
+}
+
+.request,
+.user-row{
   display:flex;
   align-items:center;
-  gap:12px;
-  padding:12px 0;
+  gap:11px;
+  padding:11px 0;
   border-bottom:1px solid #eee;
 }
 
-.request:last-child{
+.request:last-child,
+.user-row:last-child{
   border-bottom:0;
 }
 
 .avatar{
   width:48px;
   height:48px;
+  min-width:48px;
   border-radius:50%;
   object-fit:cover;
   background:#ddd;
-  flex-shrink:0;
+}
+
+.avatar-placeholder{
+  width:48px;
+  height:48px;
+  min-width:48px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:20px;
 }
 
 .user-info{
@@ -119,112 +166,116 @@ body{
 .username{
   font-weight:bold;
   font-size:16px;
+  word-break:break-word;
+}
+
+.name{
+  font-size:13px;
+  color:#555;
+  margin-top:2px;
 }
 
 .status{
   font-size:12px;
   color:#777;
-  margin-top:3px;
+  margin-top:4px;
 }
 
 .buttons{
   display:flex;
   gap:6px;
+  flex-shrink:0;
 }
 
 button{
   cursor:pointer;
+  font-family:Arial,sans-serif;
 }
 
 .accept,
 .decline,
 .chat-btn,
-.request-btn{
+.private-btn{
   border:0;
   border-radius:9px;
-  padding:8px 11px;
+  padding:9px 11px;
   font-weight:bold;
+  color:white;
 }
 
 .accept{
   background:#27ae60;
-  color:white;
 }
 
 .decline{
   background:#e74c3c;
-  color:white;
 }
 
 .chat-btn{
   background:#6c5ce7;
-  color:white;
 }
 
-.request-btn{
-  width:100%;
-  background:#6c5ce7;
-  color:white;
-  padding:12px;
-  font-size:15px;
-}
-
-.sent{
-  color:#777;
-  font-size:13px;
-  background:#f1f1f5;
-  padding:9px;
-  border-radius:9px;
-}
-
-.user-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 0;
-  border-bottom:1px solid #eee;
-}
-
-.user-row:last-child{
-  border-bottom:0;
-}
-
-.online-dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:#27ae60;
-  display:inline-block;
-  margin-right:5px;
-}
-
-.offline-dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:#aaa;
-  display:inline-block;
-  margin-right:5px;
+.private-btn{
+  background:#8e44ad;
 }
 
 .refresh{
   width:100%;
   border:0;
   background:#eee;
-  padding:10px;
+  color:#333;
+  padding:11px;
   border-radius:10px;
   font-weight:bold;
-  margin-top:5px;
+  margin-top:8px;
 }
 
-.error{
-  background:#ffe5e5;
-  color:#c0392b;
-  padding:10px;
-  border-radius:10px;
-  font-size:13px;
-  margin-bottom:12px;
-  display:none;
+.loading{
+  text-align:center;
+  color:#777;
+  padding:18px;
+}
+
+.online-dot{
+  width:8px;
+  height:8px;
+  display:inline-block;
+  border-radius:50%;
+  background:#27ae60;
+  margin-right:4px;
+}
+
+.offline-dot{
+  width:8px;
+  height:8px;
+  display:inline-block;
+  border-radius:50%;
+  background:#aaa;
+  margin-right:4px;
+}
+
+@media(max-width:430px){
+
+  .content{
+    padding:12px;
+  }
+
+  .card{
+    padding:13px;
+  }
+
+  .username{
+    font-size:15px;
+  }
+
+  .accept,
+  .decline,
+  .chat-btn,
+  .private-btn{
+    padding:8px 9px;
+    font-size:12px;
+  }
+
 }
 </style>
 </head>
@@ -234,61 +285,102 @@ button{
 <div class="container">
 
   <div class="header">
-    <div class="header-row">
-      <button class="back" onclick="goBack()">‹</button>
 
-      <div>
+    <div class="header-row">
+
+      <button
+        type="button"
+        class="back"
+        onclick="goBack()">
+        ‹
+      </button>
+
+      <div class="header-title">
         <h2>🔒 Private</h2>
         <small>Private Requests & Chats</small>
       </div>
+
+      <button
+        type="button"
+        class="refresh-top"
+        onclick="loadEverything()">
+        ↻
+      </button>
+
     </div>
+
   </div>
+
 
   <div class="content">
 
-    <div id="errorBox" class="error"></div>
+    <div
+      id="errorBox"
+      class="error">
+    </div>
 
-    <!-- REQUESTS -->
+
+    <!-- PRIVATE REQUESTS -->
+
     <div class="card">
+
       <div class="section-title">
         📩 Private Requests
       </div>
 
       <div id="requestsList">
-        <div class="empty">
+
+        <div class="loading">
           Requests load ho rahi hain...
         </div>
+
       </div>
+
     </div>
 
+
     <!-- ACCEPTED CHATS -->
+
     <div class="card">
+
       <div class="section-title">
         💬 Private Chats
       </div>
 
       <div id="chatsList">
-        <div class="empty">
+
+        <div class="loading">
           Private chats load ho rahi hain...
         </div>
+
       </div>
+
     </div>
 
+
     <!-- ONLINE USERS -->
+
     <div class="card">
+
       <div class="section-title">
         🟢 Online Users
       </div>
 
       <div id="onlineUsers">
-        <div class="empty">
+
+        <div class="loading">
           Online users load ho rahe hain...
         </div>
+
       </div>
 
-      <button class="refresh" onclick="loadEverything()">
+      <button
+        type="button"
+        class="refresh"
+        onclick="loadEverything()">
         🔄 Refresh
       </button>
+
     </div>
 
   </div>
@@ -297,6 +389,10 @@ button{
 
 
 <script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://szmauhxiyjffjhrcruee.supabase.co";
@@ -307,15 +403,22 @@ const SUPABASE_ANON_KEY =
 const supabaseClient =
 supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY
+  SUPABASE_ANON_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  }
 );
 
 let currentUser = null;
 
 
-/* =========================
+/* =====================================================
    ERROR
-========================= */
+===================================================== */
 
 function showError(message){
 
@@ -324,62 +427,168 @@ function showError(message){
 
   box.textContent = message;
   box.style.display = "block";
+
 }
 
 function hideError(){
 
-  document.getElementById(
-    "errorBox"
-  ).style.display = "none";
+  const box =
+    document.getElementById("errorBox");
+
+  box.textContent = "";
+  box.style.display = "none";
+
 }
 
 
-/* =========================
+/* =====================================================
    BACK
-========================= */
+===================================================== */
 
 function goBack(){
 
-  window.history.back();
+  if(
+    document.referrer &&
+    document.referrer !== window.location.href
+  ){
+
+    window.history.back();
+
+  }else{
+
+    window.location.href =
+      "index.html";
+
+  }
 
 }
 
 
-/* =========================
-   CURRENT USER
-========================= */
+/* =====================================================
+   AUTH / CURRENT USER
+===================================================== */
 
 async function getCurrentUser(){
 
-  const {
-    data,
-    error
-  } = await supabaseClient.auth.getUser();
+  try{
 
-  if(error || !data.user){
+    const {
+      data,
+      error
+    } =
+    await supabaseClient.auth.getSession();
 
-    window.location.href =
-      "login.html";
+    if(error){
+
+      console.error(
+        "Session error:",
+        error
+      );
+
+      return null;
+    }
+
+    if(
+      data &&
+      data.session &&
+      data.session.user
+    ){
+
+      return data.session.user;
+
+    }
+
+
+    /*
+      Thora wait karke dobara check.
+      Isse page load ke waqt session
+      immediately missing hone ka issue
+      kam hoga.
+    */
+
+    await new Promise(
+      resolve =>
+        setTimeout(resolve,700)
+    );
+
+
+    const retry =
+      await supabaseClient.auth.getSession();
+
+
+    if(
+      retry.data &&
+      retry.data.session &&
+      retry.data.session.user
+    ){
+
+      return retry.data.session.user;
+
+    }
 
     return null;
+
+  }catch(error){
+
+    console.error(
+      "Auth error:",
+      error
+    );
+
+    return null;
+
   }
 
-  return data.user;
 }
 
 
-/* =========================
-   LOAD EVERYTHING
-========================= */
+/* =====================================================
+   START
+===================================================== */
 
-async function loadEverything(){
+async function startPage(){
 
   hideError();
 
   currentUser =
     await getCurrentUser();
 
-  if(!currentUser) return;
+  if(!currentUser){
+
+    document.getElementById(
+      "requestsList"
+    ).innerHTML = `
+      <div class="empty">
+        🔐 Login session nahi mili.
+        <br><br>
+        <button
+          type="button"
+          class="chat-btn"
+          onclick="goLogin()">
+          Login
+        </button>
+      </div>
+    `;
+
+    document.getElementById(
+      "chatsList"
+    ).innerHTML = `
+      <div class="empty">
+        Login required.
+      </div>
+    `;
+
+    document.getElementById(
+      "onlineUsers"
+    ).innerHTML = `
+      <div class="empty">
+        Login required.
+      </div>
+    `;
+
+    return;
+
+  }
 
   await updateLastSeen();
 
@@ -392,161 +601,56 @@ async function loadEverything(){
 }
 
 
-/* =========================
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function goLogin(){
+
+  window.location.href =
+    "login.html";
+
+}
+
+
+/* =====================================================
    LAST SEEN
-========================= */
+===================================================== */
 
 async function updateLastSeen(){
 
-  try{
-
-    await supabaseClient
-      .from("profiles")
-      .update({
-        last_seen:new Date().toISOString()
-      })
-      .eq("id",currentUser.id);
-
-  }catch(e){
-
-    console.log(
-      "Last seen error:",
-      e
-    );
-
+  if(!currentUser){
+    return;
   }
 
-}
-
-
-/* =========================
-   REQUESTS
-========================= */
-
-async function loadRequests(){
-
-  const box =
-    document.getElementById(
-      "requestsList"
-    );
-
-  box.innerHTML =
-    `<div class="empty">
-      Requests load ho rahi hain...
-    </div>`;
-
   const {
-    data,
     error
   } =
   await supabaseClient
-    .from("private_requests")
-    .select("*")
-    .eq("receiver_id",currentUser.id)
-    .eq("status","pending")
-    .order("created_at",{
-      ascending:false
-    });
+    .from("profiles")
+    .update({
+      last_seen:new Date().toISOString()
+    })
+    .eq(
+      "id",
+      currentUser.id
+    );
 
   if(error){
 
-    console.error(error);
-
-    box.innerHTML =
-      `<div class="empty">
-        Requests load nahi ho saki.
-      </div>`;
-
-    showError(error.message);
-
-    return;
-  }
-
-  if(!data || data.length === 0){
-
-    box.innerHTML =
-      `<div class="empty">
-        📭 Koi pending request nahi.
-      </div>`;
-
-    return;
-  }
-
-  box.innerHTML = "";
-
-  for(const request of data){
-
-    const profile =
-      await getProfile(
-        request.sender_id
-      );
-
-    const username =
-      profile?.username ||
-      "Unknown User";
-
-    const avatar =
-      profile?.avatar_url ||
-      "";
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "request";
-
-    row.innerHTML = `
-
-      ${
-        avatar
-        ?
-        `<img
-          class="avatar"
-          src="${escapeHtml(avatar)}"
-        >`
-        :
-        `<div class="avatar"></div>`
-      }
-
-      <div class="user-info">
-
-        <div class="username">
-          @${escapeHtml(username)}
-        </div>
-
-        <div class="status">
-          Private request
-        </div>
-
-      </div>
-
-      <div class="buttons">
-
-        <button
-          class="accept"
-          onclick="acceptRequest('${request.id}')">
-          ✓
-        </button>
-
-        <button
-          class="decline"
-          onclick="declineRequest('${request.id}')">
-          ✕
-        </button>
-
-      </div>
-    `;
-
-    box.appendChild(row);
+    console.log(
+      "Last seen:",
+      error.message
+    );
 
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    PROFILE
-========================= */
+===================================================== */
 
 async function getProfile(userId){
 
@@ -559,17 +663,21 @@ async function getProfile(userId){
     .select(
       "id,username,name,avatar_url,last_seen"
     )
-    .eq("id",userId)
+    .eq(
+      "id",
+      userId
+    )
     .maybeSingle();
 
   if(error){
 
     console.log(
       "Profile error:",
-      error
+      error.message
     );
 
     return null;
+
   }
 
   return data;
@@ -577,17 +685,59 @@ async function getProfile(userId){
 }
 
 
-/* =========================
-   ACCEPT
-========================= */
+/* =====================================================
+   AVATAR HTML
+===================================================== */
 
-async function acceptRequest(requestId){
+function avatarHTML(url){
 
-  if(!confirm(
-    "Private request accept karni hai?"
-  )){
+  if(url){
+
+    return `
+      <img
+        class="avatar"
+        src="${escapeHtml(url)}"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+      >
+      <div
+        class="avatar-placeholder"
+        style="display:none;">
+        👤
+      </div>
+    `;
+
+  }
+
+  return `
+    <div class="avatar-placeholder">
+      👤
+    </div>
+  `;
+
+}
+
+
+/* =====================================================
+   REQUESTS
+===================================================== */
+
+async function loadRequests(){
+
+  if(!currentUser){
     return;
   }
+
+  const box =
+    document.getElementById(
+      "requestsList"
+    );
+
+  box.innerHTML = `
+    <div class="loading">
+      Requests load ho rahi hain...
+    </div>
+  `;
+
 
   const {
     data,
@@ -595,44 +745,203 @@ async function acceptRequest(requestId){
   } =
   await supabaseClient
     .from("private_requests")
+    .select("*")
+    .eq(
+      "receiver_id",
+      currentUser.id
+    )
+    .eq(
+      "status",
+      "pending"
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+
+  if(error){
+
+    console.error(error);
+
+    box.innerHTML = `
+      <div class="empty">
+        📭 Requests load nahi ho saki.
+      </div>
+    `;
+
+    showError(
+      "Requests: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  if(!data || data.length === 0){
+
+    box.innerHTML = `
+      <div class="empty">
+        📭 Koi pending request nahi.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML = "";
+
+
+  for(const request of data){
+
+    const profile =
+      await getProfile(
+        request.sender_id
+      );
+
+    const username =
+      profile?.username ||
+      "Unknown User";
+
+    const name =
+      profile?.name ||
+      "";
+
+    const avatar =
+      profile?.avatar_url ||
+      "";
+
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "request";
+
+
+    row.innerHTML = `
+
+      ${avatarHTML(avatar)}
+
+      <div class="user-info">
+
+        <div class="username">
+          @${escapeHtml(username)}
+        </div>
+
+        ${
+          name
+          ?
+          `<div class="name">
+            ${escapeHtml(name)}
+          </div>`
+          :
+          ""
+        }
+
+        <div class="status">
+          📩 Private request
+        </div>
+
+      </div>
+
+      <div class="buttons">
+
+        <button
+          type="button"
+          class="accept"
+          onclick="acceptRequest('${request.id}')">
+          ✓
+        </button>
+
+        <button
+          type="button"
+          class="decline"
+          onclick="declineRequest('${request.id}')">
+          ✕
+        </button>
+
+      </div>
+
+    `;
+
+
+    box.appendChild(row);
+
+  }
+
+}
+
+
+/* =====================================================
+   ACCEPT
+===================================================== */
+
+async function acceptRequest(requestId){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
     .update({
       status:"accepted"
     })
-    .eq("id",requestId)
-    .eq("receiver_id",currentUser.id)
-    .select()
-    .single();
+    .eq(
+      "id",
+      requestId
+    )
+    .eq(
+      "receiver_id",
+      currentUser.id
+    );
+
 
   if(error){
 
     showError(
-      "Request accept nahi hui: "
-      + error.message
+      "Accept nahi hui: " +
+      error.message
     );
 
     return;
+
   }
+
 
   alert(
     "✅ Private request accepted!"
   );
 
-  await loadEverything();
+
+  await loadRequests();
+
+  await loadAcceptedChats();
 
 }
 
 
-/* =========================
+/* =====================================================
    DECLINE
-========================= */
+===================================================== */
 
 async function declineRequest(requestId){
 
-  if(!confirm(
-    "Private request decline karni hai?"
-  )){
+  if(!currentUser){
     return;
   }
+
 
   const {
     error
@@ -642,129 +951,160 @@ async function declineRequest(requestId){
     .update({
       status:"declined"
     })
-    .eq("id",requestId)
-    .eq("receiver_id",currentUser.id);
+    .eq(
+      "id",
+      requestId
+    )
+    .eq(
+      "receiver_id",
+      currentUser.id
+    );
+
 
   if(error){
 
     showError(
-      "Request decline nahi hui: "
-      + error.message
+      "Decline nahi hui: " +
+      error.message
     );
 
     return;
+
   }
 
-  await loadEverything();
+
+  await loadRequests();
 
 }
 
 
-/* =========================
+/* =====================================================
    ACCEPTED CHATS
-========================= */
+===================================================== */
 
 async function loadAcceptedChats(){
+
+  if(!currentUser){
+    return;
+  }
+
 
   const box =
     document.getElementById(
       "chatsList"
     );
 
-  box.innerHTML =
-    `<div class="empty">
-      Chats load ho rahi hain...
-    </div>`;
+  box.innerHTML = `
+    <div class="loading">
+      Private chats load ho rahi hain...
+    </div>
+  `;
+
 
   const {
-    data:sent,
-    error:sentError
+    data,
+    error
   } =
   await supabaseClient
     .from("private_requests")
     .select("*")
-    .eq("sender_id",currentUser.id)
-    .eq("status","accepted")
-    .order("created_at",{
-      ascending:false
-    });
+    .or(
+      `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
+    )
+    .eq(
+      "status",
+      "accepted"
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
 
-  const {
-    data:received,
-    error:receivedError
-  } =
-  await supabaseClient
-    .from("private_requests")
-    .select("*")
-    .eq("receiver_id",currentUser.id)
-    .eq("status","accepted")
-    .order("created_at",{
-      ascending:false
-    });
 
-  if(sentError || receivedError){
+  if(error){
 
-    box.innerHTML =
-      `<div class="empty">
-        Chats load nahi ho sakin.
-      </div>`;
+    console.error(error);
+
+    box.innerHTML = `
+      <div class="empty">
+        💬 Chats load nahi ho sakin.
+      </div>
+    `;
 
     return;
+
   }
 
-  const all = [
-    ...(sent || []).map(x => ({
-      ...x,
-      other_id:x.receiver_id
-    })),
-    ...(received || []).map(x => ({
-      ...x,
-      other_id:x.sender_id
-    }))
-  ];
 
-  const unique = [];
+  if(!data || data.length === 0){
 
-  const seen = new Set();
+    box.innerHTML = `
+      <div class="empty">
+        💬 Abhi koi private chat nahi.
+      </div>
+    `;
 
-  for(const item of all){
+    return;
 
-    if(!seen.has(item.other_id)){
+  }
 
-      seen.add(item.other_id);
 
-      unique.push(item);
+  const seen =
+    new Set();
+
+  const chats = [];
+
+
+  for(const item of data){
+
+    const otherId =
+      item.sender_id === currentUser.id
+      ?
+      item.receiver_id
+      :
+      item.sender_id;
+
+
+    if(
+      !seen.has(otherId)
+    ){
+
+      seen.add(otherId);
+
+      chats.push({
+        request:item,
+        otherId:otherId
+      });
 
     }
 
   }
 
-  if(unique.length === 0){
-
-    box.innerHTML =
-      `<div class="empty">
-        💬 Abhi koi private chat nahi.
-      </div>`;
-
-    return;
-  }
 
   box.innerHTML = "";
 
-  for(const item of unique){
+
+  for(const chat of chats){
 
     const profile =
       await getProfile(
-        item.other_id
+        chat.otherId
       );
 
     const username =
       profile?.username ||
       "User";
 
+    const name =
+      profile?.name ||
+      "";
+
     const avatar =
       profile?.avatar_url ||
       "";
+
 
     const row =
       document.createElement("div");
@@ -772,24 +1112,26 @@ async function loadAcceptedChats(){
     row.className =
       "user-row";
 
+
     row.innerHTML = `
 
-      ${
-        avatar
-        ?
-        `<img
-          class="avatar"
-          src="${escapeHtml(avatar)}"
-        >`
-        :
-        `<div class="avatar"></div>`
-      }
+      ${avatarHTML(avatar)}
 
       <div class="user-info">
 
         <div class="username">
           @${escapeHtml(username)}
         </div>
+
+        ${
+          name
+          ?
+          `<div class="name">
+            ${escapeHtml(name)}
+          </div>`
+          :
+          ""
+        }
 
         <div class="status">
           🔒 Private chat
@@ -798,12 +1140,14 @@ async function loadAcceptedChats(){
       </div>
 
       <button
+        type="button"
         class="chat-btn"
-        onclick="openChat('${item.other_id}')">
+        onclick="openChat('${chat.otherId}')">
         Chat
       </button>
 
     `;
+
 
     box.appendChild(row);
 
@@ -812,45 +1156,53 @@ async function loadAcceptedChats(){
 }
 
 
-/* =========================
+/* =====================================================
    OPEN CHAT
-========================= */
+===================================================== */
 
 function openChat(userId){
 
+  if(!userId){
+    return;
+  }
+
   window.location.href =
-    "private-chat.html?user="
-    + encodeURIComponent(userId);
+    "private-chat.html?user=" +
+    encodeURIComponent(userId);
 
 }
 
 
-/* =========================
+/* =====================================================
    ONLINE USERS
-========================= */
+===================================================== */
 
 async function loadOnlineUsers(){
+
+  if(!currentUser){
+    return;
+  }
+
 
   const box =
     document.getElementById(
       "onlineUsers"
     );
 
-  box.innerHTML =
-    `<div class="empty">
-      Online users load ho rahe hain...
-    </div>`;
 
-  /*
-    5 minutes ke andar last_seen
-    = online
-  */
+  box.innerHTML = `
+    <div class="loading">
+      Online users load ho rahe hain...
+    </div>
+  `;
+
 
   const fiveMinutesAgo =
     new Date(
       Date.now() -
       5 * 60 * 1000
     ).toISOString();
+
 
   const {
     data,
@@ -861,41 +1213,52 @@ async function loadOnlineUsers(){
     .select(
       "id,username,name,avatar_url,last_seen"
     )
-    .neq("id",currentUser.id)
+    .neq(
+      "id",
+      currentUser.id
+    )
     .gte(
       "last_seen",
       fiveMinutesAgo
     )
-    .order("last_seen",{
-      ascending:false
-    });
+    .order(
+      "last_seen",
+      {
+        ascending:false
+      }
+    );
+
 
   if(error){
 
-    console.log(
-      "Online error:",
-      error
-    );
+    console.error(error);
 
-    box.innerHTML =
-      `<div class="empty">
-        Online users load nahi ho sake.
-      </div>`;
+    box.innerHTML = `
+      <div class="empty">
+        💤 Online users load nahi ho sake.
+      </div>
+    `;
 
     return;
+
   }
+
 
   if(!data || data.length === 0){
 
-    box.innerHTML =
-      `<div class="empty">
+    box.innerHTML = `
+      <div class="empty">
         💤 Abhi koi aur online nahi.
-      </div>`;
+      </div>
+    `;
 
     return;
+
   }
 
+
   box.innerHTML = "";
+
 
   for(const user of data){
 
@@ -905,18 +1268,10 @@ async function loadOnlineUsers(){
     row.className =
       "user-row";
 
+
     row.innerHTML = `
 
-      ${
-        user.avatar_url
-        ?
-        `<img
-          class="avatar"
-          src="${escapeHtml(user.avatar_url)}"
-        >`
-        :
-        `<div class="avatar"></div>`
-      }
+      ${avatarHTML(user.avatar_url || "")}
 
       <div class="user-info">
 
@@ -926,6 +1281,16 @@ async function loadOnlineUsers(){
           )}
         </div>
 
+        ${
+          user.name
+          ?
+          `<div class="name">
+            ${escapeHtml(user.name)}
+          </div>`
+          :
+          ""
+        }
+
         <div class="status">
           <span class="online-dot"></span>
           Online
@@ -934,12 +1299,14 @@ async function loadOnlineUsers(){
       </div>
 
       <button
-        class="chat-btn"
+        type="button"
+        class="private-btn"
         onclick="sendRequest('${user.id}')">
         Private
       </button>
 
     `;
+
 
     box.appendChild(row);
 
@@ -948,21 +1315,35 @@ async function loadOnlineUsers(){
 }
 
 
-/* =========================
-   SEND REQUEST
-========================= */
+/* =====================================================
+   SEND PRIVATE REQUEST
+===================================================== */
 
 async function sendRequest(receiverId){
+
+  if(!currentUser){
+
+    showError(
+      "Login session nahi mili."
+    );
+
+    return;
+
+  }
+
 
   if(
     !receiverId ||
     receiverId === currentUser.id
   ){
+
     return;
+
   }
 
+
   /*
-    Check existing request
+    Existing request check
   */
 
   const {
@@ -972,58 +1353,92 @@ async function sendRequest(receiverId){
   await supabaseClient
     .from("private_requests")
     .select(
-      "id,status,sender_id,receiver_id"
+      "id,status,sender_id,receiver_id,created_at"
     )
     .or(
       `and(sender_id.eq.${currentUser.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${currentUser.id})`
     )
-    .order("created_at",{
-      ascending:false
-    })
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    )
     .limit(1);
+
 
   if(checkError){
 
     showError(
+      "Request check error: " +
       checkError.message
     );
 
     return;
+
   }
 
-  if(existing && existing.length){
 
-    const r =
+  if(
+    existing &&
+    existing.length > 0
+  ){
+
+    const request =
       existing[0];
 
-    if(r.status === "accepted"){
+
+    if(
+      request.status ===
+      "accepted"
+    ){
 
       openChat(receiverId);
 
       return;
+
     }
 
-    if(r.status === "pending"){
 
-      alert(
-        r.sender_id === currentUser.id
-        ?
-        "📩 Request pehle hi bheji ja chuki hai."
-        :
-        "📩 Is user ki request tumhare paas pending hai."
-      );
+    if(
+      request.status ===
+      "pending"
+    ){
+
+      if(
+        request.sender_id ===
+        currentUser.id
+      ){
+
+        alert(
+          "📩 Request pehle hi bheji ja chuki hai."
+        );
+
+      }else{
+
+        alert(
+          "📩 Is user ki request tumhare paas pending hai."
+        );
+
+      }
 
       return;
+
     }
 
+
     /*
-      Declined request ko dobara bhejne
-      ke liye purani row ko pending
-      karne ki koshish.
+      Agar saamne wale ne purani
+      request decline ki hai aur current
+      user sender tha to same request
+      pending ki ja sakti hai.
     */
 
     if(
-      r.sender_id === currentUser.id
+      request.status ===
+      "declined" &&
+      request.sender_id ===
+      currentUser.id
     ){
 
       const {
@@ -1033,31 +1448,45 @@ async function sendRequest(receiverId){
         .from("private_requests")
         .update({
           status:"pending",
-          created_at:new Date().toISOString()
+          created_at:
+            new Date().toISOString()
         })
-        .eq("id",r.id)
+        .eq(
+          "id",
+          request.id
+        )
         .eq(
           "sender_id",
           currentUser.id
         );
 
+
       if(error){
 
         showError(
+          "Request dobara nahi bheji ja saki: " +
           error.message
         );
 
         return;
+
       }
+
 
       alert(
         "📩 Private request dobara bhej di gayi."
       );
 
       return;
+
     }
 
   }
+
+
+  /*
+    New request
+  */
 
   const {
     error
@@ -1065,20 +1494,26 @@ async function sendRequest(receiverId){
   await supabaseClient
     .from("private_requests")
     .insert({
-      sender_id:currentUser.id,
-      receiver_id:receiverId,
-      status:"pending"
+      sender_id:
+        currentUser.id,
+      receiver_id:
+        receiverId,
+      status:
+        "pending"
     });
+
 
   if(error){
 
     showError(
-      "Request send nahi hui: "
-      + error.message
+      "Request send nahi hui: " +
+      error.message
     );
 
     return;
+
   }
+
 
   alert(
     "📩 Private request send ho gayi!"
@@ -1087,55 +1522,76 @@ async function sendRequest(receiverId){
 }
 
 
-/* =========================
+/* =====================================================
    ESCAPE HTML
-========================= */
+===================================================== */
 
 function escapeHtml(value){
 
-  if(!value){
+  if(
+    value === null ||
+    value === undefined
+  ){
+
     return "";
+
   }
 
+
   return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
 
 
-/* =========================
-   START
-========================= */
-
-loadEverything();
-
-
-/* =========================
+/* =====================================================
    AUTO REFRESH
-========================= */
+===================================================== */
 
 setInterval(
   async function(){
 
-    if(currentUser){
-
-      await updateLastSeen();
-
-      await loadRequests();
-
-      await loadAcceptedChats();
-
-      await loadOnlineUsers();
-
+    if(!currentUser){
+      return;
     }
+
+    await updateLastSeen();
+
+    await loadRequests();
+
+    await loadAcceptedChats();
+
+    await loadOnlineUsers();
 
   },
   30000
 );
+
+
+/* =====================================================
+   START PAGE
+===================================================== */
+
+startPage();
 
 </script>
 
