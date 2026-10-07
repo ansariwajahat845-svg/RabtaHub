@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,8 +23,6 @@ body{
   color:#222;
   padding-bottom:75px;
 }
-
-/* HEADER */
 
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
@@ -56,9 +53,6 @@ body{
   font-weight:bold;
 }
 
-
-/* CONTENT */
-
 .container{
   width:100%;
   max-width:650px;
@@ -81,9 +75,6 @@ body{
   color:#777;
   box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
-
-
-/* CHAT LIST */
 
 .chat-card{
   background:white;
@@ -140,9 +131,6 @@ body{
   font-size:20px;
 }
 
-
-/* REFRESH */
-
 .refresh-btn{
   width:100%;
   border:0;
@@ -155,9 +143,6 @@ body{
   box-shadow:0 2px 8px rgba(0,0,0,.05);
   cursor:pointer;
 }
-
-
-/* BOTTOM NAV */
 
 .bottom-nav{
   position:fixed;
@@ -195,9 +180,6 @@ body{
   font-weight:bold;
 }
 
-
-/* NOTICE */
-
 .notice{
   display:none;
   background:white;
@@ -216,8 +198,6 @@ body{
 
 <body>
 
-
-<!-- HEADER -->
 
 <header class="header">
 
@@ -239,8 +219,6 @@ body{
 
 </header>
 
-
-<!-- CONTENT -->
 
 <main class="container">
 
@@ -274,8 +252,6 @@ body{
 
 </main>
 
-
-<!-- BOTTOM NAV -->
 
 <nav class="bottom-nav">
 
@@ -372,69 +348,124 @@ let currentUser = null;
 
 
 /* =====================================================
+   SESSION CHECK
+===================================================== */
+
+async function getCurrentSession(){
+
+  for(let attempt = 1; attempt <= 4; attempt++){
+
+    try{
+
+      const result =
+        await supabaseClient
+          .auth
+          .getSession();
+
+      if(
+        result &&
+        result.data &&
+        result.data.session
+      ){
+
+        return result.data.session;
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "SESSION CHECK ERROR:",
+        error
+      );
+
+    }
+
+    await new Promise(
+      resolve =>
+        setTimeout(
+          resolve,
+          500
+        )
+    );
+
+  }
+
+  return null;
+
+}
+
+
+/* =====================================================
    INIT
 ===================================================== */
 
 async function init(){
 
-  try{
-
-    const {
-      data,
-      error
-    } =
-    await supabaseClient
-      .auth
-      .getSession();
-
-
-    if(
-      error ||
-      !data ||
-      !data.session
-    ){
-
-      window.location.href =
-        "login.html";
-
-      return;
-
-    }
-
-
-    currentUser =
-      data.session.user;
-
-
-    await loadPrivateChats();
-
-
-  }catch(error){
-
-    console.error(
-      error
+  const chatList =
+    document.getElementById(
+      "chatList"
     );
 
 
-    document.getElementById(
-      "chatList"
-    ).innerHTML = `
+  chatList.innerHTML = `
+
+    <div class="loading">
+      🔄 Login session check ho rahi hai...
+    </div>
+
+  `;
+
+
+  const session =
+    await getCurrentSession();
+
+
+  if(!session){
+
+    chatList.innerHTML = `
 
       <div class="empty">
 
-        ❌ Private chats load nahi ho sakin.
+        🔒 Login session nahi mili.
 
         <br><br>
 
-        ${escapeHtml(
-          error.message || ""
-        )}
+        <button
+          onclick="goLogin()"
+          style="
+            border:0;
+            background:#6c5ce7;
+            color:white;
+            padding:10px 18px;
+            border-radius:10px;
+            font-weight:bold;
+          ">
+
+          Login
+
+        </button>
 
       </div>
 
     `;
 
+    return;
+
   }
+
+
+  currentUser =
+    session.user;
+
+
+  console.log(
+    "PRIVATE SESSION OK:",
+    currentUser.id
+  );
+
+
+  await loadPrivateChats();
 
 }
 
@@ -446,7 +477,48 @@ async function init(){
 async function loadPrivateChats(){
 
   if(!currentUser){
-    return;
+
+    const session =
+      await getCurrentSession();
+
+    if(!session){
+
+      document.getElementById(
+        "chatList"
+      ).innerHTML = `
+
+        <div class="empty">
+
+          🔒 Login session nahi mili.
+
+          <br><br>
+
+          <button
+            onclick="goLogin()"
+            style="
+              border:0;
+              background:#6c5ce7;
+              color:white;
+              padding:10px 18px;
+              border-radius:10px;
+              font-weight:bold;
+            ">
+
+            Login
+
+          </button>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+    currentUser =
+      session.user;
+
   }
 
 
@@ -464,10 +536,6 @@ async function loadPrivateChats(){
 
   `;
 
-
-  /*
-     Accepted private requests
-  */
 
   const {
     data:requests,
@@ -518,6 +586,7 @@ async function loadPrivateChats(){
     `;
 
     return;
+
   }
 
 
@@ -542,12 +611,9 @@ async function loadPrivateChats(){
     `;
 
     return;
+
   }
 
-
-  /*
-     Get other user IDs
-  */
 
   const otherIds =
     [
@@ -585,12 +651,9 @@ async function loadPrivateChats(){
     `;
 
     return;
+
   }
 
-
-  /*
-     Profiles
-  */
 
   const {
     data:profiles,
@@ -631,10 +694,6 @@ async function loadPrivateChats(){
       }
     );
 
-
-  /*
-     Get latest message for each user
-  */
 
   const {
     data:messages,
@@ -699,10 +758,6 @@ async function loadPrivateChats(){
     );
 
 
-  /*
-     Render
-  */
-
   list.innerHTML =
     otherIds
       .map(
@@ -717,7 +772,6 @@ async function loadPrivateChats(){
         }
       )
       .join("");
-
 
 }
 
@@ -795,13 +849,11 @@ function renderChat(
       class="chat-card"
       onclick="openChat('${escapeAttr(userId)}')">
 
-
       <img
         class="avatar"
         src="${escapeAttr(avatar)}"
         alt=""
         onerror="this.src=getDefaultAvatar();">
-
 
       <div class="chat-info">
 
@@ -813,7 +865,6 @@ function renderChat(
 
         </div>
 
-
         <div class="last-message">
 
           ${escapeHtml(
@@ -821,7 +872,6 @@ function renderChat(
           )}
 
         </div>
-
 
         ${
           time
@@ -834,7 +884,6 @@ function renderChat(
         }
 
       </div>
-
 
       <div class="arrow">
         ›
@@ -851,9 +900,7 @@ function renderChat(
    OPEN CHAT
 ===================================================== */
 
-function openChat(
-  userId
-){
+function openChat(userId){
 
   if(!userId){
     return;
@@ -1031,6 +1078,18 @@ function goHome(){
 
 function goPrivate(){
 
+  if(
+    window.location.pathname
+      .toLowerCase()
+      .endsWith("private.html")
+  ){
+
+    loadPrivateChats();
+    return;
+
+  }
+
+
   window.location.href =
     "private.html";
 
@@ -1069,22 +1128,46 @@ function goMore(){
 }
 
 
+function goLogin(){
+
+  window.location.href =
+    "login.html";
+
+}
+
+
 /* =====================================================
-   AUTH
+   IMPORTANT:
+   NO AUTOMATIC SIGNED_OUT REDIRECT HERE
 ===================================================== */
 
 supabaseClient
   .auth
   .onAuthStateChange(
-    function(event){
+    function(event, session){
+
+      console.log(
+        "AUTH EVENT:",
+        event
+      );
+
+      /*
+        Yahan jaan-boojh kar
+        login.html redirect nahi hai.
+
+        Is se Private page par
+        false session event ki wajah se
+        user logout nahi hoga.
+      */
 
       if(
-        event ===
-        "SIGNED_OUT"
+        session &&
+        session.user &&
+        !currentUser
       ){
 
-        window.location.href =
-          "login.html";
+        currentUser =
+          session.user;
 
       }
 
@@ -1102,4 +1185,3 @@ init();
 
 </body>
 </html>
-```
