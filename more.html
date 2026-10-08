@@ -1,1 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+<title>More - RabtaHub</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:#222;
+}
+
+body{
+  padding-bottom:85px;
+}
+
+.header{
+  background:rgba(255,255,255,.96);
+  padding:18px 16px;
+  text-align:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+
+.header h1{
+  margin:0;
+  font-size:24px;
+  color:#6c5ce7;
+}
+
+.header p{
+  margin:5px 0 0;
+  color:#777;
+  font-size:13px;
+}
+
+.menu{
+  width:94%;
+  max-width:650px;
+  margin:18px auto;
+}
+
+.menu-card{
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,.15);
+}
+
+.menu-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:17px 18px;
+  border-bottom:1px solid #eee;
+  text-decoration:none;
+  color:#222;
+  font-size:16px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.menu-item:last-child{
+  border-bottom:none;
+}
+
+.menu-item:active{
+  background:#f1edff;
+}
+
+.icon{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  background:#f0ebff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:19px;
+  flex-shrink:0;
+}
+
+.arrow{
+  margin-left:auto;
+  color:#aaa;
+  font-size:20px;
+}
+
+.logout{
+  color:#e74c3c;
+}
+
+.logout .icon{
+  background:#fff0ee;
+}
+
+.bottom-nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:70px;
+  background:#fff;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 -3px 15px rgba(0,0,0,.15);
+  z-index:100;
+}
+
+.nav-item{
+  text-decoration:none;
+  color:#777;
+  text-align:center;
+  font-size:11px;
+  min-width:55px;
+}
+
+.nav-item .nav-icon{
+  display:block;
+  font-size:22px;
+  margin-bottom:3px;
+}
+
+.nav-item.active{
+  color:#6c5ce7;
+  font-weight:bold;
+}
+
+.status{
+  text-align:center;
+  color:rgba(255,255,255,.85);
+  font-size:12px;
+  margin:12px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>☰ More</h1>
+  <p>RabtaHub</p>
+</div>
+
+<div class="menu">
+
+  <div class="menu-card">
+
+    <a class="menu-item" href="search.html">
+      <div class="icon">🔎</div>
+      <span>Search</span>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="rules.html">
+      <div class="icon">📜</div>
+      <span>Rules</span>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="about.html">
+      <div class="icon">ℹ️</div>
+      <span>About Us</span>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="terms.html">
+      <div class="icon">📄</div>
+      <span>Terms &amp; Conditions</span>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="privacy.html">
+      <div class="icon">🔒</div>
+      <span>Privacy Policy</span>
+      <span class="arrow">›</span>
+    </a>
+
+    <div class="menu-item" onclick="changePassword()">
+      <div class="icon">🔑</div>
+      <span>Change Password</span>
+      <span class="arrow">›</span>
+    </div>
+
+    <div class="menu-item logout" onclick="logoutUser()">
+      <div class="icon">🚪</div>
+      <span>Logout</span>
+      <span class="arrow">›</span>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="status">
+  RabtaHub • Connect • Share • Enjoy
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+
+  <a class="nav-item" href="index.html">
+    <span class="nav-icon">🏠</span>
+    Home
+  </a>
+
+  <a class="nav-item" href="private.html">
+    <span class="nav-icon">💬</span>
+    Private
+  </a>
+
+  <a class="nav-item" href="profile.html">
+    <span class="nav-icon">👤</span>
+    Profile
+  </a>
+
+  <a class="nav-item active" href="more.html">
+    <span class="nav-icon">☰</span>
+    More
+  </a>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+  "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
+const supabaseClient =
+  supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let currentUser = null;
+let onlineChannel = null;
+
+
+/* =========================
+   GLOBAL ONLINE PRESENCE
+========================= */
+
+async function startGlobalPresence(){
+
+  if(!currentUser) return;
+
+  if(onlineChannel) return;
+
+  try{
+
+    onlineChannel = supabaseClient.channel(
+      "chatzone-online-users",
+      {
+        config:{
+          presence:{
+            key:String(currentUser.id)
+          }
+        }
+      }
+    );
+
+    onlineChannel.on(
+      "presence",
+      {event:"sync"},
+      ()=>{
+        console.log("Global presence synced.");
+      }
+    );
+
+    onlineChannel.on(
+      "presence",
+      {event:"join"},
+      ()=>{
+        console.log("Global online user joined.");
+      }
+    );
+
+    onlineChannel.on(
+      "presence",
+      {event:"leave"},
+      ()=>{
+        console.log("Global online user left.");
+      }
+    );
+
+    await onlineChannel.subscribe(async status=>{
+
+      if(status==="SUBSCRIBED"){
+
+        try{
+
+          await onlineChannel.track({
+            user_id:String(currentUser.id),
+            online_at:new Date().toISOString()
+          });
+
+          console.log("RabtaHub user is online.");
+
+        }catch(error){
+
+          console.error(
+            "Presence track error:",
+            error
+          );
+
+        }
+
+      }
+
+    });
+
+  }catch(error){
+
+    console.error(
+      "Global presence error:",
+      error
+    );
+
+    onlineChannel=null;
+
+  }
+
+}
+
+
+/* =========================
+   CHANGE PASSWORD
+========================= */
+
+function changePassword(){
+
+  window.location.href="change-password.html";
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logoutUser(){
+
+  const confirmLogout =
+    confirm("Kya aap logout karna chahte hain?");
+
+  if(!confirmLogout) return;
+
+  try{
+
+    if(onlineChannel){
+
+      try{
+        await onlineChannel.untrack();
+      }catch(e){}
+
+      try{
+        await supabaseClient.removeChannel(
+          onlineChannel
+        );
+      }catch(e){}
+
+      onlineChannel=null;
+
+    }
+
+    const {error} =
+      await supabaseClient.auth.signOut();
+
+    if(error){
+
+      alert(
+        "Logout nahi ho saka: "+
+        error.message
+      );
+
+      return;
+
+    }
+
+    window.location.href="login.html";
+
+  }catch(error){
+
+    alert(
+      "Logout error: "+
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   PAGE START
+========================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  async()=>{
+
+    try{
+
+      const {
+        data:{
+          session
+        }
+      } =
+        await supabaseClient.auth.getSession();
+
+      if(!session){
+
+        window.location.href="login.html";
+        return;
+
+      }
+
+      currentUser=session.user;
+
+      await startGlobalPresence();
+
+    }catch(error){
+
+      console.error(
+        "Page initialization error:",
+        error
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   AUTH STATE
+========================= */
+
+supabaseClient.auth.onAuthStateChange(
+  async(event,session)=>{
+
+    if(event==="SIGNED_OUT"){
+
+      if(onlineChannel){
+
+        try{
+          await onlineChannel.untrack();
+        }catch(e){}
+
+        try{
+          await supabaseClient.removeChannel(
+            onlineChannel
+          );
+        }catch(e){}
+
+        onlineChannel=null;
+
+      }
+
+      window.location.href="login.html";
+      return;
+
+    }
+
+    if(session && !currentUser){
+
+      currentUser=session.user;
+
+      await startGlobalPresence();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   PAGE EXIT
+========================= */
+
+window.addEventListener(
+  "beforeunload",
+  ()=>{
+    if(onlineChannel){
+
+      try{
+        onlineChannel.untrack();
+      }catch(e){}
+
+    }
+  }
+);
+
+</script>
+
+</body>
+</html>
