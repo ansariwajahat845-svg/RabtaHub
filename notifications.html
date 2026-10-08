@@ -304,7 +304,7 @@ body{
 <script>
 
 /* =====================================================
-   SUPABASE
+   SUPABASE - CURRENT PROJECT
 ===================================================== */
 
 const SUPABASE_URL =
@@ -341,8 +341,18 @@ async function init(){
   } =
   await supabaseClient.auth.getSession();
 
+  if(error){
+
+    console.error(error);
+
+    showLoginError(
+      error.message
+    );
+
+    return;
+  }
+
   if(
-    error ||
     !data ||
     !data.session
   ){
@@ -361,7 +371,7 @@ async function init(){
 
 
 /* =====================================================
-   LOAD NOTIFICATIONS
+   LOAD ALL NOTIFICATIONS
 ===================================================== */
 
 async function loadNotifications(){
@@ -378,9 +388,15 @@ async function loadNotifications(){
   `;
 
 
+  /* -----------------------------------------------
+     NORMAL NOTIFICATIONS
+  ------------------------------------------------ */
+
+  let normalNotifications = [];
+
   const {
-    data,
-    error
+    data:notificationData,
+    error:notificationError
   } =
   await supabaseClient
     .from("notifications")
@@ -397,49 +413,88 @@ async function loadNotifications(){
     );
 
 
-  if(error){
+  if(notificationError){
 
-    console.error(error);
+    console.error(
+      "Notifications error:",
+      notificationError
+    );
 
-    list.innerHTML = `
-      <div class="empty">
+  }else{
 
-        🔔 Notifications load nahi ho sakin.
+    normalNotifications =
+      notificationData || [];
 
-        <br><br>
-
-        ${escapeHtml(error.message)}
-
-      </div>
-    `;
-
-    return;
   }
 
 
-  if(
-    !data ||
-    data.length === 0
-  ){
+  /* -----------------------------------------------
+     PRIVATE REQUESTS
+     
+     Ye directly private_requests se load hongi.
+     Isliye request ke liye notifications table
+     mein separate row hona zaroori nahi.
+  ------------------------------------------------ */
 
-    list.innerHTML = `
-      <div class="empty">
-        🔔 Abhi koi notification nahi hai.
-      </div>
-    `;
+  let privateRequests = [];
 
-    return;
+  const {
+    data:requestData,
+    error:requestError
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select("*")
+    .eq(
+      "receiver_id",
+      currentUser.id
+    )
+    .eq(
+      "status",
+      "pending"
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+
+  if(requestError){
+
+    console.error(
+      "Private request error:",
+      requestError
+    );
+
+  }else{
+
+    privateRequests =
+      requestData || [];
+
   }
 
 
-  const senderIds =
-    [
-      ...new Set(
-        data
-          .map(n => n.sender_id)
-          .filter(Boolean)
-      )
-    ];
+  /* -----------------------------------------------
+     PROFILES
+  ------------------------------------------------ */
+
+  const senderIds = [
+
+    ...new Set([
+
+      ...normalNotifications
+        .map(n => n.sender_id)
+        .filter(Boolean),
+
+      ...privateRequests
+        .map(r => r.sender_id)
+        .filter(Boolean)
+
+    ])
+
+  ];
 
 
   let profiles = [];
@@ -458,16 +513,19 @@ async function loadNotifications(){
           senderIds
         );
 
+
     if(!result.error){
 
       profiles =
         result.data || [];
 
     }
+
   }
 
 
   const profileMap = {};
+
 
   profiles.forEach(
     profile => {
@@ -480,8 +538,95 @@ async function loadNotifications(){
   );
 
 
+  /* -----------------------------------------------
+     CREATE PRIVATE REQUEST NOTIFICATIONS
+  ------------------------------------------------ */
+
+  const requestNotifications =
+    privateRequests.map(
+      request => {
+
+        return {
+
+          id:
+            "private_request_" +
+            request.id,
+
+          request_id:
+            request.id,
+
+          sender_id:
+            request.sender_id,
+
+          user_id:
+            currentUser.id,
+
+          type:
+            "private_request",
+
+          message:
+            "",
+
+          created_at:
+            request.created_at,
+
+          is_read:
+            false,
+
+          is_private_request:
+            true
+
+        };
+
+      }
+    );
+
+
+  /* -----------------------------------------------
+     COMBINE
+  ------------------------------------------------ */
+
+  const combined = [
+
+    ...normalNotifications,
+
+    ...requestNotifications
+
+  ];
+
+
+  /* -----------------------------------------------
+     SORT NEWEST FIRST
+  ------------------------------------------------ */
+
+  combined.sort(
+    function(a,b){
+
+      return new Date(
+        b.created_at || 0
+      ) -
+      new Date(
+        a.created_at || 0
+      );
+
+    }
+  );
+
+
+  if(!combined.length){
+
+    list.innerHTML = `
+      <div class="empty">
+        🔔 Abhi koi notification nahi hai.
+      </div>
+    `;
+
+    return;
+  }
+
+
   list.innerHTML =
-    data.map(
+    combined.map(
       notification => {
 
         return renderNotification(
@@ -495,10 +640,12 @@ async function loadNotifications(){
     ).join("");
 
 
-  /* MARK READ */
+  /* -----------------------------------------------
+     MARK NORMAL NOTIFICATIONS READ
+  ------------------------------------------------ */
 
   const unreadIds =
-    data
+    normalNotifications
       .filter(
         n => !n.is_read
       )
@@ -509,6 +656,9 @@ async function loadNotifications(){
 
   if(unreadIds.length){
 
+    const {
+      error
+    } =
     await supabaseClient
       .from("notifications")
       .update({
@@ -523,7 +673,18 @@ async function loadNotifications(){
         currentUser.id
       );
 
+
+    if(error){
+
+      console.error(
+        "Mark read error:",
+        error
+      );
+
+    }
+
   }
+
 }
 
 
@@ -565,7 +726,6 @@ function renderNotification(
   ){
 
     message =
-      notification.message ||
       `@${username} ne aapko private chat request bheji hai.`;
 
 
@@ -582,6 +742,7 @@ function renderNotification(
           <button
             class="accept-btn"
             data-action="accept-private"
+            data-request-id="${escapeAttr(notification.request_id || "")}"
             data-notification-id="${escapeAttr(notification.id)}"
             data-sender-id="${escapeAttr(notification.sender_id || "")}">
 
@@ -592,6 +753,7 @@ function renderNotification(
           <button
             class="decline-btn"
             data-action="decline-private"
+            data-request-id="${escapeAttr(notification.request_id || "")}"
             data-notification-id="${escapeAttr(notification.id)}"
             data-sender-id="${escapeAttr(notification.sender_id || "")}">
 
@@ -702,14 +864,20 @@ function renderNotification(
       }"
       id="notification-${escapeAttr(notification.id)}">
 
-      <button
-        class="delete-btn"
-        data-action="delete"
-        data-notification-id="${escapeAttr(notification.id)}">
+      ${
+        notification.is_private_request
+        ? ""
+        : `
+          <button
+            class="delete-btn"
+            data-action="delete"
+            data-notification-id="${escapeAttr(notification.id)}">
 
-        🗑️
+            🗑️
 
-      </button>
+          </button>
+        `
+      }
 
 
       <div class="notification-top">
@@ -777,11 +945,13 @@ document.addEventListener(
     ){
 
       acceptPrivateRequest(
+        button.dataset.requestId,
         button.dataset.notificationId,
         button.dataset.senderId,
         button
       );
 
+      return;
     }
 
 
@@ -791,11 +961,13 @@ document.addEventListener(
     ){
 
       declinePrivateRequest(
+        button.dataset.requestId,
         button.dataset.notificationId,
         button.dataset.senderId,
         button
       );
 
+      return;
     }
 
 
@@ -808,6 +980,7 @@ document.addEventListener(
         button.dataset.senderId
       );
 
+      return;
     }
 
 
@@ -822,6 +995,7 @@ document.addEventListener(
         button
       );
 
+      return;
     }
 
 
@@ -836,6 +1010,7 @@ document.addEventListener(
         button
       );
 
+      return;
     }
 
 
@@ -848,6 +1023,7 @@ document.addEventListener(
         button.dataset.notificationId
       );
 
+      return;
     }
 
   }
@@ -855,10 +1031,11 @@ document.addEventListener(
 
 
 /* =====================================================
-   ACCEPT PRIVATE
+   ACCEPT PRIVATE REQUEST
 ===================================================== */
 
 async function acceptPrivateRequest(
+  requestId,
   notificationId,
   senderId,
   button
@@ -869,36 +1046,97 @@ async function acceptPrivateRequest(
     "Accepting...";
 
 
-  const {
-    data:request,
-    error:findError
-  } =
-  await supabaseClient
-    .from("private_requests")
-    .select("*")
-    .eq(
-      "sender_id",
-      senderId
-    )
-    .eq(
-      "receiver_id",
-      currentUser.id
-    )
-    .eq(
-      "status",
-      "pending"
-    )
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    )
-    .limit(1)
-    .maybeSingle();
+  let request = null;
 
 
-  if(findError || !request){
+  /* -----------------------------------------------
+     IF REQUEST ID AVAILABLE
+  ------------------------------------------------ */
+
+  if(requestId){
+
+    const result =
+      await supabaseClient
+        .from("private_requests")
+        .select("*")
+        .eq(
+          "id",
+          requestId
+        )
+        .eq(
+          "receiver_id",
+          currentUser.id
+        )
+        .eq(
+          "status",
+          "pending"
+        )
+        .maybeSingle();
+
+
+    request =
+      result.data;
+
+
+    if(result.error){
+
+      console.error(
+        result.error
+      );
+
+    }
+
+  }
+
+
+  /* -----------------------------------------------
+     FALLBACK BY SENDER
+  ------------------------------------------------ */
+
+  if(!request && senderId){
+
+    const result =
+      await supabaseClient
+        .from("private_requests")
+        .select("*")
+        .eq(
+          "sender_id",
+          senderId
+        )
+        .eq(
+          "receiver_id",
+          currentUser.id
+        )
+        .eq(
+          "status",
+          "pending"
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        )
+        .limit(1)
+        .maybeSingle();
+
+
+    request =
+      result.data;
+
+
+    if(result.error){
+
+      console.error(
+        result.error
+      );
+
+    }
+
+  }
+
+
+  if(!request){
 
     button.disabled = false;
     button.textContent =
@@ -913,7 +1151,7 @@ async function acceptPrivateRequest(
 
 
   const {
-    error
+    error:updateError
   } =
   await supabaseClient
     .from("private_requests")
@@ -930,9 +1168,11 @@ async function acceptPrivateRequest(
     );
 
 
-  if(error){
+  if(updateError){
 
-    console.error(error);
+    console.error(
+      updateError
+    );
 
     button.disabled = false;
     button.textContent =
@@ -946,10 +1186,23 @@ async function acceptPrivateRequest(
   }
 
 
-  await deleteNotification(
-    notificationId,
-    false
-  );
+  /* DELETE NORMAL NOTIFICATION */
+
+  if(
+    notificationId &&
+    !String(
+      notificationId
+    ).startsWith(
+      "private_request_"
+    )
+  ){
+
+    await deleteNotification(
+      notificationId,
+      false
+    );
+
+  }
 
 
   showNotice(
@@ -958,14 +1211,16 @@ async function acceptPrivateRequest(
 
 
   await loadNotifications();
+
 }
 
 
 /* =====================================================
-   DECLINE PRIVATE
+   DECLINE PRIVATE REQUEST
 ===================================================== */
 
 async function declinePrivateRequest(
+  requestId,
   notificationId,
   senderId,
   button
@@ -976,46 +1231,67 @@ async function declinePrivateRequest(
     "Declining...";
 
 
-  const {
-    data:request,
-    error:findError
-  } =
-  await supabaseClient
-    .from("private_requests")
-    .select("id")
-    .eq(
-      "sender_id",
-      senderId
-    )
-    .eq(
-      "receiver_id",
-      currentUser.id
-    )
-    .eq(
-      "status",
-      "pending"
-    )
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    )
-    .limit(1)
-    .maybeSingle();
+  let request = null;
 
 
-  if(findError){
+  if(requestId){
 
-    button.disabled = false;
-    button.textContent =
-      "❌ Decline";
+    const result =
+      await supabaseClient
+        .from("private_requests")
+        .select("id")
+        .eq(
+          "id",
+          requestId
+        )
+        .eq(
+          "receiver_id",
+          currentUser.id
+        )
+        .eq(
+          "status",
+          "pending"
+        )
+        .maybeSingle();
 
-    showNotice(
-      "❌ Request check nahi ho saki."
-    );
 
-    return;
+    request =
+      result.data;
+
+  }
+
+
+  if(!request && senderId){
+
+    const result =
+      await supabaseClient
+        .from("private_requests")
+        .select("id")
+        .eq(
+          "sender_id",
+          senderId
+        )
+        .eq(
+          "receiver_id",
+          currentUser.id
+        )
+        .eq(
+          "status",
+          "pending"
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        )
+        .limit(1)
+        .maybeSingle();
+
+
+    request =
+      result.data;
+
   }
 
 
@@ -1041,6 +1317,10 @@ async function declinePrivateRequest(
 
     if(error){
 
+      console.error(
+        error
+      );
+
       button.disabled = false;
       button.textContent =
         "❌ Decline";
@@ -1051,13 +1331,27 @@ async function declinePrivateRequest(
 
       return;
     }
+
   }
 
 
-  await deleteNotification(
-    notificationId,
-    false
-  );
+  /* DELETE NORMAL NOTIFICATION */
+
+  if(
+    notificationId &&
+    !String(
+      notificationId
+    ).startsWith(
+      "private_request_"
+    )
+  ){
+
+    await deleteNotification(
+      notificationId,
+      false
+    );
+
+  }
 
 
   showNotice(
@@ -1066,6 +1360,7 @@ async function declinePrivateRequest(
 
 
   await loadNotifications();
+
 }
 
 
@@ -1084,7 +1379,9 @@ function openPrivateChat(
 
   window.location.href =
     "private-chat.html?user=" +
-    encodeURIComponent(senderId);
+    encodeURIComponent(
+      senderId
+    );
 }
 
 
@@ -1188,8 +1485,6 @@ async function acceptMehfilInvite(
   }
 
 
-  /* ADD MEMBER */
-
   const {
     error:memberError
   } =
@@ -1232,6 +1527,7 @@ async function acceptMehfilInvite(
 
 
   await loadNotifications();
+
 }
 
 
@@ -1279,6 +1575,7 @@ async function declineMehfilInvite(
       console.error(error);
 
     }
+
   }
 
 
@@ -1294,17 +1591,32 @@ async function declineMehfilInvite(
 
 
   await loadNotifications();
+
 }
 
 
 /* =====================================================
-   DELETE NOTIFICATION
+   DELETE NORMAL NOTIFICATION
 ===================================================== */
 
 async function deleteNotification(
   notificationId,
   reload = true
 ){
+
+  if(
+    !notificationId ||
+    String(
+      notificationId
+    ).startsWith(
+      "private_request_"
+    )
+  ){
+
+    return;
+
+  }
+
 
   const {
     error
@@ -1349,7 +1661,7 @@ async function deleteNotification(
 
 
   if(reload){
-    
+
     if(
       !document.querySelector(
         ".notification"
@@ -1365,7 +1677,9 @@ async function deleteNotification(
       `;
 
     }
+
   }
+
 }
 
 
@@ -1403,6 +1717,7 @@ function getDefaultAvatar(){
       </svg>
 
     `);
+
 }
 
 
@@ -1468,6 +1783,7 @@ function formatDate(date){
 
 
   return d.toLocaleDateString();
+
 }
 
 
@@ -1500,12 +1816,14 @@ function escapeHtml(value){
     /'/g,
     "&#039;"
   );
+
 }
 
 
 function escapeAttr(value){
 
   return escapeHtml(value);
+
 }
 
 
@@ -1544,6 +1862,49 @@ function showNotice(message){
       },
       3000
     );
+
+}
+
+
+/* =====================================================
+   LOGIN ERROR
+===================================================== */
+
+function showLoginError(message){
+
+  document.getElementById(
+    "notificationsList"
+  ).innerHTML = `
+
+    <div class="empty">
+
+      ❌ Session problem
+
+      <br><br>
+
+      ${escapeHtml(message)}
+
+      <br><br>
+
+      <button
+        onclick="window.location.href='login.html'"
+        style="
+          border:0;
+          background:#6c5ce7;
+          color:white;
+          padding:10px 16px;
+          border-radius:9px;
+          font-weight:bold;
+        ">
+
+        Login
+
+      </button>
+
+    </div>
+
+  `;
+
 }
 
 
@@ -1552,33 +1913,50 @@ function showNotice(message){
 ===================================================== */
 
 function goHome(){
+
   window.location.href =
     "index.html";
+
 }
+
 
 function goPrivate(){
+
   window.location.href =
     "private.html";
+
 }
+
 
 function goProfile(){
+
   window.location.href =
     "profile.html";
+
 }
+
 
 function goNotifications(){
+
   window.location.href =
     "notifications.html";
+
 }
+
 
 function goMehfil(){
+
   window.location.href =
     "mehfil.html";
+
 }
 
+
 function goMore(){
+
   window.location.href =
     "more.html";
+
 }
 
 
@@ -1613,4 +1991,3 @@ init();
 
 </body>
 </html>
-```
