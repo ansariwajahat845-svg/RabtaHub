@@ -70,7 +70,6 @@ body{
   text-align:center;
 }
 
-/* LARGE DP */
 .avatar-wrap{
   position:relative;
   width:360px;
@@ -443,7 +442,6 @@ textarea.input{
 
 <div class="app">
 
-  <!-- HEADER -->
   <div class="header">
 
     <div class="header-title">
@@ -458,24 +456,18 @@ textarea.input{
 
   </div>
 
-
-  <!-- LOADING -->
   <div
     id="loading"
     class="loading">
     Profile load ho rahi hai...
   </div>
 
-
-  <!-- ERROR -->
   <div
     id="errorBox"
     class="error"
     style="display:none;">
   </div>
 
-
-  <!-- PROFILE -->
   <div
     id="profileArea"
     style="display:none;">
@@ -483,8 +475,6 @@ textarea.input{
     <div class="profile-card">
 
       <div class="profile-top">
-
-        <!-- DP -->
 
         <div class="avatar-wrap">
 
@@ -503,17 +493,11 @@ textarea.input{
 
         </div>
 
-
-        <!-- NAME -->
-
         <div
           id="name"
           class="name">
           User
         </div>
-
-
-        <!-- USERNAME -->
 
         <div
           id="username"
@@ -521,25 +505,14 @@ textarea.input{
           @user
         </div>
 
-
-        <!-- BIO -->
-
         <div
           id="bio"
           class="bio">
         </div>
 
-
-        <!-- PRIVACY -->
-
         <div id="privacyBadge"></div>
 
-
-        <!-- ACTIONS -->
-
         <div class="actions">
-
-          <!-- EDIT -->
 
           <button
             id="editBtn"
@@ -548,9 +521,6 @@ textarea.input{
             ✏️ Edit Profile
           </button>
 
-
-          <!-- FOLLOW -->
-
           <button
             id="followBtn"
             class="action-btn follow-btn"
@@ -558,9 +528,6 @@ textarea.input{
             onclick="toggleFollow()">
             ➕ Follow
           </button>
-
-
-          <!-- 1 ON 1 -->
 
           <button
             id="chatBtn"
@@ -573,9 +540,6 @@ textarea.input{
         </div>
 
       </div>
-
-
-      <!-- STATS -->
 
       <div
         id="stats"
@@ -595,7 +559,6 @@ textarea.input{
 
         </div>
 
-
         <div class="stat">
 
           <div
@@ -609,7 +572,6 @@ textarea.input{
           </div>
 
         </div>
-
 
         <div class="stat">
 
@@ -626,9 +588,6 @@ textarea.input{
         </div>
 
       </div>
-
-
-      <!-- INFO -->
 
       <div
         id="infoCard"
@@ -656,7 +615,6 @@ textarea.input{
 
         </div>
 
-
         <div class="info-row">
 
           <div class="info-icon">
@@ -678,7 +636,6 @@ textarea.input{
           </div>
 
         </div>
-
 
         <div class="info-row">
 
@@ -704,9 +661,6 @@ textarea.input{
 
       </div>
 
-
-      <!-- EDIT PROFILE -->
-
       <div
         id="editPanel"
         class="edit-panel">
@@ -729,13 +683,11 @@ textarea.input{
 
         </div>
 
-
         <input
           id="editName"
           class="input"
           placeholder="Your name"
         >
-
 
         <textarea
           id="editBio"
@@ -744,13 +696,11 @@ textarea.input{
           placeholder="📝 Write your bio..."
         ></textarea>
 
-
         <input
           id="editCity"
           class="input"
           placeholder="🏙️ City"
         >
-
 
         <label
           style="
@@ -762,13 +712,11 @@ textarea.input{
           🎂 Date of Birth
         </label>
 
-
         <input
           id="editDob"
           class="input"
           type="date"
         >
-
 
         <select
           id="editGender"
@@ -792,7 +740,6 @@ textarea.input{
 
         </select>
 
-
         <select
           id="editPrivacy"
           class="input">
@@ -807,13 +754,11 @@ textarea.input{
 
         </select>
 
-
         <button
           class="save-btn"
           onclick="saveProfile()">
           💾 Save Profile
         </button>
-
 
         <button
           class="cancel-btn"
@@ -824,9 +769,6 @@ textarea.input{
       </div>
 
     </div>
-
-
-    <!-- PRIVATE PROFILE -->
 
     <div
       id="privateBox"
@@ -847,9 +789,6 @@ textarea.input{
 
     </div>
 
-
-    <!-- POSTS -->
-
     <div id="postsSection">
 
       <div class="section-title">
@@ -863,9 +802,6 @@ textarea.input{
   </div>
 
 </div>
-
-
-<!-- BOTTOM NAV -->
 
 <div class="bottom-nav">
 
@@ -883,7 +819,6 @@ textarea.input{
 
     </div>
 
-
     <div
       class="nav-item"
       onclick="goPrivate()">
@@ -895,7 +830,6 @@ textarea.input{
       Private
 
     </div>
-
 
     <div
       class="nav-item"
@@ -909,7 +843,6 @@ textarea.input{
 
     </div>
 
-
     <div class="nav-item active">
 
       <span class="icon">
@@ -919,7 +852,6 @@ textarea.input{
       Profile
 
     </div>
-
 
     <div
       class="nav-item"
@@ -950,7 +882,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 
-
 const supabaseClient =
 supabase.createClient(
   SUPABASE_URL,
@@ -970,27 +901,173 @@ supabase.createClient(
 ===================================================== */
 
 let currentUser = null;
-
 let profileUser = null;
-
 let isOwner = false;
-
 let isPrivate = false;
-
 let isFollowing = false;
 
-
-/*
-  PRIVATE REQUEST STATUS
-
-  none
-  pending
-  accepted
-*/
-
 let privateRequestStatus = "none";
-
 let privateRequestId = null;
+
+
+/* =====================================================
+   GLOBAL ONLINE PRESENCE
+   IMPORTANT:
+   Same channel as Home / Private / Mehfil.
+   No online users UI is shown on Profile.
+===================================================== */
+
+let onlineChannel = null;
+
+async function startGlobalPresence(){
+
+  if(!currentUser)
+    return;
+
+  if(onlineChannel)
+    return;
+
+  try{
+
+    onlineChannel =
+      supabaseClient.channel(
+        "chatzone-online-users",
+        {
+          config:{
+            presence:{
+              key:String(
+                currentUser.id
+              )
+            }
+          }
+        }
+      );
+
+
+    onlineChannel.on(
+      "presence",
+      {
+        event:"sync"
+      },
+      () => {
+
+        console.log(
+          "Global presence synced."
+        );
+
+      }
+    );
+
+
+    onlineChannel.on(
+      "presence",
+      {
+        event:"join"
+      },
+      () => {
+
+        console.log(
+          "Global online user joined."
+        );
+
+      }
+    );
+
+
+    onlineChannel.on(
+      "presence",
+      {
+        event:"leave"
+      },
+      () => {
+
+        console.log(
+          "Global online user left."
+        );
+
+      }
+    );
+
+
+    await onlineChannel.subscribe(
+      async status => {
+
+        if(status === "SUBSCRIBED"){
+
+          try{
+
+            await onlineChannel.track({
+
+              user_id:
+                String(
+                  currentUser.id
+                ),
+
+              online_at:
+                new Date().toISOString()
+
+            });
+
+
+            console.log(
+              "User is globally online."
+            );
+
+          }catch(error){
+
+            console.error(
+              "Presence track error:",
+              error
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+  }catch(error){
+
+    console.error(
+      "Global presence error:",
+      error
+    );
+
+    onlineChannel = null;
+
+  }
+
+}
+
+
+/* =====================================================
+   CLEANUP PRESENCE
+===================================================== */
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    if(onlineChannel){
+
+      try{
+
+        onlineChannel.untrack();
+
+      }catch(error){
+
+        console.log(
+          "Presence cleanup:",
+          error
+        );
+
+      }
+
+    }
+
+  }
+);
 
 
 /* =====================================================
@@ -1028,6 +1105,11 @@ async function init(){
     }
 
 
+    /* START GLOBAL ONLINE STATUS */
+
+    await startGlobalPresence();
+
+
     const params =
       new URLSearchParams(
         window.location.search
@@ -1054,6 +1136,54 @@ async function init(){
   }
 
 }
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+supabaseClient.auth.onAuthStateChange(
+  async (event, session) => {
+
+    if(event === "SIGNED_OUT"){
+
+      if(onlineChannel){
+
+        try{
+          await onlineChannel.untrack();
+          await supabaseClient.removeChannel(
+            onlineChannel
+          );
+        }catch(error){
+          console.log(error);
+        }
+
+        onlineChannel = null;
+
+      }
+
+      window.location.href =
+        "login.html";
+
+      return;
+
+    }
+
+
+    if(
+      session?.user &&
+      !currentUser
+    ){
+
+      currentUser =
+        session.user;
+
+      await startGlobalPresence();
+
+    }
+
+  }
+);
 
 
 /* =====================================================
@@ -2070,11 +2200,6 @@ async function openPrivateChat(){
     return;
 
 
-  /*
-    ACCEPTED
-    Directly open private chat.
-  */
-
   if(
     privateRequestStatus ===
     "accepted"
@@ -2091,10 +2216,6 @@ async function openPrivateChat(){
 
   }
 
-
-  /*
-    PENDING
-  */
 
   if(
     privateRequestStatus ===
@@ -2127,10 +2248,6 @@ async function openPrivateChat(){
       "Sending...";
 
 
-    /*
-      SEND REQUEST
-    */
-
     const {
       data,
       error
@@ -2161,10 +2278,6 @@ async function openPrivateChat(){
           ""
         ).toLowerCase();
 
-
-      /*
-        Duplicate / already existing
-      */
 
       if(
         errorText.includes(
