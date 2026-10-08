@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>ChatZone 💬</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
   box-sizing:border-box;
 }
@@ -35,7 +37,7 @@ body{
   padding-bottom:78px;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 
 .header{
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
@@ -98,11 +100,7 @@ body{
   padding:7px 8px!important;
 }
 
-.header-buttons button:active{
-  transform:scale(.96);
-}
-
-/* ONLINE */
+/* ================= ONLINE ================= */
 
 .online-section{
   background:white;
@@ -123,10 +121,8 @@ body{
   display:flex;
   gap:9px;
   overflow-x:auto;
-  overflow-y:hidden;
   white-space:nowrap;
   scrollbar-width:none;
-  padding-bottom:2px;
 }
 
 .online-users::-webkit-scrollbar{
@@ -150,7 +146,6 @@ body{
   border-radius:50%;
   object-fit:cover;
   background:#ddd;
-  flex-shrink:0;
 }
 
 .online-user-name{
@@ -159,7 +154,6 @@ body{
   max-width:90px;
   overflow:hidden;
   text-overflow:ellipsis;
-  white-space:nowrap;
 }
 
 .online-dot{
@@ -167,11 +161,10 @@ body{
   height:8px;
   border-radius:50%;
   background:#22c55e;
-  flex-shrink:0;
   box-shadow:0 0 0 2px white;
 }
 
-/* WELCOME */
+/* ================= WELCOME ================= */
 
 .welcome{
   background:white;
@@ -183,7 +176,7 @@ body{
   box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-/* CREATE */
+/* ================= CREATE ================= */
 
 .create-box{
   background:white;
@@ -238,7 +231,7 @@ textarea{
   background:#eee;
 }
 
-/* FEED */
+/* ================= FEED ================= */
 
 .feed-header{
   display:flex;
@@ -254,6 +247,8 @@ textarea{
   padding:0 12px;
   min-height:50px;
 }
+
+/* ================= POST ================= */
 
 .post{
   background:white;
@@ -304,13 +299,6 @@ textarea{
   cursor:pointer;
 }
 
-.post-content{
-  white-space:pre-wrap;
-  word-break:break-word;
-  margin:12px 0;
-  line-height:1.45;
-}
-
 .post-category{
   display:inline-block;
   background:#f0edff;
@@ -319,7 +307,17 @@ textarea{
   font-weight:bold;
   padding:5px 9px;
   border-radius:15px;
-  margin-top:5px;
+  margin-top:8px;
+}
+
+.post-content{
+  margin:12px 0;
+  padding:0;
+  font-size:15px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  word-break:break-word;
+  overflow-wrap:anywhere;
 }
 
 .post-image{
@@ -330,7 +328,7 @@ textarea{
   margin-top:8px;
 }
 
-/* ACTIONS */
+/* ================= ACTIONS ================= */
 
 .post-actions{
   display:flex;
@@ -345,7 +343,6 @@ textarea{
 .post-actions button{
   flex:1 1 0;
   min-width:0;
-  width:auto;
   border:0;
   background:#f3f3f3;
   border-radius:10px;
@@ -357,13 +354,144 @@ textarea{
   text-overflow:ellipsis;
 }
 
+.post-actions button:active{
+  transform:scale(.97);
+}
+
+.like-btn{
+  background:#fff0f3!important;
+}
+
+.dislike-btn{
+  background:#f3f3f3!important;
+}
+
+.comment-btn{
+  background:#f1f5ff!important;
+}
+
+.reply-btn{
+  background:#f0edff!important;
+}
+
 .delete-post-btn{
   background:#ffe5e5!important;
   color:#d00000;
   font-weight:bold;
 }
 
-/* COMMENTS */
+/* ================= SECOND ACTION ROW ================= */
+
+.user-actions{
+  display:flex;
+  gap:5px;
+  margin-top:6px;
+}
+
+.user-actions button{
+  flex:1;
+  min-width:0;
+  border:0;
+  border-radius:10px;
+  padding:8px 4px;
+  cursor:pointer;
+  font-size:11px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.one-one-btn{
+  background:#eaf7ff;
+  color:#087ea4;
+}
+
+.follow-btn{
+  background:#edf8ed;
+  color:#16833b;
+}
+
+.following-btn{
+  background:#e5f5ea;
+  color:#16833b;
+  font-weight:bold;
+}
+
+.block-btn{
+  background:#ffecec;
+  color:#d00000;
+}
+
+/* ================= LIKES ================= */
+
+.likes-popup{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:100;
+}
+
+.likes-content{
+  width:92%;
+  max-width:430px;
+  max-height:75vh;
+  overflow:auto;
+  background:white;
+  border-radius:18px;
+  margin:12vh auto;
+  padding:15px;
+}
+
+.likes-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.likes-header h3{
+  margin:0;
+}
+
+.likes-close{
+  border:0;
+  background:#eee;
+  border-radius:20px;
+  padding:7px 12px;
+  cursor:pointer;
+}
+
+.like-user{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 4px;
+  border-bottom:1px solid #eee;
+  cursor:pointer;
+}
+
+.like-user-avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#ddd;
+  flex-shrink:0;
+}
+
+.like-user-name{
+  font-size:13px;
+  font-weight:bold;
+}
+
+.like-user-username{
+  color:#777;
+  font-size:11px;
+  margin-top:2px;
+}
+
+/* ================= COMMENTS ================= */
 
 .comments{
   display:none;
@@ -415,10 +543,6 @@ textarea{
   margin-top:5px;
 }
 
-.comment-reply:hover{
-  background:#e7e2ff;
-}
-
 .comment-reply-box{
   display:none;
   background:#f0edff;
@@ -461,7 +585,7 @@ textarea{
   padding:8px 14px;
 }
 
-/* LOADING */
+/* ================= LOADING ================= */
 
 .empty,
 .loading{
@@ -470,7 +594,7 @@ textarea{
   color:#777;
 }
 
-/* BOTTOM NAV */
+/* ================= BOTTOM NAV ================= */
 
 .bottom-nav{
   position:fixed;
@@ -486,26 +610,19 @@ textarea{
   align-items:center;
   justify-content:space-around;
   padding:4px 2px;
-  gap:0;
-  overflow:hidden;
   z-index:30;
 }
 
 .bottom-nav button{
   border:0;
   background:none;
-  flex:1 1 0;
-  min-width:0;
-  width:20%;
+  flex:1;
   height:56px;
   color:#555;
   cursor:pointer;
   padding:3px 1px;
   font-size:11px;
   line-height:17px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 
 .bottom-nav button:first-child{
@@ -513,7 +630,7 @@ textarea{
   font-weight:bold;
 }
 
-/* POPUPS */
+/* ================= POPUPS ================= */
 
 .trending-box,
 .share-box{
@@ -556,7 +673,7 @@ textarea{
   border-bottom:1px solid #eee;
 }
 
-/* SHARE */
+/* ================= SHARE ================= */
 
 .share-option{
   width:100%;
@@ -629,16 +746,12 @@ textarea{
   display:none;
 }
 
-/* MOBILE */
+/* ================= MOBILE ================= */
 
 @media(max-width:430px){
 
   .header{
     padding:9px 5px;
-  }
-
-  .header-top{
-    gap:3px;
   }
 
   .logo{
@@ -654,11 +767,6 @@ textarea{
     padding:6px 3px;
   }
 
-  .header-buttons .share-header-btn{
-    font-size:8.5px;
-    padding:6px 4px!important;
-  }
-
   .post-actions{
     gap:4px;
   }
@@ -668,16 +776,21 @@ textarea{
     padding:8px 2px;
   }
 
+  .user-actions{
+    gap:4px;
+  }
+
+  .user-actions button{
+    font-size:10px;
+  }
+
   .bottom-nav{
     height:62px;
-    padding:3px 1px;
   }
 
   .bottom-nav button{
     height:56px;
     font-size:9px;
-    line-height:16px;
-    padding:2px 0;
   }
 
   .nested-comment{
@@ -694,12 +807,6 @@ textarea{
 
   .header-buttons button{
     font-size:7.5px;
-    padding:6px 2px;
-  }
-
-  .header-buttons .share-header-btn{
-    font-size:7.5px;
-    padding:6px 3px!important;
   }
 
   .bottom-nav button{
@@ -707,6 +814,7 @@ textarea{
   }
 
 }
+
 </style>
 </head>
 
@@ -751,6 +859,7 @@ textarea{
 
 </div>
 
+
 <!-- ONLINE USERS -->
 
 <div class="online-section">
@@ -776,11 +885,13 @@ textarea{
 
 </div>
 
+
 <!-- WELCOME -->
 
 <div class="welcome">
   Welcome to ChatZone 💬 ❤️
 </div>
+
 
 <!-- CREATE POST -->
 
@@ -837,24 +948,8 @@ textarea{
 
   </div>
 
-  <input
-    id="imageInput"
-    class="hidden-input"
-    type="file"
-    accept="image/*"
-    onchange="imageSelected()"
-  >
-
-  <div
-    id="selectedImageText"
-    style="
-      font-size:12px;
-      color:#777;
-      margin-top:7px
-    "
-  ></div>
-
 </div>
+
 
 <!-- FEED -->
 
@@ -872,7 +967,43 @@ textarea{
 
 </div>
 
-<!-- SHARE POPUP -->
+
+<!-- ================= LIKES POPUP ================= -->
+
+<div
+  id="likesPopup"
+  class="likes-popup"
+>
+
+  <div class="likes-content">
+
+    <div class="likes-header">
+
+      <h3>
+        ❤️ Liked by
+      </h3>
+
+      <button
+        class="likes-close"
+        onclick="closeLikesPopup()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <div id="likesList">
+
+      Loading...
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= SHARE POPUP ================= -->
 
 <div
   id="shareBox"
@@ -883,7 +1014,9 @@ textarea{
 
     <div class="share-header">
 
-      <h3>📤 Create Post</h3>
+      <h3>
+        📤 Create Post
+      </h3>
 
       <button onclick="closeShare()">
         ✕
@@ -980,8 +1113,8 @@ textarea{
         class="share-option"
         onclick="
           document
-            .getElementById('shareImageInput')
-            .click()
+          .getElementById('shareImageInput')
+          .click()
         "
       >
         🖼️ Select Image
@@ -1027,7 +1160,8 @@ textarea{
 
 </div>
 
-<!-- TRENDING -->
+
+<!-- ================= TRENDING ================= -->
 
 <div
   id="trendingBox"
@@ -1038,7 +1172,9 @@ textarea{
 
     <div class="trending-header">
 
-      <h3>🔥 Trending</h3>
+      <h3>
+        🔥 Trending
+      </h3>
 
       <button onclick="closeTrending()">
         ✕
@@ -1054,7 +1190,8 @@ textarea{
 
 </div>
 
-<!-- BOTTOM NAV -->
+
+<!-- ================= BOTTOM NAV ================= -->
 
 <div class="bottom-nav">
 
@@ -1080,9 +1217,12 @@ textarea{
 
 </div>
 
+
 <script>
 
-/* SUPABASE */
+/* =================================================
+   SUPABASE
+   ================================================= */
 
 const SUPABASE_URL =
 "https://jhcpqjmxiovvqbghpxbf.supabase.co";
@@ -1097,13 +1237,21 @@ supabase.createClient(
 );
 
 
-/* GLOBALS */
+/* =================================================
+   GLOBALS
+   ================================================= */
 
 let currentUser = null;
+
 let profileMap = {};
+
 let currentReplyUser = null;
+
 let currentPosts = [];
+
 let onlineChannel = null;
+
+let followMap = {};
 
 let activeCommentReply = {
   postId:null,
@@ -1112,7 +1260,9 @@ let activeCommentReply = {
 };
 
 
-/* INIT */
+/* =================================================
+   INIT
+   ================================================= */
 
 async function init(){
 
@@ -1176,7 +1326,9 @@ async function init(){
 }
 
 
-/* ONLINE USERS */
+/* =================================================
+   ONLINE USERS
+   ================================================= */
 
 async function loadOnlineUsers(){
 
@@ -1189,12 +1341,10 @@ async function loadOnlineUsers(){
     if(onlineChannel){
 
       try{
-
         await supabaseClient
           .removeChannel(
             onlineChannel
           );
-
       }catch(e){}
 
     }
@@ -1205,7 +1355,9 @@ async function loadOnlineUsers(){
         {
           config:{
             presence:{
-              key:currentUser.id
+              key:String(
+                currentUser.id
+              )
             }
           }
         }
@@ -1244,11 +1396,13 @@ async function loadOnlineUsers(){
             await onlineChannel.track({
 
               user_id:
-                currentUser.id,
+                String(
+                  currentUser.id
+                ),
 
               online_at:
                 new Date()
-                  .toISOString()
+                .toISOString()
 
             });
 
@@ -1362,7 +1516,10 @@ async function renderOnlineUsers(){
         .select(
           "id,username,name,avatar_url"
         )
-        .in("id",ids);
+        .in(
+          "id",
+          ids
+        );
 
       if(
         !error &&
@@ -1402,11 +1559,11 @@ async function renderOnlineUsers(){
 
             username =
               currentUser
-                .user_metadata
-                ?.username ||
+              .user_metadata
+              ?.username ||
               currentUser
-                .email
-                ?.split("@")[0] ||
+              .email
+              ?.split("@")[0] ||
               "User";
 
           }
@@ -1551,6 +1708,8 @@ async function loadFeed(
 
     profileMap = {};
 
+    followMap = {};
+
     if(safePosts.length === 0){
 
       feed.innerHTML = `
@@ -1562,7 +1721,8 @@ async function loadFeed(
       return;
     }
 
-    /* PROFILES */
+
+    /* ================= PROFILES ================= */
 
     const userIds = [
       ...new Set(
@@ -1610,9 +1770,57 @@ async function loadFeed(
 
     }
 
-    /* ACTION COUNTS */
+
+    /* ================= FOLLOW STATUS ================= */
+
+    if(
+      currentUser &&
+      userIds.length
+    ){
+
+      const {
+        data:follows,
+        error:followError
+      } =
+      await supabaseClient
+        .from("user_follows")
+        .select(
+          "following_id"
+        )
+        .eq(
+          "follower_id",
+          currentUser.id
+        )
+        .in(
+          "following_id",
+          userIds
+        );
+
+      if(
+        !followError &&
+        follows
+      ){
+
+        follows.forEach(
+          function(row){
+
+            followMap[
+              row.following_id
+            ] = true;
+
+          }
+        );
+
+      }
+
+    }
+
+
+    /* ================= ACTION COUNTS ================= */
 
     const actionCounts = {};
+
+    const actionUsers = {};
 
     const {
       data:actions,
@@ -1621,7 +1829,7 @@ async function loadFeed(
     await supabaseClient
       .from("post_actions")
       .select(
-        "post_id,action_type"
+        "post_id,user_id,action_type"
       )
       .in(
         "post_id",
@@ -1654,6 +1862,18 @@ async function loadFeed(
           }
 
           if(
+            !actionUsers[
+              action.post_id
+            ]
+          ){
+
+            actionUsers[
+              action.post_id
+            ] = [];
+
+          }
+
+          if(
             action.action_type ===
             "like"
           ){
@@ -1661,6 +1881,10 @@ async function loadFeed(
             actionCounts[
               action.post_id
             ].like++;
+
+            actionUsers[
+              action.post_id
+            ].push(action);
 
           }
 
@@ -1680,7 +1904,8 @@ async function loadFeed(
 
     }
 
-    /* COMMENT COUNTS */
+
+    /* ================= COMMENTS ================= */
 
     const commentCounts = {};
 
@@ -1722,7 +1947,8 @@ async function loadFeed(
 
     }
 
-    /* BUILD FEED */
+
+    /* ================= BUILD ================= */
 
     let html = "";
 
@@ -1829,11 +2055,11 @@ function renderPost(
 
     username =
       currentUser
-        .user_metadata
-        ?.username ||
+      .user_metadata
+      ?.username ||
       currentUser
-        .email
-        ?.split("@")[0] ||
+      .email
+      ?.split("@")[0] ||
       "User";
 
   }
@@ -1849,6 +2075,11 @@ function renderPost(
     currentUser &&
     post.user_id ===
     currentUser.id;
+
+  const isFollowing =
+    !!followMap[
+      post.user_id
+    ];
 
   const avatarHTML =
     avatar
@@ -1877,6 +2108,7 @@ function renderPost(
       </div>
     `;
 
+
   let imageHTML = "";
 
   if(post.image_url){
@@ -1892,6 +2124,7 @@ function renderPost(
 
   }
 
+
   const categoryHTML =
     post.category
     ?
@@ -1904,6 +2137,7 @@ function renderPost(
     `
     :
     "";
+
 
   const menuHTML =
     !isOwn
@@ -1926,11 +2160,14 @@ function renderPost(
     :
     "";
 
+
   return `
     <div
       class="post"
       id="post-${Number(post.id)}"
     >
+
+      <!-- USER -->
 
       <div class="post-head">
 
@@ -1981,7 +2218,13 @@ function renderPost(
 
       </div>
 
+
+      <!-- CATEGORY -->
+
       ${categoryHTML}
+
+
+      <!-- POST TEXT -->
 
       ${
         post.content
@@ -1997,14 +2240,72 @@ function renderPost(
         ""
       }
 
+
+      <!-- IMAGE -->
+
       ${imageHTML}
 
-      ${
-        isOwn
-        ?
-        `
-          <div class="post-actions">
 
+      <!-- MAIN ACTIONS -->
+
+      <div class="post-actions">
+
+        <button
+          class="like-btn"
+          onclick="
+            setPostAction(
+              ${Number(post.id)},
+              'like'
+            )
+          "
+        >
+          ❤️ ${counts.like}
+        </button>
+
+
+        <button
+          class="dislike-btn"
+          onclick="
+            setPostAction(
+              ${Number(post.id)},
+              'dislike'
+            )
+          "
+        >
+          👎 ${counts.dislike}
+        </button>
+
+
+        <button
+          class="comment-btn"
+          id="comment-count-${Number(post.id)}"
+          onclick="
+            toggleComments(
+              ${Number(post.id)}
+            )
+          "
+        >
+          💬 ${commentCount}
+        </button>
+
+
+        ${
+          !isOwn
+          ?
+          `
+            <button
+              class="reply-btn"
+              onclick="
+                replyPost(
+                  '${escapeJs(username)}'
+                )
+              "
+            >
+              ↩️ Reply
+            </button>
+          `
+          :
+          `
             <button
               class="delete-post-btn"
               onclick="
@@ -2015,70 +2316,116 @@ function renderPost(
             >
               🗑️ Delete
             </button>
+          `
+        }
+
+      </div>
+
+
+      <!-- LIKES BUTTON -->
+
+      <div
+        style="
+          margin-top:7px;
+        "
+      >
+
+        <button
+          onclick="
+            showLikes(
+              ${Number(post.id)}
+            )
+          "
+          style="
+            border:0;
+            background:#fff0f3;
+            color:#c2185b;
+            border-radius:18px;
+            padding:7px 12px;
+            font-size:12px;
+            font-weight:bold;
+            cursor:pointer;
+            width:100%;
+            text-align:left;
+          "
+        >
+          ❤️ ${counts.like} Likes
+        </button>
+
+      </div>
+
+
+      <!-- OTHER USER ACTIONS -->
+
+      ${
+        !isOwn
+        ?
+        `
+          <div class="user-actions">
 
             <button
-              id="comment-count-${Number(post.id)}"
+              class="one-one-btn"
               onclick="
-                toggleComments(
-                  ${Number(post.id)}
+                openOneToOne(
+                  '${escapeJs(post.user_id)}'
                 )
               "
             >
-              💬 ${commentCount}
+              💬 1on1
+            </button>
+
+
+            <button
+              class="${
+                isFollowing
+                ?
+                "following-btn"
+                :
+                "follow-btn"
+              }"
+              id="
+                follow-btn-${String(
+                  post.user_id
+                ).replace(
+                  /[^a-zA-Z0-9_-]/g,
+                  "_"
+                )}
+              "
+              onclick="
+                toggleFollow(
+                  '${escapeJs(post.user_id)}'
+                )
+              "
+            >
+              ${
+                isFollowing
+                ?
+                "✓ Following"
+                :
+                "➕ Follow"
+              }
+            </button>
+
+
+            <button
+              class="block-btn"
+              onclick="
+                blockUser(
+                  '${escapeJs(post.user_id)}'
+                )
+              "
+            >
+              🚫 Block
             </button>
 
           </div>
         `
         :
-        `
-          <div class="post-actions">
-
-            <button
-              onclick="
-                setPostAction(
-                  ${Number(post.id)},
-                  'like'
-                )
-              "
-            >
-              👍 ${counts.like}
-            </button>
-
-            <button
-              onclick="
-                setPostAction(
-                  ${Number(post.id)},
-                  'dislike'
-                )
-              "
-            >
-              👎 ${counts.dislike}
-            </button>
-
-            <button
-              id="comment-count-${Number(post.id)}"
-              onclick="
-                toggleComments(
-                  ${Number(post.id)}
-                )
-              "
-            >
-              💬 ${commentCount}
-            </button>
-
-            <button
-              onclick="
-                replyPost(
-                  '${escapeJs(username)}'
-                )
-              "
-            >
-              ↩️ Reply
-            </button>
-
-          </div>
-        `
+        ""
       }
+
+
+      <!-- COMMENTS -->
 
       <div
         class="comments"
@@ -2090,6 +2437,7 @@ function renderPost(
         >
           Loading...
         </div>
+
 
         <div
           id="comment-reply-box-${Number(post.id)}"
@@ -2113,6 +2461,7 @@ function renderPost(
           <div style="clear:both"></div>
 
         </div>
+
 
         <div class="comment-input-row">
 
@@ -2148,6 +2497,501 @@ function renderPost(
 
 
 /* =================================================
+   LIKES POPUP
+   ================================================= */
+
+async function showLikes(
+  postId
+){
+
+  const popup =
+    document.getElementById(
+      "likesPopup"
+    );
+
+  const list =
+    document.getElementById(
+      "likesList"
+    );
+
+  if(!popup || !list){
+    return;
+  }
+
+  popup.style.display =
+    "block";
+
+  list.innerHTML = `
+    <div
+      style="
+        text-align:center;
+        color:#777;
+        padding:15px
+      "
+    >
+      Loading likes...
+    </div>
+  `;
+
+  try{
+
+    const {
+      data:actions,
+      error
+    } =
+    await supabaseClient
+      .from("post_actions")
+      .select(
+        "user_id,action_type"
+      )
+      .eq(
+        "post_id",
+        postId
+      )
+      .eq(
+        "action_type",
+        "like"
+      );
+
+    if(error){
+      throw error;
+    }
+
+    if(
+      !actions ||
+      actions.length === 0
+    ){
+
+      list.innerHTML = `
+        <div
+          style="
+            text-align:center;
+            color:#777;
+            padding:20px
+          "
+        >
+          Abhi kisi ne like nahi kiya.
+        </div>
+      `;
+
+      return;
+    }
+
+    const ids = [
+      ...new Set(
+        actions
+          .map(
+            item =>
+              item.user_id
+          )
+          .filter(Boolean)
+      )
+    ];
+
+    const profilesMap = {};
+
+    if(ids.length){
+
+      const {
+        data:profiles,
+        error:profileError
+      } =
+      await supabaseClient
+        .from("profiles")
+        .select(
+          "id,username,name,avatar_url"
+        )
+        .in(
+          "id",
+          ids
+        );
+
+      if(
+        !profileError &&
+        profiles
+      ){
+
+        profiles.forEach(
+          function(profile){
+
+            profilesMap[
+              profile.id
+            ] = profile;
+
+          }
+        );
+
+      }
+
+    }
+
+
+    list.innerHTML =
+      ids.map(
+        function(id){
+
+          const profile =
+            profilesMap[id] || {};
+
+          let username =
+            profile.username || "";
+
+          let name =
+            profile.name || "";
+
+          if(
+            !username &&
+            currentUser &&
+            id === currentUser.id
+          ){
+
+            username =
+              currentUser
+              .user_metadata
+              ?.username ||
+              currentUser
+              .email
+              ?.split("@")[0] ||
+              "User";
+
+          }
+
+          if(!username){
+            username = "User";
+          }
+
+          const avatar =
+            profile.avatar_url || "";
+
+          const avatarHTML =
+            avatar
+            ?
+            `
+              <img
+                class="like-user-avatar"
+                src="${escapeAttribute(avatar)}"
+                onerror="
+                  this.style.display='none'
+                "
+              >
+            `
+            :
+            `
+              <div
+                class="like-user-avatar"
+                style="
+                  display:flex;
+                  align-items:center;
+                  justify-content:center
+                "
+              >
+                👤
+              </div>
+            `;
+
+          return `
+            <div
+              class="like-user"
+              onclick="
+                openLikeProfile(
+                  '${escapeJs(id)}'
+                )
+              "
+            >
+
+              ${avatarHTML}
+
+              <div>
+
+                <div class="like-user-name">
+                  ${escapeHtml(
+                    name || username
+                  )}
+                </div>
+
+                ${
+                  name && username
+                  ?
+                  `
+                    <div
+                      class="like-user-username"
+                    >
+                      @${escapeHtml(
+                        username
+                      )}
+                    </div>
+                  `
+                  :
+                  ""
+                }
+
+              </div>
+
+            </div>
+          `;
+
+        }
+      ).join("");
+
+  }catch(error){
+
+    console.error(
+      "Likes error:",
+      error
+    );
+
+    list.innerHTML = `
+      <div
+        style="
+          color:#d00;
+          text-align:center;
+          padding:15px
+        "
+      >
+        Likes load nahi huay.<br>
+        <small>
+          ${escapeHtml(
+            error.message || ""
+          )}
+        </small>
+      </div>
+    `;
+
+  }
+
+}
+
+
+function closeLikesPopup(){
+
+  const popup =
+    document.getElementById(
+      "likesPopup"
+    );
+
+  if(popup){
+
+    popup.style.display =
+      "none";
+
+  }
+
+}
+
+
+function openLikeProfile(
+  userId
+){
+
+  if(!userId){
+    return;
+  }
+
+  window.location.href =
+    "profile.html?user=" +
+    encodeURIComponent(userId);
+
+}
+
+
+/* =================================================
+   1ON1
+   ================================================= */
+
+function openOneToOne(
+  userId
+){
+
+  if(!userId){
+    return;
+  }
+
+  window.location.href =
+    "private.html?user=" +
+    encodeURIComponent(userId);
+
+}
+
+
+/* =================================================
+   FOLLOW
+   ================================================= */
+
+async function toggleFollow(
+  userId
+){
+
+  if(!currentUser){
+
+    alert(
+      "Please login first."
+    );
+
+    return;
+  }
+
+  if(
+    !userId ||
+    userId === currentUser.id
+  ){
+
+    return;
+  }
+
+  const isFollowing =
+    !!followMap[userId];
+
+  try{
+
+    if(isFollowing){
+
+      const {
+        error
+      } =
+      await supabaseClient
+        .from("user_follows")
+        .delete()
+        .eq(
+          "follower_id",
+          currentUser.id
+        )
+        .eq(
+          "following_id",
+          userId
+        );
+
+      if(error){
+        throw error;
+      }
+
+      followMap[userId] =
+        false;
+
+    }else{
+
+      const {
+        error
+      } =
+      await supabaseClient
+        .from("user_follows")
+        .insert({
+
+          follower_id:
+            currentUser.id,
+
+          following_id:
+            userId
+
+        });
+
+      if(error){
+
+        /*
+          Agar pehle se follow ho
+          to duplicate error ko
+          safely handle karna
+        */
+
+        if(
+          String(
+            error.message || ""
+          ).toLowerCase()
+          .includes("duplicate")
+        ){
+
+          followMap[userId] =
+            true;
+
+        }else{
+
+          throw error;
+
+        }
+
+      }else{
+
+        followMap[userId] =
+          true;
+
+      }
+
+    }
+
+    updateFollowButtons(
+      userId
+    );
+
+  }catch(error){
+
+    alert(
+      "Follow action nahi ho saki:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+function safeButtonId(
+  userId
+){
+
+  return String(
+    userId || ""
+  ).replace(
+    /[^a-zA-Z0-9_-]/g,
+    "_"
+  );
+
+}
+
+
+function updateFollowButtons(
+  userId
+){
+
+  const id =
+    "follow-btn-" +
+    safeButtonId(
+      userId
+    );
+
+  const buttons =
+    document.querySelectorAll(
+      "#" + CSS.escape(id)
+    );
+
+  buttons.forEach(
+    function(button){
+
+      if(
+        followMap[userId]
+      ){
+
+        button.textContent =
+          "✓ Following";
+
+        button.className =
+          "following-btn";
+
+      }else{
+
+        button.textContent =
+          "➕ Follow";
+
+        button.className =
+          "follow-btn";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =================================================
    SHARE
    ================================================= */
 
@@ -2178,16 +3022,6 @@ function closeShare(){
   ).style.display =
     "none";
 
-  document.getElementById(
-    "textPostForm"
-  ).style.display =
-    "none";
-
-  document.getElementById(
-    "imagePostForm"
-  ).style.display =
-    "none";
-
 }
 
 
@@ -2202,10 +3036,6 @@ function showTextPost(){
     "imagePostForm"
   ).style.display =
     "none";
-
-  document.getElementById(
-    "shareText"
-  ).focus();
 
 }
 
@@ -2419,8 +3249,8 @@ async function submitImagePost(){
 
     const fileExt =
       file.name
-        .split(".")
-        .pop();
+      .split(".")
+      .pop();
 
     const fileName =
       currentUser.id +
@@ -2451,7 +3281,7 @@ async function submitImagePost(){
     if(uploadError){
 
       throw new Error(
-        "Image upload nahi hui. Supabase Storage mein 'post-images' bucket check karein.\n\n" +
+        "Image upload nahi hui.\n\n" +
         uploadError.message
       );
 
@@ -2532,11 +3362,6 @@ async function submitImagePost(){
     await loadFeed(true);
 
   }catch(error){
-
-    console.error(
-      "Image post error:",
-      error
-    );
 
     alert(
       "Image post send nahi hui:\n\n" +
@@ -2626,7 +3451,9 @@ async function createPost(){
    POST REPLY
    ================================================= */
 
-function replyPost(username){
+function replyPost(
+  username
+){
 
   currentReplyUser =
     username;
@@ -2646,11 +3473,6 @@ function replyPost(username){
       "postText"
     );
 
-  /*
-     HOME POST REPLY:
-     Sirf @Username message box
-  */
-
   if(text){
 
     text.textContent =
@@ -2668,7 +3490,9 @@ function replyPost(username){
   if(textarea){
 
     textarea.value =
-      "@" + username + " ";
+      "@" +
+      username +
+      " ";
 
     textarea.focus();
 
@@ -2710,7 +3534,9 @@ function cancelReply(){
    DELETE POST
    ================================================= */
 
-async function deletePost(postId){
+async function deletePost(
+  postId
+){
 
   if(!currentUser){
     return;
@@ -2888,7 +3714,7 @@ async function setPostAction(
 
 
 /* =================================================
-   COMMENTS OPEN / CLOSE
+   COMMENTS
    ================================================= */
 
 async function toggleComments(
@@ -2927,10 +3753,6 @@ async function toggleComments(
 }
 
 
-/* =================================================
-   LOAD COMMENTS + REPLIES
-   ================================================= */
-
 async function loadComments(
   postId
 ){
@@ -2945,17 +3767,8 @@ async function loadComments(
     return;
   }
 
-  list.innerHTML = `
-    <div
-      style="
-        color:#888;
-        font-size:12px;
-        padding:6px
-      "
-    >
-      Loading comments...
-    </div>
-  `;
+  list.innerHTML =
+    "Loading comments...";
 
   try{
 
@@ -3019,8 +3832,7 @@ async function loadComments(
     if(userIds.length){
 
       const {
-        data:profiles,
-        error:profileError
+        data:profiles
       } =
       await supabaseClient
         .from("profiles")
@@ -3032,10 +3844,7 @@ async function loadComments(
           userIds
         );
 
-      if(
-        !profileError &&
-        profiles
-      ){
+      if(profiles){
 
         profiles.forEach(
           function(profile){
@@ -3050,8 +3859,6 @@ async function loadComments(
       }
 
     }
-
-    /* CHILDREN MAP */
 
     const childrenMap = {};
 
@@ -3076,11 +3883,9 @@ async function loadComments(
     );
 
 
-    /* RENDER ONE COMMENT */
-
     function renderComment(
       comment,
-      level = 0
+      level=0
     ){
 
       const profile =
@@ -3103,11 +3908,11 @@ async function loadComments(
 
         username =
           currentUser
-            .user_metadata
-            ?.username ||
+          .user_metadata
+          ?.username ||
           currentUser
-            .email
-            ?.split("@")[0] ||
+          .email
+          ?.split("@")[0] ||
           "User";
 
       }
@@ -3126,13 +3931,6 @@ async function loadComments(
           comment.id
         ] || [];
 
-      const nestedClass =
-        level > 0
-        ?
-        "nested-comment"
-        :
-        "";
-
       const avatar =
         profile.avatar_url || "";
 
@@ -3149,9 +3947,6 @@ async function loadComments(
               height:32px;
               border-radius:50%;
               object-fit:cover
-            "
-            onerror="
-              this.style.display='none'
             "
           >
         `
@@ -3174,7 +3969,10 @@ async function loadComments(
 
       return `
         <div
-          class="comment-item ${nestedClass}"
+          class="
+            comment-item
+            ${level>0 ? "nested-comment" : ""}
+          "
         >
 
           <div
@@ -3241,14 +4039,7 @@ async function loadComments(
             )}
           </div>
 
-          <div
-            style="
-              display:flex;
-              align-items:center;
-              gap:8px;
-              flex-wrap:wrap
-            "
-          >
+          <div>
 
             <button
               class="comment-reply"
@@ -3293,7 +4084,7 @@ async function loadComments(
                 child =>
                   renderComment(
                     child,
-                    level + 1
+                    level+1
                   )
               )
               .join("")
@@ -3305,7 +4096,6 @@ async function loadComments(
       `;
 
     }
-
 
     const topComments =
       childrenMap[0] || [];
@@ -3327,19 +4117,15 @@ async function loadComments(
       <div
         style="
           color:#d00;
-          font-size:12px;
           padding:8px
         "
       >
-
         Comments load nahi huay.<br>
-
         <small>
           ${escapeHtml(
             error.message || ""
           )}
         </small>
-
       </div>
     `;
 
@@ -3360,14 +4146,11 @@ function replyToComment(
 
   activeCommentReply = {
 
-    postId:
-      Number(postId),
+    postId:Number(postId),
 
-    commentId:
-      Number(commentId),
+    commentId:Number(commentId),
 
-    username:
-      username
+    username:username
 
   };
 
@@ -3390,10 +4173,8 @@ function replyToComment(
     );
 
   if(box){
-
     box.style.display =
       "block";
-
   }
 
   if(text){
@@ -3412,15 +4193,6 @@ function replyToComment(
       " ";
 
     input.focus();
-
-    try{
-
-      input.setSelectionRange(
-        input.value.length,
-        input.value.length
-      );
-
-    }catch(e){}
 
   }
 
@@ -3468,7 +4240,7 @@ function cancelCommentReply(
 
 
 /* =================================================
-   ADD COMMENT / REPLY
+   ADD COMMENT
    ================================================= */
 
 async function addComment(
@@ -3518,30 +4290,26 @@ async function addComment(
 
   try{
 
-    const insertData = {
-
-      post_id:
-        Number(postId),
-
-      user_id:
-        currentUser.id,
-
-      comment:
-        comment,
-
-      parent_id:
-        parentId
-
-    };
-
     const {
       error
     } =
     await supabaseClient
       .from("comments")
-      .insert(
-        insertData
-      );
+      .insert({
+
+        post_id:
+          Number(postId),
+
+        user_id:
+          currentUser.id,
+
+        comment:
+          comment,
+
+        parent_id:
+          parentId
+
+      });
 
     if(error){
       throw error;
@@ -3574,7 +4342,7 @@ async function addComment(
 
 
 /* =================================================
-   UPDATE COMMENT COUNT
+   COMMENT COUNT
    ================================================= */
 
 async function updateCommentCount(
@@ -3710,7 +4478,6 @@ async function blockUser(
     userId ===
     currentUser.id
   ){
-
     return;
   }
 
@@ -3741,16 +4508,31 @@ async function blockUser(
       });
 
     if(error){
-      throw error;
+
+      /*
+        Agar duplicate block ho
+        to feed ko phir bhi reload
+        kar denge.
+      */
+
+      if(
+        !String(
+          error.message || ""
+        ).toLowerCase()
+        .includes("duplicate")
+      ){
+
+        throw error;
+
+      }
+
     }
 
     alert(
       "User blocked."
     );
 
-    await loadFeed(
-      true
-    );
+    await loadFeed(true);
 
   }catch(error){
 
@@ -3758,41 +4540,6 @@ async function blockUser(
       "Block nahi ho saka:\n" +
       error.message
     );
-
-  }
-
-}
-
-
-/* =================================================
-   OLD IMAGE BUTTON
-   ================================================= */
-
-function imageSelected(){
-
-  const input =
-    document.getElementById(
-      "imageInput"
-    );
-
-  const output =
-    document.getElementById(
-      "selectedImageText"
-    );
-
-  if(
-    input.files &&
-    input.files.length
-  ){
-
-    output.textContent =
-      "Selected: " +
-      input.files[0].name;
-
-  }else{
-
-    output.textContent =
-      "";
 
   }
 
@@ -3835,7 +4582,7 @@ function startVoice(){
 
       const text =
         event.results[0][0]
-          .transcript;
+        .transcript;
 
       const textarea =
         document.getElementById(
@@ -3878,11 +4625,8 @@ function updateTrending(
     posts.length === 0
   ){
 
-    list.innerHTML = `
-      <div class="empty">
-        No posts yet.
-      </div>
-    `;
+    list.innerHTML =
+      "No posts yet.";
 
     return;
   }
@@ -4072,9 +4816,7 @@ function formatDate(
     );
 
   if(seconds < 10){
-
     return "Just now";
-
   }
 
   if(seconds < 60){
