@@ -152,6 +152,10 @@ body{
   cursor:pointer;
 }
 
+.action-btn:disabled{
+  cursor:not-allowed;
+}
+
 .edit-btn{
   background:#6c5ce7;
   color:white;
@@ -292,7 +296,7 @@ textarea.input{
   background:#eee;
 }
 
-/* PRIVATE */
+/* PRIVATE PROFILE */
 .private-box{
   margin:15px;
   background:white;
@@ -439,22 +443,48 @@ textarea.input{
 
 <div class="app">
 
+  <!-- HEADER -->
   <div class="header">
-    <div class="header-title">👤 Profile</div>
-    <button class="back-btn" onclick="goBack()">← Back</button>
+
+    <div class="header-title">
+      👤 Profile
+    </div>
+
+    <button
+      class="back-btn"
+      onclick="goBack()">
+      ← Back
+    </button>
+
   </div>
 
-  <div id="loading" class="loading">
+
+  <!-- LOADING -->
+  <div
+    id="loading"
+    class="loading">
     Profile load ho rahi hai...
   </div>
 
-  <div id="errorBox" class="error" style="display:none;"></div>
 
-  <div id="profileArea" style="display:none;">
+  <!-- ERROR -->
+  <div
+    id="errorBox"
+    class="error"
+    style="display:none;">
+  </div>
+
+
+  <!-- PROFILE -->
+  <div
+    id="profileArea"
+    style="display:none;">
 
     <div class="profile-card">
 
       <div class="profile-top">
+
+        <!-- DP -->
 
         <div class="avatar-wrap">
 
@@ -473,19 +503,43 @@ textarea.input{
 
         </div>
 
-        <div id="name" class="name">
+
+        <!-- NAME -->
+
+        <div
+          id="name"
+          class="name">
           User
         </div>
 
-        <div id="username" class="username">
+
+        <!-- USERNAME -->
+
+        <div
+          id="username"
+          class="username">
           @user
         </div>
 
-        <div id="bio" class="bio"></div>
+
+        <!-- BIO -->
+
+        <div
+          id="bio"
+          class="bio">
+        </div>
+
+
+        <!-- PRIVACY -->
 
         <div id="privacyBadge"></div>
 
+
+        <!-- ACTIONS -->
+
         <div class="actions">
+
+          <!-- EDIT -->
 
           <button
             id="editBtn"
@@ -494,6 +548,9 @@ textarea.input{
             ✏️ Edit Profile
           </button>
 
+
+          <!-- FOLLOW -->
+
           <button
             id="followBtn"
             class="action-btn follow-btn"
@@ -501,6 +558,9 @@ textarea.input{
             onclick="toggleFollow()">
             ➕ Follow
           </button>
+
+
+          <!-- 1 ON 1 -->
 
           <button
             id="chatBtn"
@@ -514,62 +574,142 @@ textarea.input{
 
       </div>
 
-      <div id="stats" class="stats">
+
+      <!-- STATS -->
+
+      <div
+        id="stats"
+        class="stats">
 
         <div class="stat">
-          <div id="postCount" class="stat-number">0</div>
-          <div class="stat-label">Posts</div>
+
+          <div
+            id="postCount"
+            class="stat-number">
+            0
+          </div>
+
+          <div class="stat-label">
+            Posts
+          </div>
+
         </div>
 
-        <div class="stat">
-          <div id="followersCount" class="stat-number">0</div>
-          <div class="stat-label">Followers</div>
-        </div>
 
         <div class="stat">
-          <div id="followingCount" class="stat-number">0</div>
-          <div class="stat-label">Following</div>
+
+          <div
+            id="followersCount"
+            class="stat-number">
+            0
+          </div>
+
+          <div class="stat-label">
+            Followers
+          </div>
+
+        </div>
+
+
+        <div class="stat">
+
+          <div
+            id="followingCount"
+            class="stat-number">
+            0
+          </div>
+
+          <div class="stat-label">
+            Following
+          </div>
+
         </div>
 
       </div>
 
-      <div id="infoCard" class="info-card">
+
+      <!-- INFO -->
+
+      <div
+        id="infoCard"
+        class="info-card">
 
         <div class="info-row">
-          <div class="info-icon">🏙️</div>
+
+          <div class="info-icon">
+            🏙️
+          </div>
+
           <div>
-            <div class="info-label">City</div>
-            <div id="city" class="info-value">
+
+            <div class="info-label">
+              City
+            </div>
+
+            <div
+              id="city"
+              class="info-value">
               Not added
             </div>
+
           </div>
+
         </div>
 
-        <div class="info-row">
-          <div class="info-icon">🎂</div>
-          <div>
-            <div class="info-label">Date of Birth</div>
-            <div id="dob" class="info-value">
-              Not added
-            </div>
-          </div>
-        </div>
 
         <div class="info-row">
-          <div class="info-icon">⚧️</div>
+
+          <div class="info-icon">
+            🎂
+          </div>
+
           <div>
-            <div class="info-label">Gender</div>
-            <div id="gender" class="info-value">
+
+            <div class="info-label">
+              Date of Birth
+            </div>
+
+            <div
+              id="dob"
+              class="info-value">
               Not added
             </div>
+
           </div>
+
+        </div>
+
+
+        <div class="info-row">
+
+          <div class="info-icon">
+            ⚧️
+          </div>
+
+          <div>
+
+            <div class="info-label">
+              Gender
+            </div>
+
+            <div
+              id="gender"
+              class="info-value">
+              Not added
+            </div>
+
+          </div>
+
         </div>
 
       </div>
+
 
       <!-- EDIT PROFILE -->
 
-      <div id="editPanel" class="edit-panel">
+      <div
+        id="editPanel"
+        class="edit-panel">
 
         <div class="edit-dp">
 
@@ -589,11 +729,13 @@ textarea.input{
 
         </div>
 
+
         <input
           id="editName"
           class="input"
           placeholder="Your name"
         >
+
 
         <textarea
           id="editBio"
@@ -602,15 +744,24 @@ textarea.input{
           placeholder="📝 Write your bio..."
         ></textarea>
 
+
         <input
           id="editCity"
           class="input"
           placeholder="🏙️ City"
         >
 
-        <label style="display:block;font-size:12px;color:#777;margin-bottom:5px;">
+
+        <label
+          style="
+            display:block;
+            font-size:12px;
+            color:#777;
+            margin-bottom:5px;
+          ">
           🎂 Date of Birth
         </label>
+
 
         <input
           id="editDob"
@@ -618,7 +769,10 @@ textarea.input{
           type="date"
         >
 
-        <select id="editGender" class="input">
+
+        <select
+          id="editGender"
+          class="input">
 
           <option value="">
             ⚧️ Select gender
@@ -638,7 +792,10 @@ textarea.input{
 
         </select>
 
-        <select id="editPrivacy" class="input">
+
+        <select
+          id="editPrivacy"
+          class="input">
 
           <option value="public">
             🌐 Public
@@ -650,11 +807,13 @@ textarea.input{
 
         </select>
 
+
         <button
           class="save-btn"
           onclick="saveProfile()">
           💾 Save Profile
         </button>
+
 
         <button
           class="cancel-btn"
@@ -665,6 +824,7 @@ textarea.input{
       </div>
 
     </div>
+
 
     <!-- PRIVATE PROFILE -->
 
@@ -686,6 +846,7 @@ textarea.input{
       </div>
 
     </div>
+
 
     <!-- POSTS -->
 
@@ -710,29 +871,66 @@ textarea.input{
 
   <div class="nav-inner">
 
-    <div class="nav-item" onclick="goHome()">
-      <span class="icon">🏠</span>
+    <div
+      class="nav-item"
+      onclick="goHome()">
+
+      <span class="icon">
+        🏠
+      </span>
+
       Home
+
     </div>
 
-    <div class="nav-item" onclick="goPrivate()">
-      <span class="icon">💬</span>
+
+    <div
+      class="nav-item"
+      onclick="goPrivate()">
+
+      <span class="icon">
+        💬
+      </span>
+
       Private
+
     </div>
 
-    <div class="nav-item" onclick="goMehfil()">
-      <span class="icon">👥</span>
+
+    <div
+      class="nav-item"
+      onclick="goMehfil()">
+
+      <span class="icon">
+        👥
+      </span>
+
       Mehfil
+
     </div>
+
 
     <div class="nav-item active">
-      <span class="icon">👤</span>
+
+      <span class="icon">
+        👤
+      </span>
+
       Profile
+
     </div>
 
-    <div class="nav-item" onclick="goMore()">
-      <span class="icon">☰</span>
+
+    <div
+      class="nav-item"
+      onclick="goMore()">
+
+      <span class="icon">
+        ☰
+      </span>
+
       More
+
     </div>
 
   </div>
@@ -742,15 +940,16 @@ textarea.input{
 
 <script>
 
-/* =========================
+/* =====================================================
    SUPABASE
-========================= */
+===================================================== */
 
 const SUPABASE_URL =
 "https://jhcpqjmxiovvqbghpxbf.supabase.co";
 
 const SUPABASE_KEY =
 "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
 
 const supabaseClient =
 supabase.createClient(
@@ -766,47 +965,84 @@ supabase.createClient(
 );
 
 
-let currentUser=null;
-let profileUser=null;
-let isOwner=false;
-let isPrivate=false;
-let isFollowing=false;
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
+let currentUser = null;
+
+let profileUser = null;
+
+let isOwner = false;
+
+let isPrivate = false;
+
+let isFollowing = false;
 
 
-/* =========================
+/*
+  PRIVATE REQUEST STATUS
+
+  none
+  pending
+  accepted
+*/
+
+let privateRequestStatus = "none";
+
+let privateRequestId = null;
+
+
+/* =====================================================
    INIT
-========================= */
+===================================================== */
 
 async function init(){
 
   try{
 
-    const {data,error} =
-      await supabaseClient.auth.getSession();
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+      .auth
+      .getSession();
 
-    if(error) throw error;
+
+    if(error)
+      throw error;
+
 
     currentUser =
       data.session?.user || null;
 
+
     if(!currentUser){
 
-      window.location.href="login.html";
+      window.location.href =
+        "login.html";
+
       return;
 
     }
+
 
     const params =
       new URLSearchParams(
         window.location.search
       );
 
+
     const profileId =
       params.get("user");
 
+
     await loadProfile(
-      profileId || currentUser.id
+      profileId ||
+      currentUser.id
     );
+
 
   }catch(error){
 
@@ -820,13 +1056,16 @@ async function init(){
 }
 
 
-/* =========================
+/* =====================================================
    LOAD PROFILE
-========================= */
+===================================================== */
 
 async function loadProfile(userId){
 
-  const {data,error} =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
     .from("profiles")
     .select(`
@@ -840,90 +1079,135 @@ async function loadProfile(userId){
       dob,
       gender
     `)
-    .eq("id",userId)
+    .eq(
+      "id",
+      userId
+    )
     .maybeSingle();
 
-  if(error) throw error;
+
+  if(error)
+    throw error;
+
 
   if(!data){
 
-    showError("Profile nahi mili.");
+    showError(
+      "Profile nahi mili."
+    );
+
     return;
 
   }
 
-  profileUser=data;
+
+  profileUser = data;
+
 
   isOwner =
-    currentUser.id===data.id;
+    currentUser.id === data.id;
+
 
   isPrivate =
     String(
-      data.profile_privacy || "public"
-    ).toLowerCase()==="private";
+      data.profile_privacy ||
+      "public"
+    ).toLowerCase() ===
+    "private";
+
 
   renderProfile();
 
 
   if(!isOwner){
 
-    document.getElementById("followBtn")
-      .style.display="block";
+    document.getElementById(
+      "followBtn"
+    ).style.display =
+      "block";
 
-    document.getElementById("chatBtn")
-      .style.display="block";
+
+    document.getElementById(
+      "chatBtn"
+    ).style.display =
+      "block";
+
 
     await loadFollowStatus();
+
+    await loadPrivateRequestStatus();
 
   }
 
 
-  if(isOwner || !isPrivate){
+  if(
+    isOwner ||
+    !isPrivate
+  ){
 
     await loadStats();
+
     await loadPosts();
 
   }else{
 
-    document.getElementById("stats")
-      .style.display="none";
+    document.getElementById(
+      "stats"
+    ).style.display =
+      "none";
 
-    document.getElementById("infoCard")
-      .style.display="none";
 
-    document.getElementById("postsSection")
-      .style.display="none";
+    document.getElementById(
+      "infoCard"
+    ).style.display =
+      "none";
 
-    document.getElementById("privateBox")
-      .style.display="block";
+
+    document.getElementById(
+      "postsSection"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "privateBox"
+    ).style.display =
+      "block";
 
   }
 
 
-  document.getElementById("loading")
-    .style.display="none";
+  document.getElementById(
+    "loading"
+  ).style.display =
+    "none";
 
-  document.getElementById("profileArea")
-    .style.display="block";
+
+  document.getElementById(
+    "profileArea"
+  ).style.display =
+    "block";
 
 }
 
 
-/* =========================
+/* =====================================================
    RENDER PROFILE
-========================= */
+===================================================== */
 
 function renderProfile(){
 
-  document.getElementById("name")
-    .textContent =
+  document.getElementById(
+    "name"
+  ).textContent =
     profileUser.name ||
     profileUser.username ||
     "User";
 
 
-  document.getElementById("username")
-    .textContent =
+  document.getElementById(
+    "username"
+  ).textContent =
     "@" +
     (
       profileUser.username ||
@@ -931,30 +1215,37 @@ function renderProfile(){
     );
 
 
-  document.getElementById("avatar").src =
+  document.getElementById(
+    "avatar"
+  ).src =
     profileUser.avatar_url ||
     "https://via.placeholder.com/360x430?text=User";
 
 
-  document.getElementById("bio")
-    .textContent =
-    profileUser.bio || "";
+  document.getElementById(
+    "bio"
+  ).textContent =
+    profileUser.bio ||
+    "";
 
 
-  document.getElementById("city")
-    .textContent =
+  document.getElementById(
+    "city"
+  ).textContent =
     profileUser.city ||
     "Not added";
 
 
-  document.getElementById("dob")
-    .textContent =
+  document.getElementById(
+    "dob"
+  ).textContent =
     profileUser.dob ||
     "Not added";
 
 
-  document.getElementById("gender")
-    .textContent =
+  document.getElementById(
+    "gender"
+  ).textContent =
     profileUser.gender ||
     "Not added";
 
@@ -963,123 +1254,180 @@ function renderProfile(){
 
     document.getElementById(
       "privacyBadge"
-    ).innerHTML=
-      `<span class="badge private-badge">
+    ).innerHTML =
+      `
+      <span class="badge private-badge">
         🔒 Private
-      </span>`;
+      </span>
+      `;
 
   }else{
 
     document.getElementById(
       "privacyBadge"
-    ).innerHTML=
-      `<span class="badge public-badge">
+    ).innerHTML =
+      `
+      <span class="badge public-badge">
         🌐 Public
-      </span>`;
+      </span>
+      `;
 
   }
 
 
   if(isOwner){
 
-    document.getElementById("editBtn")
-      .style.display="block";
+    document.getElementById(
+      "editBtn"
+    ).style.display =
+      "block";
 
-    document.getElementById("followBtn")
-      .style.display="none";
 
-    document.getElementById("chatBtn")
-      .style.display="none";
+    document.getElementById(
+      "followBtn"
+    ).style.display =
+      "none";
+
+
+    document.getElementById(
+      "chatBtn"
+    ).style.display =
+      "none";
 
   }else{
 
-    document.getElementById("editBtn")
-      .style.display="none";
+    document.getElementById(
+      "editBtn"
+    ).style.display =
+      "none";
 
-    document.getElementById("followBtn")
-      .style.display="block";
 
-    document.getElementById("chatBtn")
-      .style.display="block";
+    document.getElementById(
+      "followBtn"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "chatBtn"
+    ).style.display =
+      "block";
 
   }
 
 }
 
 
-/* =========================
-   EDIT
-========================= */
+/* =====================================================
+   EDIT PROFILE
+===================================================== */
 
 function toggleEdit(){
 
   const panel =
-    document.getElementById("editPanel");
+    document.getElementById(
+      "editPanel"
+    );
 
 
-  if(panel.style.display==="block"){
+  if(
+    panel.style.display ===
+    "block"
+  ){
 
-    panel.style.display="none";
+    panel.style.display =
+      "none";
+
     return;
 
   }
 
 
-  document.getElementById("editName").value =
-    profileUser.name || "";
+  document.getElementById(
+    "editName"
+  ).value =
+    profileUser.name ||
+    "";
 
 
-  document.getElementById("editBio").value =
-    profileUser.bio || "";
+  document.getElementById(
+    "editBio"
+  ).value =
+    profileUser.bio ||
+    "";
 
 
-  document.getElementById("editCity").value =
-    profileUser.city || "";
+  document.getElementById(
+    "editCity"
+  ).value =
+    profileUser.city ||
+    "";
 
 
-  document.getElementById("editDob").value =
-    profileUser.dob || "";
+  document.getElementById(
+    "editDob"
+  ).value =
+    profileUser.dob ||
+    "";
 
 
-  document.getElementById("editGender").value =
-    profileUser.gender || "";
+  document.getElementById(
+    "editGender"
+  ).value =
+    profileUser.gender ||
+    "";
 
 
-  document.getElementById("editPrivacy").value =
+  document.getElementById(
+    "editPrivacy"
+  ).value =
     isPrivate ?
     "private" :
     "public";
 
 
-  document.getElementById("editPreview").src =
+  document.getElementById(
+    "editPreview"
+  ).src =
     profileUser.avatar_url ||
     "https://via.placeholder.com/210x250?text=User";
 
 
-  panel.style.display="block";
+  panel.style.display =
+    "block";
 
 }
 
 
-/* =========================
+/* =====================================================
    DP PREVIEW
-========================= */
+===================================================== */
 
 function previewDP(event){
 
   const file =
     event.target.files[0];
 
-  if(!file) return;
+
+  if(!file)
+    return;
 
 
-  if(!file.type.startsWith("image/")){
+  if(
+    !file.type.startsWith(
+      "image/"
+    )
+  ){
 
     alert(
       "Sirf image select karein."
     );
 
-    event.target.value="";
+
+    event.target.value =
+      "";
+
+
     return;
 
   }
@@ -1089,23 +1437,27 @@ function previewDP(event){
     new FileReader();
 
 
-  reader.onload=function(e){
+  reader.onload =
+    function(e){
 
-    document.getElementById(
-      "editPreview"
-    ).src=e.target.result;
+      document.getElementById(
+        "editPreview"
+      ).src =
+        e.target.result;
 
-  };
+    };
 
 
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(
+    file
+  );
 
 }
 
 
-/* =========================
+/* =====================================================
    SAVE PROFILE
-========================= */
+===================================================== */
 
 async function saveProfile(){
 
@@ -1116,8 +1468,13 @@ async function saveProfile(){
         ".save-btn"
       );
 
-    saveBtn.disabled=true;
-    saveBtn.textContent="Saving...";
+
+    saveBtn.disabled =
+      true;
+
+
+    saveBtn.textContent =
+      "Saving...";
 
 
     let avatarUrl =
@@ -1129,6 +1486,7 @@ async function saveProfile(){
       document.getElementById(
         "avatarFile"
       );
+
 
     const file =
       fileInput.files[0];
@@ -1160,7 +1518,8 @@ async function saveProfile(){
           file,
           {
             upsert:true,
-            contentType:file.type
+            contentType:
+              file.type
           }
         );
 
@@ -1226,17 +1585,35 @@ async function saveProfile(){
       ).value;
 
 
-    const {data,error} =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
       .from("profiles")
       .update({
-        name:name || null,
-        bio:bio || null,
-        city:city || null,
-        dob:dob || null,
-        gender:gender || null,
-        profile_privacy:privacy,
-        avatar_url:avatarUrl
+
+        name:
+          name || null,
+
+        bio:
+          bio || null,
+
+        city:
+          city || null,
+
+        dob:
+          dob || null,
+
+        gender:
+          gender || null,
+
+        profile_privacy:
+          privacy,
+
+        avatar_url:
+          avatarUrl
+
       })
       .eq(
         "id",
@@ -1246,24 +1623,41 @@ async function saveProfile(){
       .maybeSingle();
 
 
-    if(error) throw error;
+    if(error)
+      throw error;
 
 
     profileUser =
-      data || {
+      data ||
+      {
         ...profileUser,
-        name:name || null,
-        bio:bio || null,
-        city:city || null,
-        dob:dob || null,
-        gender:gender || null,
-        profile_privacy:privacy,
-        avatar_url:avatarUrl
+
+        name:
+          name || null,
+
+        bio:
+          bio || null,
+
+        city:
+          city || null,
+
+        dob:
+          dob || null,
+
+        gender:
+          gender || null,
+
+        profile_privacy:
+          privacy,
+
+        avatar_url:
+          avatarUrl
       };
 
 
     isPrivate =
-      privacy==="private";
+      privacy ===
+      "private";
 
 
     renderProfile();
@@ -1271,23 +1665,36 @@ async function saveProfile(){
 
     document.getElementById(
       "editPanel"
-    ).style.display="none";
+    ).style.display =
+      "none";
 
 
-    document.getElementById("stats")
-      .style.display="flex";
+    document.getElementById(
+      "stats"
+    ).style.display =
+      "flex";
 
-    document.getElementById("infoCard")
-      .style.display="block";
 
-    document.getElementById("postsSection")
-      .style.display="block";
+    document.getElementById(
+      "infoCard"
+    ).style.display =
+      "block";
 
-    document.getElementById("privateBox")
-      .style.display="none";
+
+    document.getElementById(
+      "postsSection"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "privateBox"
+    ).style.display =
+      "none";
 
 
     await loadStats();
+
     await loadPosts();
 
 
@@ -1311,9 +1718,12 @@ async function saveProfile(){
         ".save-btn"
       );
 
-    saveBtn.disabled=false;
 
-    saveBtn.textContent=
+    saveBtn.disabled =
+      false;
+
+
+    saveBtn.textContent =
       "💾 Save Profile";
 
   }
@@ -1321,13 +1731,16 @@ async function saveProfile(){
 }
 
 
-/* =========================
+/* =====================================================
    FOLLOW
-========================= */
+===================================================== */
 
 async function loadFollowStatus(){
 
-  const {data,error} =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
     .from("user_follows")
     .select("id")
@@ -1344,7 +1757,9 @@ async function loadFollowStatus(){
 
   if(!error){
 
-    isFollowing=!!data;
+    isFollowing =
+      !!data;
+
 
     updateFollowButton();
 
@@ -1362,22 +1777,27 @@ function updateFollowButton(){
 
 
   btn.textContent =
-    isFollowing ?
-    "✓ Following" :
-    "➕ Follow";
+    isFollowing
+    ? "✓ Following"
+    : "➕ Follow";
 
 }
 
 
 async function toggleFollow(){
 
-  if(!profileUser || isOwner)
+  if(
+    !profileUser ||
+    isOwner
+  )
     return;
 
 
   if(isFollowing){
 
-    const {error} =
+    const {
+      error
+    } =
       await supabaseClient
       .from("user_follows")
       .delete()
@@ -1403,19 +1823,24 @@ async function toggleFollow(){
     }
 
 
-    isFollowing=false;
-
+    isFollowing =
+      false;
 
   }else{
 
-    const {error} =
+    const {
+      error
+    } =
       await supabaseClient
       .from("user_follows")
       .insert({
+
         follower_id:
           currentUser.id,
+
         following_id:
           profileUser.id
+
       });
 
 
@@ -1431,7 +1856,8 @@ async function toggleFollow(){
     }
 
 
-    isFollowing=true;
+    isFollowing =
+      true;
 
   }
 
@@ -1443,9 +1869,386 @@ async function toggleFollow(){
 }
 
 
-/* =========================
+/* =====================================================
+   PRIVATE REQUEST STATUS
+===================================================== */
+
+async function loadPrivateRequestStatus(){
+
+  if(
+    !currentUser ||
+    !profileUser ||
+    isOwner
+  )
+    return;
+
+
+  privateRequestStatus =
+    "none";
+
+
+  privateRequestId =
+    null;
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+    .from("private_requests")
+    .select("*")
+    .or(
+      "and(sender_id.eq." +
+      currentUser.id +
+      ",receiver_id.eq." +
+      profileUser.id +
+      "),and(sender_id.eq." +
+      profileUser.id +
+      ",receiver_id.eq." +
+      currentUser.id +
+      ")"
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    )
+    .limit(1)
+    .maybeSingle();
+
+
+  if(error){
+
+    console.log(
+      "Private request status:",
+      error.message
+    );
+
+
+    updatePrivateButton();
+
+    return;
+
+  }
+
+
+  if(data){
+
+    privateRequestId =
+      data.id ||
+      null;
+
+
+    const status =
+      String(
+        data.status ||
+        "pending"
+      ).toLowerCase();
+
+
+    if(
+      status ===
+      "accepted"
+    ){
+
+      privateRequestStatus =
+        "accepted";
+
+    }
+
+    else if(
+      status === "declined" ||
+      status === "rejected"
+    ){
+
+      privateRequestStatus =
+        "none";
+
+    }
+
+    else{
+
+      privateRequestStatus =
+        "pending";
+
+    }
+
+  }
+
+
+  updatePrivateButton();
+
+}
+
+
+/* =====================================================
+   UPDATE 1-ON-1 BUTTON
+===================================================== */
+
+function updatePrivateButton(){
+
+  const btn =
+    document.getElementById(
+      "chatBtn"
+    );
+
+
+  if(!btn)
+    return;
+
+
+  if(
+    privateRequestStatus ===
+    "accepted"
+  ){
+
+    btn.textContent =
+      "💬 Open Chat";
+
+
+    btn.disabled =
+      false;
+
+
+    btn.style.opacity =
+      "1";
+
+
+    return;
+
+  }
+
+
+  if(
+    privateRequestStatus ===
+    "pending"
+  ){
+
+    btn.textContent =
+      "⏳ Request Sent";
+
+
+    btn.disabled =
+      true;
+
+
+    btn.style.opacity =
+      ".65";
+
+
+    return;
+
+  }
+
+
+  btn.textContent =
+    "💬 1-on-1";
+
+
+  btn.disabled =
+    false;
+
+
+  btn.style.opacity =
+    "1";
+
+}
+
+
+/* =====================================================
+   SEND PRIVATE REQUEST
+===================================================== */
+
+async function openPrivateChat(){
+
+  if(
+    !profileUser ||
+    isOwner
+  )
+    return;
+
+
+  /*
+    ACCEPTED
+    Directly open private chat.
+  */
+
+  if(
+    privateRequestStatus ===
+    "accepted"
+  ){
+
+    window.location.href =
+      "private-chat.html?user=" +
+      encodeURIComponent(
+        profileUser.id
+      );
+
+
+    return;
+
+  }
+
+
+  /*
+    PENDING
+  */
+
+  if(
+    privateRequestStatus ===
+    "pending"
+  ){
+
+    alert(
+      "⏳ Private request already sent."
+    );
+
+
+    return;
+
+  }
+
+
+  try{
+
+    const btn =
+      document.getElementById(
+        "chatBtn"
+      );
+
+
+    btn.disabled =
+      true;
+
+
+    btn.textContent =
+      "Sending...";
+
+
+    /*
+      SEND REQUEST
+    */
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+      .from("private_requests")
+      .insert({
+
+        sender_id:
+          currentUser.id,
+
+        receiver_id:
+          profileUser.id,
+
+        status:
+          "pending"
+
+      })
+      .select()
+      .maybeSingle();
+
+
+    if(error){
+
+      const errorText =
+        String(
+          error.message ||
+          ""
+        ).toLowerCase();
+
+
+      /*
+        Duplicate / already existing
+      */
+
+      if(
+        errorText.includes(
+          "duplicate"
+        ) ||
+        errorText.includes(
+          "unique"
+        )
+      ){
+
+        privateRequestStatus =
+          "pending";
+
+
+        updatePrivateButton();
+
+
+        alert(
+          "⏳ Request already sent."
+        );
+
+
+        return;
+
+      }
+
+
+      throw error;
+
+    }
+
+
+    privateRequestId =
+      data?.id ||
+      null;
+
+
+    privateRequestStatus =
+      "pending";
+
+
+    updatePrivateButton();
+
+
+    alert(
+      "✅ Private request sent!\n\n" +
+      "User ko Notifications mein request mil jayegi."
+    );
+
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+
+    const btn =
+      document.getElementById(
+        "chatBtn"
+      );
+
+
+    btn.disabled =
+      false;
+
+
+    btn.textContent =
+      "💬 1-on-1";
+
+
+    alert(
+      "Request send nahi ho saki:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
    STATS
-========================= */
+===================================================== */
 
 async function loadStats(){
 
@@ -1470,7 +2273,8 @@ async function loadStats(){
     document.getElementById(
       "postCount"
     ).textContent =
-      posts.count || 0;
+      posts.count ||
+      0;
 
   }
 
@@ -1496,7 +2300,8 @@ async function loadStats(){
     document.getElementById(
       "followersCount"
     ).textContent =
-      followers.count || 0;
+      followers.count ||
+      0;
 
   }
 
@@ -1522,20 +2327,24 @@ async function loadStats(){
     document.getElementById(
       "followingCount"
     ).textContent =
-      following.count || 0;
+      following.count ||
+      0;
 
   }
 
 }
 
 
-/* =========================
+/* =====================================================
    POSTS
-========================= */
+===================================================== */
 
 async function loadPosts(){
 
-  const {data,error} =
+  const {
+    data,
+    error
+  } =
     await supabaseClient
     .from("posts")
     .select(`
@@ -1560,10 +2369,12 @@ async function loadPosts(){
 
     document.getElementById(
       "postsList"
-    ).innerHTML=
-      `<div class="post-card">
+    ).innerHTML =
+      `
+      <div class="post-card">
         Posts load nahi ho sakin.
-      </div>`;
+      </div>
+      `;
 
     return;
 
@@ -1576,12 +2387,17 @@ async function loadPosts(){
     );
 
 
-  if(!data || data.length===0){
+  if(
+    !data ||
+    data.length === 0
+  ){
 
-    list.innerHTML=
-      `<div class="post-card">
+    list.innerHTML =
+      `
+      <div class="post-card">
         Abhi koi post nahi hai.
-      </div>`;
+      </div>
+      `;
 
     return;
 
@@ -1589,101 +2405,104 @@ async function loadPosts(){
 
 
   list.innerHTML =
-    data.map(post=>{
+    data
+    .map(
+      post => {
 
-      let image="";
+        let image = "";
 
 
-      if(post.image_url){
+        if(post.image_url){
 
-        image=
-          `<img
-            class="post-image"
-            src="${escapeHtml(
-              post.image_url
-            )}"
-            onerror="this.style.display='none'"
-          >`;
+          image =
+            `
+            <img
+              class="post-image"
+              src="${escapeHtml(
+                post.image_url
+              )}"
+              onerror="this.style.display='none'"
+            >
+            `;
+
+        }
+
+
+        return `
+          <div class="post-card">
+
+            <div>
+              ${escapeHtml(
+                post.content ||
+                ""
+              )}
+            </div>
+
+            ${image}
+
+            <div class="post-date">
+              ${formatDate(
+                post.created_at
+              )}
+            </div>
+
+          </div>
+        `;
 
       }
-
-
-      return `
-        <div class="post-card">
-
-          <div>
-            ${escapeHtml(
-              post.content || ""
-            )}
-          </div>
-
-          ${image}
-
-          <div class="post-date">
-            ${formatDate(
-              post.created_at
-            )}
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
+    )
+    .join("");
 
 }
 
 
-/* =========================
-   1-ON-1
-========================= */
-
-function openPrivateChat(){
-
-  if(!profileUser)
-    return;
-
-  if(isOwner)
-    return;
-
-
-  window.location.href =
-    "private-chat.html?user=" +
-    encodeURIComponent(
-      profileUser.id
-    );
-
-}
-
-
-/* =========================
+/* =====================================================
    NAVIGATION
-========================= */
+===================================================== */
 
 function goHome(){
-  window.location.href="index.html";
+
+  window.location.href =
+    "index.html";
+
 }
+
 
 function goPrivate(){
-  window.location.href="private.html";
+
+  window.location.href =
+    "private.html";
+
 }
+
 
 function goMehfil(){
-  window.location.href="mehfil.html";
+
+  window.location.href =
+    "mehfil.html";
+
 }
 
+
 function goMore(){
-  window.location.href="more.html";
+
+  window.location.href =
+    "more.html";
+
 }
+
 
 function goBack(){
 
-  if(document.referrer){
+  if(
+    document.referrer
+  ){
 
     history.back();
 
   }else{
 
-    window.location.href=
+    window.location.href =
       "index.html";
 
   }
@@ -1691,77 +2510,99 @@ function goBack(){
 }
 
 
-/* =========================
+/* =====================================================
    HELPERS
-========================= */
+===================================================== */
 
 function formatDate(date){
 
-  if(!date) return "";
+  if(!date)
+    return "";
 
-  const d=new Date(date);
 
-  const now=new Date();
+  const d =
+    new Date(date);
+
+
+  const now =
+    new Date();
+
 
   const seconds =
     Math.floor(
-      (now-d)/1000
+      (now - d) /
+      1000
     );
 
 
-  if(seconds<60)
+  if(seconds < 60)
     return "Just now";
 
 
   const minutes =
     Math.floor(
-      seconds/60
+      seconds / 60
     );
 
 
-  if(minutes<60)
-    return minutes +
+  if(minutes < 60){
+
+    return (
+      minutes +
       " minute" +
       (
-        minutes===1 ?
-        "" :
-        "s"
+        minutes === 1
+        ? ""
+        : "s"
       ) +
-      " ago";
+      " ago"
+    );
+
+  }
 
 
   const hours =
     Math.floor(
-      minutes/60
+      minutes / 60
     );
 
 
-  if(hours<24)
-    return hours +
+  if(hours < 24){
+
+    return (
+      hours +
       " hour" +
       (
-        hours===1 ?
-        "" :
-        "s"
+        hours === 1
+        ? ""
+        : "s"
       ) +
-      " ago";
+      " ago"
+    );
+
+  }
 
 
   const days =
     Math.floor(
-      hours/24
+      hours / 24
     );
 
 
-  if(days<7)
-    return days +
+  if(days < 7){
+
+    return (
+      days +
       " day" +
       (
-        days===1 ?
-        "" :
-        "s"
+        days === 1
+        ? ""
+        : "s"
       ) +
-      " ago";
+      " ago"
+    );
+
+  }
 
 
   return d.toLocaleDateString();
@@ -1774,11 +2615,26 @@ function escapeHtml(value){
   return String(
     value ?? ""
   )
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#039;");
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
@@ -1787,7 +2643,8 @@ function showError(message){
 
   document.getElementById(
     "loading"
-  ).style.display="none";
+  ).style.display =
+    "none";
 
 
   const box =
@@ -1796,16 +2653,19 @@ function showError(message){
     );
 
 
-  box.textContent=message;
+  box.textContent =
+    message;
 
-  box.style.display="block";
+
+  box.style.display =
+    "block";
 
 }
 
 
-/* =========================
+/* =====================================================
    START
-========================= */
+===================================================== */
 
 init();
 
