@@ -1,40 +1,47 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Private - ChatZone 💬</title>
+<title>Private Chat - ChatZone 💬</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+*{box-sizing:border-box}
 
-*{
-  box-sizing:border-box;
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,sans-serif;
+  background:#f4f6fb;
 }
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f6fb;
-  color:#222;
-  padding-bottom:75px;
+  display:flex;
+  flex-direction:column;
 }
 
 .header{
+  flex-shrink:0;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
   color:white;
-  padding:15px;
-  position:sticky;
-  top:0;
+  padding:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
   z-index:10;
 }
 
 .header-row{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  gap:10px;
+  max-width:700px;
+  margin:auto;
 }
 
 .back-btn{
@@ -43,25 +50,55 @@ body{
   color:white;
   border-radius:10px;
   padding:8px 12px;
-  font-size:18px;
-}
-
-.header-title{
   font-size:20px;
-  font-weight:bold;
+  cursor:pointer;
 }
 
-.container{
-  width:100%;
-  max-width:650px;
+.header-user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  flex:1;
+}
+
+.header-avatar{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eee;
+  border:2px solid rgba(255,255,255,.7);
+}
+
+.header-info{
+  min-width:0;
+}
+
+.header-name{
+  font-weight:bold;
+  font-size:16px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.header-status{
+  font-size:12px;
+  opacity:.9;
+  margin-top:2px;
+}
+
+.chat-area{
+  flex:1;
+  overflow-y:auto;
+  padding:14px 10px 95px;
+}
+
+.chat-inner{
+  max-width:700px;
   margin:auto;
-  padding:14px;
-}
-
-.section-title{
-  font-size:18px;
-  font-weight:bold;
-  margin:5px 0 12px;
 }
 
 .loading,
@@ -71,230 +108,271 @@ body{
   padding:25px 15px;
   text-align:center;
   color:#777;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  margin-top:20px;
 }
 
-.chat-card{
-  background:white;
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:10px;
+.message-row{
   display:flex;
-  align-items:center;
-  gap:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.06);
-  cursor:pointer;
-}
-
-.chat-card:active{
-  transform:scale(.99);
-}
-
-.avatar{
-  width:52px;
-  height:52px;
-  min-width:52px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#eee;
-}
-
-.chat-info{
-  flex:1;
-  min-width:0;
-}
-
-.username{
-  font-weight:bold;
-  font-size:16px;
-  margin-bottom:4px;
-}
-
-.last-message{
-  color:#777;
-  font-size:13px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.chat-time{
-  color:#999;
-  font-size:11px;
-  margin-top:4px;
-}
-
-.arrow{
-  color:#aaa;
-  font-size:20px;
-}
-
-.refresh-btn{
+  margin:7px 0;
   width:100%;
-  border:0;
+}
+
+.message-row.mine{
+  justify-content:flex-end;
+}
+
+.message-row.theirs{
+  justify-content:flex-start;
+}
+
+.message-bubble{
+  max-width:78%;
+  padding:9px 12px;
+  border-radius:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+  word-wrap:break-word;
+  overflow-wrap:anywhere;
+}
+
+.mine .message-bubble{
+  background:#6c5ce7;
+  color:white;
+  border-bottom-right-radius:5px;
+}
+
+.theirs .message-bubble{
   background:white;
-  color:#6c5ce7;
-  border-radius:12px;
-  padding:11px;
-  margin-bottom:15px;
-  font-weight:bold;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  color:#222;
+  border-bottom-left-radius:5px;
+}
+
+.message-text{
+  white-space:pre-wrap;
+  font-size:15px;
+  line-height:1.4;
+}
+
+.message-time{
+  font-size:10px;
+  margin-top:4px;
+  opacity:.65;
+  text-align:right;
+}
+
+.voice-btn{
+  border:0;
+  background:rgba(255,255,255,.15);
+  color:inherit;
+  border-radius:10px;
+  padding:8px 12px;
   cursor:pointer;
 }
 
-.bottom-nav{
+.theirs .voice-btn{
+  background:#eee;
+  color:#333;
+}
+
+.image-message{
+  max-width:240px;
+  max-height:300px;
+  border-radius:12px;
+  display:block;
+  object-fit:cover;
+}
+
+.composer{
   position:fixed;
   left:0;
   right:0;
   bottom:0;
-  height:68px;
   background:white;
   border-top:1px solid #ddd;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
+  padding:9px;
   z-index:20;
-  overflow-x:auto;
 }
 
-.nav-btn{
+.composer-inner{
+  max-width:700px;
+  margin:auto;
+  display:flex;
+  align-items:flex-end;
+  gap:6px;
+}
+
+.input{
+  flex:1;
+  min-width:0;
+  border:1px solid #ddd;
+  border-radius:22px;
+  padding:11px 14px;
+  outline:none;
+  font-size:15px;
+  resize:none;
+  max-height:110px;
+  font-family:Arial,sans-serif;
+}
+
+.input:focus{
+  border-color:#6c5ce7;
+}
+
+.action-btn{
+  width:42px;
+  height:42px;
   border:0;
-  background:none;
-  color:#666;
-  font-size:11px;
-  text-align:center;
-  cursor:pointer;
-  min-width:55px;
-}
-
-.nav-icon{
-  display:block;
-  font-size:20px;
-  margin-bottom:3px;
-}
-
-.nav-btn.active{
+  border-radius:50%;
+  background:#f0efff;
   color:#6c5ce7;
-  font-weight:bold;
+  font-size:19px;
+  cursor:pointer;
+  flex-shrink:0;
 }
 
+.send-btn{
+  background:#6c5ce7;
+  color:white;
+}
+
+.action-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.recording{
+  background:#e74c3c!important;
+  color:white!important;
+}
+
+#fileInput{
+  display:none;
+}
+
+.typing{
+  font-size:12px;
+  color:#777;
+  padding:2px 8px 5px;
+  min-height:18px;
+}
+
+@media(max-width:500px){
+  .message-bubble{
+    max-width:85%;
+  }
+
+  .image-message{
+    max-width:210px;
+  }
+}
 </style>
 </head>
 
-
 <body>
 
-
 <header class="header">
-
   <div class="header-row">
 
-    <button
-      class="back-btn"
-      onclick="goHome()">
-      ←
-    </button>
+    <button class="back-btn" onclick="goBack()">←</button>
 
-    <div class="header-title">
-      🔒 Private Chats
+    <div class="header-user">
+
+      <img
+        id="headerAvatar"
+        class="header-avatar"
+        src=""
+        alt=""
+      >
+
+      <div class="header-info">
+
+        <div
+          id="headerName"
+          class="header-name">
+          Loading...
+        </div>
+
+        <div
+          id="headerStatus"
+          class="header-status">
+          Private Chat
+        </div>
+
+      </div>
+
     </div>
 
-    <div style="width:45px;"></div>
-
   </div>
-
 </header>
 
 
-<main class="container">
+<main
+  id="chatArea"
+  class="chat-area">
 
-  <button
-    class="refresh-btn"
-    onclick="loadPrivateChats()">
+  <div class="chat-inner">
 
-    🔄 Refresh Chats
+    <div
+      id="messages"
+      class="loading">
 
-  </button>
+      🔄 Chat load ho rahi hai...
 
+    </div>
 
-  <div class="section-title">
-    💬 Your Private Chats
-  </div>
-
-
-  <div
-    id="chatList"
-    class="loading">
-
-    Private chats load ho rahi hain...
+    <div
+      id="typing"
+      class="typing">
+    </div>
 
   </div>
 
 </main>
 
 
-<nav class="bottom-nav">
+<div class="composer">
 
-  <button
-    class="nav-btn"
-    onclick="goHome()">
+  <div class="composer-inner">
 
-    <span class="nav-icon">🏠</span>
-    Home
+    <input
+      type="file"
+      id="fileInput"
+      accept="image/*"
+      onchange="sendImage(event)"
+    >
 
-  </button>
+    <button
+      class="action-btn"
+      onclick="document.getElementById('fileInput').click()"
+      title="Image">
+      📷
+    </button>
 
+    <button
+      id="voiceBtn"
+      class="action-btn"
+      onclick="toggleVoice()"
+      title="Voice">
+      🎤
+    </button>
 
-  <button
-    class="nav-btn active"
-    onclick="goPrivate()">
+    <textarea
+      id="messageInput"
+      class="input"
+      rows="1"
+      placeholder="Message likhein..."
+      onkeydown="handleKey(event)"
+    ></textarea>
 
-    <span class="nav-icon">💬</span>
-    Private
+    <button
+      id="sendBtn"
+      class="action-btn send-btn"
+      onclick="sendMessage()">
+      ➤
+    </button>
 
-  </button>
+  </div>
 
-
-  <button
-    class="nav-btn"
-    onclick="goProfile()">
-
-    <span class="nav-icon">👤</span>
-    Profile
-
-  </button>
-
-
-  <button
-    class="nav-btn"
-    onclick="goNotifications()">
-
-    <span class="nav-icon">🔔</span>
-    Notifications
-
-  </button>
-
-
-  <button
-    class="nav-btn"
-    onclick="goMehfil()">
-
-    <span class="nav-icon">🏠</span>
-    Mehfil
-
-  </button>
-
-
-  <button
-    class="nav-btn"
-    onclick="goMore()">
-
-    <span class="nav-icon">☰</span>
-    More
-
-  </button>
-
-</nav>
+</div>
 
 
 <script>
@@ -308,7 +386,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
 "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-
 
 const supabaseClient =
 supabase.createClient(
@@ -324,709 +401,33 @@ supabase.createClient(
 );
 
 
-let currentUser = null;
-
-
 /* =====================================================
-   GLOBAL ONLINE PRESENCE
-   Screen par kuch show nahi hota.
-   Sirf online status maintain hota hai.
+   VARIABLES
 ===================================================== */
 
+let currentUser = null;
+let otherUserId = null;
+let otherProfile = null;
+let messagesChannel = null;
 let onlineChannel = null;
 
-
-async function startGlobalPresence(){
-
-  if(!currentUser){
-    return;
-  }
-
-
-  if(onlineChannel){
-    return;
-  }
-
-
-  try{
-
-    onlineChannel =
-      supabaseClient.channel(
-        "chatzone-online-users",
-        {
-          config:{
-            presence:{
-              key:currentUser.id
-            }
-          }
-        }
-      );
-
-
-    onlineChannel.on(
-      "presence",
-      {
-        event:"sync"
-      },
-      function(){
-
-        console.log(
-          "Global online presence synced"
-        );
-
-      }
-    );
-
-
-    onlineChannel.on(
-      "presence",
-      {
-        event:"join"
-      },
-      function(){
-
-        console.log(
-          "User joined online"
-        );
-
-      }
-    );
-
-
-    onlineChannel.on(
-      "presence",
-      {
-        event:"leave"
-      },
-      function(){
-
-        console.log(
-          "User left online"
-        );
-
-      }
-    );
-
-
-    onlineChannel.subscribe(
-      async function(status){
-
-        console.log(
-          "GLOBAL ONLINE:",
-          status
-        );
-
-
-        if(
-          status ===
-          "SUBSCRIBED"
-        ){
-
-          try{
-
-            await onlineChannel.track({
-
-              user_id:
-                currentUser.id,
-
-              online_at:
-                new Date()
-                  .toISOString()
-
-            });
-
-
-            console.log(
-              "User is now ONLINE"
-            );
-
-          }catch(error){
-
-            console.error(
-              "TRACK ERROR:",
-              error
-            );
-
-          }
-
-        }
-
-      }
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "GLOBAL PRESENCE ERROR:",
-      error
-    );
-
-  }
-
-}
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
 
 
 /* =====================================================
-   GET SESSION
+   GET USER ID FROM URL
 ===================================================== */
 
-async function getUserSession(){
+function getOtherUserId(){
 
-  try{
-
-    const result =
-      await supabaseClient
-        .auth
-        .getSession();
-
-
-    if(
-      result &&
-      result.data &&
-      result.data.session &&
-      result.data.session.user
-    ){
-
-      return result.data.session;
-
-    }
-
-  }catch(error){
-
-    console.error(
-      "SESSION ERROR:",
-      error
+  const params =
+    new URLSearchParams(
+      window.location.search
     );
 
-  }
-
-
-  return null;
-
-}
-
-
-/* =====================================================
-   INIT
-===================================================== */
-
-async function init(){
-
-  const list =
-    document.getElementById(
-      "chatList"
-    );
-
-
-  list.innerHTML = `
-
-    <div class="loading">
-
-      🔄 Session check ho rahi hai...
-
-    </div>
-
-  `;
-
-
-  /*
-    Thoda wait taake Supabase
-    local session restore kar sake.
-  */
-
-  await new Promise(
-    resolve =>
-      setTimeout(
-        resolve,
-        700
-      )
-  );
-
-
-  const session =
-    await getUserSession();
-
-
-  if(!session){
-
-    list.innerHTML = `
-
-      <div class="empty">
-
-        🔒 Session available nahi hai.
-
-        <br><br>
-
-        Page ko ek baar refresh karein.
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  currentUser =
-    session.user;
-
-
-  console.log(
-    "Private user:",
-    currentUser.id
-  );
-
-
-  /*
-    IMPORTANT:
-    Private page par online users
-    display nahi honge.
-    Sirf presence background mein
-    active rahegi.
-  */
-
-  await startGlobalPresence();
-
-
-  await loadPrivateChats();
-
-}
-
-
-/* =====================================================
-   LOAD PRIVATE CHATS
-===================================================== */
-
-async function loadPrivateChats(){
-
-  if(!currentUser){
-
-    const session =
-      await getUserSession();
-
-
-    if(!session){
-
-      document.getElementById(
-        "chatList"
-      ).innerHTML = `
-
-        <div class="empty">
-
-          🔒 Session available nahi hai.
-
-          <br><br>
-
-          Page ko ek baar refresh karein.
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    currentUser =
-      session.user;
-
-
-    /*
-      Agar kisi reason se
-      session baad mein mila ho
-      to presence bhi start karo.
-    */
-
-    await startGlobalPresence();
-
-  }
-
-
-  const list =
-    document.getElementById(
-      "chatList"
-    );
-
-
-  list.innerHTML = `
-
-    <div class="loading">
-
-      Private chats load ho rahi hain...
-
-    </div>
-
-  `;
-
-
-  /* ACCEPTED REQUESTS */
-
-  const {
-    data:requests,
-    error:requestError
-  } =
-  await supabaseClient
-    .from("private_requests")
-    .select(
-      "sender_id,receiver_id,created_at,status"
-    )
-    .eq(
-      "status",
-      "accepted"
-    )
-    .or(
-      `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
-    )
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    );
-
-
-  if(requestError){
-
-    console.error(
-      "REQUEST ERROR:",
-      requestError
-    );
-
-
-    list.innerHTML = `
-
-      <div class="empty">
-
-        ❌ Private chats load nahi ho sakin.
-
-        <br><br>
-
-        ${escapeHtml(
-          requestError.message
-        )}
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  if(
-    !requests ||
-    requests.length === 0
-  ){
-
-    list.innerHTML = `
-
-      <div class="empty">
-
-        🔒 Abhi koi private chat nahi hai.
-
-        <br><br>
-
-        Private request accept hone ke baad
-        chat yahan show hogi.
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  /* OTHER USERS */
-
-  const otherIds =
-    [
-      ...new Set(
-        requests
-          .map(
-            request => {
-
-              if(
-                request.sender_id ===
-                currentUser.id
-              ){
-
-                return request.receiver_id;
-
-              }
-
-              return request.sender_id;
-
-            }
-          )
-          .filter(Boolean)
-      )
-    ];
-
-
-  if(otherIds.length === 0){
-
-    list.innerHTML = `
-
-      <div class="empty">
-
-        🔒 Abhi koi private chat nahi hai.
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-
-  /* PROFILES */
-
-  const {
-    data:profiles
-  } =
-  await supabaseClient
-    .from("profiles")
-    .select(
-      "id,username,name,avatar_url"
-    )
-    .in(
-      "id",
-      otherIds
-    );
-
-
-  const profileMap = {};
-
-
-  (profiles || [])
-    .forEach(
-      profile => {
-
-        profileMap[
-          profile.id
-        ] = profile;
-
-      }
-    );
-
-
-  /* LATEST MESSAGES */
-
-  const {
-    data:messages
-  } =
-  await supabaseClient
-    .from("private_messages")
-    .select(
-      "sender_id,receiver_id,content,message_type,created_at"
-    )
-    .or(
-      `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
-    )
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    )
-    .limit(100);
-
-
-  const latestMessages = {};
-
-
-  (messages || [])
-    .forEach(
-      message => {
-
-        const otherId =
-          message.sender_id ===
-          currentUser.id
-
-          ? message.receiver_id
-
-          : message.sender_id;
-
-
-        if(
-          !latestMessages[
-            otherId
-          ]
-        ){
-
-          latestMessages[
-            otherId
-          ] = message;
-
-        }
-
-      }
-    );
-
-
-  /* RENDER */
-
-  list.innerHTML =
-    otherIds
-      .map(
-        userId => {
-
-          return renderChat(
-            userId,
-            profileMap[userId],
-            latestMessages[userId]
-          );
-
-        }
-      )
-      .join("");
-
-}
-
-
-/* =====================================================
-   RENDER CHAT
-===================================================== */
-
-function renderChat(
-  userId,
-  profile,
-  lastMessage
-){
-
-  const username =
-    profile?.username ||
-    profile?.name ||
-    "User";
-
-
-  const avatar =
-    profile?.avatar_url ||
-    getDefaultAvatar();
-
-
-  let preview =
-    "Private chat";
-
-
-  if(lastMessage){
-
-    if(
-      lastMessage.message_type ===
-      "image"
-    ){
-
-      preview =
-        "📷 Image";
-
-    }
-
-    else if(
-      lastMessage.message_type ===
-      "voice"
-    ){
-
-      preview =
-        "🎤 Voice message";
-
-    }
-
-    else if(
-      lastMessage.content
-    ){
-
-      preview =
-        lastMessage.content;
-
-    }
-
-  }
-
-
-  const time =
-    lastMessage
-      ? formatDate(
-          lastMessage.created_at
-        )
-      : "";
-
-
-  return `
-
-    <div
-      class="chat-card"
-      onclick="openChat('${escapeAttr(userId)}')">
-
-      <img
-        class="avatar"
-        src="${escapeAttr(avatar)}"
-        alt=""
-        onerror="this.src=getDefaultAvatar();">
-
-      <div class="chat-info">
-
-        <div class="username">
-
-          @${escapeHtml(
-            username
-          )}
-
-        </div>
-
-        <div class="last-message">
-
-          ${escapeHtml(
-            preview
-          )}
-
-        </div>
-
-        ${
-          time
-          ? `
-            <div class="chat-time">
-              ${escapeHtml(time)}
-            </div>
-          `
-          : ""
-        }
-
-      </div>
-
-      <div class="arrow">
-        ›
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   OPEN CHAT
-===================================================== */
-
-function openChat(userId){
-
-  if(!userId){
-    return;
-  }
-
-
-  window.location.href =
-    "private-chat.html?user=" +
-    encodeURIComponent(
-      userId
-    );
+  return params.get("user");
 
 }
 
@@ -1070,68 +471,1251 @@ function getDefaultAvatar(){
 
 
 /* =====================================================
-   DATE
+   SESSION
 ===================================================== */
 
-function formatDate(date){
+async function getSession(){
+
+  try{
+
+    const result =
+      await supabaseClient
+        .auth
+        .getSession();
+
+    return result?.data?.session || null;
+
+  }catch(error){
+
+    console.error(
+      "SESSION ERROR:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+async function init(){
+
+  otherUserId =
+    getOtherUserId();
+
+  if(!otherUserId){
+
+    showError(
+      "Chat user nahi mila."
+    );
+
+    return;
+
+  }
+
+
+  const session =
+    await getSession();
+
+  if(!session){
+
+    showError(
+      "Session available nahi hai. Pehle login karein."
+    );
+
+    return;
+
+  }
+
+
+  currentUser =
+    session.user;
+
+
+  if(
+    otherUserId ===
+    currentUser.id
+  ){
+
+    showError(
+      "Apne saath private chat open nahi ki ja sakti."
+    );
+
+    return;
+
+  }
+
+
+  await loadProfile();
+
+  await verifyAccepted();
+
+  await loadMessages();
+
+  startRealtime();
+
+  startPresence();
+
+}
+
+
+/* =====================================================
+   LOAD OTHER PROFILE
+===================================================== */
+
+async function loadProfile(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("profiles")
+    .select(
+      "id,username,name,avatar_url"
+    )
+    .eq(
+      "id",
+      otherUserId
+    )
+    .maybeSingle();
+
+
+  if(error){
+
+    console.error(
+      "PROFILE ERROR:",
+      error
+    );
+
+  }
+
+
+  otherProfile =
+    data || {};
+
+
+  const name =
+    otherProfile.username ||
+    otherProfile.name ||
+    "User";
+
+
+  document.getElementById(
+    "headerName"
+  ).textContent =
+    "@" + name;
+
+
+  document.getElementById(
+    "headerAvatar"
+  ).src =
+    otherProfile.avatar_url ||
+    getDefaultAvatar();
+
+
+  document.getElementById(
+    "headerAvatar"
+  ).onerror =
+    function(){
+
+      this.src =
+        getDefaultAvatar();
+
+    };
+
+}
+
+
+/* =====================================================
+   VERIFY ACCEPTED REQUEST
+===================================================== */
+
+async function verifyAccepted(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("private_requests")
+    .select(
+      "id,status"
+    )
+    .eq(
+      "status",
+      "accepted"
+    )
+    .or(
+      `and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${currentUser.id})`
+    )
+    .limit(1);
+
+
+  if(error){
+
+    console.error(
+      "REQUEST CHECK ERROR:",
+      error
+    );
+
+    /*
+      Agar RLS request check ko
+      block kare to chat ko
+      unnecessarily stop nahi karenge.
+    */
+
+    return true;
+
+  }
+
+
+  if(
+    !data ||
+    data.length === 0
+  ){
+
+    showError(
+      "Ye private request abhi accepted nahi hai."
+    );
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =====================================================
+   LOAD MESSAGES
+===================================================== */
+
+async function loadMessages(){
+
+  const box =
+    document.getElementById(
+      "messages"
+    );
+
+
+  box.innerHTML = `
+
+    <div class="loading">
+      🔄 Messages load ho rahe hain...
+    </div>
+
+  `;
+
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("private_messages")
+    .select(
+      "id,sender_id,receiver_id,message_type,content,media_url,created_at"
+    )
+    .or(
+      `and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${currentUser.id})`
+    )
+    .order(
+      "created_at",
+      {
+        ascending:true
+      }
+    );
+
+
+  if(error){
+
+    console.error(
+      "MESSAGE LOAD ERROR:",
+      error
+    );
+
+
+    box.innerHTML = `
+
+      <div class="empty">
+
+        ❌ Messages load nahi ho sake.
+
+        <br><br>
+
+        ${escapeHtml(error.message)}
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  if(
+    !data ||
+    data.length === 0
+  ){
+
+    box.innerHTML = `
+
+      <div class="empty">
+
+        💬 Abhi koi message nahi.
+
+        <br><br>
+
+        Pehla message bhejein.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    data
+      .map(
+        message =>
+          renderMessage(message)
+      )
+      .join("");
+
+
+  scrollToBottom();
+
+}
+
+
+/* =====================================================
+   RENDER MESSAGE
+===================================================== */
+
+function renderMessage(message){
+
+  const mine =
+    message.sender_id ===
+    currentUser.id;
+
+
+  const type =
+    message.message_type ||
+    "text";
+
+
+  let content = "";
+
+
+  if(type === "image"){
+
+    if(message.media_url){
+
+      content = `
+
+        <img
+          class="image-message"
+          src="${escapeAttr(message.media_url)}"
+          alt="Image"
+          onclick="window.open('${escapeAttr(message.media_url)}','_blank')"
+        >
+
+      `;
+
+    }else{
+
+      content =
+        "📷 Image";
+
+    }
+
+  }
+
+  else if(type === "voice"){
+
+    if(message.media_url){
+
+      content = `
+
+        <audio
+          controls
+          style="max-width:220px;width:100%;">
+
+          <source
+            src="${escapeAttr(message.media_url)}">
+
+        </audio>
+
+      `;
+
+    }else{
+
+      content =
+        "🎤 Voice message";
+
+    }
+
+  }
+
+  else{
+
+    content = `
+
+      <div class="message-text">
+
+        ${escapeHtml(
+          message.content || ""
+        )}
+
+      </div>
+
+    `;
+
+  }
+
+
+  return `
+
+    <div
+      class="message-row ${mine ? "mine" : "theirs"}">
+
+      <div class="message-bubble">
+
+        ${content}
+
+        <div class="message-time">
+
+          ${escapeHtml(
+            formatTime(message.created_at)
+          )}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   SEND TEXT MESSAGE
+===================================================== */
+
+async function sendMessage(){
+
+  if(!currentUser || !otherUserId){
+    return;
+  }
+
+
+  const input =
+    document.getElementById(
+      "messageInput"
+    );
+
+
+  const content =
+    input.value.trim();
+
+
+  if(!content){
+    return;
+  }
+
+
+  const sendBtn =
+    document.getElementById(
+      "sendBtn"
+    );
+
+
+  sendBtn.disabled = true;
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("private_messages")
+    .insert({
+
+      sender_id:
+        currentUser.id,
+
+      receiver_id:
+        otherUserId,
+
+      message_type:
+        "text",
+
+      content:
+        content
+
+    });
+
+
+  sendBtn.disabled = false;
+
+
+  if(error){
+
+    console.error(
+      "SEND MESSAGE ERROR:",
+      error
+    );
+
+    alert(
+      "Message send nahi hua:\n" +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  input.value = "";
+
+  autoResize();
+
+  await loadMessages();
+
+}
+
+
+/* =====================================================
+   SEND IMAGE
+===================================================== */
+
+async function sendImage(event){
+
+  const file =
+    event.target.files[0];
+
+
+  event.target.value = "";
+
+
+  if(!file){
+    return;
+  }
+
+
+  if(
+    !file.type.startsWith("image/")
+  ){
+
+    alert(
+      "Sirf image select karein."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    file.size >
+    8 * 1024 * 1024
+  ){
+
+    alert(
+      "Image 8MB se choti honi chahiye."
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    const extension =
+      file.name
+        .split(".")
+        .pop() ||
+      "jpg";
+
+
+    const path =
+      currentUser.id +
+      "/" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2) +
+      "." +
+      extension;
+
+
+    /*
+      Storage bucket ka naam:
+      chat-media
+
+      Agar tumhare Supabase mein
+      bucket nahi hai to neeche
+      error show hoga.
+    */
+
+    const upload =
+      await supabaseClient
+        .storage
+        .from("chat-media")
+        .upload(
+          path,
+          file,
+          {
+            cacheControl:"3600",
+            upsert:false
+          }
+        );
+
+
+    if(upload.error){
+
+      throw upload.error;
+
+    }
+
+
+    const publicUrl =
+      supabaseClient
+        .storage
+        .from("chat-media")
+        .getPublicUrl(path)
+        .data
+        .publicUrl;
+
+
+    const {
+      error
+    } =
+    await supabaseClient
+      .from("private_messages")
+      .insert({
+
+        sender_id:
+          currentUser.id,
+
+        receiver_id:
+          otherUserId,
+
+        message_type:
+          "image",
+
+        content:
+          "",
+
+        media_url:
+          publicUrl
+
+      });
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    await loadMessages();
+
+
+  }catch(error){
+
+    console.error(
+      "IMAGE ERROR:",
+      error
+    );
+
+    alert(
+      "Image send nahi hui:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   VOICE RECORDING
+===================================================== */
+
+async function toggleVoice(){
+
+  if(isRecording){
+
+    stopVoice();
+
+  }else{
+
+    await startVoice();
+
+  }
+
+}
+
+
+/* =====================================================
+   START VOICE
+===================================================== */
+
+async function startVoice(){
+
+  if(
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ){
+
+    alert(
+      "Is browser mein voice recording supported nahi."
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    const stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio:true
+        });
+
+
+    audioChunks = [];
+
+
+    mediaRecorder =
+      new MediaRecorder(stream);
+
+
+    mediaRecorder.ondataavailable =
+      function(event){
+
+        if(
+          event.data &&
+          event.data.size > 0
+        ){
+
+          audioChunks.push(
+            event.data
+          );
+
+        }
+
+      };
+
+
+    mediaRecorder.onstop =
+      async function(){
+
+        stream
+          .getTracks()
+          .forEach(
+            track =>
+              track.stop()
+          );
+
+
+        const blob =
+          new Blob(
+            audioChunks,
+            {
+              type:
+                mediaRecorder.mimeType ||
+                "audio/webm"
+            }
+          );
+
+
+        await uploadVoice(blob);
+
+      };
+
+
+    mediaRecorder.start();
+
+    isRecording = true;
+
+
+    const btn =
+      document.getElementById(
+        "voiceBtn"
+      );
+
+
+    btn.classList.add(
+      "recording"
+    );
+
+
+    btn.textContent =
+      "⏹";
+
+
+    document.getElementById(
+      "messageInput"
+    ).placeholder =
+      "Recording... dobara 🎤 dabayein";
+
+
+  }catch(error){
+
+    console.error(
+      "VOICE START ERROR:",
+      error
+    );
+
+    alert(
+      "Microphone permission nahi mili."
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   STOP VOICE
+===================================================== */
+
+function stopVoice(){
+
+  if(
+    mediaRecorder &&
+    mediaRecorder.state !==
+    "inactive"
+  ){
+
+    mediaRecorder.stop();
+
+  }
+
+
+  isRecording = false;
+
+
+  const btn =
+    document.getElementById(
+      "voiceBtn"
+    );
+
+
+  btn.classList.remove(
+    "recording"
+  );
+
+
+  btn.textContent =
+    "🎤";
+
+
+  document.getElementById(
+    "messageInput"
+  ).placeholder =
+    "Message likhein...";
+
+}
+
+
+/* =====================================================
+   UPLOAD VOICE
+===================================================== */
+
+async function uploadVoice(blob){
+
+  try{
+
+    const path =
+      currentUser.id +
+      "/voice-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2) +
+      ".webm";
+
+
+    const upload =
+      await supabaseClient
+        .storage
+        .from("chat-media")
+        .upload(
+          path,
+          blob,
+          {
+            contentType:
+              "audio/webm",
+            upsert:false
+          }
+        );
+
+
+    if(upload.error){
+
+      throw upload.error;
+
+    }
+
+
+    const publicUrl =
+      supabaseClient
+        .storage
+        .from("chat-media")
+        .getPublicUrl(path)
+        .data
+        .publicUrl;
+
+
+    const {
+      error
+    } =
+    await supabaseClient
+      .from("private_messages")
+      .insert({
+
+        sender_id:
+          currentUser.id,
+
+        receiver_id:
+          otherUserId,
+
+        message_type:
+          "voice",
+
+        content:
+          "",
+
+        media_url:
+          publicUrl
+
+      });
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    await loadMessages();
+
+
+  }catch(error){
+
+    console.error(
+      "VOICE UPLOAD ERROR:",
+      error
+    );
+
+    alert(
+      "Voice send nahi hui:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   REALTIME MESSAGES
+===================================================== */
+
+function startRealtime(){
+
+  if(messagesChannel){
+    return;
+  }
+
+
+  messagesChannel =
+    supabaseClient
+      .channel(
+        "private-chat-" +
+        currentUser.id +
+        "-" +
+        otherUserId
+      )
+      .on(
+        "postgres_changes",
+        {
+          event:"INSERT",
+          schema:"public",
+          table:"private_messages"
+        },
+        function(payload){
+
+          const message =
+            payload.new;
+
+
+          if(
+            (
+              message.sender_id ===
+              currentUser.id &&
+              message.receiver_id ===
+              otherUserId
+            )
+            ||
+            (
+              message.sender_id ===
+              otherUserId &&
+              message.receiver_id ===
+              currentUser.id
+            )
+          ){
+
+            loadMessages();
+
+          }
+
+        }
+      )
+      .subscribe();
+
+}
+
+
+/* =====================================================
+   ONLINE PRESENCE
+===================================================== */
+
+function startPresence(){
+
+  if(
+    !currentUser ||
+    onlineChannel
+  ){
+
+    return;
+
+  }
+
+
+  onlineChannel =
+    supabaseClient
+      .channel(
+        "chatzone-online-users",
+        {
+          config:{
+            presence:{
+              key:
+                currentUser.id
+            }
+          }
+        }
+      );
+
+
+  onlineChannel.subscribe(
+    async function(status){
+
+      if(
+        status ===
+        "SUBSCRIBED"
+      ){
+
+        try{
+
+          await onlineChannel.track({
+
+            user_id:
+              currentUser.id,
+
+            online_at:
+              new Date()
+                .toISOString()
+
+          });
+
+        }catch(error){
+
+          console.error(
+            "PRESENCE ERROR:",
+            error
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   TIME
+===================================================== */
+
+function formatTime(date){
 
   if(!date){
     return "";
   }
 
 
-  const d =
-    new Date(date);
+  return new Date(date)
+    .toLocaleTimeString(
+      [],
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
 
-  const now =
-    new Date();
+}
 
 
-  const seconds =
-    Math.floor(
-      (now - d) / 1000
+/* =====================================================
+   SCROLL
+===================================================== */
+
+function scrollToBottom(){
+
+  setTimeout(
+    function(){
+
+      const area =
+        document.getElementById(
+          "chatArea"
+        );
+
+
+      area.scrollTop =
+        area.scrollHeight;
+
+    },
+    50
+  );
+
+}
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+function handleKey(event){
+
+  if(
+    event.key ===
+    "Enter" &&
+    !event.shiftKey
+  ){
+
+    event.preventDefault();
+
+    sendMessage();
+
+  }
+
+}
+
+
+document
+  .getElementById(
+    "messageInput"
+  )
+  .addEventListener(
+    "input",
+    autoResize
+  );
+
+
+function autoResize(){
+
+  const input =
+    document.getElementById(
+      "messageInput"
     );
 
 
-  if(seconds < 60){
-    return "Just now";
-  }
+  input.style.height =
+    "auto";
 
 
-  const minutes =
-    Math.floor(
-      seconds / 60
-    );
+  input.style.height =
+    Math.min(
+      input.scrollHeight,
+      110
+    ) +
+    "px";
+
+}
 
 
-  if(minutes < 60){
-    return minutes + " min ago";
-  }
+/* =====================================================
+   BACK
+===================================================== */
+
+function goBack(){
+
+  window.location.href =
+    "private.html";
+
+}
 
 
-  const hours =
-    Math.floor(
-      minutes / 60
-    );
+/* =====================================================
+   ERROR
+===================================================== */
 
+function showError(message){
 
-  if(hours < 24){
-    return hours + " hours ago";
-  }
+  document.getElementById(
+    "messages"
+  ).innerHTML = `
 
+    <div class="empty">
 
-  const days =
-    Math.floor(
-      hours / 24
-    );
+      ❌ ${escapeHtml(message)}
 
+      <br><br>
 
-  if(days < 7){
-    return days + " days ago";
-  }
+      <button
+        onclick="goBack()"
+        style="
+          border:0;
+          background:#6c5ce7;
+          color:white;
+          padding:10px 18px;
+          border-radius:10px;
+          cursor:pointer;
+        ">
 
+        ← Back to Private
 
-  return d.toLocaleDateString();
+      </button>
+
+    </div>
+
+  `;
 
 }
 
@@ -1162,72 +1746,7 @@ function escapeAttr(value){
 
 
 /* =====================================================
-   NAVIGATION
-===================================================== */
-
-function goHome(){
-
-  window.location.href =
-    "index.html";
-
-}
-
-
-function goPrivate(){
-
-  if(
-    window.location.pathname
-      .toLowerCase()
-      .endsWith("private.html")
-  ){
-
-    loadPrivateChats();
-
-    return;
-
-  }
-
-
-  window.location.href =
-    "private.html";
-
-}
-
-
-function goProfile(){
-
-  window.location.href =
-    "profile.html";
-
-}
-
-
-function goNotifications(){
-
-  window.location.href =
-    "notifications.html";
-
-}
-
-
-function goMehfil(){
-
-  window.location.href =
-    "mehfil.html";
-
-}
-
-
-function goMore(){
-
-  window.location.href =
-    "more.html";
-
-}
-
-
-/* =====================================================
-   AUTH STATE
+   AUTH
 ===================================================== */
 
 supabaseClient
@@ -1235,30 +1754,14 @@ supabaseClient
   .onAuthStateChange(
     function(event,session){
 
-      console.log(
-        "AUTH EVENT:",
-        event
-      );
-
-
       if(
         session &&
-        session.user
+        session.user &&
+        !currentUser
       ){
 
         currentUser =
           session.user;
-
-        /*
-          Presence start/restart
-          only if needed.
-        */
-
-        if(!onlineChannel){
-
-          startGlobalPresence();
-
-        }
 
       }
 
@@ -1274,19 +1777,22 @@ window.addEventListener(
   "beforeunload",
   function(){
 
+    if(messagesChannel){
+
+      supabaseClient
+        .removeChannel(
+          messagesChannel
+        );
+
+    }
+
+
     if(onlineChannel){
 
       onlineChannel
         .untrack()
         .catch(
-          function(error){
-
-            console.error(
-              "UNTRACK ERROR:",
-              error
-            );
-
-          }
+          function(){}
         );
 
     }
