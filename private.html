@@ -24,6 +24,8 @@ body{
   color:#222;
 }
 
+/* ================= HEADER ================= */
+
 .header{
   height:76px;
   background:linear-gradient(135deg,#6c5ce7,#8e44ad);
@@ -57,6 +59,7 @@ body{
   color:white;
   font-size:24px;
   cursor:pointer;
+  flex-shrink:0;
 }
 
 .chat-avatar{
@@ -65,6 +68,7 @@ body{
   border-radius:50%;
   object-fit:cover;
   background:#eee;
+  flex-shrink:0;
 }
 
 .user-info{
@@ -98,6 +102,27 @@ body{
 .status.offline{
   color:#eee;
 }
+
+/* ================= LEAVE BUTTON ================= */
+
+.leave-btn{
+  border:0;
+  background:rgba(255,255,255,.18);
+  color:white;
+  height:36px;
+  padding:0 12px;
+  border-radius:18px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+.leave-btn:active{
+  transform:scale(.96);
+}
+
+/* ================= MESSAGES ================= */
 
 .messages{
   position:fixed;
@@ -167,6 +192,31 @@ body{
   text-align:right;
 }
 
+/* ================= MESSAGE STATUS ================= */
+
+.message-status{
+  font-size:9px;
+  margin-top:2px;
+  text-align:right;
+  opacity:.82;
+  line-height:1;
+}
+
+.message-status.seen{
+  color:#d7f7ff;
+  font-weight:bold;
+}
+
+.message-status.delivered{
+  color:#e8e8ff;
+}
+
+.message-status.sent{
+  color:#e8e8e8;
+}
+
+/* ================= INPUT ================= */
+
 .input-area{
   position:fixed;
   left:0;
@@ -229,6 +279,48 @@ body{
   cursor:pointer;
   margin-top:8px;
 }
+
+/* ================= MOBILE ================= */
+
+@media(max-width:430px){
+
+  .header{
+    padding-left:8px;
+    padding-right:8px;
+  }
+
+  .header-inner{
+    gap:7px;
+  }
+
+  .back-btn{
+    width:38px;
+    height:38px;
+  }
+
+  .chat-avatar{
+    width:42px;
+    height:42px;
+  }
+
+  .chat-name{
+    font-size:15px;
+  }
+
+  .chat-username{
+    font-size:11px;
+  }
+
+  .leave-btn{
+    padding:0 9px;
+    font-size:11px;
+  }
+
+  .bubble{
+    max-width:82%;
+  }
+
+}
 </style>
 </head>
 
@@ -261,6 +353,14 @@ body{
       </div>
 
     </div>
+
+    <!-- LEAVE BUTTON -->
+    <button
+      class="leave-btn"
+      onclick="leaveChat()"
+    >
+      Leave
+    </button>
 
   </div>
 
@@ -331,8 +431,10 @@ supabase.createClient(
 let currentUser = null;
 let targetUserId = null;
 let targetProfile = null;
+
 let messagesChannel = null;
 let presenceChannel = null;
+
 let loadingMessages = false;
 
 
@@ -488,7 +590,7 @@ async function loadProfile(){
 
 
   targetProfile =
-  result.data;
+    result.data;
 
 
   document.getElementById(
@@ -522,12 +624,12 @@ async function loadProfile(){
   document.getElementById(
     "chatAvatar"
   ).onerror =
-    function(){
+  function(){
 
-      this.src =
-        defaultAvatar();
+    this.src =
+      defaultAvatar();
 
-    };
+  };
 
 
   updateStatus(
@@ -547,9 +649,9 @@ async function loadProfile(){
 function updateStatus(lastSeen){
 
   const status =
-  document.getElementById(
-    "chatStatus"
-  );
+    document.getElementById(
+      "chatStatus"
+    );
 
 
   if(!lastSeen){
@@ -597,6 +699,163 @@ function updateStatus(lastSeen){
 
 
 /* =========================
+   CHECK ONLINE
+========================= */
+
+function isTargetOnline(){
+
+  if(!targetProfile?.last_seen){
+    return false;
+  }
+
+  const time =
+    new Date(
+      targetProfile.last_seen
+    ).getTime();
+
+  if(Number.isNaN(time)){
+    return false;
+  }
+
+  return (
+    Date.now() - time <=
+    5 * 60 * 1000
+  );
+
+}
+
+
+/* =========================
+   MARK DELIVERED
+========================= */
+
+async function markMessagesDelivered(){
+
+  if(
+    !currentUser ||
+    !targetUserId
+  ){
+    return;
+  }
+
+
+  if(!isTargetOnline()){
+    return;
+  }
+
+
+  const now =
+    new Date().toISOString();
+
+
+  const result =
+    await supabaseClient
+    .from("private_messages")
+    .update({
+      delivered_at:now
+    })
+    .eq(
+      "sender_id",
+      currentUser.id === targetUserId
+        ? "__none__"
+        : targetUserId
+    )
+    .eq(
+      "receiver_id",
+      currentUser.id
+    )
+    .is(
+      "delivered_at",
+      null
+    );
+
+
+  if(result.error){
+
+    console.log(
+      "DELIVERED UPDATE:",
+      result.error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   MARK SEEN
+========================= */
+
+async function markMessagesSeen(){
+
+  if(
+    !currentUser ||
+    !targetUserId
+  ){
+    return;
+  }
+
+
+  const now =
+    new Date().toISOString();
+
+
+  /* Pehle delivered */
+
+  await supabaseClient
+  .from("private_messages")
+  .update({
+    delivered_at:now
+  })
+  .eq(
+    "sender_id",
+    targetUserId
+  )
+  .eq(
+    "receiver_id",
+    currentUser.id
+  )
+  .is(
+    "delivered_at",
+    null
+  );
+
+
+  /* Phir seen */
+
+  const result =
+    await supabaseClient
+    .from("private_messages")
+    .update({
+      seen_at:now
+    })
+    .eq(
+      "sender_id",
+      targetUserId
+    )
+    .eq(
+      "receiver_id",
+      currentUser.id
+    )
+    .is(
+      "seen_at",
+      null
+    );
+
+
+  if(result.error){
+
+    console.log(
+      "SEEN UPDATE:",
+      result.error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
    LOAD MESSAGES
 ========================= */
 
@@ -608,9 +867,9 @@ async function loadMessages(){
 
 
   const box =
-  document.getElementById(
-    "messagesInner"
-  );
+    document.getElementById(
+      "messagesInner"
+    );
 
 
   box.innerHTML = `
@@ -621,18 +880,20 @@ async function loadMessages(){
 
 
   const result =
-  await supabaseClient
-  .from("private_messages")
-  .select(
-    "id,sender_id,receiver_id,message_type,content,media_url,created_at"
-  )
-  .or(
-    `and(sender_id.eq.${currentUser.id},receiver_id.eq.${targetUserId}),and(sender_id.eq.${targetUserId},receiver_id.eq.${currentUser.id})`
-  )
-  .order(
-    "created_at",
-    {ascending:true}
-  );
+    await supabaseClient
+    .from("private_messages")
+    .select(
+      "id,sender_id,receiver_id,message_type,content,media_url,created_at,delivered_at,seen_at"
+    )
+    .or(
+      `and(sender_id.eq.${currentUser.id},receiver_id.eq.${targetUserId}),and(sender_id.eq.${targetUserId},receiver_id.eq.${currentUser.id})`
+    )
+    .order(
+      "created_at",
+      {
+        ascending:true
+      }
+    );
 
 
   loadingMessages=false;
@@ -693,6 +954,40 @@ async function loadMessages(){
 
 
 /* =========================
+   MESSAGE STATUS
+========================= */
+
+function getMessageStatus(message){
+
+  if(message.seen_at){
+
+    return {
+      text:"Seen",
+      className:"seen"
+    };
+
+  }
+
+
+  if(message.delivered_at){
+
+    return {
+      text:"Delivered",
+      className:"delivered"
+    };
+
+  }
+
+
+  return {
+    text:"Sent",
+    className:"sent"
+  };
+
+}
+
+
+/* =========================
    RENDER MESSAGE
 ========================= */
 
@@ -725,6 +1020,31 @@ function renderMessage(message){
     );
 
 
+  let statusHTML = "";
+
+
+  /*
+    Status sirf apne bheje hue
+    message ke neeche show hoga.
+  */
+
+  if(mine){
+
+    const status =
+      getMessageStatus(
+        message
+      );
+
+
+    statusHTML = `
+      <div class="message-status ${status.className}">
+        ${status.text}
+      </div>
+    `;
+
+  }
+
+
   return `
 
     <div class="message-row ${
@@ -738,6 +1058,8 @@ function renderMessage(message){
         <div class="message-time">
           ${escapeHtml(time)}
         </div>
+
+        ${statusHTML}
 
       </div>
 
@@ -755,18 +1077,18 @@ function renderMessage(message){
 async function sendMessage(){
 
   const input =
-  document.getElementById(
-    "messageInput"
-  );
+    document.getElementById(
+      "messageInput"
+    );
 
   const button =
-  document.getElementById(
-    "sendBtn"
-  );
+    document.getElementById(
+      "sendBtn"
+    );
 
 
   const content =
-  input.value.trim();
+    input.value.trim();
 
 
   if(!content)return;
@@ -791,28 +1113,28 @@ async function sendMessage(){
 
 
   const result =
-  await supabaseClient
-  .from("private_messages")
-  .insert({
+    await supabaseClient
+    .from("private_messages")
+    .insert({
 
-    sender_id:
-      currentUser.id,
+      sender_id:
+        currentUser.id,
 
-    receiver_id:
-      targetUserId,
+      receiver_id:
+        targetUserId,
 
-    message_type:
-      "text",
+      message_type:
+        "text",
 
-    content:
-      content,
+      content:
+        content,
 
-    media_url:
-      null
+      media_url:
+        null
 
-  })
-  .select()
-  .single();
+    })
+    .select()
+    .single();
 
 
   input.disabled=false;
@@ -863,13 +1185,13 @@ function startRealtime(){
 
 
   messagesChannel =
-  supabaseClient
-  .channel(
-    "private-chat-" +
-    currentUser.id +
-    "-" +
-    targetUserId
-  );
+    supabaseClient
+    .channel(
+      "private-chat-" +
+      currentUser.id +
+      "-" +
+      targetUserId
+    );
 
 
   messagesChannel.on(
@@ -879,11 +1201,12 @@ function startRealtime(){
       schema:"public",
       table:"private_messages"
     },
-    payload => {
+    async payload => {
 
       const row =
         payload.new ||
         payload.old;
+
 
       if(!row)return;
 
@@ -906,7 +1229,23 @@ function startRealtime(){
 
       if(relevant){
 
-        loadMessages();
+        await loadMessages();
+
+        /*
+          Agar receiver chat mein hai,
+          incoming message automatically seen.
+        */
+
+        if(
+          row.sender_id ===
+          targetUserId &&
+          row.receiver_id ===
+          currentUser.id
+        ){
+
+          await markMessagesSeen();
+
+        }
 
       }
 
@@ -917,7 +1256,9 @@ function startRealtime(){
   messagesChannel.subscribe();
 
 
-  /* Presence */
+  /* =========================
+     PRESENCE
+  ========================= */
 
   if(presenceChannel){
 
@@ -929,15 +1270,17 @@ function startRealtime(){
 
 
   presenceChannel =
-  supabaseClient
-  .channel(
-    "private-chat-presence"
-  );
+    supabaseClient
+    .channel(
+      "private-chat-presence"
+    );
 
 
   presenceChannel.on(
     "presence",
-    {event:"sync"},
+    {
+      event:"sync"
+    },
     async ()=>{
 
       const state =
@@ -981,6 +1324,16 @@ function startRealtime(){
         status.className =
           "status online";
 
+
+        /*
+          Target online hai,
+          isliye received messages delivered.
+        */
+
+        await markMessagesDelivered();
+
+        await loadMessages();
+
       }else{
 
         updateStatus(
@@ -1017,14 +1370,52 @@ function startRealtime(){
 
 
 /* =========================
+   LEAVE CHAT
+========================= */
+
+function leaveChat(){
+
+  /*
+    Sirf chat screen se bahar.
+    Messages/request delete nahi honge.
+  */
+
+  if(messagesChannel){
+
+    supabaseClient.removeChannel(
+      messagesChannel
+    );
+
+    messagesChannel=null;
+
+  }
+
+
+  if(presenceChannel){
+
+    supabaseClient.removeChannel(
+      presenceChannel
+    );
+
+    presenceChannel=null;
+
+  }
+
+
+  window.location.assign(
+    "private.html"
+  );
+
+}
+
+
+/* =========================
    BACK
 ========================= */
 
 function goBack(){
 
-  window.location.assign(
-    "private.html"
-  );
+  leaveChat();
 
 }
 
@@ -1039,6 +1430,7 @@ function formatTime(value){
 
   const date =
     new Date(value);
+
 
   if(
     Number.isNaN(
@@ -1072,6 +1464,7 @@ function scrollToBottom(){
     document.getElementById(
       "messages"
     );
+
 
   setTimeout(()=>{
 
@@ -1236,6 +1629,14 @@ document
   if(!profileLoaded)return;
 
 
+  /*
+    Chat open hote hi:
+    received messages = Seen
+  */
+
+  await markMessagesSeen();
+
+
   await loadMessages();
 
 
@@ -1253,4 +1654,3 @@ document
 
 </body>
 </html>
-```
