@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -329,6 +330,146 @@ let currentUser = null;
 
 
 /* =====================================================
+   GLOBAL ONLINE PRESENCE
+   Screen par kuch show nahi hota.
+   Sirf online status maintain hota hai.
+===================================================== */
+
+let onlineChannel = null;
+
+
+async function startGlobalPresence(){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  if(onlineChannel){
+    return;
+  }
+
+
+  try{
+
+    onlineChannel =
+      supabaseClient.channel(
+        "chatzone-online-users",
+        {
+          config:{
+            presence:{
+              key:currentUser.id
+            }
+          }
+        }
+      );
+
+
+    onlineChannel.on(
+      "presence",
+      {
+        event:"sync"
+      },
+      function(){
+
+        console.log(
+          "Global online presence synced"
+        );
+
+      }
+    );
+
+
+    onlineChannel.on(
+      "presence",
+      {
+        event:"join"
+      },
+      function(){
+
+        console.log(
+          "User joined online"
+        );
+
+      }
+    );
+
+
+    onlineChannel.on(
+      "presence",
+      {
+        event:"leave"
+      },
+      function(){
+
+        console.log(
+          "User left online"
+        );
+
+      }
+    );
+
+
+    onlineChannel.subscribe(
+      async function(status){
+
+        console.log(
+          "GLOBAL ONLINE:",
+          status
+        );
+
+
+        if(
+          status ===
+          "SUBSCRIBED"
+        ){
+
+          try{
+
+            await onlineChannel.track({
+
+              user_id:
+                currentUser.id,
+
+              online_at:
+                new Date()
+                  .toISOString()
+
+            });
+
+
+            console.log(
+              "User is now ONLINE"
+            );
+
+          }catch(error){
+
+            console.error(
+              "TRACK ERROR:",
+              error
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "GLOBAL PRESENCE ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =====================================================
    GET SESSION
 ===================================================== */
 
@@ -337,7 +478,9 @@ async function getUserSession(){
   try{
 
     const result =
-      await supabaseClient.auth.getSession();
+      await supabaseClient
+        .auth
+        .getSession();
 
 
     if(
@@ -381,16 +524,17 @@ async function init(){
   list.innerHTML = `
 
     <div class="loading">
+
       🔄 Session check ho rahi hai...
+
     </div>
 
   `;
 
 
   /*
-     Thoda wait taake
-     Supabase local session restore
-     kar sake.
+    Thoda wait taake Supabase
+    local session restore kar sake.
   */
 
   await new Promise(
@@ -437,6 +581,17 @@ async function init(){
   );
 
 
+  /*
+    IMPORTANT:
+    Private page par online users
+    display nahi honge.
+    Sirf presence background mein
+    active rahegi.
+  */
+
+  await startGlobalPresence();
+
+
   await loadPrivateChats();
 
 }
@@ -479,6 +634,15 @@ async function loadPrivateChats(){
 
     currentUser =
       session.user;
+
+
+    /*
+      Agar kisi reason se
+      session baad mein mila ho
+      to presence bhi start karo.
+    */
+
+    await startGlobalPresence();
 
   }
 
@@ -1079,25 +1243,58 @@ supabaseClient
       );
 
 
-      /*
-        Yahan koi logout redirect nahi.
-        Private page khud login.html
-        par nahi bhejega.
-      */
-
       if(
         session &&
-        session.user &&
-        !currentUser
+        session.user
       ){
 
         currentUser =
           session.user;
 
+        /*
+          Presence start/restart
+          only if needed.
+        */
+
+        if(!onlineChannel){
+
+          startGlobalPresence();
+
+        }
+
       }
 
     }
   );
+
+
+/* =====================================================
+   CLEANUP
+===================================================== */
+
+window.addEventListener(
+  "beforeunload",
+  function(){
+
+    if(onlineChannel){
+
+      onlineChannel
+        .untrack()
+        .catch(
+          function(error){
+
+            console.error(
+              "UNTRACK ERROR:",
+              error
+            );
+
+          }
+        );
+
+    }
+
+  }
+);
 
 
 /* =====================================================
@@ -1110,3 +1307,4 @@ init();
 
 </body>
 </html>
+```
