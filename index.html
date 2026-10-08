@@ -320,6 +320,17 @@ border-radius:12px;
 margin-top:8px
 }
 
+/* VOICE POST */
+.post-voice{
+width:100%;
+margin-top:10px
+}
+
+.post-voice audio{
+width:100%;
+height:42px
+}
+
 /* ACTIONS */
 .post-actions{
 display:flex;
@@ -554,9 +565,7 @@ padding:25px 10px;
 color:#777
 }
 
-/* =====================================
-   BOTTOM NAVIGATION
-===================================== */
+/* BOTTOM NAV */
 .bottom-nav{
 position:fixed;
 bottom:0;
@@ -713,9 +722,88 @@ cursor:pointer
 
 .hidden-input{display:none}
 
-/* =====================================
-   MOBILE RESPONSIVE
-===================================== */
+/* VOICE RECORDER */
+.voice-popup{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:200;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.voice-content{
+width:100%;
+max-width:400px;
+background:white;
+border-radius:18px;
+padding:20px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.voice-content h3{
+margin:0 0 15px;
+color:#6c5ce7;
+}
+
+.voice-status{
+font-size:14px;
+color:#777;
+margin:12px 0;
+min-height:20px;
+}
+
+.voice-timer{
+font-size:28px;
+font-weight:bold;
+color:#6c5ce7;
+margin:12px 0;
+}
+
+.voice-buttons{
+display:flex;
+gap:8px;
+}
+
+.voice-buttons button{
+flex:1;
+border:0;
+border-radius:12px;
+padding:12px 8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.voice-record-btn{
+background:#ffecec;
+color:#d00000;
+}
+
+.voice-stop-btn{
+background:#eee;
+color:#555;
+}
+
+.voice-send-btn{
+background:#6c5ce7;
+color:white;
+}
+
+.voice-close-btn{
+width:100%;
+border:0;
+background:#eee;
+border-radius:12px;
+padding:11px;
+margin-top:9px;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* MOBILE */
 @media(max-width:500px){
 
 .header{
@@ -783,7 +871,6 @@ margin-left:12px
 }
 }
 
-/* SMALL PHONES */
 @media(max-width:380px){
 
 .logo{
@@ -832,7 +919,6 @@ border-radius:10px
 }
 }
 
-/* VERY SMALL */
 @media(max-width:340px){
 
 .logo{
@@ -997,6 +1083,57 @@ style="margin-top:10px"></textarea>
 </div>
 </div>
 
+<!-- VOICE RECORDER -->
+<div id="voicePopup" class="voice-popup">
+
+<div class="voice-content">
+
+<h3>🎤 Voice Post</h3>
+
+<div id="voiceStatus" class="voice-status">
+Ready to record
+</div>
+
+<div id="voiceTimer" class="voice-timer">
+00:00
+</div>
+
+<div class="voice-buttons">
+
+<button
+id="voiceRecordBtn"
+class="voice-record-btn"
+onclick="recordVoice()">
+🔴 Record
+</button>
+
+<button
+id="voiceStopBtn"
+class="voice-stop-btn"
+onclick="stopVoice()"
+disabled>
+⏹️ Stop
+</button>
+
+<button
+id="voiceSendBtn"
+class="voice-send-btn"
+onclick="sendVoice()"
+disabled>
+📤 Send
+</button>
+
+</div>
+
+<button
+class="voice-close-btn"
+onclick="closeVoice()">
+Cancel
+</button>
+
+</div>
+</div>
+
 <!-- TRENDING -->
 <div id="trendingBox" class="trending-box">
 <div class="trending-content">
@@ -1048,6 +1185,13 @@ let currentPosts=[];
 let onlineChannel=null;
 let followMap={};
 let activeCommentReply={postId:null,commentId:null,username:null};
+
+/* VOICE VARIABLES */
+let voiceRecorder=null;
+let voiceChunks=[];
+let voiceBlob=null;
+let voiceTimerInterval=null;
+let voiceSeconds=0;
 
 async function init(){
 try{
@@ -1259,7 +1403,7 @@ try{
 
 const {data:posts,error:postsError}=await supabaseClient
 .from("posts")
-.select("id,user_id,content,created_at,post_type,category,image_url")
+.select("id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration")
 .order("created_at",{ascending:false})
 .order("id",{ascending:false});
 
@@ -1471,6 +1615,12 @@ alt="Post image"
 loading="lazy">`
 :"";
 
+const voiceHTML=post.voice_url
+?`<div class="post-voice">
+<audio controls preload="metadata" src="${escapeAttribute(post.voice_url)}"></audio>
+</div>`
+:"";
+
 const categoryHTML=post.category
 ?`<div class="post-category">
 #${escapeHtml(post.category)}
@@ -1532,6 +1682,8 @@ ${escapeHtml(post.content)}
 }
 
 ${imageHTML}
+
+${voiceHTML}
 
 <div class="post-actions">
 
@@ -2821,45 +2973,311 @@ error.message
 }
 }
 
-/* VOICE */
+/* =========================================
+   VOICE RECORDER
+========================================= */
+
 function startVoice(){
 
-const SpeechRecognition=
-window.SpeechRecognition||
-window.webkitSpeechRecognition;
+const popup=document.getElementById("voicePopup");
 
-if(!SpeechRecognition){
+if(!popup)return;
+
+popup.style.display="flex";
+
+resetVoiceRecorder();
+
+}
+
+function resetVoiceRecorder(){
+
+voiceChunks=[];
+voiceBlob=null;
+voiceSeconds=0;
+
+clearInterval(voiceTimerInterval);
+
+const timer=document.getElementById("voiceTimer");
+const status=document.getElementById("voiceStatus");
+const recordBtn=document.getElementById("voiceRecordBtn");
+const stopBtn=document.getElementById("voiceStopBtn");
+const sendBtn=document.getElementById("voiceSendBtn");
+
+if(timer)
+timer.textContent="00:00";
+
+if(status)
+status.textContent="Ready to record";
+
+if(recordBtn){
+recordBtn.disabled=false;
+recordBtn.textContent="🔴 Record";
+}
+
+if(stopBtn)
+stopBtn.disabled=true;
+
+if(sendBtn)
+sendBtn.disabled=true;
+
+}
+
+async function recordVoice(){
+
+try{
+
+if(!navigator.mediaDevices||
+!navigator.mediaDevices.getUserMedia){
 
 alert(
-"Voice typing is not supported in this browser."
+"Voice recording is not supported in this browser."
 );
 
 return;
 
 }
 
-const recognition=
-new SpeechRecognition();
+const stream=
+await navigator.mediaDevices.getUserMedia({
+audio:true
+});
 
-recognition.lang="ur-PK";
-recognition.interimResults=false;
-recognition.continuous=false;
+voiceChunks=[];
+voiceBlob=null;
 
-recognition.onresult=function(event){
+voiceRecorder=
+new MediaRecorder(stream);
 
-const text=
-event.results[0][0].transcript;
+voiceRecorder.ondataavailable=function(event){
 
-const textarea=
-document.getElementById("postText");
-
-textarea.value+=
-(textarea.value?"\n":"")+
-text;
+if(event.data&&event.data.size>0){
+voiceChunks.push(event.data);
+}
 
 };
 
-recognition.start();
+voiceRecorder.onstop=function(){
+
+stream.getTracks().forEach(track=>track.stop());
+
+voiceBlob=
+new Blob(
+voiceChunks,
+{type:voiceRecorder.mimeType||"audio/webm"}
+);
+
+const status=document.getElementById("voiceStatus");
+const sendBtn=document.getElementById("voiceSendBtn");
+const recordBtn=document.getElementById("voiceRecordBtn");
+const stopBtn=document.getElementById("voiceStopBtn");
+
+if(status)
+status.textContent="Recording ready — Send Voice dabayein";
+
+if(sendBtn)
+sendBtn.disabled=false;
+
+if(recordBtn)
+recordBtn.disabled=false;
+
+if(stopBtn)
+stopBtn.disabled=true;
+
+};
+
+voiceRecorder.start();
+
+voiceSeconds=0;
+
+const status=document.getElementById("voiceStatus");
+const recordBtn=document.getElementById("voiceRecordBtn");
+const stopBtn=document.getElementById("voiceStopBtn");
+const sendBtn=document.getElementById("voiceSendBtn");
+
+if(status)
+status.textContent="🔴 Recording...";
+
+if(recordBtn)
+recordBtn.disabled=true;
+
+if(stopBtn)
+stopBtn.disabled=false;
+
+if(sendBtn)
+sendBtn.disabled=true;
+
+clearInterval(voiceTimerInterval);
+
+voiceTimerInterval=setInterval(function(){
+
+voiceSeconds++;
+
+const minutes=
+String(Math.floor(voiceSeconds/60)).padStart(2,"0");
+
+const seconds=
+String(voiceSeconds%60).padStart(2,"0");
+
+const timer=
+document.getElementById("voiceTimer");
+
+if(timer)
+timer.textContent=minutes+":"+seconds;
+
+},1000);
+
+}catch(error){
+
+console.error("Voice recorder error:",error);
+
+alert(
+"Microphone open nahi ho saka:\n"+
+error.message
+);
+
+}
+
+}
+
+function stopVoice(){
+
+if(
+voiceRecorder&&
+voiceRecorder.state==="recording"
+){
+
+voiceRecorder.stop();
+
+clearInterval(voiceTimerInterval);
+
+}
+
+}
+
+async function sendVoice(){
+
+if(!currentUser){
+
+alert("Please login first.");
+return;
+
+}
+
+if(!voiceBlob){
+
+alert("Pehle voice record karein.");
+return;
+
+}
+
+try{
+
+const sendBtn=
+document.getElementById("voiceSendBtn");
+
+const status=
+document.getElementById("voiceStatus");
+
+if(sendBtn)
+sendBtn.disabled=true;
+
+if(status)
+status.textContent="Uploading voice...";
+
+const fileName=
+currentUser.id+
+"_"+Date.now()+
+".webm";
+
+const filePath=
+"voices/"+fileName;
+
+const {error:uploadError}=
+await supabaseClient.storage
+.from("voice-posts")
+.upload(
+filePath,
+voiceBlob,
+{
+contentType:"audio/webm",
+cacheControl:"3600",
+upsert:false
+}
+);
+
+if(uploadError)
+throw uploadError;
+
+const {data:publicData}=
+supabaseClient.storage
+.from("voice-posts")
+.getPublicUrl(filePath);
+
+const voiceUrl=
+publicData?.publicUrl||"";
+
+if(!voiceUrl)
+throw new Error("Voice URL nahi mili.");
+
+const {error:postError}=
+await supabaseClient
+.from("posts")
+.insert({
+user_id:currentUser.id,
+content:"",
+post_type:"voice",
+voice_url:voiceUrl,
+voice_duration:voiceSeconds
+});
+
+if(postError)
+throw postError;
+
+closeVoice();
+
+await loadFeed(true);
+
+}catch(error){
+
+console.error("Voice send error:",error);
+
+alert(
+"Voice send nahi hui:\n"+
+error.message
+);
+
+const sendBtn=
+document.getElementById("voiceSendBtn");
+
+if(sendBtn)
+sendBtn.disabled=false;
+
+}
+
+}
+
+function closeVoice(){
+
+clearInterval(voiceTimerInterval);
+
+if(
+voiceRecorder&&
+voiceRecorder.state==="recording"
+){
+
+voiceRecorder.stop();
+
+}
+
+voiceRecorder=null;
+voiceChunks=[];
+voiceBlob=null;
+
+const popup=
+document.getElementById("voicePopup");
+
+if(popup)
+popup.style.display="none";
 
 }
 
