@@ -1,151 +1,310 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Private - ChatZone 💬</title>
+<title>Private Chat - ChatZone 💬</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;width:100%;min-height:100%;overflow-x:hidden}
-body{font-family:Arial,sans-serif;background:#f4f3fb;color:#222}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f4f3fb;
+  color:#222;
+}
 
 .header{
- background:linear-gradient(135deg,#6c5ce7,#8e44ad);
- color:white;padding:15px 12px;position:sticky;top:0;z-index:20;
- box-shadow:0 2px 8px rgba(0,0,0,.15)
-}
-.header-inner{max-width:680px;margin:auto}
-.title{font-size:22px;font-weight:bold}
-.subtitle{font-size:13px;opacity:.9;margin-top:3px}
-.online-box{
- margin-top:12px;background:rgba(255,255,255,.14);
- border-radius:12px;padding:9px 10px;font-size:13px
-}
-
-.container{width:100%;max-width:680px;margin:auto;padding:12px 10px 90px}
-.section-title{font-size:18px;font-weight:bold;margin:8px 2px 12px}
-
-.loading,.empty,.error{
- background:white;border-radius:14px;padding:22px 15px;
- text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);color:#777
+  height:76px;
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:white;
+  display:flex;
+  align-items:center;
+  padding:10px 12px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:20;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
 }
 
-.chat-card{
- background:white;border-radius:15px;padding:12px;margin-bottom:10px;
- display:flex;align-items:center;gap:11px;cursor:pointer;
- box-shadow:0 2px 8px rgba(0,0,0,.06);transition:.15s
+.header-inner{
+  width:100%;
+  max-width:680px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-.chat-card:active{transform:scale(.98)}
 
-.avatar-wrap{position:relative;width:52px;height:52px;min-width:52px}
-.avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;background:#eee}
-.online-dot{
- position:absolute;right:0;bottom:1px;width:13px;height:13px;
- border-radius:50%;background:#bbb;border:2px solid white
+.back-btn{
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  color:white;
+  font-size:24px;
+  cursor:pointer;
 }
-.online-dot.online{background:#22c55e}
 
-.chat-info{flex:1;min-width:0}
-.name{font-size:16px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.username{color:#6c5ce7;font-size:13px;margin-top:2px}
-.last-message{color:#777;font-size:13px;margin-top:5px}
-.arrow{color:#999;font-size:22px}
+.chat-avatar{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eee;
+}
 
-.bottom-nav{
- position:fixed;left:0;right:0;bottom:0;height:64px;background:white;
- border-top:1px solid #ddd;display:flex;justify-content:center;
- z-index:30;box-shadow:0 -2px 8px rgba(0,0,0,.08)
+.user-info{
+  min-width:0;
+  flex:1;
 }
-.nav-inner{width:100%;max-width:680px;display:flex;justify-content:space-around;align-items:center}
-.nav-btn{
- border:0;background:none;color:#777;font-size:12px;cursor:pointer;padding:7px 12px
-}
-.nav-btn span{display:block;font-size:21px;margin-bottom:2px}
-.nav-btn.active{color:#6c5ce7;font-weight:bold}
 
-.refresh-btn{
- border:0;background:#6c5ce7;color:white;border-radius:10px;
- padding:8px 13px;cursor:pointer;float:right;margin-top:-35px
+.chat-name{
+  font-size:17px;
+  font-weight:bold;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
-.clear{clear:both}
+
+.chat-username{
+  font-size:12px;
+  opacity:.9;
+  margin-top:2px;
+}
+
+.status{
+  font-size:11px;
+  margin-top:2px;
+}
+
+.status.online{
+  color:#b8ffca;
+}
+
+.status.offline{
+  color:#eee;
+}
+
+.messages{
+  position:fixed;
+  top:76px;
+  bottom:70px;
+  left:0;
+  right:0;
+  overflow-y:auto;
+  padding:14px 10px 18px;
+}
+
+.messages-inner{
+  width:100%;
+  max-width:680px;
+  margin:auto;
+}
+
+.loading,
+.empty,
+.error{
+  background:white;
+  border-radius:14px;
+  padding:20px;
+  text-align:center;
+  color:#777;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+.message-row{
+  display:flex;
+  margin:7px 0;
+}
+
+.message-row.mine{
+  justify-content:flex-end;
+}
+
+.message-row.theirs{
+  justify-content:flex-start;
+}
+
+.bubble{
+  max-width:78%;
+  padding:10px 12px;
+  border-radius:16px;
+  word-wrap:break-word;
+  white-space:pre-wrap;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+
+.mine .bubble{
+  background:#6c5ce7;
+  color:white;
+  border-bottom-right-radius:4px;
+}
+
+.theirs .bubble{
+  background:white;
+  color:#222;
+  border-bottom-left-radius:4px;
+}
+
+.message-time{
+  font-size:10px;
+  opacity:.65;
+  margin-top:4px;
+  text-align:right;
+}
+
+.input-area{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:70px;
+  background:white;
+  border-top:1px solid #ddd;
+  z-index:30;
+  padding:10px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.08);
+}
+
+.input-inner{
+  max-width:680px;
+  margin:auto;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.message-input{
+  flex:1;
+  min-width:0;
+  height:48px;
+  border:1px solid #ddd;
+  border-radius:24px;
+  padding:0 16px;
+  outline:none;
+  font-size:15px;
+  background:#f8f8fb;
+}
+
+.message-input:focus{
+  border-color:#6c5ce7;
+}
+
+.send-btn{
+  width:48px;
+  height:48px;
+  border:0;
+  border-radius:50%;
+  background:#6c5ce7;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.send-btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.retry-btn{
+  border:0;
+  background:#6c5ce7;
+  color:white;
+  padding:9px 15px;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:8px;
+}
 </style>
 </head>
 
 <body>
 
 <header class="header">
-<div class="header-inner">
 
-<div class="title">💬 Private Chat</div>
+  <div class="header-inner">
 
-<div class="subtitle">
-Your accepted private chats
-</div>
+    <button class="back-btn" onclick="goBack()">‹</button>
 
-<div class="online-box">
-🟢 Online users:
-<b id="onlineCount">0</b>
-</div>
+    <img
+      id="chatAvatar"
+      class="chat-avatar"
+      alt="avatar"
+    >
 
-</div>
+    <div class="user-info">
+
+      <div id="chatName" class="chat-name">
+        Loading...
+      </div>
+
+      <div id="chatUsername" class="chat-username">
+        @user
+      </div>
+
+      <div id="chatStatus" class="status offline">
+        Checking...
+      </div>
+
+    </div>
+
+  </div>
+
 </header>
 
 
-<main class="container">
+<main id="messages" class="messages">
 
-<div class="section-title">
+  <div class="messages-inner" id="messagesInner">
 
-Private Chats
+    <div class="loading">
+      🔄 Chat load ho rahi hai...
+    </div>
 
-<button class="refresh-btn" onclick="loadChats()">
-🔄
-</button>
-
-<div class="clear"></div>
-</div>
-
-<div id="chatList">
-<div class="loading">
-🔄 Chats load ho rahi hain...
-</div>
-</div>
+  </div>
 
 </main>
 
 
-<nav class="bottom-nav">
+<div class="input-area">
 
-<div class="nav-inner">
+  <div class="input-inner">
 
-<button class="nav-btn" onclick="go('index.html')">
-<span>🏠</span>
-Home
-</button>
+    <input
+      id="messageInput"
+      class="message-input"
+      type="text"
+      maxlength="2000"
+      placeholder="Message likhein..."
+      autocomplete="off"
+    >
 
-<button class="nav-btn active">
-<span>💬</span>
-Private
-</button>
+    <button
+      id="sendBtn"
+      class="send-btn"
+      onclick="sendMessage()"
+    >
+      ➤
+    </button>
 
-<button class="nav-btn" onclick="go('mehfil.html')">
-<span>👥</span>
-Mehfil
-</button>
-
-<button class="nav-btn" onclick="go('profile.html')">
-<span>👤</span>
-Profile
-</button>
-
-<button class="nav-btn" onclick="go('notifications.html')">
-<span>🔔</span>
-Alerts
-</button>
+  </div>
 
 </div>
-</nav>
 
 
 <script>
@@ -158,389 +317,941 @@ const SUPABASE_KEY =
 
 const supabaseClient =
 supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY,
- {
-  auth:{
-   persistSession:true,
-   autoRefreshToken:true,
-   detectSessionInUrl:false
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:false
+    }
   }
- }
 );
 
-let currentUser=null;
-let onlineUsers=new Set();
 
+let currentUser = null;
+let targetUserId = null;
+let targetProfile = null;
+let messagesChannel = null;
+let presenceChannel = null;
+let loadingMessages = false;
+
+
+/* =========================
+   DEFAULT AVATAR
+========================= */
 
 function defaultAvatar(){
 
-return "data:image/svg+xml;charset=UTF-8,"+
-encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
-<rect width="100" height="100" rx="50" fill="#e9e7ff"/>
-<circle cx="50" cy="38" r="18" fill="#6c5ce7"/>
-<path d="M20 85c4-20 17-30 30-30s26 10 30 30" fill="#6c5ce7"/>
-</svg>
-`);
+  return "data:image/svg+xml;charset=UTF-8,"+
+  encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg"
+       width="100" height="100">
+
+    <rect width="100" height="100"
+          rx="50" fill="#e9e7ff"/>
+
+    <circle cx="50" cy="38" r="18"
+            fill="#6c5ce7"/>
+
+    <path d="M20 85c4-20 17-30 30-30s26 10 30 30"
+          fill="#6c5ce7"/>
+
+  </svg>
+  `);
 
 }
 
+
+/* =========================
+   GET SESSION
+========================= */
 
 async function getCurrentUser(){
 
-const {data,error} =
-await supabaseClient.auth.getSession();
+  const result =
+  await supabaseClient.auth.getSession();
 
-if(error){
-console.error("SESSION ERROR:",error);
-return null;
-}
+  if(result.error){
 
-return data?.session?.user || null;
+    console.error(
+      "SESSION ERROR:",
+      result.error
+    );
 
-}
+    return null;
+  }
 
-
-async function loadChats(){
-
-const list=document.getElementById("chatList");
-
-list.innerHTML=`
-<div class="loading">
-🔄 Chats load ho rahi hain...
-</div>
-`;
-
-currentUser=await getCurrentUser();
-
-if(!currentUser){
-
-list.innerHTML=`
-<div class="error">
-❌ Login session nahi mili.
-<br><br>
-<button onclick="go('login.html')"
-style="border:0;background:#6c5ce7;color:white;padding:10px 18px;border-radius:10px">
-Login
-</button>
-</div>
-`;
-
-return;
-}
-
-
-const {data:requests,error:requestError} =
-await supabaseClient
-.from("private_requests")
-.select("sender_id,receiver_id,created_at,status")
-.eq("status","accepted")
-.or(
-`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
-)
-.order("created_at",{ascending:false});
-
-
-if(requestError){
-
-console.error(requestError);
-
-list.innerHTML=`
-<div class="error">
-❌ Private chats load nahi hui.
-<br><br>
-${escapeHtml(requestError.message)}
-</div>
-`;
-
-return;
-}
-
-
-if(!requests || requests.length===0){
-
-list.innerHTML=`
-<div class="empty">
-💬 Abhi koi accepted private chat nahi.
-<br><br>
-Pehle kisi user ki private request accept karein.
-</div>
-`;
-
-return;
-}
-
-
-const otherIds=[];
-
-requests.forEach(request=>{
-
-const otherId =
-request.sender_id===currentUser.id
-? request.receiver_id
-: request.sender_id;
-
-if(
-otherId &&
-otherId!==currentUser.id &&
-!otherIds.includes(otherId)
-){
-otherIds.push(otherId);
-}
-
-});
-
-
-if(otherIds.length===0){
-
-list.innerHTML=`
-<div class="empty">
-💬 No chat users found.
-</div>
-`;
-
-return;
-}
-
-
-const {data:profiles,error:profileError} =
-await supabaseClient
-.from("profiles")
-.select("id,username,name,avatar_url,last_seen")
-.in("id",otherIds);
-
-
-if(profileError){
-console.error("PROFILE ERROR:",profileError);
-}
-
-
-const profileMap={};
-
-(profiles||[]).forEach(profile=>{
-profileMap[profile.id]=profile;
-});
-
-
-const cards=[];
-
-
-for(const userId of otherIds){
-
-const profile=profileMap[userId]||{};
-
-const username=profile.username||"user";
-const name=profile.name||username;
-const avatar=profile.avatar_url||defaultAvatar();
-
-const isOnline =
-onlineUsers.has(userId) ||
-isRecentlyOnline(profile.last_seen);
-
-
-cards.push(`
-
-<div
-class="chat-card"
-data-user-id="${escapeAttr(userId)}"
-onclick="openChat(this.getAttribute('data-user-id'))"
->
-
-<div class="avatar-wrap">
-
-<img
-class="avatar"
-src="${escapeAttr(avatar)}"
-onerror="this.src='${defaultAvatar()}'"
->
-
-<span class="online-dot ${isOnline?"online":""}">
-</span>
-
-</div>
-
-<div class="chat-info">
-
-<div class="name">
-${escapeHtml(name)}
-</div>
-
-<div class="username">
-@${escapeHtml(username)}
-</div>
-
-<div class="last-message">
-Tap to open private chat
-</div>
-
-</div>
-
-<div class="arrow">›</div>
-
-</div>
-
-`);
+  return result.data?.session?.user || null;
 
 }
 
 
-list.innerHTML=cards.join("");
+/* =========================
+   GET TARGET USER
+========================= */
+
+function getTargetUserId(){
+
+  const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+  let id =
+  params.get("user");
+
+  if(!id){
+
+    id =
+    localStorage.getItem(
+      "privateChatUserId"
+    );
+
+  }
+
+  if(!id){
+
+    id =
+    params.get("user_id");
+
+  }
+
+  if(!id){
+
+    id =
+    params.get("id");
+
+  }
+
+  if(!id)return null;
+
+  id =
+  String(id).trim();
+
+  if(
+    id==="undefined" ||
+    id==="null" ||
+    id===""
+  ){
+
+    return null;
+
+  }
+
+  return id;
 
 }
 
 
-function openChat(userId){
+/* =========================
+   LOAD PROFILE
+========================= */
 
-if(!userId){
-alert("User ID nahi mili.");
-return;
-}
+async function loadProfile(){
 
-userId=String(userId).trim();
-
-if(
-!userId ||
-userId==="undefined" ||
-userId==="null"
-){
-alert("Invalid User ID.");
-return;
-}
+  const result =
+  await supabaseClient
+  .from("profiles")
+  .select(
+    "id,username,name,avatar_url,last_seen"
+  )
+  .eq("id",targetUserId)
+  .maybeSingle();
 
 
-/* IMPORTANT:
-   ID localStorage mein save */
-localStorage.setItem(
-"privateChatUserId",
-userId
-);
+  if(result.error){
+
+    console.error(
+      "PROFILE ERROR:",
+      result.error
+    );
+
+    showError(
+      "User profile load nahi ho saki.<br><br>"+
+      escapeHtml(result.error.message)
+    );
+
+    return false;
+
+  }
 
 
-/* GitHub Pages compatible URL */
-const chatUrl =
-new URL(
-"private-chat.html",
-window.location.href
-);
+  if(!result.data){
 
-chatUrl.searchParams.set(
-"user",
-userId
-);
+    showError(
+      "❌ User profile nahi mili."
+    );
 
-console.log(
-"OPENING CHAT:",
-chatUrl.href
-);
+    return false;
 
-window.location.assign(
-chatUrl.href
-);
-
-}
+  }
 
 
-function isRecentlyOnline(lastSeen){
-
-if(!lastSeen)return false;
-
-const time=new Date(lastSeen).getTime();
-
-if(Number.isNaN(time))return false;
-
-return Date.now()-time<=
-5*60*1000;
-
-}
+  targetProfile =
+  result.data;
 
 
-function startPresence(){
-
-const channel=
-supabaseClient
-.channel("global-chat-zone-online");
-
-channel.on(
-"presence",
-{event:"sync"},
-()=>{
-
-const state=channel.presenceState();
-
-onlineUsers=new Set();
-
-Object.values(state).forEach(entries=>{
-entries.forEach(entry=>{
-if(entry.user_id){
-onlineUsers.add(entry.user_id);
-}
-});
-});
+  document.getElementById(
+    "chatName"
+  ).textContent =
+    targetProfile.name ||
+    targetProfile.username ||
+    "User";
 
 
-document.getElementById("onlineCount")
-.textContent=onlineUsers.size;
+  document.getElementById(
+    "chatUsername"
+  ).textContent =
+    "@" +
+    (
+      targetProfile.username ||
+      "user"
+    );
 
-loadChats();
 
-}
-);
+  const avatar =
+    targetProfile.avatar_url ||
+    defaultAvatar();
 
-channel.subscribe(async status=>{
 
-if(status==="SUBSCRIBED"){
+  document.getElementById(
+    "chatAvatar"
+  ).src = avatar;
 
-await channel.track({
-user_id:currentUser?.id||null
-});
 
-}
+  document.getElementById(
+    "chatAvatar"
+  ).onerror =
+    function(){
 
-});
+      this.src =
+        defaultAvatar();
+
+    };
+
+
+  updateStatus(
+    targetProfile.last_seen
+  );
+
+
+  return true;
 
 }
 
 
-function go(page){
+/* =========================
+   ONLINE STATUS
+========================= */
 
-window.location.assign(page);
+function updateStatus(lastSeen){
+
+  const status =
+  document.getElementById(
+    "chatStatus"
+  );
+
+
+  if(!lastSeen){
+
+    status.textContent =
+      "⚪ Offline";
+
+    status.className =
+      "status offline";
+
+    return;
+
+  }
+
+
+  const time =
+    new Date(lastSeen).getTime();
+
+
+  const online =
+    !Number.isNaN(time) &&
+    Date.now()-time <=
+    5*60*1000;
+
+
+  if(online){
+
+    status.textContent =
+      "🟢 Online";
+
+    status.className =
+      "status online";
+
+  }else{
+
+    status.textContent =
+      "⚪ Offline";
+
+    status.className =
+      "status offline";
+
+  }
 
 }
 
+
+/* =========================
+   LOAD MESSAGES
+========================= */
+
+async function loadMessages(){
+
+  if(loadingMessages)return;
+
+  loadingMessages=true;
+
+
+  const box =
+  document.getElementById(
+    "messagesInner"
+  );
+
+
+  box.innerHTML = `
+    <div class="loading">
+      🔄 Messages load ho rahe hain...
+    </div>
+  `;
+
+
+  const result =
+  await supabaseClient
+  .from("private_messages")
+  .select(
+    "id,sender_id,receiver_id,message_type,content,media_url,created_at"
+  )
+  .or(
+    `and(sender_id.eq.${currentUser.id},receiver_id.eq.${targetUserId}),and(sender_id.eq.${targetUserId},receiver_id.eq.${currentUser.id})`
+  )
+  .order(
+    "created_at",
+    {ascending:true}
+  );
+
+
+  loadingMessages=false;
+
+
+  if(result.error){
+
+    console.error(
+      "MESSAGES ERROR:",
+      result.error
+    );
+
+    showError(
+      "❌ Messages load nahi ho sake.<br><br>"+
+      escapeHtml(
+        result.error.message
+      )+
+      `<br>
+      <button class="retry-btn"
+              onclick="loadMessages()">
+        🔄 Retry
+      </button>`
+    );
+
+    return;
+
+  }
+
+
+  const messages =
+    result.data || [];
+
+
+  if(messages.length===0){
+
+    box.innerHTML = `
+      <div class="empty">
+        💬 Abhi koi message nahi.
+        <br>
+        Pehla message bhejein.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    messages
+    .map(renderMessage)
+    .join("");
+
+
+  scrollToBottom();
+
+}
+
+
+/* =========================
+   RENDER MESSAGE
+========================= */
+
+function renderMessage(message){
+
+  const mine =
+    message.sender_id ===
+    currentUser.id;
+
+
+  let content =
+    message.content || "";
+
+
+  if(
+    message.message_type &&
+    message.message_type !== "text" &&
+    !content
+  ){
+
+    content =
+      "📎 Media message";
+
+  }
+
+
+  const time =
+    formatTime(
+      message.created_at
+    );
+
+
+  return `
+
+    <div class="message-row ${
+      mine ? "mine" : "theirs"
+    }">
+
+      <div class="bubble">
+
+        ${escapeHtml(content)}
+
+        <div class="message-time">
+          ${escapeHtml(time)}
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   SEND MESSAGE
+========================= */
+
+async function sendMessage(){
+
+  const input =
+  document.getElementById(
+    "messageInput"
+  );
+
+  const button =
+  document.getElementById(
+    "sendBtn"
+  );
+
+
+  const content =
+  input.value.trim();
+
+
+  if(!content)return;
+
+
+  if(
+    !currentUser ||
+    !targetUserId
+  ){
+
+    alert(
+      "Chat user nahi mila."
+    );
+
+    return;
+
+  }
+
+
+  input.disabled=true;
+  button.disabled=true;
+
+
+  const result =
+  await supabaseClient
+  .from("private_messages")
+  .insert({
+
+    sender_id:
+      currentUser.id,
+
+    receiver_id:
+      targetUserId,
+
+    message_type:
+      "text",
+
+    content:
+      content,
+
+    media_url:
+      null
+
+  })
+  .select()
+  .single();
+
+
+  input.disabled=false;
+  button.disabled=false;
+
+
+  if(result.error){
+
+    console.error(
+      "SEND ERROR:",
+      result.error
+    );
+
+    alert(
+      "Message send nahi hua:\n"+
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  input.value="";
+
+
+  await loadMessages();
+
+
+  input.focus();
+
+}
+
+
+/* =========================
+   REALTIME
+========================= */
+
+function startRealtime(){
+
+  if(messagesChannel){
+
+    supabaseClient.removeChannel(
+      messagesChannel
+    );
+
+  }
+
+
+  messagesChannel =
+  supabaseClient
+  .channel(
+    "private-chat-" +
+    currentUser.id +
+    "-" +
+    targetUserId
+  );
+
+
+  messagesChannel.on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"private_messages"
+    },
+    payload => {
+
+      const row =
+        payload.new ||
+        payload.old;
+
+      if(!row)return;
+
+
+      const relevant =
+        (
+          row.sender_id ===
+          currentUser.id &&
+          row.receiver_id ===
+          targetUserId
+        )
+        ||
+        (
+          row.sender_id ===
+          targetUserId &&
+          row.receiver_id ===
+          currentUser.id
+        );
+
+
+      if(relevant){
+
+        loadMessages();
+
+      }
+
+    }
+  );
+
+
+  messagesChannel.subscribe();
+
+
+  /* Presence */
+
+  if(presenceChannel){
+
+    supabaseClient.removeChannel(
+      presenceChannel
+    );
+
+  }
+
+
+  presenceChannel =
+  supabaseClient
+  .channel(
+    "private-chat-presence"
+  );
+
+
+  presenceChannel.on(
+    "presence",
+    {event:"sync"},
+    async ()=>{
+
+      const state =
+        presenceChannel
+        .presenceState();
+
+
+      let online=false;
+
+
+      Object.values(state)
+      .forEach(entries=>{
+
+        entries.forEach(entry=>{
+
+          if(
+            entry.user_id ===
+            targetUserId
+          ){
+
+            online=true;
+
+          }
+
+        });
+
+      });
+
+
+      const status =
+        document.getElementById(
+          "chatStatus"
+        );
+
+
+      if(online){
+
+        status.textContent =
+          "🟢 Online";
+
+        status.className =
+          "status online";
+
+      }else{
+
+        updateStatus(
+          targetProfile?.last_seen
+        );
+
+      }
+
+    }
+  );
+
+
+  presenceChannel.subscribe(
+    async status=>{
+
+      if(
+        status ===
+        "SUBSCRIBED"
+      ){
+
+        await presenceChannel.track({
+
+          user_id:
+            currentUser.id
+
+        });
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack(){
+
+  window.location.assign(
+    "private.html"
+  );
+
+}
+
+
+/* =========================
+   TIME
+========================= */
+
+function formatTime(value){
+
+  if(!value)return "";
+
+  const date =
+    new Date(value);
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return "";
+
+  }
+
+
+  return date.toLocaleTimeString(
+    [],
+    {
+      hour:"numeric",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+/* =========================
+   SCROLL
+========================= */
+
+function scrollToBottom(){
+
+  const box =
+    document.getElementById(
+      "messages"
+    );
+
+  setTimeout(()=>{
+
+    box.scrollTop =
+      box.scrollHeight;
+
+  },50);
+
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+function showError(message){
+
+  document.getElementById(
+    "messagesInner"
+  ).innerHTML = `
+    <div class="error">
+      ${message}
+    </div>
+  `;
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
 
 function escapeHtml(value){
 
-return String(value??"")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
 
-function escapeAttr(value){
+/* =========================
+   ENTER SEND
+========================= */
 
-return escapeHtml(value);
+document
+.getElementById(
+  "messageInput"
+)
+.addEventListener(
+  "keydown",
+  event=>{
 
-}
+    if(
+      event.key ===
+      "Enter"
+    ){
 
+      event.preventDefault();
+
+      sendMessage();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   START
+========================= */
 
 (async function(){
 
-currentUser=await getCurrentUser();
+  currentUser =
+    await getCurrentUser();
 
-if(currentUser){
-startPresence();
-}
 
-await loadChats();
+  if(!currentUser){
+
+    showError(`
+      ❌ Login session nahi mili.
+      <br><br>
+      <button class="retry-btn"
+              onclick="window.location.assign('login.html')">
+        Login
+      </button>
+    `);
+
+    return;
+
+  }
+
+
+  targetUserId =
+    getTargetUserId();
+
+
+  if(!targetUserId){
+
+    showError(`
+      ❌ User ID nahi mili.
+      <br><br>
+      Private page se chat dobara open karein.
+      <br>
+      <button class="retry-btn"
+              onclick="goBack()">
+        ← Private Chats
+      </button>
+    `);
+
+    return;
+
+  }
+
+
+  /* Apne aap se chat prevent */
+
+  if(
+    targetUserId ===
+    currentUser.id
+  ){
+
+    showError(`
+      ❌ Apne aap se private chat nahi ho sakti.
+      <br>
+      <button class="retry-btn"
+              onclick="goBack()">
+        ← Back
+      </button>
+    `);
+
+    return;
+
+  }
+
+
+  const profileLoaded =
+    await loadProfile();
+
+
+  if(!profileLoaded)return;
+
+
+  await loadMessages();
+
+
+  startRealtime();
+
+
+  document
+  .getElementById(
+    "messageInput"
+  )
+  .focus();
 
 })();
-
 </script>
 
 </body>
 </html>
+```
