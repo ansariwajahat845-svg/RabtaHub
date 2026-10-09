@@ -1,48 +1,93 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#6c5ce7">
 <title>More - ChatZone 💬</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;min-height:100%;font-family:Arial,sans-serif;background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:#222}
+html,body{
+  margin:0;padding:0;min-height:100%;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#6c5ce7,#8e44ad);
+  color:#222;
+}
 body{padding-bottom:85px}
-.header{background:rgba(255,255,255,.96);padding:18px 16px;text-align:center;box-shadow:0 2px 10px #0002}
+.header{
+  background:rgba(255,255,255,.97);
+  padding:18px 16px;text-align:center;
+  box-shadow:0 2px 10px #0002;
+}
 .header h1{margin:0;font-size:24px;color:#6c5ce7}
 .header p{margin:5px 0 0;color:#777;font-size:13px}
 .menu{width:94%;max-width:650px;margin:18px auto}
-.menu-card,.role-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 15px #0002}
-.menu-item{display:flex;align-items:center;gap:14px;padding:17px 18px;border-bottom:1px solid #eee;text-decoration:none;color:#222;font-size:16px;cursor:pointer}
-.menu-item:last-child{border-bottom:none}
-.menu-item:active{background:#f1edff}
-.icon{width:38px;height:38px;border-radius:12px;background:#f0ebff;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
-.arrow{margin-left:auto;color:#aaa;font-size:20px}
-.logout{color:#e74c3c}
-.logout .icon{background:#fff0ee}
+.menu-card,.role-card{
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 4px 15px #0002;
+}
 .role-card{margin-bottom:16px;padding:17px}
 .role-top{display:flex;align-items:center;gap:12px}
-.avatar{height:50px;width:50px;border-radius:50%;background:#f0ebff;display:flex;align-items:center;justify-content:center;font-size:25px;flex-shrink:0}
+.avatar{
+  height:52px;width:52px;border-radius:50%;
+  background:#f0ebff;display:flex;align-items:center;
+  justify-content:center;font-size:25px;flex-shrink:0;
+  overflow:hidden;
+}
+.avatar img{height:100%;width:100%;object-fit:cover}
 .role-name{font-size:17px;font-weight:bold;overflow-wrap:anywhere}
 .crown{color:#e3a008;font-size:21px;margin-left:4px}
-.role-badge{display:inline-block;margin-top:7px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:bold}
+.role-badge{
+  display:inline-block;margin-top:7px;padding:5px 10px;
+  border-radius:20px;font-size:11px;font-weight:bold;
+}
 .creator{background:#fff0bf;color:#815900}
 .admin{background:#e5edff;color:#234fba}
 .normal{background:#eee;color:#555}
 .role-description{font-size:12px;color:#777;margin-top:8px}
+#roleStatus{
+  font-size:12px;color:#777;margin-top:10px;
+  overflow-wrap:anywhere;line-height:1.5;
+}
+.menu-item{
+  display:flex;align-items:center;gap:14px;
+  padding:15px 16px;border-bottom:1px solid #eee;
+  text-decoration:none;color:#222;font-size:15px;
+  cursor:pointer;width:100%;background:#fff;
+  font-family:inherit;text-align:left;
+}
+.menu-item:last-child{border-bottom:none}
+.menu-item:active{background:#f1edff}
+.icon{
+  width:38px;height:38px;border-radius:12px;
+  background:#f0ebff;display:flex;align-items:center;
+  justify-content:center;font-size:19px;flex-shrink:0;
+}
+.arrow{margin-left:auto;color:#aaa;font-size:20px}
+.logout{color:#e74c3c}
+.logout .icon{background:#fff0ee}
 .status{text-align:center;color:#fff;font-size:12px;margin:12px 0}
-.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:70px;background:#fff;display:flex;justify-content:space-around;align-items:center;box-shadow:0 -3px 15px #0002;z-index:100}
-.nav-item{text-decoration:none;color:#777;text-align:center;font-size:11px;min-width:55px}
+.bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;height:70px;
+  background:#fff;display:flex;justify-content:space-around;
+  align-items:center;box-shadow:0 -3px 15px #0002;z-index:100;
+}
+.nav-item{
+  text-decoration:none;color:#777;text-align:center;
+  font-size:11px;min-width:55px;padding:5px 3px;
+}
 .nav-icon{display:block;font-size:22px;margin-bottom:3px}
 .nav-item.active{color:#6c5ce7;font-weight:bold}
-#roleStatus{font-size:12px;color:#777;margin-top:9px}
+.hidden{display:none!important}
 </style>
-
 </head>
 
 <body>
+
 <div class="header">
   <h1>☰ More</h1>
   <p>ChatZone • Connect • Share • Enjoy</p>
@@ -52,33 +97,60 @@ body{padding-bottom:85px}
 
   <div class="role-card">
     <div class="role-top">
-      <div class="avatar">👤</div>
+      <div class="avatar" id="profileAvatar">👤</div>
       <div>
-        <div class="role-name" id="roleUsername">Loading profile...</div>
-        <span class="role-badge normal" id="roleBadge">MEMBER</span>
+        <div class="role-name" id="roleUsername">Checking account...</div>
+        <span class="role-badge normal" id="roleBadge">PLEASE WAIT</span>
       </div>
     </div>
-    <div class="role-description" id="roleDescription">Your ChatZone account</div>
-    <div id="roleStatus">Checking account role...</div>
+    <div class="role-description" id="roleDescription">
+      Your ChatZone account
+    </div>
+    <div id="roleStatus">Checking login and account role...</div>
   </div>
 
   <div class="menu-card">
-    <a class="menu-item" href="search.html"><div class="icon">🔎</div><span>Search</span><span class="arrow">›</span></a>
-    <a class="menu-item" href="rules.html"><div class="icon">📜</div><span>Rules</span><span class="arrow">›</span></a>
-    <a class="menu-item" href="about.html"><div class="icon">ℹ️</div><span>About Us</span><span class="arrow">›</span></a>
-    <a class="menu-item" href="terms.html"><div class="icon">📄</div><span>Terms &amp; Conditions</span><span class="arrow">›</span></a>
-    <a class="menu-item" href="privacy.html"><div class="icon">🔒</div><span>Privacy Policy</span><span class="arrow">›</span></a>
-    <a class="menu-item" href="change-password.html"><div class="icon">🔑</div><span>Change Password</span><span class="arrow">›</span></a>
 
-```
-<a class="menu-item" id="adminPanelLink" href="admin.html" style="display:none">
-  <div class="icon">👑</div><span>Admin Management</span><span class="arrow">›</span>
-</a>
+    <a class="menu-item" href="search.html">
+      <div class="icon">🔎</div>
+      <span>Search</span><span class="arrow">›</span>
+    </a>
 
-<div class="menu-item logout" id="logoutButton">
-  <div class="icon">🚪</div><span>Logout</span><span class="arrow">›</span>
-</div>
-```
+    <a class="menu-item" href="rules.html">
+      <div class="icon">📜</div>
+      <span>Rules</span><span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="about.html">
+      <div class="icon">ℹ️</div>
+      <span>About Us</span><span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="terms.html">
+      <div class="icon">📄</div>
+      <span>Terms &amp; Conditions</span>
+      <span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="privacy.html">
+      <div class="icon">🔒</div>
+      <span>Privacy Policy</span><span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item" href="change-password.html">
+      <div class="icon">🔑</div>
+      <span>Change Password</span><span class="arrow">›</span>
+    </a>
+
+    <a class="menu-item hidden" id="adminPanelLink" href="admin.html">
+      <div class="icon">👑</div>
+      <span>Admin Management</span><span class="arrow">›</span>
+    </a>
+
+    <button class="menu-item logout" id="logoutButton" type="button">
+      <div class="icon">🚪</div>
+      <span>Logout</span><span class="arrow">›</span>
+    </button>
 
   </div>
 </div>
@@ -86,159 +158,306 @@ body{padding-bottom:85px}
 <div class="status">ChatZone • Connect • Share • Enjoy</div>
 
 <div class="bottom-nav">
-  <a class="nav-item" href="index.html"><span class="nav-icon">🏠</span>Home</a>
-  <a class="nav-item" href="private.html"><span class="nav-icon">💬</span>Private</a>
-  <a class="nav-item" href="profile.html"><span class="nav-icon">👤</span>Profile</a>
-  <a class="nav-item active" href="more.html"><span class="nav-icon">☰</span>More</a>
+  <a class="nav-item" href="index.html">
+    <span class="nav-icon">🏠</span>Home
+  </a>
+  <a class="nav-item" href="private.html">
+    <span class="nav-icon">💬</span>Private
+  </a>
+  <a class="nav-item" href="profile.html">
+    <span class="nav-icon">👤</span>Profile
+  </a>
+  <a class="nav-item active" href="more.html">
+    <span class="nav-icon">☰</span>More
+  </a>
 </div>
 
 <script>
-const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
-const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+"use strict";
 
-let currentUser=null;
-let onlineChannel=null;
+/* SAME SUPABASE PROJECT AS YOUR EXISTING WEBSITE */
+const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 
-async function startGlobalPresence(){
-  if(!currentUser||onlineChannel)return;
-  try{
-    onlineChannel=supabaseClient.channel("chatzone-online-users",{
-      config:{presence:{key:String(currentUser.id)}}
-    });
-    await onlineChannel.subscribe(async status=>{
-      if(status==="SUBSCRIBED"){
-        try{
-          await onlineChannel.track({
-            user_id:String(currentUser.id),
-            online_at:new Date().toISOString()
-          });
-        }catch(e){console.error("Presence track error:",e)}
-      }
-    });
-  }catch(e){
-    console.error("Presence error:",e);
-    onlineChannel=null;
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
+
+let currentUser = null;
+let onlineChannel = null;
+let loadingAccount = false;
+let authCheckStarted = false;
+
+const $ = id => document.getElementById(id);
+
+function showStatus(message, color) {
+  $("roleStatus").textContent = message;
+  $("roleStatus").style.color = color || "#777";
+}
+
+function setBadge(text, className) {
+  $("roleBadge").textContent = text;
+  $("roleBadge").className = "role-badge " + className;
+}
+
+function setAccountName(username, isPrivileged) {
+  const el = $("roleUsername");
+  el.replaceChildren(document.createTextNode(username));
+
+  if (isPrivileged) {
+    const crown = document.createElement("span");
+    crown.className = "crown";
+    crown.textContent = "👑";
+    el.appendChild(crown);
   }
 }
 
-async function loadAccountRole(){
-  const nameEl=document.getElementById("roleUsername");
-  const badgeEl=document.getElementById("roleBadge");
-  const descEl=document.getElementById("roleDescription");
-  const statusEl=document.getElementById("roleStatus");
-  const panelLink=document.getElementById("adminPanelLink");
+async function loadAccountRole() {
+  if (!currentUser || loadingAccount) return;
 
-  try{
-    const {data:profile}=await supabaseClient
+  loadingAccount = true;
+
+  const panelLink = $("adminPanelLink");
+  panelLink.classList.add("hidden");
+
+  try {
+    const fallbackName =
+      currentUser.email
+        ? currentUser.email.split("@")[0]
+        : "Member";
+
+    setAccountName(fallbackName, false);
+    showStatus("Loading your profile...");
+
+    /* Load profile independently */
+    const profileResult = await supabaseClient
       .from("profiles")
-      .select("username,name")
-      .eq("id",currentUser.id)
+      .select("username,name,avatar_url")
+      .eq("id", currentUser.id)
       .maybeSingle();
 
-    const username=profile?.username || currentUser.email?.split("@")[0] || "Member";
-    nameEl.textContent=username;
+    if (profileResult.error) {
+      console.warn("Profile lookup:", profileResult.error.message);
+    }
 
-    const {data:roleRow,error}=await supabaseClient
+    const profile = profileResult.data;
+    const username =
+      profile?.username || profile?.name || fallbackName;
+
+    setAccountName(username, false);
+
+    if (profile?.avatar_url) {
+      const img = document.createElement("img");
+      img.src = profile.avatar_url;
+      img.alt = "Profile picture";
+      img.onerror = () => {
+        $("profileAvatar").replaceChildren(
+          document.createTextNode("👤")
+        );
+      };
+      $("profileAvatar").replaceChildren(img);
+    }
+
+    showStatus("Checking Creator/Admin permissions...");
+
+    /* Fetch the role for this exact authenticated user */
+    const roleResult = await supabaseClient
       .from("user_roles")
       .select("role")
-      .eq("user_id",currentUser.id)
+      .eq("user_id", currentUser.id)
       .maybeSingle();
 
-    if(error){
-      console.error("Role lookup error:",error);
-      badgeEl.textContent="MEMBER";
-      badgeEl.className="role-badge normal";
-      descEl.textContent="Your ChatZone account";
-      statusEl.textContent="Role verification unavailable.";
+    if (roleResult.error) {
+      console.error("Role lookup error:", roleResult.error);
+
+      setBadge("ROLE ERROR", "normal");
+      $("roleDescription").textContent = "Your ChatZone account";
+
+      showStatus(
+        "Role verification failed: " +
+        roleResult.error.message +
+        (roleResult.error.code
+          ? " | Code: " + roleResult.error.code
+          : ""),
+        "#c0392b"
+      );
+
       return;
     }
 
-    const role=roleRow?.role || "user";
+    const role = String(roleResult.data?.role || "user")
+      .trim()
+      .toLowerCase();
 
-    if(role==="creator"){
-      nameEl.innerHTML="";
-      nameEl.append(document.createTextNode(username+" "));
-      const crown=document.createElement("span");
-      crown.className="crown";
-      crown.textContent="👑";
-      nameEl.appendChild(crown);
-      badgeEl.textContent="👑 CREATOR";
-      badgeEl.className="role-badge creator";
-      descEl.textContent="Website Creator • Full role privileges";
-      panelLink.style.display="flex";
-      statusEl.textContent="Creator role verified";
-    }else if(role==="admin"||role==="senior_admin"){
-      nameEl.innerHTML="";
-      nameEl.append(document.createTextNode(username+" "));
-      const crown=document.createElement("span");
-      crown.className="crown";
-      crown.textContent="👑";
-      nameEl.appendChild(crown);
-      badgeEl.textContent=role==="senior_admin"?"👑 SENIOR ADMIN":"👑 ADMIN";
-      badgeEl.className="role-badge admin";
-      descEl.textContent="ChatZone Administration";
-      panelLink.style.display="flex";
-      statusEl.textContent="Administrator role verified";
-    }else{
-      badgeEl.textContent="MEMBER";
-      badgeEl.className="role-badge normal";
-      descEl.textContent="ChatZone Member";
-      statusEl.textContent="Standard account";
-    }
-  }catch(e){
-    console.error("Profile/role error:",e);
-    statusEl.textContent="Could not load account role.";
-  }
-}
+    if (role === "creator") {
+      setAccountName(username, true);
+      setBadge("👑 CREATOR", "creator");
+      $("roleDescription").textContent =
+        "ChatZone Website Creator";
+      showStatus("✅ Creator role verified successfully.", "#18864b");
 
-async function logoutUser(){
-  if(!confirm("Kya aap logout karna chahte hain?"))return;
-  try{
-    if(onlineChannel){
-      try{await onlineChannel.untrack()}catch(e){}
-      try{await supabaseClient.removeChannel(onlineChannel)}catch(e){}
-      onlineChannel=null;
-    }
-    const {error}=await supabaseClient.auth.signOut();
-    if(error)throw error;
-    window.location.href="login.html";
-  }catch(e){
-    alert("Logout nahi ho saka: "+e.message);
-  }
-}
-
-document.getElementById("logoutButton").addEventListener("click",logoutUser);
-
-document.addEventListener("DOMContentLoaded",async()=>{
-  try{
-    const {data:{session},error}=await supabaseClient.auth.getSession();
-    if(error)throw error;
-    if(!session){
-      window.location.href="login.html";
+      panelLink.classList.remove("hidden");
       return;
     }
-    currentUser=session.user;
-    await Promise.all([loadAccountRole(),startGlobalPresence()]);
-  }catch(e){
-    console.error("Page initialization error:",e);
-    document.getElementById("roleStatus").textContent="Unable to verify session. Refresh the page.";
-  }
-});
 
-supabaseClient.auth.onAuthStateChange((event,session)=>{
-  if(event==="SIGNED_OUT"){
-    if(onlineChannel){
-      supabaseClient.removeChannel(onlineChannel);
-      onlineChannel=null;
+    if (role === "admin" || role === "senior_admin") {
+      setAccountName(username, true);
+      setBadge(
+        role === "senior_admin" ? "👑 SENIOR ADMIN" : "👑 ADMIN",
+        "admin"
+      );
+      $("roleDescription").textContent = "ChatZone Administration";
+      showStatus("✅ Administrator role verified.", "#234fba");
+
+      panelLink.classList.remove("hidden");
+      return;
     }
-    window.location.href="login.html";
+
+    setBadge("MEMBER", "normal");
+    $("roleDescription").textContent = "ChatZone Member";
+    showStatus("Standard account. No administrator role assigned.");
+  } catch (error) {
+    console.error("Account role error:", error);
+
+    setBadge("CHECK FAILED", "normal");
+    showStatus(
+      "Could not check account: " +
+      (error?.message || String(error)),
+      "#c0392b"
+    );
+  } finally {
+    loadingAccount = false;
+  }
+}
+
+/* Shared Realtime presence channel */
+async function startGlobalPresence() {
+  if (!currentUser || onlineChannel) return;
+
+  try {
+    onlineChannel = supabaseClient.channel("chatzone-online-users", {
+      config: {
+        presence: {
+          key: String(currentUser.id)
+        }
+      }
+    });
+
+    onlineChannel.subscribe(async status => {
+      if (status === "SUBSCRIBED" && onlineChannel && currentUser) {
+        try {
+          await onlineChannel.track({
+            user_id: String(currentUser.id),
+            online_at: new Date().toISOString()
+          });
+        } catch (error) {
+          console.warn("Presence tracking failed:", error);
+        }
+      }
+    });
+  } catch (error) {
+    console.warn("Presence error:", error);
+    onlineChannel = null;
+  }
+}
+
+async function stopGlobalPresence() {
+  if (!onlineChannel) return;
+
+  const channel = onlineChannel;
+  onlineChannel = null;
+
+  try {
+    await channel.untrack();
+  } catch (_) {}
+
+  try {
+    await supabaseClient.removeChannel(channel);
+  } catch (_) {}
+}
+
+async function logoutUser() {
+  if (!confirm("Kya aap logout karna chahte hain?")) return;
+
+  $("logoutButton").disabled = true;
+
+  try {
+    await stopGlobalPresence();
+
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) throw error;
+
+    window.location.href = "login.html";
+  } catch (error) {
+    alert("Logout nahi ho saka: " + error.message);
+    $("logoutButton").disabled = false;
+  }
+}
+
+$("logoutButton").addEventListener("click", logoutUser);
+
+/* Start only after the page is ready */
+document.addEventListener("DOMContentLoaded", async () => {
+  if (authCheckStarted) return;
+  authCheckStarted = true;
+
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error) throw error;
+
+    if (!data.session || !data.session.user) {
+      window.location.replace("login.html");
+      return;
+    }
+
+    currentUser = data.session.user;
+
+    await loadAccountRole();
+    startGlobalPresence();
+  } catch (error) {
+    console.error("Session initialization error:", error);
+    setBadge("SESSION ERROR", "normal");
+
+    showStatus(
+      "Session check failed: " +
+      (error?.message || String(error)),
+      "#c0392b"
+    );
   }
 });
 
-window.addEventListener("beforeunload",()=>{
-  if(onlineChannel){
-    try{onlineChannel.untrack()}catch(e){}
+/* React to sign-out or account changes */
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    currentUser = null;
+    stopGlobalPresence();
+    window.location.replace("login.html");
+    return;
+  }
+
+  if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+    if (session?.user) {
+      currentUser = session.user;
+      loadAccountRole();
+    }
+  }
+});
+
+window.addEventListener("pagehide", () => {
+  if (onlineChannel) {
+    try {
+      onlineChannel.untrack();
+    } catch (_) {}
   }
 });
 </script>
