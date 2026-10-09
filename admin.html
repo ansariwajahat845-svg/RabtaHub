@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChatZone Admin 👑</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f0ff;color:#242038}
+header{background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:#fff;text-align:center;padding:22px 12px}
+header h1{font-size:23px;margin:0 0 7px}
+header p{font-size:13px;margin:0}
+main{width:94%;max-width:650px;margin:16px auto;padding-bottom:25px}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px #0001}
+h2{font-size:18px;color:#6c5ce7;margin:0 0 12px}
+input,select,button{width:100%;padding:12px;margin:5px 0;border-radius:9px;font-size:14px}
+input,select{border:1px solid #ddd;background:#fff}
+button{background:#6c5ce7;color:white;border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+.secondary{background:#eee9ff;color:#5138bd}
+.danger{background:#d63031}
+.note,.small{font-size:12px;color:#777;line-height:1.5;overflow-wrap:anywhere}
+#status,#message{padding:11px;border-radius:9px;background:#f3f0ff;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.hidden{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.stat{background:#f3f0ff;border-radius:9px;padding:12px 3px;text-align:center}
+.stat strong{display:block;color:#6c5ce7;font-size:20px}
+.stat span{font-size:11px;color:#666}
+.person{border:1px solid #eee;border-radius:10px;padding:12px;margin:9px 0;overflow-wrap:anywhere}
+.tag{display:inline-block;background:#eee9ff;color:#5138bd;border-radius:12px;padding:5px 8px;font-size:11px;margin:5px 0}
+</style>
+</head>
+<body>
+<header>
+<h1>👑 ChatZone Admin Management</h1>
+<p>Creator Control Panel</p>
+</header>
+
+<main>
+<div class="card">
+<h2>🔐 Creator Verification</h2>
+<div id="status">Checking account...</div>
+<button class="secondary" onclick="location.href='more.html'">← Back to More</button>
+</div>
+
+<div id="panel" class="hidden">
+<div class="card">
+<h2>📊 Admin Summary</h2>
+<div class="stats">
+<div class="stat"><strong id="total">0/3</strong><span>Total Admins</span></div>
+<div class="stat"><strong id="senior">0/1</strong><span>Senior Admin</span></div>
+<div class="stat"><strong id="normal">0/2</strong><span>Normal Admins</span></div>
+</div>
+</div>
+
+<div class="card">
+<h2>🔎 Search Users</h2>
+<p class="note">Registered user ka username likhein. Search profiles table ke SELECT permissions par depend karti hai.</p>
+<input id="query" placeholder="Username likhein..." autocomplete="off">
+<button id="searchBtn">Search Users</button>
+<div id="results"></div>
+</div>
+
+<div class="card">
+<h2>🛡️ Current Admins</h2>
+<p class="note">Maximum 1 Senior Admin aur 2 Normal Admins. Creator in teen slots mein shamil nahi.</p>
+<button id="refreshBtn" class="secondary">↻ Refresh Admins</button>
+<div id="admins">Loading...</div>
+</div>
+
+<div class="card">
+<h2>🚫 Ban Management</h2>
+<p class="note">Ban/unban ko secure database functions ke saath setup karna zaroori hai. Is panel se ban table ko directly edit nahi kiya jata.</p>
+</div>
+</div>
+
+<div id="message" class="hidden"></div>
+</main>
+
+<script>
+"use strict";
+
+const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
+const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+const CREATOR_ID="db4d3669-e3ec-42ec-a716-791f43cebd8d";
+
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+ auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+});
+
+const $=id=>document.getElementById(id);
+let me=null;
+
+function showMessage(text,error=false){
+ const el=$("message");
+ el.textContent=text;
+ el.classList.remove("hidden");
+ el.style.background=error?"#fff0ef":"#e8f8ee";
+ el.style.color=error?"#a82020":"#176b39";
+}
+function clearMessage(){
+ $("message").classList.add("hidden");
+}
+function make(tag,text,className){
+ const el=document.createElement(tag);
+ el.textContent=text==null?"":String(text);
+ if(className)el.className=className;
+ return el;
+}
+function roleName(role){
+ return role==="senior_admin"?"Senior Admin":"Normal Admin";
+}
+
+async function init(){
+ try{
+  const {data,error}=await db.auth.getSession();
+  if(error)throw error;
+
+  if(!data.session){
+   $("status").textContent="Login required. Login page khol rahe hain...";
+   setTimeout(()=>location.replace("login.html"),1000);
+   return;
+  }
+
+  me=data.session.user;
+
+  if(me.id.toLowerCase()!==CREATOR_ID.toLowerCase()){
+   $("status").textContent="⛔ Access denied. Sirf Creator account allowed hai.\nYour ID: "+me.id;
+   return;
+  }
+
+  const {data:role,error:roleError}=await db
+   .from("user_roles")
+   .select("role")
+   .eq("user_id",me.id)
+   .maybeSingle();
+
+  if(roleError)throw roleError;
+
+  if(String(role?.role||"").toLowerCase()!=="creator"){
+   $("status").textContent="Creator role verify nahi hua. Supabase user_roles table check karein.";
+   return;
+  }
+
+  $("status").textContent="✅ Creator verified\nAccount ID: "+me.id;
+  $("panel").classList.remove("hidden");
+  await loadAdmins();
+ }catch(e){
+  $("status").textContent="Error: "+(e.message||String(e))+"\nSupabase settings aur SQL setup check karein.";
+ }
+}
+
+async function searchUsers(){
+ clearMessage();
+ const query=$("query").value.trim().replace(/^@/,"");
+ const results=$("results");
+ results.replaceChildren();
+
+ if(query.length<2){
+  results.textContent="Kam az kam 2 characters likhein.";
+  return;
+ }
+
+ $("searchBtn").disabled=true;
+ results.textContent="Searching...";
+
+ try{
+  const {data,error}=await db
+   .from("profiles")
+   .select("id,username,name,avatar_url")
+   .ilike("username","%"+query+"%")
+   .limit(20);
+
+  if(error)throw error;
+
+  results.replaceChildren();
+  const users=(data||[]).filter(u=>u.id!==me.id);
+
+  if(!users.length){
+   results.textContent="User nahi mila. Username ya profiles SELECT permission check karein.";
+   return;
+  }
+
+  users.forEach(user=>{
+   const box=make("div","","person");
+   box.appendChild(make("strong","@"+(user.username||"unknown")));
+   box.appendChild(make("div",user.name||"","small"));
+   box.appendChild(make("div","User ID: "+user.id,"small"));
+
+   const roleSelect=document.createElement("select");
+   roleSelect.innerHTML=
+    '<option value="senior_admin">Senior Admin</option>'+
+    '<option value="admin">Normal Admin</option>';
+
+   const assign=make("button","Assign Admin");
+   assign.addEventListener("click",()=>assignAdmin(user,roleSelect.value));
+
+   box.appendChild(roleSelect);
+   box.appendChild(assign);
+   results.appendChild(box);
+  });
+ }catch(e){
+  results.textContent="Search error: "+(e.message||String(e))+
+   "\nProfiles table par SELECT permission zaroori ho sakti hai.";
+ }finally{
+  $("searchBtn").disabled=false;
+ }
+}
+
+async function assignAdmin(user,role){
+ if(!confirm("@"+(user.username||"user")+" ko "+roleName(role)+" banana hai?"))return;
+ clearMessage();
+
+ try{
+  const {error}=await db.rpc("assign_chatzone_admin",{
+   target_user_id:user.id,
+   target_role:role
+  });
+
+  if(error)throw error;
+
+  showMessage("✅ Admin role successfully assign ho gaya.");
+  await loadAdmins();
+ }catch(e){
+  showMessage("Admin assign nahi hua: "+(e.message||String(e))+
+   "\nSQL function aur admin limits check karein.",true);
+ }
+}
+
+async function removeAdmin(userId){
+ if(!confirm("Is user ka admin role remove karna hai?"))return;
+ clearMessage();
+
+ try{
+  const {error}=await db.rpc("remove_chatzone_admin",{
+   target_user_id:userId
+  });
+
+  if(error)throw error;
+
+  showMessage("Admin role remove ho gaya.");
+  await loadAdmins();
+ }catch(e){
+  showMessage("Role remove nahi hua: "+(e.message||String(e)),true);
+ }
+}
+
+async function loadAdmins(){
+ $("admins").textContent="Loading admins...";
+ clearMessage();
+
+ try{
+  const {data,error}=await db
+   .from("chatzone_admins")
+   .select("user_id,role,created_at")
+   .order("created_at",{ascending:true});
+
+  if(error)throw error;
+
+  const list=data||[];
+  const senior=list.filter(x=>x.role==="senior_admin").length;
+  const normal=list.filter(x=>x.role==="admin").length;
+
+  $("total").textContent=list.length+"/3";
+  $("senior").textContent=senior+"/1";
+  $("normal").textContent=normal+"/2";
+  $("admins").replaceChildren();
+
+  if(!list.length){
+   $("admins").textContent="Abhi koi additional admin assign nahi hua.";
+   return;
+  }
+
+  for(const admin of list){
+   const box=make("div","","person");
+   box.appendChild(make("strong",roleName(admin.role)));
+   box.appendChild(make("div","User ID: "+admin.user_id,"small"));
+
+   const {data:profile}=await db.from("profiles")
+    .select("username,name")
+    .eq("id",admin.user_id)
+    .maybeSingle();
+
+   box.appendChild(make("div",
+    (profile?.name||"")+
+    (profile?.username?" (@"+profile.username+")":""),"small"));
+
+   box.appendChild(make("span",roleName(admin.role),"tag"));
+
+   const remove=make("button","Remove Admin","danger");
+   remove.addEventListener("click",()=>removeAdmin(admin.user_id));
+   box.appendChild(remove);
+   $("admins").appendChild(box);
+  }
+ }catch(e){
+  $("admins").textContent="Admin list error: "+(e.message||String(e))+
+   "\nchatzone_admins table aur SELECT RLS policy check karein.";
+ }
+}
+
+$("searchBtn").addEventListener("click",searchUsers);
+$("refreshBtn").addEventListener("click",loadAdmins);
+$("query").addEventListener("keydown",e=>{
+ if(e.key==="Enter")searchUsers();
+});
+
+init();
+</script>
+</body>
+</html>
