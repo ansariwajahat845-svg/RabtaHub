@@ -33,7 +33,6 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
 </style>
 </head>
 <body>
-
 <header>
   <h1>👑 ChatZone Admin</h1>
   <p>Creator Dashboard • Member Management • Ban System</p>
@@ -41,7 +40,7 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
 
 <main>
   <section class="card">
-    <h2>🔐 Creator Verification</h2>
+    <h2>🔐 Admin Verification</h2>
     <div id="authStatus" class="status">Checking account...</div>
     <div class="actions">
       <button class="purple" id="refreshAccess">🔄 Verify Again</button>
@@ -50,7 +49,6 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
   </section>
 
   <div id="dashboard" class="hidden">
-
     <section class="card">
       <h2>🔎 Search Members</h2>
       <p class="muted">Username ya display name se search karein.</p>
@@ -66,7 +64,7 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
 
     <section class="card">
       <h2>🚫 Active Bans</h2>
-      <p class="muted">Temporary aur permanent ban records.</p>
+      <p class="muted">Active temporary aur permanent ban records.</p>
       <button class="purple" id="refreshBans">🔄 Refresh Bans</button>
       <p id="banStatus" class="muted"></p>
       <div id="banList"></div>
@@ -74,12 +72,11 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
 
     <section class="card">
       <h2>🛡️ Admin Management</h2>
-      <p class="muted">Member ko search karke Admin ya Senior Admin assign karein.</p>
+      <p class="muted" id="adminHelp">Admin roles ki list.</p>
       <button class="purple" id="refreshAdmins">🔄 Refresh Admins</button>
       <p id="adminStatus" class="muted"></p>
       <div id="adminList"></div>
     </section>
-
   </div>
 </main>
 
@@ -88,7 +85,6 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
 <script>
 "use strict";
 
-/* Supabase project configuration */
 const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const CREATOR_ID = "db4d3669-e3ec-42ec-a716-791f43cebd8d";
@@ -102,6 +98,7 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
 });
 
 let currentUser = null;
+let currentRole = null;
 let accessGranted = false;
 let checkingAccess = false;
 
@@ -109,11 +106,8 @@ const el = id => document.getElementById(id);
 
 function safe(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
   })[c]);
 }
 
@@ -123,8 +117,8 @@ function status(id, message) {
 
 function dateText(value) {
   if (!value) return "Permanent";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleString();
 }
 
 function remainingText(value) {
@@ -133,16 +127,19 @@ function remainingText(value) {
   if (!Number.isFinite(ms)) return "Expiry unavailable";
   if (ms <= 0) return "Expired";
   const hours = Math.ceil(ms / 3600000);
-  if (hours < 24) return hours + " hour(s) remaining";
-  return Math.ceil(hours / 24) + " day(s) remaining";
+  return hours < 24
+    ? hours + " hour(s) remaining"
+    : Math.ceil(hours / 24) + " day(s) remaining";
 }
 
-async function verifyCreator() {
+/* Creator ya registered admin ki verification */
+async function verifyAccess() {
   if (checkingAccess) return accessGranted;
   checkingAccess = true;
   accessGranted = false;
+  currentRole = null;
   el("dashboard").classList.add("hidden");
-  status("authStatus", "Checking login and creator role...");
+  status("authStatus", "Checking login and admin role...");
 
   try {
     const { data, error } = await db.auth.getSession();
@@ -157,30 +154,61 @@ async function verifyCreator() {
 
     currentUser = user;
 
-    if (user.id !== CREATOR_ID) {
-      status("authStatus", "⛔ Creator access denied. Yeh registered creator account nahi hai.");
-      return false;
-    }
+    if (user.id === CREATOR_ID) {
+      const { data: roles, error: roleError } = await db
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
 
-    const { data: roles, error: roleError } = await db
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id);
+      if (roleError) throw roleError;
 
-    if (roleError) throw roleError;
+      if (!(roles || []).some(
+        r => String(r.role || "").toLowerCase() === "creator"
+      )) {
+        status("authStatus", "Creator role user_roles mein verify nahi hua.");
+        return false;
+      }
 
-    const isCreator = (roles || []).some(
-      r => String(r.role || "").toLowerCase() === "creator"
-    );
+      currentRole = "creator";
+    } else {
+      const { data: admin, error: adminError } = await db
+        .from("chatzone_admins")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-    if (!isCreator) {
-      status("authStatus", "Creator role verify nahi hua. user_roles table aur role value check karein.");
-      return false;
+      if (adminError) throw adminError;
+
+      const role = String(admin?.role || "").toLowerCase();
+      if (!["senior_admin", "admin"].includes(role)) {
+        status(
+          "authStatus",
+          "⛔ Access denied. Yeh Creator ya registered Admin account nahi hai."
+        );
+        return false;
+      }
+
+      currentRole = role;
     }
 
     accessGranted = true;
-    status("authStatus", "✅ Creator verified.\nUser ID: " + user.id);
+
+    const roleLabel = currentRole === "creator"
+      ? "👑 Creator"
+      : currentRole === "senior_admin"
+        ? "🛡️ Senior Admin"
+        : "🔰 Admin";
+
+    status(
+      "authStatus",
+      "✅ Access verified: " + roleLabel + "\nUser ID: " + user.id
+    );
+
     el("dashboard").classList.remove("hidden");
+
+    el("adminHelp").textContent = currentRole === "creator"
+      ? "Aap Admin aur Senior Admin assign/remove kar sakte hain."
+      : "Admin list dekh sakte hain. Role assign/remove sirf Creator kar sakta hai.";
 
     await Promise.allSettled([loadBans(), loadAdmins()]);
     return true;
@@ -192,21 +220,50 @@ async function verifyCreator() {
   }
 }
 
-async function ensureCreator() {
-  if (!accessGranted || !currentUser || currentUser.id !== CREATOR_ID) {
-    throw new Error("Creator verification required. Verify access again.");
-  }
-
+/* Har sensitive operation se pehle current access dobara check karein */
+async function ensureAuthorized() {
   const { data, error } = await db.auth.getSession();
   if (error) throw error;
 
-  if (!data.session || data.session.user.id !== CREATOR_ID) {
+  const user = data.session?.user;
+  if (!user || !currentUser || user.id !== currentUser.id) {
     accessGranted = false;
     throw new Error("Session expired. Please login again.");
   }
+
+  if (user.id === CREATOR_ID) {
+    if (currentRole !== "creator" || !accessGranted) {
+      throw new Error("Please verify Creator access again.");
+    }
+    return;
+  }
+
+  const { data: admin, error: adminError } = await db
+    .from("chatzone_admins")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (adminError) throw adminError;
+
+  const role = String(admin?.role || "").toLowerCase();
+  if (!["senior_admin", "admin"].includes(role)) {
+    accessGranted = false;
+    throw new Error("Admin permission nahi mili. Verify Again karein.");
+  }
+
+  currentRole = role;
+  accessGranted = true;
 }
 
-el("refreshAccess").addEventListener("click", verifyCreator);
+async function ensureCreator() {
+  await ensureAuthorized();
+  if (currentUser?.id !== CREATOR_ID || currentRole !== "creator") {
+    throw new Error("Yeh action sirf Creator kar sakta hai.");
+  }
+}
+
+el("refreshAccess").addEventListener("click", verifyAccess);
 
 el("logoutBtn").addEventListener("click", async () => {
   accessGranted = false;
@@ -223,7 +280,7 @@ el("logoutBtn").addEventListener("click", async () => {
 el("searchForm").addEventListener("submit", async event => {
   event.preventDefault();
   try {
-    await ensureCreator();
+    await ensureAuthorized();
     await searchMembers();
   } catch (error) {
     status("searchStatus", error.message || String(error));
@@ -241,7 +298,7 @@ async function searchMembers() {
   el("searchResults").replaceChildren();
 
   try {
-    await ensureCreator();
+    await ensureAuthorized();
 
     const { data, error } = await db
       .from("profiles")
@@ -251,8 +308,8 @@ async function searchMembers() {
 
     if (error) throw error;
 
-    if (!data || !data.length) {
-      status("searchStatus", "Member nahi mila. Profiles SELECT policy bhi check karein.");
+    if (!data?.length) {
+      status("searchStatus", "Member nahi mila ya Profiles SELECT permission nahi hai.");
       return;
     }
 
@@ -270,9 +327,10 @@ async function searchMembers() {
         ${isCreator ? '<span class="tag">👑 Creator</span>' : ""}
         <div class="actions">
           <button class="red" data-open-ban ${isCreator ? "disabled" : ""}>🚫 Ban Member</button>
-          <button class="green" data-assign-admin ${isCreator ? "disabled" : ""}>🛡️ Assign Admin</button>
+          ${currentRole === "creator" && !isCreator
+            ? '<button class="green" data-assign-admin>🛡️ Assign Admin</button>'
+            : ""}
         </div>
-
         <div class="ban-form hidden">
           <label>Ban Duration</label>
           <select data-duration>
@@ -289,18 +347,18 @@ async function searchMembers() {
             <button class="gray" data-cancel-ban>Cancel</button>
           </div>
         </div>
-
-        <div class="admin-form hidden">
-          <label>Admin Role</label>
-          <select data-admin-role>
-            <option value="admin">Admin</option>
-            <option value="senior_admin">Senior Admin</option>
-          </select>
-          <div class="actions">
-            <button class="green" data-confirm-admin>Confirm Role</button>
-            <button class="gray" data-cancel-admin>Cancel</button>
-          </div>
-        </div>
+        ${currentRole === "creator" && !isCreator ? `
+          <div class="admin-form hidden">
+            <label>Admin Role</label>
+            <select data-admin-role>
+              <option value="admin">Admin</option>
+              <option value="senior_admin">Senior Admin</option>
+            </select>
+            <div class="actions">
+              <button class="green" data-confirm-admin>Confirm Role</button>
+              <button class="gray" data-cancel-admin>Cancel</button>
+            </div>
+          </div>` : ""}
       `;
 
       item.querySelector("[data-open-ban]").addEventListener("click", () => {
@@ -311,13 +369,41 @@ async function searchMembers() {
         item.querySelector(".ban-form").classList.add("hidden");
       });
 
-      item.querySelector("[data-assign-admin]").addEventListener("click", () => {
-        item.querySelector(".admin-form").classList.remove("hidden");
-      });
+      const assignBtn = item.querySelector("[data-assign-admin]");
+      if (assignBtn) {
+        assignBtn.addEventListener("click", () => {
+          item.querySelector(".admin-form").classList.remove("hidden");
+        });
 
-      item.querySelector("[data-cancel-admin]").addEventListener("click", () => {
-        item.querySelector(".admin-form").classList.add("hidden");
-      });
+        item.querySelector("[data-cancel-admin]").addEventListener("click", () => {
+          item.querySelector(".admin-form").classList.add("hidden");
+        });
+
+        item.querySelector("[data-confirm-admin]").addEventListener("click", async event => {
+          const role = item.querySelector("[data-admin-role]").value;
+          if (!confirm("Is member ko " + role + " assign karna hai?")) return;
+
+          const button = event.currentTarget;
+          button.disabled = true;
+
+          try {
+            await ensureCreator();
+            const { error } = await db.rpc("assign_chatzone_admin", {
+              target_user_id: member.id,
+              target_role: role
+            });
+            if (error) throw error;
+
+            alert("Admin role assign ho gaya.");
+            item.querySelector(".admin-form").classList.add("hidden");
+            await loadAdmins();
+          } catch (error) {
+            alert("Admin assign error: " + (error.message || error));
+          } finally {
+            button.disabled = false;
+          }
+        });
+      }
 
       item.querySelector("[data-confirm-ban]").addEventListener("click", async event => {
         const reason = item.querySelector("[data-reason]").value.trim();
@@ -327,14 +413,13 @@ async function searchMembers() {
           alert("Ban reason likhna zaroori hai.");
           return;
         }
-
         if (!confirm("Kya aap is account ko ban karna chahte hain?")) return;
 
         const button = event.currentTarget;
         button.disabled = true;
 
         try {
-          await ensureCreator();
+          await ensureAuthorized();
 
           const banUntil = duration === "permanent"
             ? null
@@ -345,7 +430,6 @@ async function searchMembers() {
             ban_reason: reason,
             ban_until: banUntil
           });
-
           if (error) throw error;
 
           alert("Ban record save ho gaya.");
@@ -353,33 +437,6 @@ async function searchMembers() {
           await loadBans();
         } catch (error) {
           alert("Ban error: " + (error.message || error));
-        } finally {
-          button.disabled = false;
-        }
-      });
-
-      item.querySelector("[data-confirm-admin]").addEventListener("click", async event => {
-        const role = item.querySelector("[data-admin-role]").value;
-        if (!confirm("Is member ko " + role + " assign karna hai?")) return;
-
-        const button = event.currentTarget;
-        button.disabled = true;
-
-        try {
-          await ensureCreator();
-
-          const { error } = await db.rpc("assign_chatzone_admin", {
-            target_user_id: member.id,
-            target_role: role
-          });
-
-          if (error) throw error;
-
-          alert("Admin role assign ho gaya.");
-          item.querySelector(".admin-form").classList.add("hidden");
-          await loadAdmins();
-        } catch (error) {
-          alert("Admin assign error: " + (error.message || error));
         } finally {
           button.disabled = false;
         }
@@ -397,12 +454,11 @@ el("refreshBans").addEventListener("click", loadBans);
 
 async function loadBans() {
   if (!accessGranted) return;
-
   status("banStatus", "Loading bans...");
   el("banList").replaceChildren();
 
   try {
-    await ensureCreator();
+    await ensureAuthorized();
 
     const { data, error } = await db.rpc("chatzone_list_active_bans");
     if (error) throw error;
@@ -426,9 +482,7 @@ async function loadBans() {
         <div class="muted">Banned: ${safe(dateText(ban.banned_at))}</div>
         <div class="muted">Expires: ${safe(dateText(ban.expires_at))}</div>
         <span class="tag">${safe(remainingText(ban.expires_at))}</span>
-        <div class="actions">
-          <button class="green" data-unban>✅ Unban</button>
-        </div>
+        <div class="actions"><button class="green" data-unban>✅ Unban</button></div>
       `;
 
       item.querySelector("[data-unban]").addEventListener("click", async event => {
@@ -438,12 +492,11 @@ async function loadBans() {
         button.disabled = true;
 
         try {
-          await ensureCreator();
+          await ensureAuthorized();
 
           const { error } = await db.rpc("chatzone_unban_user", {
             target_user_id: ban.user_id
           });
-
           if (error) throw error;
 
           alert("Unban successful.");
@@ -462,17 +515,16 @@ async function loadBans() {
   }
 }
 
-/* Admin list */
+/* Admin list: role removal Creator-only */
 el("refreshAdmins").addEventListener("click", loadAdmins);
 
 async function loadAdmins() {
   if (!accessGranted) return;
-
   status("adminStatus", "Loading admins...");
   el("adminList").replaceChildren();
 
   try {
-    await ensureCreator();
+    await ensureAuthorized();
 
     const { data, error } = await db
       .from("chatzone_admins")
@@ -496,9 +548,7 @@ async function loadAdmins() {
         .eq("id", admin.user_id)
         .maybeSingle();
 
-      if (profileError) {
-        console.warn("Could not load admin profile:", profileError.message);
-      }
+      if (profileError) console.warn(profileError.message);
 
       const item = document.createElement("div");
       item.className = "item";
@@ -508,34 +558,36 @@ async function loadAdmins() {
         <div class="muted">Role: ${safe(admin.role)}</div>
         <div class="muted">ID: ${safe(admin.user_id)}</div>
         <div class="muted">Assigned: ${safe(dateText(admin.created_at))}</div>
-        <div class="actions">
-          <button class="red" data-remove-admin>Remove Admin</button>
-        </div>
+        ${currentRole === "creator"
+          ? '<div class="actions"><button class="red" data-remove-admin>Remove Admin</button></div>'
+          : '<span class="tag">View only</span>'}
       `;
 
-      item.querySelector("[data-remove-admin]").addEventListener("click", async event => {
-        if (!confirm("Is admin ka role remove karna hai?")) return;
+      const removeBtn = item.querySelector("[data-remove-admin]");
+      if (removeBtn) {
+        removeBtn.addEventListener("click", async event => {
+          if (!confirm("Is admin ka role remove karna hai?")) return;
 
-        const button = event.currentTarget;
-        button.disabled = true;
+          const button = event.currentTarget;
+          button.disabled = true;
 
-        try {
-          await ensureCreator();
+          try {
+            await ensureCreator();
 
-          const { error } = await db.rpc("remove_chatzone_admin", {
-            target_user_id: admin.user_id
-          });
+            const { error } = await db.rpc("remove_chatzone_admin", {
+              target_user_id: admin.user_id
+            });
+            if (error) throw error;
 
-          if (error) throw error;
-
-          alert("Admin role remove ho gaya.");
-          await loadAdmins();
-        } catch (error) {
-          alert("Remove error: " + (error.message || error));
-        } finally {
-          button.disabled = false;
-        }
-      });
+            alert("Admin role remove ho gaya.");
+            await loadAdmins();
+          } catch (error) {
+            alert("Remove error: " + (error.message || error));
+          } finally {
+            button.disabled = false;
+          }
+        });
+      }
 
       el("adminList").appendChild(item);
     }
@@ -544,19 +596,19 @@ async function loadAdmins() {
   }
 }
 
-/* Auth state */
-db.auth.onAuthStateChange((event, session) => {
+db.auth.onAuthStateChange((event) => {
   if (event === "SIGNED_OUT") {
     accessGranted = false;
     currentUser = null;
+    currentRole = null;
     el("dashboard").classList.add("hidden");
     status("authStatus", "Signed out. Please login again.");
-  } else if (event === "SIGNED_IN" && session) {
-    setTimeout(() => verifyCreator(), 0);
+  } else if (event === "SIGNED_IN") {
+    setTimeout(() => verifyAccess(), 0);
   }
 });
 
-verifyCreator();
+verifyAccess();
 </script>
 </body>
 </html>
