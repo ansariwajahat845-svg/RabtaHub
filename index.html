@@ -2009,7 +2009,11 @@ ${avatarHTML}
 <span class="post-author-name">
 ${escapeHtml(name||username)}
 </span>
-
+${
+post.user_id === "db4d3669-e3ec-42ec-a716-791f43cebd8d"
+? '<span class="role-badge website-creator-badge">👑 Website Creator</span>'
+: ""
+}
 ${
 name&&username
 ?`
