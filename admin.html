@@ -8,305 +8,555 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f0ff;color:#242038}
+body{margin:0;background:#f3efff;font-family:Arial,sans-serif;color:#222}
 header{background:linear-gradient(135deg,#6c5ce7,#8e44ad);color:#fff;text-align:center;padding:22px 12px}
-header h1{font-size:23px;margin:0 0 7px}
-header p{font-size:13px;margin:0}
-main{width:94%;max-width:650px;margin:16px auto;padding-bottom:25px}
-.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px #0001}
-h2{font-size:18px;color:#6c5ce7;margin:0 0 12px}
-input,select,button{width:100%;padding:12px;margin:5px 0;border-radius:9px;font-size:14px}
-input,select{border:1px solid #ddd;background:#fff}
-button{background:#6c5ce7;color:white;border:0;font-weight:bold;cursor:pointer}
+header h1{margin:0 0 7px;font-size:24px}
+header p{margin:0;font-size:13px}
+main{max-width:760px;margin:18px auto;padding:0 12px 30px}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:15px;box-shadow:0 4px 14px #33226612}
+h2{color:#5935a6;font-size:19px;margin:0 0 13px}
+p{line-height:1.5}
+label{display:block;font-weight:bold;font-size:13px;margin:10px 0 5px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;font-size:14px;background:white}
+textarea{min-height:65px;resize:vertical}
+button{border:0;border-radius:9px;padding:11px 13px;color:white;font-weight:bold;font-size:13px;cursor:pointer}
 button:disabled{opacity:.5}
-.secondary{background:#eee9ff;color:#5138bd}
-.danger{background:#d63031}
-.note,.small{font-size:12px;color:#777;line-height:1.5;overflow-wrap:anywhere}
-#status,#message{padding:11px;border-radius:9px;background:#f3f0ff;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.purple{background:#6c5ce7}.red{background:#d63031}.green{background:#218c54}.gray{background:#777}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.status{background:#f5f2ff;padding:11px;border-radius:9px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.muted{font-size:12px;color:#777;line-height:1.6;overflow-wrap:anywhere}
+.item{border:1px solid #e8e2f5;border-radius:10px;padding:12px;margin-top:10px;overflow-wrap:anywhere}
+.item strong{font-size:15px}
 .hidden{display:none!important}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.stat{background:#f3f0ff;border-radius:9px;padding:12px 3px;text-align:center}
-.stat strong{display:block;color:#6c5ce7;font-size:20px}
-.stat span{font-size:11px;color:#666}
-.person{border:1px solid #eee;border-radius:10px;padding:12px;margin:9px 0;overflow-wrap:anywhere}
-.tag{display:inline-block;background:#eee9ff;color:#5138bd;border-radius:12px;padding:5px 8px;font-size:11px;margin:5px 0}
+.tag{display:inline-block;background:#eee7ff;color:#5935a6;padding:4px 8px;border-radius:20px;font-size:11px;margin-top:5px}
+footer{text-align:center;color:#777;font-size:12px;padding:15px}
 </style>
 </head>
 <body>
+
 <header>
-<h1>👑 ChatZone Admin Management</h1>
-<p>Creator Control Panel</p>
+  <h1>👑 ChatZone Admin</h1>
+  <p>Creator Dashboard • Member Management • Ban System</p>
 </header>
 
 <main>
-<div class="card">
-<h2>🔐 Creator Verification</h2>
-<div id="status">Checking account...</div>
-<button class="secondary" onclick="location.href='more.html'">← Back to More</button>
-</div>
+  <section class="card">
+    <h2>🔐 Creator Verification</h2>
+    <div id="authStatus" class="status">Checking account...</div>
+    <div class="actions">
+      <button class="purple" id="refreshAccess">🔄 Verify Again</button>
+      <button class="red" id="logoutBtn">Logout</button>
+    </div>
+  </section>
 
-<div id="panel" class="hidden">
-<div class="card">
-<h2>📊 Admin Summary</h2>
-<div class="stats">
-<div class="stat"><strong id="total">0/3</strong><span>Total Admins</span></div>
-<div class="stat"><strong id="senior">0/1</strong><span>Senior Admin</span></div>
-<div class="stat"><strong id="normal">0/2</strong><span>Normal Admins</span></div>
-</div>
-</div>
+  <div id="dashboard" class="hidden">
 
-<div class="card">
-<h2>🔎 Search Users</h2>
-<p class="note">Registered user ka username likhein. Search profiles table ke SELECT permissions par depend karti hai.</p>
-<input id="query" placeholder="Username likhein..." autocomplete="off">
-<button id="searchBtn">Search Users</button>
-<div id="results"></div>
-</div>
+    <section class="card">
+      <h2>🔎 Search Members</h2>
+      <p class="muted">Username ya display name se search karein.</p>
+      <form id="searchForm">
+        <input id="searchInput" placeholder="Username ya name..." required minlength="2">
+        <div class="actions">
+          <button class="purple" type="submit">Search</button>
+        </div>
+      </form>
+      <p id="searchStatus" class="muted"></p>
+      <div id="searchResults"></div>
+    </section>
 
-<div class="card">
-<h2>🛡️ Current Admins</h2>
-<p class="note">Maximum 1 Senior Admin aur 2 Normal Admins. Creator in teen slots mein shamil nahi.</p>
-<button id="refreshBtn" class="secondary">↻ Refresh Admins</button>
-<div id="admins">Loading...</div>
-</div>
+    <section class="card">
+      <h2>🚫 Active Bans</h2>
+      <p class="muted">Temporary aur permanent ban records.</p>
+      <button class="purple" id="refreshBans">🔄 Refresh Bans</button>
+      <p id="banStatus" class="muted"></p>
+      <div id="banList"></div>
+    </section>
 
-<div class="card">
-<h2>🚫 Ban Management</h2>
-<p class="note">Ban/unban ko secure database functions ke saath setup karna zaroori hai. Is panel se ban table ko directly edit nahi kiya jata.</p>
-</div>
-</div>
+    <section class="card">
+      <h2>🛡️ Admin Management</h2>
+      <p class="muted">Member ko search karke Admin ya Senior Admin assign karein.</p>
+      <button class="purple" id="refreshAdmins">🔄 Refresh Admins</button>
+      <p id="adminStatus" class="muted"></p>
+      <div id="adminList"></div>
+    </section>
 
-<div id="message" class="hidden"></div>
+  </div>
 </main>
+
+<footer>ChatZone 💬</footer>
 
 <script>
 "use strict";
 
-const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
-const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-const CREATOR_ID="db4d3669-e3ec-42ec-a716-791f43cebd8d";
+/* Supabase project configuration */
+const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+const CREATOR_ID = "db4d3669-e3ec-42ec-a716-791f43cebd8d";
 
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
- auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
 });
 
-const $=id=>document.getElementById(id);
-let me=null;
+let currentUser = null;
+let accessGranted = false;
+let checkingAccess = false;
 
-function showMessage(text,error=false){
- const el=$("message");
- el.textContent=text;
- el.classList.remove("hidden");
- el.style.background=error?"#fff0ef":"#e8f8ee";
- el.style.color=error?"#a82020":"#176b39";
-}
-function clearMessage(){
- $("message").classList.add("hidden");
-}
-function make(tag,text,className){
- const el=document.createElement(tag);
- el.textContent=text==null?"":String(text);
- if(className)el.className=className;
- return el;
-}
-function roleName(role){
- return role==="senior_admin"?"Senior Admin":"Normal Admin";
+const el = id => document.getElementById(id);
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[c]);
 }
 
-async function init(){
- try{
-  const {data,error}=await db.auth.getSession();
-  if(error)throw error;
+function status(id, message) {
+  el(id).textContent = message;
+}
 
-  if(!data.session){
-   $("status").textContent="Login required. Login page khol rahe hain...";
-   setTimeout(()=>location.replace("login.html"),1000);
-   return;
+function dateText(value) {
+  if (!value) return "Permanent";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+}
+
+function remainingText(value) {
+  if (!value) return "Permanent ban";
+  const ms = new Date(value).getTime() - Date.now();
+  if (!Number.isFinite(ms)) return "Expiry unavailable";
+  if (ms <= 0) return "Expired";
+  const hours = Math.ceil(ms / 3600000);
+  if (hours < 24) return hours + " hour(s) remaining";
+  return Math.ceil(hours / 24) + " day(s) remaining";
+}
+
+async function verifyCreator() {
+  if (checkingAccess) return accessGranted;
+  checkingAccess = true;
+  accessGranted = false;
+  el("dashboard").classList.add("hidden");
+  status("authStatus", "Checking login and creator role...");
+
+  try {
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
+
+    const user = data.session?.user;
+    if (!user) {
+      currentUser = null;
+      status("authStatus", "Login required. Pehle ChatZone mein login karein.");
+      return false;
+    }
+
+    currentUser = user;
+
+    if (user.id !== CREATOR_ID) {
+      status("authStatus", "⛔ Creator access denied. Yeh registered creator account nahi hai.");
+      return false;
+    }
+
+    const { data: roles, error: roleError } = await db
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id);
+
+    if (roleError) throw roleError;
+
+    const isCreator = (roles || []).some(
+      r => String(r.role || "").toLowerCase() === "creator"
+    );
+
+    if (!isCreator) {
+      status("authStatus", "Creator role verify nahi hua. user_roles table aur role value check karein.");
+      return false;
+    }
+
+    accessGranted = true;
+    status("authStatus", "✅ Creator verified.\nUser ID: " + user.id);
+    el("dashboard").classList.remove("hidden");
+
+    await Promise.allSettled([loadBans(), loadAdmins()]);
+    return true;
+  } catch (error) {
+    status("authStatus", "Verification error: " + (error.message || error));
+    return false;
+  } finally {
+    checkingAccess = false;
+  }
+}
+
+async function ensureCreator() {
+  if (!accessGranted || !currentUser || currentUser.id !== CREATOR_ID) {
+    throw new Error("Creator verification required. Verify access again.");
   }
 
-  me=data.session.user;
+  const { data, error } = await db.auth.getSession();
+  if (error) throw error;
 
-  if(me.id.toLowerCase()!==CREATOR_ID.toLowerCase()){
-   $("status").textContent="⛔ Access denied. Sirf Creator account allowed hai.\nYour ID: "+me.id;
-   return;
+  if (!data.session || data.session.user.id !== CREATOR_ID) {
+    accessGranted = false;
+    throw new Error("Session expired. Please login again.");
   }
-
-  const {data:role,error:roleError}=await db
-   .from("user_roles")
-   .select("role")
-   .eq("user_id",me.id)
-   .maybeSingle();
-
-  if(roleError)throw roleError;
-
-  if(String(role?.role||"").toLowerCase()!=="creator"){
-   $("status").textContent="Creator role verify nahi hua. Supabase user_roles table check karein.";
-   return;
-  }
-
-  $("status").textContent="✅ Creator verified\nAccount ID: "+me.id;
-  $("panel").classList.remove("hidden");
-  await loadAdmins();
- }catch(e){
-  $("status").textContent="Error: "+(e.message||String(e))+"\nSupabase settings aur SQL setup check karein.";
- }
 }
 
-async function searchUsers(){
- clearMessage();
- const query=$("query").value.trim().replace(/^@/,"");
- const results=$("results");
- results.replaceChildren();
+el("refreshAccess").addEventListener("click", verifyCreator);
 
- if(query.length<2){
-  results.textContent="Kam az kam 2 characters likhein.";
-  return;
- }
-
- $("searchBtn").disabled=true;
- results.textContent="Searching...";
-
- try{
-  const {data,error}=await db
-   .from("profiles")
-   .select("id,username,name,avatar_url")
-   .ilike("username","%"+query+"%")
-   .limit(20);
-
-  if(error)throw error;
-
-  results.replaceChildren();
-  const users=(data||[]).filter(u=>u.id!==me.id);
-
-  if(!users.length){
-   results.textContent="User nahi mila. Username ya profiles SELECT permission check karein.";
-   return;
+el("logoutBtn").addEventListener("click", async () => {
+  accessGranted = false;
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+  } catch (error) {
+    alert("Logout error: " + (error.message || error));
   }
-
-  users.forEach(user=>{
-   const box=make("div","","person");
-   box.appendChild(make("strong","@"+(user.username||"unknown")));
-   box.appendChild(make("div",user.name||"","small"));
-   box.appendChild(make("div","User ID: "+user.id,"small"));
-
-   const roleSelect=document.createElement("select");
-   roleSelect.innerHTML=
-    '<option value="senior_admin">Senior Admin</option>'+
-    '<option value="admin">Normal Admin</option>';
-
-   const assign=make("button","Assign Admin");
-   assign.addEventListener("click",()=>assignAdmin(user,roleSelect.value));
-
-   box.appendChild(roleSelect);
-   box.appendChild(assign);
-   results.appendChild(box);
-  });
- }catch(e){
-  results.textContent="Search error: "+(e.message||String(e))+
-   "\nProfiles table par SELECT permission zaroori ho sakti hai.";
- }finally{
-  $("searchBtn").disabled=false;
- }
-}
-
-async function assignAdmin(user,role){
- if(!confirm("@"+(user.username||"user")+" ko "+roleName(role)+" banana hai?"))return;
- clearMessage();
-
- try{
-  const {error}=await db.rpc("assign_chatzone_admin",{
-   target_user_id:user.id,
-   target_role:role
-  });
-
-  if(error)throw error;
-
-  showMessage("✅ Admin role successfully assign ho gaya.");
-  await loadAdmins();
- }catch(e){
-  showMessage("Admin assign nahi hua: "+(e.message||String(e))+
-   "\nSQL function aur admin limits check karein.",true);
- }
-}
-
-async function removeAdmin(userId){
- if(!confirm("Is user ka admin role remove karna hai?"))return;
- clearMessage();
-
- try{
-  const {error}=await db.rpc("remove_chatzone_admin",{
-   target_user_id:userId
-  });
-
-  if(error)throw error;
-
-  showMessage("Admin role remove ho gaya.");
-  await loadAdmins();
- }catch(e){
-  showMessage("Role remove nahi hua: "+(e.message||String(e)),true);
- }
-}
-
-async function loadAdmins(){
- $("admins").textContent="Loading admins...";
- clearMessage();
-
- try{
-  const {data,error}=await db
-   .from("chatzone_admins")
-   .select("user_id,role,created_at")
-   .order("created_at",{ascending:true});
-
-  if(error)throw error;
-
-  const list=data||[];
-  const senior=list.filter(x=>x.role==="senior_admin").length;
-  const normal=list.filter(x=>x.role==="admin").length;
-
-  $("total").textContent=list.length+"/3";
-  $("senior").textContent=senior+"/1";
-  $("normal").textContent=normal+"/2";
-  $("admins").replaceChildren();
-
-  if(!list.length){
-   $("admins").textContent="Abhi koi additional admin assign nahi hua.";
-   return;
-  }
-
-  for(const admin of list){
-   const box=make("div","","person");
-   box.appendChild(make("strong",roleName(admin.role)));
-   box.appendChild(make("div","User ID: "+admin.user_id,"small"));
-
-   const {data:profile}=await db.from("profiles")
-    .select("username,name")
-    .eq("id",admin.user_id)
-    .maybeSingle();
-
-   box.appendChild(make("div",
-    (profile?.name||"")+
-    (profile?.username?" (@"+profile.username+")":""),"small"));
-
-   box.appendChild(make("span",roleName(admin.role),"tag"));
-
-   const remove=make("button","Remove Admin","danger");
-   remove.addEventListener("click",()=>removeAdmin(admin.user_id));
-   box.appendChild(remove);
-   $("admins").appendChild(box);
-  }
- }catch(e){
-  $("admins").textContent="Admin list error: "+(e.message||String(e))+
-   "\nchatzone_admins table aur SELECT RLS policy check karein.";
- }
-}
-
-$("searchBtn").addEventListener("click",searchUsers);
-$("refreshBtn").addEventListener("click",loadAdmins);
-$("query").addEventListener("keydown",e=>{
- if(e.key==="Enter")searchUsers();
+  location.href = "login.html";
 });
 
-init();
+/* Member search */
+el("searchForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  try {
+    await ensureCreator();
+    await searchMembers();
+  } catch (error) {
+    status("searchStatus", error.message || String(error));
+  }
+});
+
+async function searchMembers() {
+  const term = el("searchInput").value.trim();
+  if (term.length < 2) {
+    status("searchStatus", "Kam az kam 2 characters likhein.");
+    return;
+  }
+
+  status("searchStatus", "Searching...");
+  el("searchResults").replaceChildren();
+
+  try {
+    await ensureCreator();
+
+    const { data, error } = await db
+      .from("profiles")
+      .select("id,username,name")
+      .or("username.ilike.%"+term+"%,name.ilike.%"+term+"%")
+      .limit(20);
+
+    if (error) throw error;
+
+    if (!data || !data.length) {
+      status("searchStatus", "Member nahi mila. Profiles SELECT policy bhi check karein.");
+      return;
+    }
+
+    status("searchStatus", data.length + " member(s) found.");
+
+    data.forEach(member => {
+      const isCreator = member.id === CREATOR_ID;
+      const item = document.createElement("div");
+      item.className = "item";
+
+      item.innerHTML = `
+        <strong>${safe(member.name || member.username || "Member")}</strong>
+        <div class="muted">@${safe(member.username || "unknown")}</div>
+        <div class="muted">ID: ${safe(member.id)}</div>
+        ${isCreator ? '<span class="tag">👑 Creator</span>' : ""}
+        <div class="actions">
+          <button class="red" data-open-ban ${isCreator ? "disabled" : ""}>🚫 Ban Member</button>
+          <button class="green" data-assign-admin ${isCreator ? "disabled" : ""}>🛡️ Assign Admin</button>
+        </div>
+
+        <div class="ban-form hidden">
+          <label>Ban Duration</label>
+          <select data-duration>
+            <option value="3600000">1 Hour</option>
+            <option value="86400000">24 Hours</option>
+            <option value="604800000">7 Days</option>
+            <option value="2592000000">30 Days</option>
+            <option value="permanent">Permanent</option>
+          </select>
+          <label>Ban Reason</label>
+          <textarea data-reason maxlength="500" placeholder="Ban ki wajah likhein..."></textarea>
+          <div class="actions">
+            <button class="red" data-confirm-ban>Confirm Ban</button>
+            <button class="gray" data-cancel-ban>Cancel</button>
+          </div>
+        </div>
+
+        <div class="admin-form hidden">
+          <label>Admin Role</label>
+          <select data-admin-role>
+            <option value="admin">Admin</option>
+            <option value="senior_admin">Senior Admin</option>
+          </select>
+          <div class="actions">
+            <button class="green" data-confirm-admin>Confirm Role</button>
+            <button class="gray" data-cancel-admin>Cancel</button>
+          </div>
+        </div>
+      `;
+
+      item.querySelector("[data-open-ban]").addEventListener("click", () => {
+        item.querySelector(".ban-form").classList.remove("hidden");
+      });
+
+      item.querySelector("[data-cancel-ban]").addEventListener("click", () => {
+        item.querySelector(".ban-form").classList.add("hidden");
+      });
+
+      item.querySelector("[data-assign-admin]").addEventListener("click", () => {
+        item.querySelector(".admin-form").classList.remove("hidden");
+      });
+
+      item.querySelector("[data-cancel-admin]").addEventListener("click", () => {
+        item.querySelector(".admin-form").classList.add("hidden");
+      });
+
+      item.querySelector("[data-confirm-ban]").addEventListener("click", async event => {
+        const reason = item.querySelector("[data-reason]").value.trim();
+        const duration = item.querySelector("[data-duration]").value;
+
+        if (!reason) {
+          alert("Ban reason likhna zaroori hai.");
+          return;
+        }
+
+        if (!confirm("Kya aap is account ko ban karna chahte hain?")) return;
+
+        const button = event.currentTarget;
+        button.disabled = true;
+
+        try {
+          await ensureCreator();
+
+          const banUntil = duration === "permanent"
+            ? null
+            : new Date(Date.now() + Number(duration)).toISOString();
+
+          const { error } = await db.rpc("chatzone_ban_user", {
+            target_user_id: member.id,
+            ban_reason: reason,
+            ban_until: banUntil
+          });
+
+          if (error) throw error;
+
+          alert("Ban record save ho gaya.");
+          item.querySelector(".ban-form").classList.add("hidden");
+          await loadBans();
+        } catch (error) {
+          alert("Ban error: " + (error.message || error));
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      item.querySelector("[data-confirm-admin]").addEventListener("click", async event => {
+        const role = item.querySelector("[data-admin-role]").value;
+        if (!confirm("Is member ko " + role + " assign karna hai?")) return;
+
+        const button = event.currentTarget;
+        button.disabled = true;
+
+        try {
+          await ensureCreator();
+
+          const { error } = await db.rpc("assign_chatzone_admin", {
+            target_user_id: member.id,
+            target_role: role
+          });
+
+          if (error) throw error;
+
+          alert("Admin role assign ho gaya.");
+          item.querySelector(".admin-form").classList.add("hidden");
+          await loadAdmins();
+        } catch (error) {
+          alert("Admin assign error: " + (error.message || error));
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      el("searchResults").appendChild(item);
+    });
+  } catch (error) {
+    status("searchStatus", "Search error: " + (error.message || error));
+  }
+}
+
+/* Active bans */
+el("refreshBans").addEventListener("click", loadBans);
+
+async function loadBans() {
+  if (!accessGranted) return;
+
+  status("banStatus", "Loading bans...");
+  el("banList").replaceChildren();
+
+  try {
+    await ensureCreator();
+
+    const { data, error } = await db.rpc("chatzone_list_active_bans");
+    if (error) throw error;
+
+    const bans = data || [];
+    if (!bans.length) {
+      status("banStatus", "Koi active ban nahi mila.");
+      return;
+    }
+
+    status("banStatus", bans.length + " active ban(s).");
+
+    bans.forEach(ban => {
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = `
+        <strong>@${safe(ban.username || "unknown")}</strong>
+        <div class="muted">${safe(ban.name || "")}</div>
+        <div class="muted">User ID: ${safe(ban.user_id)}</div>
+        <div class="muted">Reason: ${safe(ban.reason || "Not specified")}</div>
+        <div class="muted">Banned: ${safe(dateText(ban.banned_at))}</div>
+        <div class="muted">Expires: ${safe(dateText(ban.expires_at))}</div>
+        <span class="tag">${safe(remainingText(ban.expires_at))}</span>
+        <div class="actions">
+          <button class="green" data-unban>✅ Unban</button>
+        </div>
+      `;
+
+      item.querySelector("[data-unban]").addEventListener("click", async event => {
+        if (!confirm("Is account ka ban remove karna hai?")) return;
+
+        const button = event.currentTarget;
+        button.disabled = true;
+
+        try {
+          await ensureCreator();
+
+          const { error } = await db.rpc("chatzone_unban_user", {
+            target_user_id: ban.user_id
+          });
+
+          if (error) throw error;
+
+          alert("Unban successful.");
+          await loadBans();
+        } catch (error) {
+          alert("Unban error: " + (error.message || error));
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      el("banList").appendChild(item);
+    });
+  } catch (error) {
+    status("banStatus", "Ban list error: " + (error.message || error));
+  }
+}
+
+/* Admin list */
+el("refreshAdmins").addEventListener("click", loadAdmins);
+
+async function loadAdmins() {
+  if (!accessGranted) return;
+
+  status("adminStatus", "Loading admins...");
+  el("adminList").replaceChildren();
+
+  try {
+    await ensureCreator();
+
+    const { data, error } = await db
+      .from("chatzone_admins")
+      .select("user_id,role,assigned_by,created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const admins = data || [];
+    if (!admins.length) {
+      status("adminStatus", "Koi admin assigned nahi hai.");
+      return;
+    }
+
+    status("adminStatus", admins.length + " admin(s).");
+
+    for (const admin of admins) {
+      const { data: profile, error: profileError } = await db
+        .from("profiles")
+        .select("username,name")
+        .eq("id", admin.user_id)
+        .maybeSingle();
+
+      if (profileError) {
+        console.warn("Could not load admin profile:", profileError.message);
+      }
+
+      const item = document.createElement("div");
+      item.className = "item";
+      item.innerHTML = `
+        <strong>${safe(profile?.name || profile?.username || "ChatZone Member")}</strong>
+        <div class="muted">@${safe(profile?.username || "unknown")}</div>
+        <div class="muted">Role: ${safe(admin.role)}</div>
+        <div class="muted">ID: ${safe(admin.user_id)}</div>
+        <div class="muted">Assigned: ${safe(dateText(admin.created_at))}</div>
+        <div class="actions">
+          <button class="red" data-remove-admin>Remove Admin</button>
+        </div>
+      `;
+
+      item.querySelector("[data-remove-admin]").addEventListener("click", async event => {
+        if (!confirm("Is admin ka role remove karna hai?")) return;
+
+        const button = event.currentTarget;
+        button.disabled = true;
+
+        try {
+          await ensureCreator();
+
+          const { error } = await db.rpc("remove_chatzone_admin", {
+            target_user_id: admin.user_id
+          });
+
+          if (error) throw error;
+
+          alert("Admin role remove ho gaya.");
+          await loadAdmins();
+        } catch (error) {
+          alert("Remove error: " + (error.message || error));
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      el("adminList").appendChild(item);
+    }
+  } catch (error) {
+    status("adminStatus", "Admin list error: " + (error.message || error));
+  }
+}
+
+/* Auth state */
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    accessGranted = false;
+    currentUser = null;
+    el("dashboard").classList.add("hidden");
+    status("authStatus", "Signed out. Please login again.");
+  } else if (event === "SIGNED_IN" && session) {
+    setTimeout(() => verifyCreator(), 0);
+  }
+});
+
+verifyCreator();
 </script>
 </body>
 </html>
