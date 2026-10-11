@@ -2060,7 +2060,13 @@ post.user_id === "db4d3669-e3ec-42ec-a716-791f43cebd8d"
 ? '<span class="role-badge website-creator-badge">👑 Website Creator</span>'
 : ""
 }
-${
+
+   ${
+  roleMap &&
+  roleMap[String(post.user_id).toLowerCase()]
+    ? '<span class="role-badge senior-admin-badge">🛡️ Senior Admin</span>'
+    : ""
+}
 name&&username
 ?`
 <span class="post-author-username">
