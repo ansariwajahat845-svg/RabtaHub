@@ -1933,369 +1933,242 @@ error.message||
 /* =========================================
    RENDER POST
 ========================================= */
-
+```javascript
 function renderPost(
-post,
-counts={
-like:0,
-dislike:0
-},
-commentCount=0
-){
+  post,
+  counts = {
+    like: 0,
+    dislike: 0
+  },
+  commentCount = 0
+) {
+  const profile = profileMap[post.user_id] || {};
 
-const profile=
-profileMap[post.user_id]||{};
+  let username = profile.username || "";
+  let name = profile.name || "";
 
-let username=
-profile.username||"";
+  if (!username && currentUser && post.user_id === currentUser.id) {
+    username =
+      currentUser.user_metadata?.username ||
+      currentUser.email?.split("@")[0] ||
+      "User";
+  }
 
-let name=
-profile.name||"";
+  if (!username) username = "User";
 
-if(
-!username&&
-currentUser&&
-post.user_id===currentUser.id
-){
+  const avatar = profile.avatar_url || "";
 
-username=
-currentUser.user_metadata?.username||
-currentUser.email?.split("@")[0]||
-"User";
+  const isOwn =
+    currentUser && post.user_id === currentUser.id;
 
+  const isFollowing = !!followMap[post.user_id];
+
+  const avatarHTML = avatar
+    ? `<img class="avatar"
+        src="${escapeAttribute(avatar)}"
+        onerror="this.style.display='none'">`
+    : `<div class="avatar"
+        style="display:flex;align-items:center;justify-content:center;font-size:20px">
+        👤
+      </div>`;
+
+  const imageHTML = post.image_url
+    ? `<img class="post-image"
+        src="${escapeAttribute(post.image_url)}"
+        alt="Post image"
+        loading="lazy">`
+    : "";
+
+  const voiceHTML = post.voice_url
+    ? `<div class="post-voice">
+        <audio controls preload="metadata"
+          src="${escapeAttribute(post.voice_url)}"></audio>
+      </div>`
+    : "";
+
+  const categoryHTML = post.category
+    ? `<div class="post-category">
+        #${escapeHtml(post.category)}
+      </div>`
+    : "";
+
+  const menuHTML = !isOwn
+    ? `<div class="post-menu">
+        <button onclick="blockUser('${escapeJs(post.user_id)}')">⋮</button>
+      </div>`
+    : "";
+
+  return `
+    <div class="post" id="post-${Number(post.id)}">
+
+      <div class="post-head">
+        <div class="user-info">
+          ${avatarHTML}
+
+          <div>
+            <div class="user-name">
+              <span class="post-author-name">
+                ${escapeHtml(name || username)}
+              </span>
+
+              ${
+                post.user_id === "db4d3669-e3ec-42ec-a716-791f43cebd8d"
+                  ? '<span class="role-badge website-creator-badge">👑 Website Creator</span>'
+                  : ""
+              }
+
+              ${
+                typeof roleMap !== "undefined" &&
+                roleMap &&
+                roleMap[String(post.user_id).toLowerCase()]
+                  ? '<span class="role-badge senior-admin-badge">🛡️ Senior Admin</span>'
+                  : ""
+              }
+
+              ${
+                name && username
+                  ? `<span class="post-author-username">
+                      @${escapeHtml(username)}
+                    </span>`
+                  : ""
+              }
+            </div>
+
+            <div class="post-date">
+              ${formatDate(post.created_at)}
+            </div>
+          </div>
+        </div>
+
+        ${menuHTML}
+      </div>
+
+      ${categoryHTML}
+
+      ${
+        post.content
+          ? `<div class="post-content">
+              ${escapeHtml(post.content)}
+            </div>`
+          : ""
+      }
+
+      ${imageHTML}
+      ${voiceHTML}
+
+      <!-- Likes count: Like button ke upar -->
+      <div style="margin-top:7px">
+        <button
+          onclick="showLikes(${Number(post.id)})"
+          style="border:0;background:#fff0f3;color:#c2185b;border-radius:18px;padding:8px 12px;font-size:12px;font-weight:bold;cursor:pointer;width:100%;text-align:left;min-height:38px;">
+          ❤️ ${Number(counts.like) || 0} Likes
+        </button>
+      </div>
+
+      <!-- Post actions: sirf ek baar -->
+      <div class="post-actions">
+
+        <button
+          class="like-btn"
+          onclick="setPostAction(${Number(post.id)}, 'like')">
+          ❤️ ${Number(counts.like) || 0}
+        </button>
+
+        <button
+          class="dislike-btn"
+          onclick="setPostAction(${Number(post.id)}, 'dislike')">
+          👎 ${Number(counts.dislike) || 0}
+        </button>
+
+        <button
+          class="comment-btn"
+          id="comment-count-${Number(post.id)}"
+          onclick="toggleComments(${Number(post.id)})">
+          💬 ${Number(commentCount) || 0}
+        </button>
+
+        ${
+          !isOwn
+            ? `<button
+                class="reply-btn"
+                onclick="replyPost('${escapeJs(username)}')">
+                ↩️ Reply
+              </button>`
+            : `<button
+                class="delete-post-btn"
+                onclick="deletePost(${Number(post.id)})">
+                🗑️ Delete
+              </button>`
+        }
+
+      </div>
+
+      ${
+        !isOwn
+          ? `<div class="user-actions">
+
+              <button
+                class="one-one-btn"
+                onclick="openOneToOne('${escapeJs(post.user_id)}')">
+                💬 1on1
+              </button>
+
+              <button
+                class="${isFollowing ? "following-btn" : "follow-btn"}"
+                id="follow-btn-${safeButtonId(post.user_id)}"
+                onclick="toggleFollow('${escapeJs(post.user_id)}')">
+                ${isFollowing ? "✓ Following" : "➕ Follow"}
+              </button>
+
+              <button
+                class="block-btn"
+                onclick="blockUser('${escapeJs(post.user_id)}')">
+                🚫 Block
+              </button>
+
+            </div>`
+          : ""
+      }
+
+      <div class="comments" id="comments-${Number(post.id)}">
+
+        <div id="comments-list-${Number(post.id)}">
+          Loading...
+        </div>
+
+        <div
+          id="comment-reply-box-${Number(post.id)}"
+          class="comment-reply-box">
+
+          <span id="comment-reply-text-${Number(post.id)}"></span>
+
+          <button onclick="cancelCommentReply(${Number(post.id)})">
+            ✕
+          </button>
+
+          <div style="clear:both"></div>
+        </div>
+
+        <div class="comment-input-row">
+
+          <input
+            id="comment-input-${Number(post.id)}"
+            type="text"
+            placeholder="Write a comment..."
+            onkeydown="if(event.key==='Enter'){addComment(${Number(post.id)})}">
+
+          <button onclick="addComment(${Number(post.id)})">
+            Send
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  `;
 }
-
-if(!username)
-username="User";
-
-const avatar=
-profile.avatar_url||"";
-
-const isOwn=
-currentUser&&
-post.user_id===currentUser.id;
-
-const isFollowing=
-!!followMap[post.user_id];
-
-const avatarHTML=
-avatar
-?`<img
-class="avatar"
-src="${escapeAttribute(avatar)}"
-onerror="this.style.display='none'">`
-:`<div
-class="avatar"
-style="display:flex;align-items:center;justify-content:center;font-size:20px">
-👤
-</div>`;
-
-const imageHTML=
-post.image_url
-?`<img
-class="post-image"
-src="${escapeAttribute(post.image_url)}"
-alt="Post image"
-loading="lazy">`
-:"";
-
-const voiceHTML=
-post.voice_url
-?`
-<div class="post-voice">
-
-<audio
-controls
-preload="metadata"
-src="${escapeAttribute(post.voice_url)}">
-</audio>
-
-</div>
-`
-:"";
-
-const categoryHTML=
-post.category
-?`
-<div class="post-category">
-#${escapeHtml(post.category)}
-</div>
-`
-:"";
-
-const menuHTML=
-!isOwn
-?`
-<div class="post-menu">
-
-<button
-onclick="blockUser('${escapeJs(post.user_id)}')">
-⋮
-</button>
-
-</div>
-`
-:"";
-
-return `
-<div
-class="post"
-id="post-${Number(post.id)}">
-
-<div class="post-head">
-
-<div class="user-info">
-
-${avatarHTML}
-
-<div>
-
-<div class="user-name">
-
-<span class="post-author-name">
-${escapeHtml(name||username)}
-</span>
-${
-post.user_id === "db4d3669-e3ec-42ec-a716-791f43cebd8d"
-? '<span class="role-badge website-creator-badge">👑 Website Creator</span>'
-: ""
-}
-
-   ${
-  roleMap &&
-  roleMap[String(post.user_id).toLowerCase()]
-    ? '<span class="role-badge senior-admin-badge">🛡️ Senior Admin</span>'
-    : ""
-}
-${
-name&&username
-?`
-<span class="post-author-username">
-@${escapeHtml(username)}
-</span>
-`
-:""
-}
-
-</div>
-
-<div class="post-date">
-${formatDate(post.created_at)}
-</div>
-
-</div>
-</div>
-
-${menuHTML}
-
-</div>
-
-${categoryHTML}
-
-${
-post.content
-?`
-<div class="post-content">
-${escapeHtml(post.content)}
-</div>
-`
-:""
-}
-
-${imageHTML}
-
-${voiceHTML}
-```js
-<div style="margin-top:7px">
-<button
-onclick="showLikes(${Number(post.id)})"
-style="border:0;background:#fff0f3;color:#c2185b;border-radius:18px;padding:8px 12px;font-size:12px;font-weight:bold;cursor:pointer;width:100%;text-align:left;min-height:38px;">
-❤️ ${counts.like} Likes
-</button>
-</div>
-
-<div class="post-actions">
-
-<button
-class="like-btn"
-onclick="setPostAction(
-${Number(post.id)},
-'like'
-)">
 ```
 
-<div class="post-actions">
-
-<button
-class="like-btn"
-onclick="setPostAction(
-${Number(post.id)},
-'like'
-)">
-❤️ ${counts.like}
-</button>
-
-<button
-class="dislike-btn"
-onclick="setPostAction(
-${Number(post.id)},
-'dislike'
-)">
-👎 ${counts.dislike}
-</button>
-
-<button
-class="comment-btn"
-id="comment-count-${Number(post.id)}"
-onclick="toggleComments(
-${Number(post.id)}
-)">
-💬 ${commentCount}
-</button>
-
-${
-!isOwn
-?`
-<button
-class="reply-btn"
-onclick="replyPost(
-'${escapeJs(username)}'
-)">
-↩️ Reply
-</button>
-`
-:`
-<button
-class="delete-post-btn"
-onclick="deletePost(
-${Number(post.id)}
-)">
-🗑️ Delete
-</button>
-`
-}
-
-</div>
-
-<div style="margin-top:7px">
-
-<button
-onclick="showLikes(${Number(post.id)})"
-style="
-border:0;
-background:#fff0f3;
-color:#c2185b;
-border-radius:18px;
-padding:8px 12px;
-font-size:12px;
-font-weight:bold;
-cursor:pointer;
-width:100%;
-text-align:left;
-min-height:38px;
-">
-
-❤️ ${counts.like} Likes
-
-</button>
-
-</div>
-
-${
-!isOwn
-?`
-<div class="user-actions">
-
-<button
-class="one-one-btn"
-onclick="openOneToOne(
-'${escapeJs(post.user_id)}'
-)">
-💬 1on1
-</button>
-
-<button
-class="${
-isFollowing
-?"following-btn"
-:"follow-btn"
-}"
-id="follow-btn-${safeButtonId(post.user_id)}"
-onclick="toggleFollow(
-'${escapeJs(post.user_id)}'
-)">
-${
-isFollowing
-?"✓ Following"
-:"➕ Follow"
-}
-</button>
-
-<button
-class="block-btn"
-onclick="blockUser(
-'${escapeJs(post.user_id)}'
-)">
-🚫 Block
-</button>
-
-</div>
-`
-:""
-}
-
-<div
-class="comments"
-id="comments-${Number(post.id)}">
-
-<div
-id="comments-list-${Number(post.id)}">
-Loading...
-</div>
-
-<div
-id="comment-reply-box-${Number(post.id)}"
-class="comment-reply-box">
-
-<span
-id="comment-reply-text-${Number(post.id)}">
-</span>
-
-<button
-onclick="cancelCommentReply(
-${Number(post.id)}
-)">
-✕
-</button>
-
-<div style="clear:both"></div>
-
-</div>
-
-<div class="comment-input-row">
-
-<input
-id="comment-input-${Number(post.id)}"
-type="text"
-placeholder="Write a comment..."
-onkeydown="
-if(event.key==='Enter'){
-addComment(${Number(post.id)})
-}">
-
-<button
-onclick="addComment(${Number(post.id)})">
-Send
-</button>
-
-</div>
-
-</div>
-
-</div>
-`;
-
-}
 
 
 /* =========================================
