@@ -1020,8 +1020,8 @@ font-size:8.5px
 <div class="header-buttons">
 <button onclick="showTrending()">ðŸ”¥ Trending</button>
 <button class="share-header-btn" onclick="showShare()">+ Share</button>
-<button onclick="goStars()">â­</button>
-<button onclick="goNotifications()">ðŸ””</button>
+<button type="button" aria-label="Top Members" title="Top Members" onclick="goStars()">â­</button>
+<button type="button" aria-label="Notifications" title="Notifications" onclick="goNotifications()">ðŸ””</button>
 </div>
 
 </div>
@@ -1069,13 +1069,13 @@ placeholder="What's on your mind?">
 <button
 class="send-btn"
 onclick="createPost()">
-Send Post
+Publish Post
 </button>
 
 <button
 class="upload-btn"
 onclick="showImagePost()">
-ðŸ–¼ï¸ Image Post
+ðŸ–¼ï¸ Photo Post
 </button>
 
 <button
@@ -1138,7 +1138,7 @@ onclick="showTextPost()">
 <button
 class="share-option"
 onclick="showImagePost()">
-ðŸ–¼ï¸ Image Post
+ðŸ–¼ï¸ Photo Post
 </button>
 
 <div id="textPostForm" class="share-form">
@@ -1151,7 +1151,7 @@ placeholder="What's on your mind?">
 <button
 class="share-submit"
 onclick="submitTextPost()">
-ðŸ“¤ Share Text Post
+ðŸ“¤ Publish Text Post
 </button>
 
 </div>
@@ -1208,7 +1208,7 @@ style="margin-top:10px">
 <button
 class="share-submit"
 onclick="submitImagePost()">
-ðŸ–¼ï¸ Share Image Post
+ðŸ–¼ï¸ Publish Photo Post
 </button>
 
 </div>
@@ -1428,7 +1428,7 @@ if(feed){
 
 feed.innerHTML=
 `<div class="empty">
-Feed load nahi ho saki.<br>
+Could not load the feed.<br>
 <small>
 ${escapeHtml(error.message||"")}
 </small>
@@ -1740,7 +1740,7 @@ if(safePosts.length===0){
 
 feed.innerHTML=
 `<div class="empty">
-Abhi koi post nahi hai.
+There are no posts yet.
 </div>`;
 
 return;
@@ -1953,7 +1953,7 @@ error
 
 feed.innerHTML=
 `<div class="empty">
-Feed load nahi ho saki.<br>
+Could not load the feed.<br>
 <small>
 ${escapeHtml(
 error.message||
@@ -2243,7 +2243,7 @@ class="one-one-btn"
 onclick="openOneToOne(
 '${escapeJs(post.user_id)}'
 )">
-ðŸ’¬ 1on1
+ðŸ’¬ Private Chat
 </button>
 
 <button
@@ -2373,7 +2373,7 @@ if(!actions||actions.length===0){
 list.innerHTML=
 `<div
 style="text-align:center;color:#777;padding:20px">
-Abhi kisi ne like nahi kiya.
+No one has liked this yet.
 </div>`;
 
 return;
@@ -2490,7 +2490,7 @@ name&&username
 list.innerHTML=
 `<div
 style="color:#d00;text-align:center;padding:15px">
-Likes load nahi huay.<br>
+Could not load likes.<br>
 <small>
 ${escapeHtml(error.message||"")}
 </small>
@@ -2616,7 +2616,7 @@ updateFollowButtons(userId);
 }catch(error){
 
 alert(
-"Follow action nahi ho saki:\n"+
+"Could not complete the follow action:\n"+
 error.message
 );
 
@@ -2749,7 +2749,7 @@ input.value.trim();
 
 if(!content){
 
-alert("Pehle text likhein.");
+alert("Please enter some text first.");
 
 return;
 
@@ -2777,7 +2777,7 @@ await loadFeed(true);
 }catch(error){
 
 alert(
-"Text post send nahi hui:\n"+
+"Could not publish the text post:\n"+
 error.message
 );
 
@@ -2808,7 +2808,7 @@ const file=input.files[0];
 
 if(!file.type.startsWith("image/")){
 
-alert("Sirf image select karein.");
+alert("Please select an image file only.");
 
 input.value="";
 
@@ -2862,7 +2862,7 @@ document.getElementById(
 if(!category){
 
 alert(
-"Image post ke liye category select karna zaroori hai."
+"Please select a category for the image post."
 );
 
 return;
@@ -2875,7 +2875,7 @@ if(
 ){
 
 alert(
-"Pehle image select karein."
+"Please select an image first."
 );
 
 return;
@@ -2913,7 +2913,7 @@ upsert:false
 
 if(uploadError)
 throw new Error(
-"Image upload nahi hui.\n\n"+
+"Image upload failed.\n\n"+
 uploadError.message
 );
 
@@ -2927,7 +2927,7 @@ publicData?.publicUrl||"";
 
 if(!imageUrl)
 throw new Error(
-"Image URL nahi mili."
+"Image URL was not found."
 );
 
 const {error:postError}=
@@ -2971,7 +2971,7 @@ await loadFeed(true);
 }catch(error){
 
 alert(
-"Image post send nahi hui:\n\n"+
+"Could not publish the image post:\n\n"+
 error.message
 );
 
@@ -2995,7 +2995,7 @@ textarea.value.trim();
 if(!content){
 
 alert(
-"Pehle post likhein."
+"Please write a post first."
 );
 
 return;
@@ -3034,7 +3034,7 @@ await loadFeed(true);
 }catch(error){
 
 alert(
-"Post send nahi ho saki:\n"+
+"Could not publish the post:\n"+
 error.message
 );
 
@@ -3109,7 +3109,7 @@ async function deletePost(postId){
 if(!currentUser)return;
 
 if(!confirm(
-"Apni post delete karni hai?"
+"Are you sure you want to delete your post?"
 ))
 return;
 
@@ -3132,7 +3132,7 @@ await loadFeed(true);
 }catch(error){
 
 alert(
-"Delete nahi hui:\n"+
+"Could not delete:\n"+
 error.message
 );
 
@@ -3231,7 +3231,7 @@ await loadFeed(true);
 }catch(error){
 
 alert(
-"Action nahi ho saki:\n"+
+"Could not complete the action:\n"+
 error.message
 );
 
@@ -3562,7 +3562,7 @@ comment,
 list.innerHTML=
 `<div
 style="color:#d00;padding:8px">
-Comments load nahi huay.<br>
+Could not load comments.<br>
 <small>
 ${escapeHtml(
 error.message||""
@@ -3722,7 +3722,7 @@ updateCommentCount(postId);
 }catch(error){
 
 alert(
-"Comment send nahi hua:\n"+
+"Could not send the comment:\n"+
 error.message
 );
 
@@ -3787,7 +3787,7 @@ postId
 if(!currentUser)return;
 
 if(!confirm(
-"Apna comment delete karna hai?"
+"Are you sure you want to delete your comment?"
 ))
 return;
 
@@ -3814,7 +3814,7 @@ postId
 }catch(error){
 
 alert(
-"Comment delete nahi hua:\n"+
+"Could not delete the comment:\n"+
 error.message
 );
 
@@ -3835,7 +3835,7 @@ if(userId===currentUser.id)
 return;
 
 if(!confirm(
-"Is user ko block karna hai?"
+"Are you sure you want to block this user?"
 ))
 return;
 
@@ -3867,7 +3867,7 @@ await loadFeed(true);
 }catch(error){
 
 alert(
-"Block nahi ho saka:\n"+
+"Could not block the user:\n"+
 error.message
 );
 
@@ -4252,7 +4252,7 @@ document.getElementById(
 
 if(status)
 status.textContent=
-"Voice record nahi hui.";
+"Voice recording failed.";
 
 return;
 
@@ -4318,7 +4318,7 @@ document.getElementById(
 
 if(status)
 status.textContent=
-"âœ… Voice ready â€” preview karein";
+"âœ… Voice is ready â€” preview it before sending.";
 
 if(recordBtn)
 recordBtn.disabled=false;
@@ -4416,7 +4416,7 @@ voiceStream=null;
 voiceRecorder=null;
 
 alert(
-"Microphone open nahi ho saka:\n"+
+"Could not access the microphone:\n"+
 (
 error.message||
 "Permission denied"
@@ -4770,7 +4770,7 @@ return;
 if(!voiceBlob){
 
 alert(
-"Pehle voice record karein."
+"Please record a voice message first."
 );
 
 return;
@@ -4782,7 +4782,7 @@ voiceBlob.size===0
 ){
 
 alert(
-"Voice file empty hai. Dobara record karein."
+"The voice recording is empty. Please record again."
 );
 
 return;
@@ -4882,7 +4882,7 @@ publicData?.publicUrl||"";
 
 if(!voiceUrl)
 throw new Error(
-"Voice URL nahi mili."
+"Voice URL was not found."
 );
 
 if(status)
@@ -4926,7 +4926,7 @@ error
 );
 
 alert(
-"Voice send nahi hui:\n\n"+
+"Could not send the voice message:\n\n"+
 (
 error.message||
 "Unknown error"
