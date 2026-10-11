@@ -2156,6 +2156,30 @@ ${imageHTML}
 
 ${voiceHTML}
 
+<div style="margin-top:7px">
+
+<button
+onclick="showLikes(${Number(post.id)})"
+style="
+border:0;
+background:#fff0f3;
+color:#c2185b;
+border-radius:18px;
+padding:8px 12px;
+font-size:12px;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+text-align:left;
+min-height:38px;
+">
+
+&#10084;&#65039; ${counts.like} Likes
+
+</button>
+
+</div>
+
 <div class="post-actions">
 
 <button
@@ -2206,30 +2230,6 @@ ${Number(post.id)}
 </button>
 `
 }
-
-</div>
-
-<div style="margin-top:7px">
-
-<button
-onclick="showLikes(${Number(post.id)})"
-style="
-border:0;
-background:#fff0f3;
-color:#c2185b;
-border-radius:18px;
-padding:8px 12px;
-font-size:12px;
-font-weight:bold;
-cursor:pointer;
-width:100%;
-text-align:left;
-min-height:38px;
-">
-
-&#10084;&#65039; ${counts.like} Likes
-
-</button>
 
 </div>
 
