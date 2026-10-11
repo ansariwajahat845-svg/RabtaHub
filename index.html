@@ -2105,6 +2105,24 @@ ${escapeHtml(post.content)}
 ${imageHTML}
 
 ${voiceHTML}
+```js
+<div style="margin-top:7px">
+<button
+onclick="showLikes(${Number(post.id)})"
+style="border:0;background:#fff0f3;color:#c2185b;border-radius:18px;padding:8px 12px;font-size:12px;font-weight:bold;cursor:pointer;width:100%;text-align:left;min-height:38px;">
+❤️ ${counts.like} Likes
+</button>
+</div>
+
+<div class="post-actions">
+
+<button
+class="like-btn"
+onclick="setPostAction(
+${Number(post.id)},
+'like'
+)">
+```
 
 <div class="post-actions">
 
