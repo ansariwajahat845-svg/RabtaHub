@@ -1768,9 +1768,12 @@ if (!adminRolesError && adminRoles) {
       .toLowerCase()
       .replace(/[\s-]+/g, "_");
 
-    if (role === "senior_admin") {
-      roleMap[row.user_id] = true;
-    }
+    if (
+  role === "senior_admin" ||
+  role === "senior admin"
+) {
+  roleMap[String(row.user_id).toLowerCase()] = true;
+}
   });
 } else if (adminRolesError) {
   console.warn("Senior Admin roles:", adminRolesError.message);
