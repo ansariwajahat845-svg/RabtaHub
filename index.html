@@ -1974,22 +1974,22 @@ function getRoleBadge(userId){
   const id=String(userId||"");
   // Keep the existing verified creator ID badge working as before.
   if(id === "db4d3669-e3ec-42ec-a716-791f43cebd8d"){
-    return '<span class="role-badge website-creator-badge">ðŸ‘‘ Website Creator</span>';
+    return '<span class="role-badge website-creator-badge">&#128081; Website Creator</span>';
   }
 
   // Known Senior Admin account fallback; database role rows remain the source for others.
   if(id === "21e46d48-cd2c-4824-992e-5beb7f797c5b"){
-    return '<span class="role-badge senior-admin-badge">ðŸ›¡ï¸ Senior Admin</span>';
+    return '<span class="role-badge senior-admin-badge">&#128737;&#65039; Senior Admin</span>';
   }
   const role=String(roleMap[id]||"").toLowerCase().replace(/[\s-]+/g,"_");
   if(["creator","website_creator","owner","super_admin","superadmin"].includes(role)){
-    return '<span class="role-badge website-creator-badge">ðŸ‘‘ Website Creator</span>';
+    return '<span class="role-badge website-creator-badge">&#128081; Website Creator</span>';
   }
   if(["senior_admin","senioradmin","head_admin","supervisor"].includes(role)){
-    return '<span class="role-badge senior-admin-badge">ðŸ›¡ï¸ Senior Admin</span>';
+    return '<span class="role-badge senior-admin-badge">&#128737;&#65039; Senior Admin</span>';
   }
   if(["admin","administrator"].includes(role)){
-    return '<span class="role-badge admin-badge">â­ Admin</span>';
+    return '<span class="role-badge admin-badge">&#11088; Admin</span>';
   }
   return "";
 }
@@ -2090,7 +2090,7 @@ const menuHTML=
 
 <button
 onclick="blockUser('${escapeJs(post.user_id)}')">
-â‹®
+&#8942;
 </button>
 
 </div>
@@ -2163,7 +2163,7 @@ onclick="setPostAction(
 ${Number(post.id)},
 'like'
 )">
-â¤ï¸ ${counts.like}
+&#10084;&#65039; ${counts.like}
 </button>
 
 <button
@@ -2172,7 +2172,7 @@ onclick="setPostAction(
 ${Number(post.id)},
 'dislike'
 )">
-ðŸ‘Ž ${counts.dislike}
+&#128078; ${counts.dislike}
 </button>
 
 <button
@@ -2181,7 +2181,7 @@ id="comment-count-${Number(post.id)}"
 onclick="toggleComments(
 ${Number(post.id)}
 )">
-ðŸ’¬ ${commentCount}
+&#128172; ${commentCount}
 </button>
 
 ${
@@ -2192,7 +2192,7 @@ class="reply-btn"
 onclick="replyPost(
 '${escapeJs(username)}'
 )">
-â†©ï¸ Reply
+&#8617;&#65039; Reply
 </button>
 `
 :`
@@ -2201,7 +2201,7 @@ class="delete-post-btn"
 onclick="deletePost(
 ${Number(post.id)}
 )">
-ðŸ—‘ï¸ Delete
+&#128465;&#65039; Delete
 </button>
 `
 }
@@ -2226,7 +2226,7 @@ text-align:left;
 min-height:38px;
 ">
 
-â¤ï¸ ${counts.like} Likes
+&#10084;&#65039; ${counts.like} Likes
 
 </button>
 
@@ -2242,7 +2242,7 @@ class="one-one-btn"
 onclick="openOneToOne(
 '${escapeJs(post.user_id)}'
 )">
-ðŸ’¬ Private Chat
+&#128172; Private Chat
 </button>
 
 <button
@@ -2257,8 +2257,8 @@ onclick="toggleFollow(
 )">
 ${
 isFollowing
-?"âœ… Following"
-:"âž• Follow"
+?"&#9989; Following"
+:"&#10133; Follow"
 }
 </button>
 
@@ -2267,7 +2267,7 @@ class="block-btn"
 onclick="blockUser(
 '${escapeJs(post.user_id)}'
 )">
-ðŸš« Block
+&#128683; Block
 </button>
 
 </div>
@@ -2649,14 +2649,14 @@ buttons.forEach(button=>{
 
 if(followMap[userId]){
 
-button.textContent="âœ… Following";
+button.textContent="&#9989; Following";
 
 button.className=
 "following-btn";
 
 }else{
 
-button.textContent="âž• Follow";
+button.textContent="&#10133; Follow";
 
 button.className=
 "follow-btn";
@@ -3503,7 +3503,7 @@ ${Number(postId)},
 ${Number(comment.id)},
 '${escapeJs(username)}'
 )">
-â†©ï¸ Reply
+&#8617;&#65039; Reply
 </button>
 
 ${
@@ -3515,7 +3515,7 @@ onclick="deleteComment(
 ${Number(comment.id)},
 ${Number(postId)}
 )">
-ðŸ—‘ï¸ Delete
+&#128465;&#65039; Delete
 </button>
 `
 :""
@@ -3610,7 +3610,7 @@ box.style.display="block";
 
 if(text)
 text.textContent=
-"â†©ï¸ Reply to @"+username;
+"&#8617;&#65039; Reply to @"+username;
 
 if(input){
 
@@ -5277,7 +5277,6 @@ year:"numeric"
 );
 
 }
-
 
 
 /* =========================================
