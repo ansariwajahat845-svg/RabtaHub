@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>ChatZone 💬</title>
+<title>ChatZone ðŸ’¬</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -267,6 +266,39 @@ background:linear-gradient(90deg,#6c5ce7,#e84393,#0984e3);
 -webkit-text-fill-color:transparent;
 background-clip:text;
 font-weight:800
+}
+
+/* PREMIUM CHATZONE ROLE BADGES â€” added without changing Home layout */
+.role-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 10px;
+  margin:5px 0 3px 5px;
+  border-radius:7px;
+  font-family:Arial,sans-serif;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.25px;
+  vertical-align:middle;
+  box-shadow:0 2px 7px rgba(0,0,0,.12);
+  -webkit-text-fill-color:initial;
+}
+.website-creator-badge{
+  color:#624000;
+  background:linear-gradient(135deg,#fff4bd,#f5ca55,#ffe9a0);
+  border:1px solid #d6a328;
+  box-shadow:0 0 9px rgba(235,183,45,.35);
+}
+.senior-admin-badge{
+  color:#174a91;
+  background:linear-gradient(135deg,#edf5ff,#bcd8ff);
+  border:1px solid #78a8f5;
+}
+.admin-badge{
+  color:#6336a0;
+  background:linear-gradient(135deg,#f7efff,#dfc5ff);
+  border:1px solid #b99ae8;
 }
 
 .post-author-username{
@@ -971,22 +1003,6 @@ font-size:8px
 .post-actions button{
 font-size:8.5px
 }
-   /* SENIOR ADMIN BADGE */
-.role-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  margin: 3px 0 3px 5px;
-  border: 1px solid #65d5ff;
-  border-radius: 7px;
-  background: linear-gradient(135deg, #073b67, #087ea4);
-  color: #e1f7ff;
-  font-family: Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  vertical-align: middle;
-  -webkit-text-fill-color: #e1f7ff;
 }
 </style>
 </head>
@@ -998,13 +1014,13 @@ font-size:8.5px
 <div class="header">
 <div class="header-top">
 
-<div class="logo">ChatZone 💬</div>
+<div class="logo">ChatZone ðŸ’¬</div>
 
 <div class="header-buttons">
-<button onclick="showTrending()">🔥 Trending</button>
+<button onclick="showTrending()">ðŸ”¥ Trending</button>
 <button class="share-header-btn" onclick="showShare()">+ Share</button>
-<button onclick="goStars()">⭐</button>
-<button onclick="goNotifications()">🔔</button>
+<button onclick="goStars()">â­</button>
+<button onclick="goNotifications()">ðŸ””</button>
 </div>
 
 </div>
@@ -1013,7 +1029,7 @@ font-size:8.5px
 <div class="online-section">
 
 <div class="online-title">
-🟢 <span id="onlineCount">0</span> Users Online
+ðŸŸ¢ <span id="onlineCount">0</span> Users Online
 </div>
 
 <div id="onlineUsers" class="online-users">
@@ -1025,7 +1041,7 @@ Online users loading...
 </div>
 
 <div class="welcome">
-Welcome to ChatZone 💬 ❤️
+Welcome to ChatZone ðŸ’¬ â¤ï¸
 </div>
 
 <div class="create-box">
@@ -1037,7 +1053,7 @@ Welcome to ChatZone 💬 ❤️
 <button
 onclick="cancelReply()"
 style="float:right;border:0;background:none;color:#d00">
-✕
+âœ•
 </button>
 
 </div>
@@ -1058,13 +1074,13 @@ Send Post
 <button
 class="upload-btn"
 onclick="showImagePost()">
-🖼️ Image Post
+ðŸ–¼ï¸ Image Post
 </button>
 
 <button
 class="voice-btn"
 onclick="startVoice()">
-🎤 Voice
+ðŸŽ¤ Voice
 </button>
 
 </div>
@@ -1087,11 +1103,11 @@ onclick="startVoice()">
 <div class="likes-content">
 
 <div class="likes-header">
-<h3>❤️ Liked by</h3>
+<h3>â¤ï¸ Liked by</h3>
 <button
 class="likes-close"
 onclick="closeLikesPopup()">
-✕
+âœ•
 </button>
 </div>
 
@@ -1108,20 +1124,20 @@ Loading...
 <div class="share-content">
 
 <div class="share-header">
-<h3>📤 Create Post</h3>
-<button onclick="closeShare()">✕</button>
+<h3>ðŸ“¤ Create Post</h3>
+<button onclick="closeShare()">âœ•</button>
 </div>
 
 <button
 class="share-option"
 onclick="showTextPost()">
-📝 Text Post
+ðŸ“ Text Post
 </button>
 
 <button
 class="share-option"
 onclick="showImagePost()">
-🖼️ Image Post
+ðŸ–¼ï¸ Image Post
 </button>
 
 <div id="textPostForm" class="share-form">
@@ -1134,7 +1150,7 @@ placeholder="What's on your mind?">
 <button
 class="share-submit"
 onclick="submitTextPost()">
-📤 Share Text Post
+ðŸ“¤ Share Text Post
 </button>
 
 </div>
@@ -1167,7 +1183,7 @@ Image *
 <button
 class="share-option"
 onclick="document.getElementById('shareImageInput').click()">
-🖼️ Select Image
+ðŸ–¼ï¸ Select Image
 </button>
 
 <input
@@ -1191,7 +1207,7 @@ style="margin-top:10px">
 <button
 class="share-submit"
 onclick="submitImagePost()">
-🖼️ Share Image Post
+ðŸ–¼ï¸ Share Image Post
 </button>
 
 </div>
@@ -1210,7 +1226,7 @@ Cancel
 
 <div class="voice-content">
 
-<h3>🎤 Voice Post</h3>
+<h3>ðŸŽ¤ Voice Post</h3>
 
 <div id="voiceStatus" class="voice-status">
 Ready to record
@@ -1239,7 +1255,7 @@ preload="metadata">
 id="voiceRecordBtn"
 class="voice-record-btn"
 onclick="recordVoice()">
-🔴 Record
+ðŸ”´ Record
 </button>
 
 <button
@@ -1247,7 +1263,7 @@ id="voicePauseBtn"
 class="voice-stop-btn"
 onclick="pauseResumeVoice()"
 disabled>
-⏸️ Pause
+â¸ï¸ Pause
 </button>
 
 <button
@@ -1255,7 +1271,7 @@ id="voiceStopBtn"
 class="voice-stop-btn"
 onclick="stopVoice()"
 disabled>
-⏹️ Stop
+â¹ï¸ Stop
 </button>
 
 </div>
@@ -1267,7 +1283,7 @@ id="voiceAgainBtn"
 class="voice-stop-btn"
 onclick="recordAgainVoice()"
 disabled>
-🔄 Again
+ðŸ”„ Again
 </button>
 
 <button
@@ -1275,7 +1291,7 @@ id="voiceSendBtn"
 class="voice-send-btn"
 onclick="sendVoice()"
 disabled>
-📤 Send
+ðŸ“¤ Send
 </button>
 
 </div>
@@ -1295,8 +1311,8 @@ Cancel
 <div class="trending-content">
 
 <div class="trending-header">
-<h3>🔥 Trending</h3>
-<button onclick="closeTrending()">✕</button>
+<h3>ðŸ”¥ Trending</h3>
+<button onclick="closeTrending()">âœ•</button>
 </div>
 
 <div id="trendingList">
@@ -1310,23 +1326,23 @@ Loading...
 <div class="bottom-nav">
 
 <button onclick="goHome()">
-🏠<br>Home
+ðŸ <br>Home
 </button>
 
 <button onclick="goPrivate()">
-💬<br>Private
+ðŸ’¬<br>Private
 </button>
 
 <button onclick="goMehfil()">
-👥<br>Mehfil
+ðŸ‘¥<br>Mehfil
 </button>
 
 <button onclick="goProfile()">
-👤<br>Profile
+ðŸ‘¤<br>Profile
 </button>
 
 <button onclick="goMore()">
-☰<br>More
+â˜°<br>More
 </button>
 
 </div>
@@ -1349,6 +1365,7 @@ let currentReplyUser=null;
 let currentPosts=[];
 let onlineChannel=null;
 let followMap={};
+let roleMap={};
 
 let activeCommentReply={
 postId:null,
@@ -1619,7 +1636,7 @@ onerror="this.style.display='none'">`
 :`<div
 class="online-user-avatar"
 style="display:flex;align-items:center;justify-content:center">
-👤
+ðŸ‘¤
 </div>`;
 
 return `
@@ -1679,26 +1696,35 @@ window.scrollY;
 
 try{
 
-const {
-data:posts,
-error:postsError
-}=
-await supabaseClient
+// First try the full post schema, including optional voice columns.
+// If this project's posts table does not have those columns yet, retry
+// with the standard columns so the entire feed does not get stuck.
+let postsResult = await supabaseClient
 .from("posts")
-.select(
-"id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration"
-)
-.order(
-"created_at",
-{ascending:false}
-)
-.order(
-"id",
-{ascending:false}
-);
+.select("id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration")
+.order("created_at", {ascending:false})
+.order("id", {ascending:false});
 
-if(postsError)
-throw postsError;
+if(postsResult.error){
+  const message = String(postsResult.error.message || "").toLowerCase();
+  const missingVoiceColumn =
+    message.includes("voice_url") ||
+    message.includes("voice_duration") ||
+    (message.includes("column") && message.includes("does not exist"));
+
+  if(missingVoiceColumn){
+    console.warn("Optional voice columns are unavailable; loading standard posts.", postsResult.error.message);
+    postsResult = await supabaseClient
+      .from("posts")
+      .select("id,user_id,content,created_at,post_type,category,image_url")
+      .order("created_at", {ascending:false})
+      .order("id", {ascending:false});
+  }
+}
+
+const posts = postsResult.data;
+const postsError = postsResult.error;
+if(postsError) throw postsError;
 
 const safePosts=
 Array.isArray(posts)
@@ -1708,7 +1734,6 @@ Array.isArray(posts)
 currentPosts=safePosts;
 profileMap={};
 followMap={};
-roleMap={};
 
 if(safePosts.length===0){
 
@@ -1752,32 +1777,6 @@ profileMap[profile.id]=profile;
 
 }
 
-/* LOAD SENIOR ADMIN ROLES */
-const {
-  data: adminRoles,
-  error: adminRolesError
-} = await supabaseClient
-  .from("user_roles")
-  .select("user_id, role")
-  .in("user_id", userIds);
-
-if (!adminRolesError && adminRoles) {
-  adminRoles.forEach(row => {
-    const role = String(row.role || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[\s-]+/g, "_");
-
-    if (
-  role === "senior_admin" ||
-  role === "senior admin"
-) {
-  roleMap[String(row.user_id).toLowerCase()] = true;
-}
-  });
-} else if (adminRolesError) {
-  console.warn("Senior Admin roles:", adminRolesError.message);
-}
 if(currentUser&&userIds.length){
 
 const {
@@ -1805,6 +1804,43 @@ followMap[row.following_id]=true;
 }
 
 }
+
+
+/* ---------- LOAD ROLE BADGES: user_roles + chatzone_admins ---------- */
+roleMap={};
+try{
+  // Existing roles table (Creator/Admin roles, if configured there).
+  const {data:roleRows,error:roleError}=await supabaseClient
+    .from("user_roles")
+    .select("*");
+  if(!roleError && Array.isArray(roleRows)){
+    roleRows.forEach(row=>{
+      const uid=row.user_id||row.profile_id||row.auth_user_id||row.member_id||row.uid||row.id;
+      const rawRole=row.role||row.role_name||row.user_role||row.permission||row.type||row.level||"";
+      if(uid&&rawRole) roleMap[String(uid)]=String(rawRole).toLowerCase().trim().replace(/[\s-]+/g,"_");
+    });
+  }else if(roleError){
+    console.warn("user_roles badge lookup:",roleError.message);
+  }
+}catch(roleLoadError){console.warn("user_roles badge lookup unavailable:",roleLoadError.message);}
+
+try{
+  // Senior Admin/Admin entries are also stored in chatzone_admins.
+  const {data:adminRows,error:adminError}=await supabaseClient
+    .from("chatzone_admins")
+    .select("user_id,role");
+  if(!adminError&&Array.isArray(adminRows)){
+    adminRows.forEach(row=>{
+      if(row.user_id&&row.role){
+        const role=String(row.role).toLowerCase().trim().replace(/[\s-]+/g,"_");
+        // Explicit admin table roles take priority over generic user_roles rows.
+        roleMap[String(row.user_id)]=role;
+      }
+    });
+  }else if(adminError){
+    console.warn("chatzone_admins badge lookup; check SELECT policy:",adminError.message);
+  }
+}catch(adminLoadError){console.warn("chatzone_admins badge lookup unavailable:",adminLoadError.message);}
 
 const actionCounts={};
 
@@ -1933,242 +1969,364 @@ error.message||
 /* =========================================
    RENDER POST
 ========================================= */
-```javascript
-function renderPost(
-  post,
-  counts = {
-    like: 0,
-    dislike: 0
-  },
-  commentCount = 0
-) {
-  const profile = profileMap[post.user_id] || {};
 
-  let username = profile.username || "";
-  let name = profile.name || "";
-
-  if (!username && currentUser && post.user_id === currentUser.id) {
-    username =
-      currentUser.user_metadata?.username ||
-      currentUser.email?.split("@")[0] ||
-      "User";
+function getRoleBadge(userId){
+  const id=String(userId||"");
+  // Keep the existing verified creator ID badge working as before.
+  if(id === "db4d3669-e3ec-42ec-a716-791f43cebd8d"){
+    return '<span class="role-badge website-creator-badge">ðŸ‘‘ Website Creator</span>';
   }
 
-  if (!username) username = "User";
-
-  const avatar = profile.avatar_url || "";
-
-  const isOwn =
-    currentUser && post.user_id === currentUser.id;
-
-  const isFollowing = !!followMap[post.user_id];
-
-  const avatarHTML = avatar
-    ? `<img class="avatar"
-        src="${escapeAttribute(avatar)}"
-        onerror="this.style.display='none'">`
-    : `<div class="avatar"
-        style="display:flex;align-items:center;justify-content:center;font-size:20px">
-        👤
-      </div>`;
-
-  const imageHTML = post.image_url
-    ? `<img class="post-image"
-        src="${escapeAttribute(post.image_url)}"
-        alt="Post image"
-        loading="lazy">`
-    : "";
-
-  const voiceHTML = post.voice_url
-    ? `<div class="post-voice">
-        <audio controls preload="metadata"
-          src="${escapeAttribute(post.voice_url)}"></audio>
-      </div>`
-    : "";
-
-  const categoryHTML = post.category
-    ? `<div class="post-category">
-        #${escapeHtml(post.category)}
-      </div>`
-    : "";
-
-  const menuHTML = !isOwn
-    ? `<div class="post-menu">
-        <button onclick="blockUser('${escapeJs(post.user_id)}')">⋮</button>
-      </div>`
-    : "";
-
-  return `
-    <div class="post" id="post-${Number(post.id)}">
-
-      <div class="post-head">
-        <div class="user-info">
-          ${avatarHTML}
-
-          <div>
-            <div class="user-name">
-              <span class="post-author-name">
-                ${escapeHtml(name || username)}
-              </span>
-
-              ${
-                post.user_id === "db4d3669-e3ec-42ec-a716-791f43cebd8d"
-                  ? '<span class="role-badge website-creator-badge">👑 Website Creator</span>'
-                  : ""
-              }
-
-              ${
-                typeof roleMap !== "undefined" &&
-                roleMap &&
-                roleMap[String(post.user_id).toLowerCase()]
-                  ? '<span class="role-badge senior-admin-badge">🛡️ Senior Admin</span>'
-                  : ""
-              }
-
-              ${
-                name && username
-                  ? `<span class="post-author-username">
-                      @${escapeHtml(username)}
-                    </span>`
-                  : ""
-              }
-            </div>
-
-            <div class="post-date">
-              ${formatDate(post.created_at)}
-            </div>
-          </div>
-        </div>
-
-        ${menuHTML}
-      </div>
-
-      ${categoryHTML}
-
-      ${
-        post.content
-          ? `<div class="post-content">
-              ${escapeHtml(post.content)}
-            </div>`
-          : ""
-      }
-
-      ${imageHTML}
-      ${voiceHTML}
-
-      <!-- Likes count: Like button ke upar -->
-      <div style="margin-top:7px">
-        <button
-          onclick="showLikes(${Number(post.id)})"
-          style="border:0;background:#fff0f3;color:#c2185b;border-radius:18px;padding:8px 12px;font-size:12px;font-weight:bold;cursor:pointer;width:100%;text-align:left;min-height:38px;">
-          ❤️ ${Number(counts.like) || 0} Likes
-        </button>
-      </div>
-
-      <!-- Post actions: sirf ek baar -->
-      <div class="post-actions">
-
-        <button
-          class="like-btn"
-          onclick="setPostAction(${Number(post.id)}, 'like')">
-          ❤️ ${Number(counts.like) || 0}
-        </button>
-
-        <button
-          class="dislike-btn"
-          onclick="setPostAction(${Number(post.id)}, 'dislike')">
-          👎 ${Number(counts.dislike) || 0}
-        </button>
-
-        <button
-          class="comment-btn"
-          id="comment-count-${Number(post.id)}"
-          onclick="toggleComments(${Number(post.id)})">
-          💬 ${Number(commentCount) || 0}
-        </button>
-
-        ${
-          !isOwn
-            ? `<button
-                class="reply-btn"
-                onclick="replyPost('${escapeJs(username)}')">
-                ↩️ Reply
-              </button>`
-            : `<button
-                class="delete-post-btn"
-                onclick="deletePost(${Number(post.id)})">
-                🗑️ Delete
-              </button>`
-        }
-
-      </div>
-
-      ${
-        !isOwn
-          ? `<div class="user-actions">
-
-              <button
-                class="one-one-btn"
-                onclick="openOneToOne('${escapeJs(post.user_id)}')">
-                💬 1on1
-              </button>
-
-              <button
-                class="${isFollowing ? "following-btn" : "follow-btn"}"
-                id="follow-btn-${safeButtonId(post.user_id)}"
-                onclick="toggleFollow('${escapeJs(post.user_id)}')">
-                ${isFollowing ? "✓ Following" : "➕ Follow"}
-              </button>
-
-              <button
-                class="block-btn"
-                onclick="blockUser('${escapeJs(post.user_id)}')">
-                🚫 Block
-              </button>
-
-            </div>`
-          : ""
-      }
-
-      <div class="comments" id="comments-${Number(post.id)}">
-
-        <div id="comments-list-${Number(post.id)}">
-          Loading...
-        </div>
-
-        <div
-          id="comment-reply-box-${Number(post.id)}"
-          class="comment-reply-box">
-
-          <span id="comment-reply-text-${Number(post.id)}"></span>
-
-          <button onclick="cancelCommentReply(${Number(post.id)})">
-            ✕
-          </button>
-
-          <div style="clear:both"></div>
-        </div>
-
-        <div class="comment-input-row">
-
-          <input
-            id="comment-input-${Number(post.id)}"
-            type="text"
-            placeholder="Write a comment..."
-            onkeydown="if(event.key==='Enter'){addComment(${Number(post.id)})}">
-
-          <button onclick="addComment(${Number(post.id)})">
-            Send
-          </button>
-
-        </div>
-      </div>
-
-    </div>
-  `;
+  // Known Senior Admin account fallback; database role rows remain the source for others.
+  if(id === "21e46d48-cd2c-4824-992e-5beb7f797c5b"){
+    return '<span class="role-badge senior-admin-badge">ðŸ›¡ï¸ Senior Admin</span>';
+  }
+  const role=String(roleMap[id]||"").toLowerCase().replace(/[\s-]+/g,"_");
+  if(["creator","website_creator","owner","super_admin","superadmin"].includes(role)){
+    return '<span class="role-badge website-creator-badge">ðŸ‘‘ Website Creator</span>';
+  }
+  if(["senior_admin","senioradmin","head_admin","supervisor"].includes(role)){
+    return '<span class="role-badge senior-admin-badge">ðŸ›¡ï¸ Senior Admin</span>';
+  }
+  if(["admin","administrator"].includes(role)){
+    return '<span class="role-badge admin-badge">â­ Admin</span>';
+  }
+  return "";
 }
-```
 
+function renderPost(
+post,
+counts={
+like:0,
+dislike:0
+},
+commentCount=0
+){
+
+const profile=
+profileMap[post.user_id]||{};
+
+let username=
+profile.username||"";
+
+let name=
+profile.name||"";
+
+if(
+!username&&
+currentUser&&
+post.user_id===currentUser.id
+){
+
+username=
+currentUser.user_metadata?.username||
+currentUser.email?.split("@")[0]||
+"User";
+
+}
+
+if(!username)
+username="User";
+
+const avatar=
+profile.avatar_url||"";
+
+const isOwn=
+currentUser&&
+post.user_id===currentUser.id;
+
+const isFollowing=
+!!followMap[post.user_id];
+
+const avatarHTML=
+avatar
+?`<img
+class="avatar"
+src="${escapeAttribute(avatar)}"
+onerror="this.style.display='none'">`
+:`<div
+class="avatar"
+style="display:flex;align-items:center;justify-content:center;font-size:20px">
+ðŸ‘¤
+</div>`;
+
+const imageHTML=
+post.image_url
+?`<img
+class="post-image"
+src="${escapeAttribute(post.image_url)}"
+alt="Post image"
+loading="lazy">`
+:"";
+
+const voiceHTML=
+post.voice_url
+?`
+<div class="post-voice">
+
+<audio
+controls
+preload="metadata"
+src="${escapeAttribute(post.voice_url)}">
+</audio>
+
+</div>
+`
+:"";
+
+const categoryHTML=
+post.category
+?`
+<div class="post-category">
+#${escapeHtml(post.category)}
+</div>
+`
+:"";
+
+const menuHTML=
+!isOwn
+?`
+<div class="post-menu">
+
+<button
+onclick="blockUser('${escapeJs(post.user_id)}')">
+â‹®
+</button>
+
+</div>
+`
+:"";
+
+return `
+<div
+class="post"
+id="post-${Number(post.id)}">
+
+<div class="post-head">
+
+<div class="user-info">
+
+${avatarHTML}
+
+<div>
+
+<div class="user-name">
+
+<span class="post-author-name">
+${escapeHtml(name||username)}
+</span>
+${getRoleBadge(post.user_id)}
+${
+name&&username
+?`
+<span class="post-author-username">
+@${escapeHtml(username)}
+</span>
+`
+:""
+}
+
+</div>
+
+<div class="post-date">
+${formatDate(post.created_at)}
+</div>
+
+</div>
+</div>
+
+${menuHTML}
+
+</div>
+
+${categoryHTML}
+
+${
+post.content
+?`
+<div class="post-content">
+${escapeHtml(post.content)}
+</div>
+`
+:""
+}
+
+${imageHTML}
+
+${voiceHTML}
+
+<div class="post-actions">
+
+<button
+class="like-btn"
+onclick="setPostAction(
+${Number(post.id)},
+'like'
+)">
+â¤ï¸ ${counts.like}
+</button>
+
+<button
+class="dislike-btn"
+onclick="setPostAction(
+${Number(post.id)},
+'dislike'
+)">
+ðŸ‘Ž ${counts.dislike}
+</button>
+
+<button
+class="comment-btn"
+id="comment-count-${Number(post.id)}"
+onclick="toggleComments(
+${Number(post.id)}
+)">
+ðŸ’¬ ${commentCount}
+</button>
+
+${
+!isOwn
+?`
+<button
+class="reply-btn"
+onclick="replyPost(
+'${escapeJs(username)}'
+)">
+â†©ï¸ Reply
+</button>
+`
+:`
+<button
+class="delete-post-btn"
+onclick="deletePost(
+${Number(post.id)}
+)">
+ðŸ—‘ï¸ Delete
+</button>
+`
+}
+
+</div>
+
+<div style="margin-top:7px">
+
+<button
+onclick="showLikes(${Number(post.id)})"
+style="
+border:0;
+background:#fff0f3;
+color:#c2185b;
+border-radius:18px;
+padding:8px 12px;
+font-size:12px;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+text-align:left;
+min-height:38px;
+">
+
+â¤ï¸ ${counts.like} Likes
+
+</button>
+
+</div>
+
+${
+!isOwn
+?`
+<div class="user-actions">
+
+<button
+class="one-one-btn"
+onclick="openOneToOne(
+'${escapeJs(post.user_id)}'
+)">
+ðŸ’¬ 1on1
+</button>
+
+<button
+class="${
+isFollowing
+?"following-btn"
+:"follow-btn"
+}"
+id="follow-btn-${safeButtonId(post.user_id)}"
+onclick="toggleFollow(
+'${escapeJs(post.user_id)}'
+)">
+${
+isFollowing
+?"âœ“ Following"
+:"âž• Follow"
+}
+</button>
+
+<button
+class="block-btn"
+onclick="blockUser(
+'${escapeJs(post.user_id)}'
+)">
+ðŸš« Block
+</button>
+
+</div>
+`
+:""
+}
+
+<div
+class="comments"
+id="comments-${Number(post.id)}">
+
+<div
+id="comments-list-${Number(post.id)}">
+Loading...
+</div>
+
+<div
+id="comment-reply-box-${Number(post.id)}"
+class="comment-reply-box">
+
+<span
+id="comment-reply-text-${Number(post.id)}">
+</span>
+
+<button
+onclick="cancelCommentReply(
+${Number(post.id)}
+)">
+âœ•
+</button>
+
+<div style="clear:both"></div>
+
+</div>
+
+<div class="comment-input-row">
+
+<input
+id="comment-input-${Number(post.id)}"
+type="text"
+placeholder="Write a comment..."
+onkeydown="
+if(event.key==='Enter'){
+addComment(${Number(post.id)})
+}">
+
+<button
+onclick="addComment(${Number(post.id)})">
+Send
+</button>
+
+</div>
+
+</div>
+
+</div>
+`;
+
+}
 
 
 /* =========================================
@@ -2291,7 +2449,7 @@ onerror="this.style.display='none'">`
 :`<div
 class="like-user-avatar"
 style="display:flex;align-items:center;justify-content:center">
-👤
+ðŸ‘¤
 </div>`;
 
 return `
@@ -2491,14 +2649,14 @@ buttons.forEach(button=>{
 
 if(followMap[userId]){
 
-button.textContent="✓ Following";
+button.textContent="âœ“ Following";
 
 button.className=
 "following-btn";
 
 }else{
 
-button.textContent="➕ Follow";
+button.textContent="âž• Follow";
 
 button.className=
 "follow-btn";
@@ -3271,7 +3429,7 @@ background:#ddd;
 display:flex;
 align-items:center;
 justify-content:center">
-👤
+ðŸ‘¤
 </div>`;
 
 return `
@@ -3345,7 +3503,7 @@ ${Number(postId)},
 ${Number(comment.id)},
 '${escapeJs(username)}'
 )">
-↩️ Reply
+â†©ï¸ Reply
 </button>
 
 ${
@@ -3357,7 +3515,7 @@ onclick="deleteComment(
 ${Number(comment.id)},
 ${Number(postId)}
 )">
-🗑️ Delete
+ðŸ—‘ï¸ Delete
 </button>
 `
 :""
@@ -3452,7 +3610,7 @@ box.style.display="block";
 
 if(text)
 text.textContent=
-"↩️ Reply to @"+username;
+"â†©ï¸ Reply to @"+username;
 
 if(input){
 
@@ -3602,7 +3760,7 @@ document.getElementById(
 
 if(btn)
 btn.textContent=
-"💬 "+(count||0);
+"ðŸ’¬ "+(count||0);
 
 }catch(error){
 
@@ -3827,7 +3985,7 @@ if(recordBtn){
 
 recordBtn.disabled=false;
 recordBtn.textContent=
-"🔴 Record";
+"ðŸ”´ Record";
 
 }
 
@@ -3835,7 +3993,7 @@ if(pauseBtn){
 
 pauseBtn.disabled=true;
 pauseBtn.textContent=
-"⏸️ Pause";
+"â¸ï¸ Pause";
 
 }
 
@@ -4159,7 +4317,7 @@ document.getElementById(
 
 if(status)
 status.textContent=
-"✅ Voice ready — preview karein";
+"âœ… Voice ready â€” preview karein";
 
 if(recordBtn)
 recordBtn.disabled=false;
@@ -4212,7 +4370,7 @@ document.getElementById(
 
 if(status)
 status.textContent=
-"🔴 Recording...";
+"ðŸ”´ Recording...";
 
 if(recordBtn)
 recordBtn.disabled=true;
@@ -4356,11 +4514,11 @@ document.getElementById(
 
 if(pauseBtn)
 pauseBtn.textContent=
-"▶️ Resume";
+"â–¶ï¸ Resume";
 
 if(status)
 status.textContent=
-"⏸️ Recording paused";
+"â¸ï¸ Recording paused";
 
 return;
 
@@ -4387,11 +4545,11 @@ document.getElementById(
 
 if(pauseBtn)
 pauseBtn.textContent=
-"⏸️ Pause";
+"â¸ï¸ Pause";
 
 if(status)
 status.textContent=
-"🔴 Recording...";
+"ðŸ”´ Recording...";
 
 }
 
@@ -4573,7 +4731,7 @@ if(pauseBtn){
 
 pauseBtn.disabled=true;
 pauseBtn.textContent=
-"⏸️ Pause";
+"â¸ï¸ Pause";
 
 }
 
@@ -4655,7 +4813,7 @@ againBtn.disabled=true;
 
 if(status)
 status.textContent=
-"📤 Uploading voice...";
+"ðŸ“¤ Uploading voice...";
 
 let extension="webm";
 
@@ -4728,7 +4886,7 @@ throw new Error(
 
 if(status)
 status.textContent=
-"💾 Saving voice post...";
+"ðŸ’¾ Saving voice post...";
 
 const {
 error:postError
@@ -4748,7 +4906,7 @@ throw postError;
 
 if(status)
 status.textContent=
-"✅ Voice posted!";
+"âœ… Voice posted!";
 
 setTimeout(
 ()=>{
@@ -5119,6 +5277,7 @@ year:"numeric"
 );
 
 }
+
 
 
 /* =========================================
