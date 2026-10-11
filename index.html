@@ -1752,6 +1752,29 @@ profileMap[profile.id]=profile;
 
 }
 
+/* LOAD SENIOR ADMIN ROLES */
+const {
+  data: adminRoles,
+  error: adminRolesError
+} = await supabaseClient
+  .from("user_roles")
+  .select("user_id, role")
+  .in("user_id", userIds);
+
+if (!adminRolesError && adminRoles) {
+  adminRoles.forEach(row => {
+    const role = String(row.role || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, "_");
+
+    if (role === "senior_admin") {
+      roleMap[row.user_id] = true;
+    }
+  });
+} else if (adminRolesError) {
+  console.warn("Senior Admin roles:", adminRolesError.message);
+}
 if(currentUser&&userIds.length){
 
 const {
