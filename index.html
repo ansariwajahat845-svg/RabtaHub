@@ -3159,6 +3159,50 @@ error.message
 
 
 /* =========================================
+   ACTIVITY NOTIFICATIONS
+========================================= */
+
+function currentActorLabel(){
+  const profile = currentUser ? (profileMap[currentUser.id] || {}) : {};
+  return profile.username
+    ? "@" + profile.username
+    : (currentUser?.user_metadata?.username
+        ? "@" + currentUser.user_metadata.username
+        : "A user");
+}
+
+async function sendActivityNotification(recipientId, message, type){
+  if(!currentUser || !recipientId || recipientId === currentUser.id) return;
+  try{
+    const { error } = await supabaseClient
+      .from("notifications")
+      .insert({
+        user_id: recipientId,
+        sender_id: currentUser.id,
+        message: message,
+        type: type,
+        is_read: false
+      });
+    if(error) throw error;
+  }catch(error){
+    // A notification failure must not undo the user's like/comment.
+    console.warn("Activity notification could not be saved:", error.message || error);
+  }
+}
+
+async function getPostOwnerId(postId){
+  const cached = currentPosts.find(post => Number(post.id) === Number(postId));
+  if(cached?.user_id) return cached.user_id;
+  const { data, error } = await supabaseClient
+    .from("posts")
+    .select("user_id")
+    .eq("id", postId)
+    .maybeSingle();
+  if(error) throw error;
+  return data?.user_id || null;
+}
+
+/* =========================================
    LIKE / DISLIKE
 ========================================= */
 
@@ -3240,6 +3284,19 @@ action_type:actionType
 });
 
 if(error)throw error;
+
+if(actionType === "like"){
+  try{
+    const ownerId = await getPostOwnerId(postId);
+    await sendActivityNotification(
+      ownerId,
+      currentActorLabel() + " liked your post.",
+      "like"
+    );
+  }catch(notificationError){
+    console.warn("Like notification error:", notificationError.message || notificationError);
+  }
+}
 
 }
 
@@ -3716,6 +3773,17 @@ activeCommentReply.commentId
 
 try{
 
+let parentCommentOwnerId = null;
+if(parentId){
+  const { data: parentComment, error: parentError } = await supabaseClient
+    .from("comments")
+    .select("user_id")
+    .eq("id", parentId)
+    .maybeSingle();
+  if(parentError) throw parentError;
+  parentCommentOwnerId = parentComment?.user_id || null;
+}
+
 const {error}=
 await supabaseClient
 .from("comments")
@@ -3727,6 +3795,25 @@ parent_id:parentId
 });
 
 if(error)throw error;
+
+if(parentId && parentCommentOwnerId){
+  await sendActivityNotification(
+    parentCommentOwnerId,
+    currentActorLabel() + " replied to your comment.",
+    "comment_reply"
+  );
+}else{
+  try{
+    const ownerId = await getPostOwnerId(postId);
+    await sendActivityNotification(
+      ownerId,
+      currentActorLabel() + " commented on your post.",
+      "comment"
+    );
+  }catch(notificationError){
+    console.warn("Comment notification error:", notificationError.message || notificationError);
+  }
+}
 
 input.value="";
 
