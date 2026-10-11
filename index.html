@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1019,7 +1018,7 @@ font-size:8.5px
 
 <div class="header-buttons">
 <button onclick="showTrending()">ðŸ”¥ Trending</button>
-<button class="share-header-btn" onclick="showShare()">+ Share</button>
+<button class="share-header-btn" onclick="showShare()">âž• Share</button>
 <button type="button" aria-label="Top Members" title="Top Members" onclick="goStars()">â­</button>
 <button type="button" aria-label="Notifications" title="Notifications" onclick="goNotifications()">ðŸ””</button>
 </div>
@@ -1069,7 +1068,7 @@ placeholder="What's on your mind?">
 <button
 class="send-btn"
 onclick="createPost()">
-Publish Post
+ðŸ“¤ Publish Post
 </button>
 
 <button
@@ -1126,7 +1125,7 @@ Loading...
 
 <div class="share-header">
 <h3>ðŸ“¤ Create Post</h3>
-<button onclick="closeShare()">âœ•</button>
+<button onclick="closeShare()">âŒ</button>
 </div>
 
 <button
@@ -1216,7 +1215,7 @@ onclick="submitImagePost()">
 <button
 class="cancel-share"
 onclick="closeShare()">
-Cancel
+âŒ Cancel
 </button>
 
 </div>
@@ -1300,7 +1299,7 @@ disabled>
 <button
 class="voice-close-btn"
 onclick="closeVoice()">
-Cancel
+âŒ Cancel
 </button>
 
 </div>
@@ -1313,7 +1312,7 @@ Cancel
 
 <div class="trending-header">
 <h3>ðŸ”¥ Trending</h3>
-<button onclick="closeTrending()">âœ•</button>
+<button onclick="closeTrending()">âŒ</button>
 </div>
 
 <div id="trendingList">
@@ -1327,7 +1326,7 @@ Loading...
 <div class="bottom-nav">
 
 <button onclick="goHome()">
-ðŸ <br>Home
+ðŸ¡<br>Home
 </button>
 
 <button onclick="goPrivate()">
@@ -2258,7 +2257,7 @@ onclick="toggleFollow(
 )">
 ${
 isFollowing
-?"âœ“ Following"
+?"âœ… Following"
 :"âž• Follow"
 }
 </button>
@@ -2317,7 +2316,7 @@ addComment(${Number(post.id)})
 
 <button
 onclick="addComment(${Number(post.id)})">
-Send
+ðŸ“¤ Send
 </button>
 
 </div>
@@ -2650,7 +2649,7 @@ buttons.forEach(button=>{
 
 if(followMap[userId]){
 
-button.textContent="âœ“ Following";
+button.textContent="âœ… Following";
 
 button.className=
 "following-btn";
@@ -5278,6 +5277,7 @@ year:"numeric"
 );
 
 }
+
 
 
 /* =========================================
