@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Notifications - ChatZone ðŸ’¬</title>
+<title>Notifications - ChatZone 💬</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -234,11 +234,11 @@ body{
     <button
       class="back-btn"
       onclick="goHome()">
-      â†
+      ←
     </button>
 
     <div class="header-title">
-      ðŸ”” Notifications
+      🔔 Notifications
     </div>
 
     <div style="width:45px;"></div>
@@ -269,32 +269,32 @@ body{
 <nav class="bottom-nav">
 
   <button class="nav-btn" onclick="goHome()">
-    <span class="nav-icon">ðŸ </span>
+    <span class="nav-icon">🏠</span>
     Home
   </button>
 
   <button class="nav-btn" onclick="goPrivate()">
-    <span class="nav-icon">ðŸ’¬</span>
+    <span class="nav-icon">💬</span>
     Private
   </button>
 
   <button class="nav-btn" onclick="goProfile()">
-    <span class="nav-icon">ðŸ‘¤</span>
+    <span class="nav-icon">👤</span>
     Profile
   </button>
 
   <button class="nav-btn active" onclick="goNotifications()">
-    <span class="nav-icon">ðŸ””</span>
+    <span class="nav-icon">🔔</span>
     Notifications
   </button>
 
   <button class="nav-btn" onclick="goMehfil()">
-    <span class="nav-icon">ðŸ </span>
+    <span class="nav-icon">🏠</span>
     Mehfil
   </button>
 
   <button class="nav-btn" onclick="goMore()">
-    <span class="nav-icon">â˜°</span>
+    <span class="nav-icon">☰</span>
     More
   </button>
 
@@ -375,10 +375,6 @@ async function init(){
 ===================================================== */
 
 async function loadNotifications(){
-
-  if(!currentUser){
-    return;
-  }
 
   const list =
     document.getElementById(
@@ -621,7 +617,7 @@ async function loadNotifications(){
 
     list.innerHTML = `
       <div class="empty">
-        ðŸ”” Abhi koi notification nahi hai.
+        🔔 Abhi koi notification nahi hai.
       </div>
     `;
 
@@ -738,7 +734,7 @@ function renderNotification(
       <div class="action-box">
 
         <div class="action-title">
-          ðŸ“© Private Chat Request
+          📩 Private Chat Request
         </div>
 
         <div class="action-buttons">
@@ -750,7 +746,7 @@ function renderNotification(
             data-notification-id="${escapeAttr(notification.id)}"
             data-sender-id="${escapeAttr(notification.sender_id || "")}">
 
-            âœ… Accept
+            ✅ Accept
 
           </button>
 
@@ -761,7 +757,7 @@ function renderNotification(
             data-notification-id="${escapeAttr(notification.id)}"
             data-sender-id="${escapeAttr(notification.sender_id || "")}">
 
-            âŒ Decline
+            ❌ Decline
 
           </button>
 
@@ -784,7 +780,7 @@ function renderNotification(
 
     message =
       notification.message ||
-      `ðŸ’¬ @${username} ne aapko private message bheja hai.`;
+      `💬 @${username} ne aapko private message bheja hai.`;
 
 
     extra = `
@@ -796,7 +792,7 @@ function renderNotification(
           data-action="open-private"
           data-sender-id="${escapeAttr(notification.sender_id || "")}">
 
-          ðŸ’¬ Open Private Chat
+          💬 Open Private Chat
 
         </button>
 
@@ -817,7 +813,7 @@ function renderNotification(
 
     message =
       notification.message ||
-      `ðŸ  @${username} ne aapko Mehfil mein invite kiya hai.`;
+      `🏠 @${username} ne aapko Mehfil mein invite kiya hai.`;
 
 
     extra = `
@@ -825,7 +821,7 @@ function renderNotification(
       <div class="action-box">
 
         <div class="action-title">
-          ðŸ  Mehfil Invitation
+          🏠 Mehfil Invitation
         </div>
 
         <div class="action-buttons">
@@ -836,7 +832,7 @@ function renderNotification(
             data-notification-id="${escapeAttr(notification.id)}"
             data-mehfil-id="${escapeAttr(notification.mehfil_id || "")}">
 
-            âœ… Accept
+            ✅ Accept
 
           </button>
 
@@ -846,7 +842,7 @@ function renderNotification(
             data-notification-id="${escapeAttr(notification.id)}"
             data-mehfil-id="${escapeAttr(notification.mehfil_id || "")}">
 
-            âŒ Decline
+            ❌ Decline
 
           </button>
 
@@ -877,7 +873,7 @@ function renderNotification(
             data-action="delete"
             data-notification-id="${escapeAttr(notification.id)}">
 
-            ðŸ—‘ï¸
+            🗑️
 
           </button>
         `
@@ -1144,10 +1140,10 @@ async function acceptPrivateRequest(
 
     button.disabled = false;
     button.textContent =
-      "âœ… Accept";
+      "✅ Accept";
 
     showNotice(
-      "âŒ Private request nahi mili."
+      "❌ Private request nahi mili."
     );
 
     return;
@@ -1180,10 +1176,10 @@ async function acceptPrivateRequest(
 
     button.disabled = false;
     button.textContent =
-      "âœ… Accept";
+      "✅ Accept";
 
     showNotice(
-      "âŒ Request accept nahi hui."
+      "❌ Request accept nahi hui."
     );
 
     return;
@@ -1210,7 +1206,7 @@ async function acceptPrivateRequest(
 
 
   showNotice(
-    "âœ… Private request accepted!"
+    "✅ Private request accepted!"
   );
 
 
@@ -1327,10 +1323,10 @@ async function declinePrivateRequest(
 
       button.disabled = false;
       button.textContent =
-        "âŒ Decline";
+        "❌ Decline";
 
       showNotice(
-        "âŒ Request decline nahi hui."
+        "❌ Request decline nahi hui."
       );
 
       return;
@@ -1402,7 +1398,7 @@ async function acceptMehfilInvite(
   if(!mehfilId){
 
     showNotice(
-      "âŒ Mehfil ID missing hai."
+      "❌ Mehfil ID missing hai."
     );
 
     return;
@@ -1447,10 +1443,10 @@ async function acceptMehfilInvite(
 
     button.disabled = false;
     button.textContent =
-      "âœ… Accept";
+      "✅ Accept";
 
     showNotice(
-      "âŒ Mehfil invite nahi mili."
+      "❌ Mehfil invite nahi mili."
     );
 
     return;
@@ -1479,10 +1475,10 @@ async function acceptMehfilInvite(
 
     button.disabled = false;
     button.textContent =
-      "âœ… Accept";
+      "✅ Accept";
 
     showNotice(
-      "âŒ Invite accept nahi hui."
+      "❌ Invite accept nahi hui."
     );
 
     return;
@@ -1509,17 +1505,12 @@ async function acceptMehfilInvite(
   if(memberError){
 
     console.error(
-      "Mehfil membership error:",
       memberError
     );
 
     showNotice(
-      "Invite accept hui, lekin member add nahi ho saka. Please try again."
+      "Invite accept hui, lekin member add nahi ho saka."
     );
-
-    button.disabled = false;
-    button.textContent = "âœ… Accept";
-    return;
 
   }
 
@@ -1531,7 +1522,7 @@ async function acceptMehfilInvite(
 
 
   showNotice(
-    "âœ… Mehfil join ho gayi!"
+    "✅ Mehfil join ho gayi!"
   );
 
 
@@ -1650,7 +1641,7 @@ async function deleteNotification(
     );
 
     showNotice(
-      "âŒ Notification delete nahi hui."
+      "❌ Notification delete nahi hui."
     );
 
     return;
@@ -1681,7 +1672,7 @@ async function deleteNotification(
         "notificationsList"
       ).innerHTML = `
         <div class="empty">
-          ðŸ”” Abhi koi notification nahi hai.
+          🔔 Abhi koi notification nahi hai.
         </div>
       `;
 
@@ -1887,7 +1878,7 @@ function showLoginError(message){
 
     <div class="empty">
 
-      âŒ Session problem
+      ❌ Session problem
 
       <br><br>
 
