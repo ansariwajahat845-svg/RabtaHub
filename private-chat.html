@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Private Chat - ChatZone 💬</title>
+<title>Chat - ChatZone 💬</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#efeae2;color:#111b21}
-header{height:64px;background:#075e54;color:#fff;display:flex;align-items:center;gap:10px;padding:8px 12px;position:sticky;top:0;z-index:4;border:2px solid #8000ff}
+header{height:64px;background:#075e54;color:#fff;display:flex;align-items:center;gap:10px;padding:8px 12px;position:sticky;top:0;z-index:4}
 button{cursor:pointer;border:0}#back{font-size:26px;color:#fff;background:transparent;padding:4px}
 #avatar{height:42px;width:42px;border-radius:50%;object-fit:cover;background:#dce7e3;display:grid;place-items:center;font-size:22px}
 .identity{flex:1;min-width:0}.identity h1{font-size:16px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.identity p{font-size:12px;margin:0;color:#d7eee8}
@@ -20,9 +20,12 @@ main{max-width:760px;margin:auto;background:#efeae2;height:calc(100dvh - 128px);
 .bubble.theirs{align-self:flex-start;background:#fff;border-top-left-radius:2px}
 .time{display:block;text-align:right;color:#667781;font-size:10px;margin-top:4px}
 .image-message{max-width:100%;max-height:280px;border-radius:6px;display:block;margin-bottom:5px}
-.composer{display:flex;align-items:flex-end;gap:8px;padding:9px;background:#f0f2f5;max-width:760px;width:100%;margin:auto}
+.composer{display:flex;align-items:flex-end;gap:6px;padding:9px;background:#f0f2f5;max-width:760px;width:100%;margin:auto;border:2px solid #8b5cf6;border-radius:16px;position:relative}
 #messageInput{flex:1;resize:none;max-height:120px;min-height:42px;border:0;outline:0;border-radius:22px;padding:12px 15px;font-size:15px;font-family:inherit;background:#fff}
-#send{height:42px;width:44px;border-radius:50%;background:#128c7e;color:#fff;font-size:20px}
+#send{height:42px;width:44px;flex:0 0 44px;border-radius:50%;background:#8b5cf6;color:#fff;font-size:20px}
+.tool-btn{height:42px;width:36px;flex:0 0 36px;border-radius:50%;background:#fff;color:#6d28d9;font-size:20px;border:1px solid #e5d8ff;padding:0}
+#emojiPanel{display:none;position:absolute;bottom:70px;left:8px;right:8px;max-width:740px;margin:auto;background:#fff;border:1px solid #d8b4fe;border-radius:12px;padding:8px;box-shadow:0 4px 18px #0002;z-index:8;flex-wrap:wrap;gap:4px}
+#emojiPanel button{background:#fff;font-size:24px;padding:5px;border-radius:7px}
 #send:disabled{opacity:.5}
 #status{font-size:12px;color:#b42318;padding:0 12px 5px;background:#f0f2f5}
 @media(min-width:761px){body{background:#d9d2c5}main{border-left:1px solid #ddd;border-right:1px solid #ddd}}
@@ -30,7 +33,7 @@ main{max-width:760px;margin:auto;background:#efeae2;height:calc(100dvh - 128px);
 </head>
 <body>
 <header>
-<button id="back" onclick="goBack()" aria-label="Back">⬅️</button>
+<button id="back" onclick="goBack()" aria-label="Back">‹</button>
 <div id="avatar">👤</div>
 <div class="identity"><h1 id="chatName">Private Chat</h1><p id="chatStatus">Connecting...</p></div>
 <button id="refresh" onclick="loadMessages()" aria-label="Refresh">🔄</button>
@@ -38,18 +41,25 @@ main{max-width:760px;margin:auto;background:#efeae2;height:calc(100dvh - 128px);
 <main>
 <div id="messages"><div class="notice">Messages are shown here.</div></div>
 <div id="status"></div>
+<div style="position:relative;max-width:760px;width:100%;margin:auto;background:#f0f2f5">
+<div id="emojiPanel" aria-label="Emoji picker"></div>
 <form class="composer" id="sendForm">
+<button class="tool-btn" type="button" id="emojiBtn" aria-label="Emojis">😀</button>
+<button class="tool-btn" type="button" id="imageBtn" aria-label="Send image">📷</button>
+<input id="imageInput" type="file" accept="image/*" hidden>
 <textarea id="messageInput" rows="1" placeholder="Message" autocomplete="off"></textarea>
-<button id="send" type="submit" aria-label="Send">📤</button>
+<button class="tool-btn" type="button" id="voiceBtn" aria-label="Record voice message">🎤</button>
+<button id="send" type="submit" aria-label="Send">➤</button>
 </form>
+</div>
 </main>
 <script>
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const params=new URLSearchParams(location.search);
-const otherId=params.get("user")||params.get("user_id")||params.get("id")||params.get("receiver_id")||params.get("sender_id");
-let me=null,other=null,sending=false,lastLoad=0;
+const otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
+let me=null,other=null,sending=false,lastLoad=0,mediaRecorder=null,voiceChunks=[],recording=false;
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function goBack(){location.href="private.html"}
 function showStatus(t){document.getElementById("status").textContent=t||""}
@@ -74,6 +84,7 @@ let box=document.getElementById("messages");
 if(!rows.length){box.innerHTML='<div class="notice">👋 Say hello and start the conversation.</div>';return}
 box.innerHTML=rows.map(r=>{let mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text",body="";
 if(type==="image"&&r.media_url)body=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
+else if(type==="voice"&&r.media_url)body=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
 else body=esc(text);
 return `<div class="bubble ${mine?"mine":"theirs"}">${body}<span class="time">${timeText(r.created_at)}${mine?" ✓":""}</span></div>`}).join("");
 box.scrollTop=box.scrollHeight;
@@ -85,6 +96,22 @@ const {data,error}=await db.from("private_messages").select("*").or(`and(sender_
 if(error)throw error;renderMessages(data||[]);lastLoad=Date.now();showStatus("");
 }catch(e){console.error(e);showStatus("Messages could not load. Check private_messages table and RLS policies.")}
 }
+async function uploadAndSend(file,type){
+if(!me||!otherId||sending||!file)return;
+sending=true;showStatus("Uploading media...");
+try{
+const safeName=String(file.name||(`${type}-${Date.now()}`)).replace(/[^a-zA-Z0-9._-]/g,"_");
+const path=`${me.id}/${Date.now()}-${safeName}`;
+const {data:up,error:uploadError}=await db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});
+if(uploadError)throw uploadError;
+const {data:pub}=db.storage.from("chat-media").getPublicUrl(up.path);
+if(!pub?.publicUrl)throw new Error("Could not create media URL.");
+const {error}=await db.from("private_messages").insert({sender_id:me.id,receiver_id:otherId,message_type:type,content:"",media_url:pub.publicUrl});
+if(error)throw error;
+showStatus("");await loadMessages();
+}catch(err){console.error(err);showStatus("Media not sent: "+(err.message||"Check chat-media bucket and private_messages.media_url column."))}
+finally{sending=false}
+}
 document.getElementById("sendForm").addEventListener("submit",async e=>{
 e.preventDefault();if(sending||!me||!otherId)return;
 const input=document.getElementById("messageInput"),content=input.value.trim();if(!content)return;
@@ -94,6 +121,22 @@ const {error}=await db.from("private_messages").insert({sender_id:me.id,receiver
 if(error)throw error;input.value="";input.style.height="42px";showStatus("");await loadMessages();
 }catch(err){console.error(err);showStatus("Message not sent: "+(err.message||"Check table permissions."))}
 finally{sending=false;document.getElementById("send").disabled=false;input.focus()}
+});
+document.getElementById("imageBtn").addEventListener("click",()=>document.getElementById("imageInput").click());
+document.getElementById("imageInput").addEventListener("change",async e=>{const file=e.target.files?.[0];if(file){if(!file.type.startsWith("image/")){showStatus("Please choose an image file.");e.target.value="";return}await uploadAndSend(file,"image")}e.target.value=""});
+const emojiList=["😀","😂","🥹","😍","😘","😊","😉","😭","😎","🥰","❤️","💜","💖","💕","👍","👎","🙏","👏","🔥","🎉","🤔","😴","😡","😇","🙈","💯","✅","😋","🤗","😔","🤣","😜","🌹","✨","💯","🙌","🤝","💐","😅","😆","😃","😢","😱","🤩","🫶","💗","💞","💔","👀"];
+const emojiPanel=document.getElementById("emojiPanel");emojiPanel.innerHTML=emojiList.map(em=>`<button type="button" aria-label="${em}">${em}</button>`).join("");
+emojiPanel.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{const inp=document.getElementById("messageInput"),a=inp.selectionStart,z=inp.selectionEnd;inp.value=inp.value.slice(0,a)+b.textContent+inp.value.slice(z);inp.focus();inp.selectionStart=inp.selectionEnd=a+b.textContent.length;emojiPanel.style.display="none"}));
+document.getElementById("emojiBtn").addEventListener("click",()=>{emojiPanel.style.display=emojiPanel.style.display==="flex"?"none":"flex"});
+document.getElementById("voiceBtn").addEventListener("click",async()=>{
+if(recording){mediaRecorder?.stop();return}
+if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showStatus("Voice recording is not supported in this browser.");return}
+try{
+const stream=await navigator.mediaDevices.getUserMedia({audio:true});voiceChunks=[];mediaRecorder=new MediaRecorder(stream);
+mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};
+mediaRecorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());recording=false;document.getElementById("voiceBtn").textContent="🎤";const blob=new Blob(voiceChunks,{type:mediaRecorder.mimeType||"audio/webm"});if(blob.size)await uploadAndSend(new File([blob],`voice-${Date.now()}.webm`,{type:blob.type}),"voice")};
+mediaRecorder.start();recording=true;document.getElementById("voiceBtn").textContent="⏹️";showStatus("Recording voice… tap ⏹️ to finish and send.");
+}catch(err){console.error(err);showStatus("Microphone permission was not granted.")}
 });
 const input=document.getElementById("messageInput");
 input.addEventListener("input",()=>{input.style.height="42px";input.style.height=Math.min(input.scrollHeight,120)+"px"});
