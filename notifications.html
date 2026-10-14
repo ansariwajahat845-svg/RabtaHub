@@ -116,7 +116,7 @@ const items=[
 ].sort((a,b)=>b.sort-a.sort);
 if(!items.length){box.innerHTML='<div class="empty">✨ You are all caught up.<br><br>New private messages and private chat requests will appear here.</div>';return}
 box.innerHTML=items.map(x=>x.kind==="request"?requestCard(x.row,byId[x.row.sender_id]):messageCard(x.row,byId[x.row.sender_id])).join("");
-}catch(e){console.error(e);box.innerHTML='<div class="error">Notifications could not load. Please check your Supabase table permissions and try again.<br><br><button class="btn open" onclick="loadNotifications()">Try again</button></div>';document.getElementById("status").textContent="Could not load notifications"}
+}catch(e){console.error("ChatZone notification load error:",e);const detail=esc(e?.message||e?.details||e?.hint||String(e)||"Unknown error");box.innerHTML='<div class="error"><b>Notifications could not load.</b><br><br>'+detail+'<br><br><small>Supabase error details upar show ho rahe hain. Is message ko copy karke support ko bhej sakte hain.</small><br><br><button class="btn open" onclick="loadNotifications()">Try again</button></div>';document.getElementById("status").textContent="Load error: "+String(e?.code||"check details")}
 finally{busy=false}
 }
 async function acceptRequest(id,event){
