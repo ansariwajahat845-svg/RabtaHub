@@ -269,7 +269,7 @@ background-clip:text;
 font-weight:800
 }
 
-/* PREMIUM CHATZONE ROLE BADGES â€” added without changing Home layout */
+/* PREMIUM CHATZONE ROLE BADGES — added without changing Home layout */
 .role-badge{
   display:inline-flex;
   align-items:center;
@@ -1005,6 +1005,40 @@ font-size:8px
 font-size:8.5px
 }
 }
+
+
+/* CHATZONE THEME 3: DARK PURPLE + GOLD */
+:root{--cz-purple:#211038;--cz-purple2:#351653;--cz-gold:#f5c65d;--cz-gold2:#ffe6a0}
+body{background:linear-gradient(135deg,#170a27,#43205f)!important;color:#f8f2ff!important}
+.app{background:#1d102b!important;color:#f8f2ff!important}
+.header{background:linear-gradient(135deg,#1b0d2b,#492269)!important;border-bottom:1px solid rgba(245,198,93,.45)}
+.logo{color:var(--cz-gold2)!important}
+.header-buttons button{background:#5a3478!important;color:#fff!important;border:1px solid rgba(245,198,93,.25)!important}
+.header-buttons .share-header-btn{background:linear-gradient(135deg,#f5c65d,#ffe6a0)!important;color:#281239!important}
+.online-section,.welcome,.create-box,.post-card,.post,.likes-content,.comments,.comment-reply-box,.modal-content{background:#2a183b!important;color:#f8f2ff!important;border:1px solid rgba(245,198,93,.22)!important;box-shadow:0 4px 16px rgba(0,0,0,.22)!important}
+.online-title,.online-user-name,.comment-user,.post-author,.post-username{color:#ffe6a0!important}
+.online-user{background:#3a2450!important;color:#fff!important}
+textarea,input,select{background:#21132f!important;color:#fff!important;border-color:#70518a!important}
+textarea::placeholder,input::placeholder{color:#c4b2d5!important}
+button{transition:filter .15s ease}
+.create-actions button,.post-actions button,.comment-input-row button,.comment-reply-box button{background:#593477!important;color:#fff!important;border:1px solid rgba(245,198,93,.28)!important}
+.like-btn{background:#49254f!important;color:#ffe6a0!important}
+.dislike-btn{background:#352442!important;color:#f7d6e7!important}
+.comment-btn{background:#392550!important;color:#eadbff!important}
+.bottom-nav{background:#1b0d2a!important;border-top:1px solid rgba(245,198,93,.4)!important}
+.bottom-nav button{color:#f6d98a!important}
+.empty{background:#2a183b!important;color:#e8d8f4!important}
+.points-panel{margin:12px;padding:13px;border-radius:15px;background:linear-gradient(135deg,#351653,#211038);border:1px solid #f5c65d;box-shadow:0 4px 14px #0003;color:#fff}
+.points-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.points-title{font-weight:800;color:#ffe6a0}
+.points-total{font-size:23px;font-weight:900;color:#f5c65d}
+.points-note{font-size:11px;color:#ddc9ee;margin-top:4px}
+.points-top{margin-top:10px;border-top:1px solid #64427d;padding-top:8px}
+.points-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff12;font-size:12px}
+.points-rank{width:22px;color:#f5c65d;font-weight:bold}
+.points-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.points-value{color:#ffe6a0;font-weight:bold}
+.points-error{font-size:11px;color:#e8d8f4;padding-top:6px}
 </style>
 </head>
 
@@ -1045,6 +1079,14 @@ Online users loading...
 &#x1F44B; Welcome to ChatZone! &#x1F49C;&#x1F4AC;
 </div>
 
+<div class="points-panel" id="pointsPanel">
+  <div class="points-head">
+    <div><div class="points-title">⭐ ChatZone Points</div><div class="points-note">Posts +10 · Likes on your post +50 · Trending post like +500</div></div>
+    <div class="points-total"><span id="myPoints">0</span> pts</div>
+  </div>
+  <div class="points-top"><div class="points-title">🏆 Top 10 Members</div><div id="pointsLeaderboard" class="points-note">Loading ranking...</div></div>
+</div>
+
 <div class="create-box">
 
 <div id="replyBox" class="reply-box">
@@ -1054,7 +1096,7 @@ Online users loading...
 <button
 onclick="cancelReply()"
 style="float:right;border:0;background:none;color:#d00">
-âœ•
+✕
 </button>
 
 </div>
@@ -1104,11 +1146,11 @@ onclick="startVoice()">
 <div class="likes-content">
 
 <div class="likes-header">
-<h3>â¤ï¸ Liked by</h3>
+<h3>❤️ Liked by</h3>
 <button
 class="likes-close"
 onclick="closeLikesPopup()">
-âœ•
+✕
 </button>
 </div>
 
@@ -1125,14 +1167,14 @@ Loading...
 <div class="share-content">
 
 <div class="share-header">
-<h3>ðŸ“¤ Create Post</h3>
-<button onclick="closeShare()">âŒ</button>
+<h3>📤 Create Post</h3>
+<button onclick="closeShare()">❌</button>
 </div>
 
 <button
 class="share-option"
 onclick="showTextPost()">
-ðŸ“ Text Post
+📝 Text Post
 </button>
 
 <button
@@ -1151,7 +1193,7 @@ placeholder="What's on your mind?">
 <button
 class="share-submit"
 onclick="submitTextPost()">
-ðŸ“¤ Publish Text Post
+📤 Publish Text Post
 </button>
 
 </div>
@@ -1184,7 +1226,7 @@ Image *
 <button
 class="share-option"
 onclick="document.getElementById('shareImageInput').click()">
-ðŸ“· Select Image
+📷 Select Image
 </button>
 
 <input
@@ -1216,7 +1258,7 @@ onclick="submitImagePost()">
 <button
 class="cancel-share"
 onclick="closeShare()">
-âŒ Cancel
+❌ Cancel
 </button>
 
 </div>
@@ -1256,7 +1298,7 @@ preload="metadata">
 id="voiceRecordBtn"
 class="voice-record-btn"
 onclick="recordVoice()">
-ðŸ”´ Record
+🔴 Record
 </button>
 
 <button
@@ -1264,7 +1306,7 @@ id="voicePauseBtn"
 class="voice-stop-btn"
 onclick="pauseResumeVoice()"
 disabled>
-â¸ï¸ Pause
+⏸️ Pause
 </button>
 
 <button
@@ -1272,7 +1314,7 @@ id="voiceStopBtn"
 class="voice-stop-btn"
 onclick="stopVoice()"
 disabled>
-â¹ï¸ Stop
+⏹️ Stop
 </button>
 
 </div>
@@ -1284,7 +1326,7 @@ id="voiceAgainBtn"
 class="voice-stop-btn"
 onclick="recordAgainVoice()"
 disabled>
-ðŸ”„ Again
+🔄 Again
 </button>
 
 <button
@@ -1292,7 +1334,7 @@ id="voiceSendBtn"
 class="voice-send-btn"
 onclick="sendVoice()"
 disabled>
-ðŸ“¤ Send
+📤 Send
 </button>
 
 </div>
@@ -1300,7 +1342,7 @@ disabled>
 <button
 class="voice-close-btn"
 onclick="closeVoice()">
-âŒ Cancel
+❌ Cancel
 </button>
 
 </div>
@@ -1313,7 +1355,7 @@ onclick="closeVoice()">
 
 <div class="trending-header">
 <h3>&#x1F525; Trending</h3>
-<button onclick="closeTrending()">âŒ</button>
+<button onclick="closeTrending()">❌</button>
 </div>
 
 <div id="trendingList">
@@ -1390,6 +1432,34 @@ let voiceSession=0;
 
 
 /* =========================================
+   POINTS + TOP 10
+========================================= */
+async function loadPointsBoard(){
+  const board=document.getElementById("pointsLeaderboard");
+  if(!board)return;
+  try{
+    const {data:rows,error}=await supabaseClient.from("member_points").select("user_id,points").order("points",{ascending:false}).limit(10);
+    if(error)throw error;
+    const list=Array.isArray(rows)?rows:[];
+    const mine=list.find(x=>x.user_id===currentUser?.id);
+    if(mine)document.getElementById("myPoints").textContent=Number(mine.points||0).toLocaleString();
+    else {
+      const {data:own}=await supabaseClient.from("member_points").select("points").eq("user_id",currentUser.id).maybeSingle();
+      document.getElementById("myPoints").textContent=Number(own?.points||0).toLocaleString();
+    }
+    if(!list.length){board.innerHTML='<div class="points-error">Points ranking will appear after members start earning points.</div>';return;}
+    const ids=list.map(x=>x.user_id).filter(Boolean);
+    const {data:profiles}=await supabaseClient.from("profiles").select("id,username,name").in("id",ids);
+    const names={};(profiles||[]).forEach(p=>names[p.id]=p.username||p.name||"Member");
+    board.innerHTML=list.map((x,i)=>`<div class="points-row"><span class="points-rank">${i+1}.</span><span class="points-name">${escapeHtml(names[x.user_id]||"Member")}${x.user_id===currentUser?.id?' (You)':''}</span><span class="points-value">${Number(x.points||0).toLocaleString()} pts</span></div>`).join("");
+  }catch(e){
+    document.getElementById("myPoints").textContent="—";
+    board.innerHTML='<div class="points-error">Points setup required. Run the supplied ChatZone-Points-SQL.txt in Supabase SQL Editor.</div>';
+    console.warn("Points board:",e.message||e);
+  }
+}
+
+/* =========================================
    INIT
 ========================================= */
 
@@ -1416,6 +1486,7 @@ return;
 loadOnlineUsers();
 
 await loadFeed(false);
+await loadPointsBoard();
 
 }catch(error){
 
@@ -1637,7 +1708,7 @@ onerror="this.style.display='none'">`
 :`<div
 class="online-user-avatar"
 style="display:flex;align-items:center;justify-content:center">
-ðŸ‘¤
+👤
 </div>`;
 
 return `
@@ -2059,7 +2130,7 @@ tabindex="0"
 aria-label="Open ${escapeAttribute(name||username)} profile"
 onclick="openOnlineProfile('${escapeJs(post.user_id)}')"
 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openOnlineProfile('${escapeJs(post.user_id)}')}">
-ðŸ‘¤
+👤
 </div>`;
 
 const imageHTML=
@@ -2314,7 +2385,7 @@ id="comment-reply-text-${Number(post.id)}">
 onclick="cancelCommentReply(
 ${Number(post.id)}
 )">
-âœ•
+✕
 </button>
 
 <div style="clear:both"></div>
@@ -2334,7 +2405,7 @@ addComment(${Number(post.id)})
 
 <button
 onclick="addComment(${Number(post.id)})">
-ðŸ“¤ Send
+📤 Send
 </button>
 
 </div>
@@ -2467,7 +2538,7 @@ onerror="this.style.display='none'">`
 :`<div
 class="like-user-avatar"
 style="display:flex;align-items:center;justify-content:center">
-ðŸ‘¤
+👤
 </div>`;
 
 return `
@@ -3301,6 +3372,7 @@ if(actionType === "like"){
 }
 
 await loadFeed(true);
+await loadPointsBoard();
 
 }catch(error){
 
@@ -3504,7 +3576,7 @@ background:#ddd;
 display:flex;
 align-items:center;
 justify-content:center">
-ðŸ‘¤
+👤
 </div>`;
 
 return `
@@ -3865,7 +3937,7 @@ document.getElementById(
 
 if(btn)
 btn.textContent=
-"ðŸ’¬ "+(count||0);
+"💬 "+(count||0);
 
 }catch(error){
 
@@ -4090,7 +4162,7 @@ if(recordBtn){
 
 recordBtn.disabled=false;
 recordBtn.textContent=
-"ðŸ”´ Record";
+"🔴 Record";
 
 }
 
@@ -4098,7 +4170,7 @@ if(pauseBtn){
 
 pauseBtn.disabled=true;
 pauseBtn.textContent=
-"â¸ï¸ Pause";
+"⏸️ Pause";
 
 }
 
@@ -4422,7 +4494,7 @@ document.getElementById(
 
 if(status)
 status.textContent=
-"âœ… Voice is ready â€” preview it before sending.";
+"✅ Voice is ready — preview it before sending.";
 
 if(recordBtn)
 recordBtn.disabled=false;
@@ -4475,7 +4547,7 @@ document.getElementById(
 
 if(status)
 status.textContent=
-"ðŸ”´ Recording...";
+"🔴 Recording...";
 
 if(recordBtn)
 recordBtn.disabled=true;
@@ -4619,11 +4691,11 @@ document.getElementById(
 
 if(pauseBtn)
 pauseBtn.textContent=
-"â–¶ï¸ Resume";
+"▶️ Resume";
 
 if(status)
 status.textContent=
-"â¸ï¸ Recording paused";
+"⏸️ Recording paused";
 
 return;
 
@@ -4650,11 +4722,11 @@ document.getElementById(
 
 if(pauseBtn)
 pauseBtn.textContent=
-"â¸ï¸ Pause";
+"⏸️ Pause";
 
 if(status)
 status.textContent=
-"ðŸ”´ Recording...";
+"🔴 Recording...";
 
 }
 
@@ -4836,7 +4908,7 @@ if(pauseBtn){
 
 pauseBtn.disabled=true;
 pauseBtn.textContent=
-"â¸ï¸ Pause";
+"⏸️ Pause";
 
 }
 
@@ -4918,7 +4990,7 @@ againBtn.disabled=true;
 
 if(status)
 status.textContent=
-"ðŸ“¤ Uploading voice...";
+"📤 Uploading voice...";
 
 let extension="webm";
 
@@ -4991,7 +5063,7 @@ throw new Error(
 
 if(status)
 status.textContent=
-"ðŸ’¾ Saving voice post...";
+"💾 Saving voice post...";
 
 const {
 error:postError
@@ -5011,7 +5083,7 @@ throw postError;
 
 if(status)
 status.textContent=
-"âœ… Voice posted!";
+"✅ Voice posted!";
 
 setTimeout(
 ()=>{
