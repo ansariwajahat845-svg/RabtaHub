@@ -97,7 +97,7 @@ if(!session?.user){currentUser=null;updateCount(0);document.getElementById("stat
 currentUser=session.user;document.getElementById("status").textContent="Private messages and requests";
 const [reqRes,msgRes]=await Promise.all([
 db.from("private_requests").select("id,sender_id,receiver_id,status,created_at").eq("receiver_id",currentUser.id).eq("status","pending").order("created_at",{ascending:false}).limit(100),
-db.from("private_messages").select("id,sender_id,receiver_id,content,message,message_type,media_url,created_at").eq("receiver_id",currentUser.id).neq("sender_id",currentUser.id).order("created_at",{ascending:false}).limit(100)
+db.from("private_messages").select("id,sender_id,receiver_id,content,message_type,media_url,created_at").eq("receiver_id",currentUser.id).neq("sender_id",currentUser.id).order("created_at",{ascending:false}).limit(100)
 ]);
 if(reqRes.error)throw reqRes.error;
 if(msgRes.error)throw msgRes.error;
