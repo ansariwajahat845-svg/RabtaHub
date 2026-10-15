@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatZone ⭐ Star List</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--purple:#8b5cf6;--purple-dark:#6d28d9;--lavender:#f5f0ff;--ink:#30234a;--muted:#796b91;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f4edff 0%,#fbf9ff 55%,#f0e8ff 100%);font-family:Arial,Helvetica,sans-serif;color:var(--ink);min-height:100vh}
+header{background:linear-gradient(135deg,#a78bfa,#7c3aed);color:white;text-align:center;padding:27px 16px 30px;border-radius:0 0 26px 26px;box-shadow:0 8px 24px #6d28d929}
+header .bigstar{font-size:38px;line-height:1.2}
+h1{font-size:25px;margin:7px 0 5px}
+header p{margin:0;font-size:14px;opacity:.95}
+main{width:min(680px,100%);margin:18px auto;padding:0 13px 28px}
+.summary{background:white;border:1px solid #e8dcff;border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:0 4px 14px #6d28d90b}
+.summary strong{color:var(--purple-dark)}
+.status{font-size:13px;color:var(--muted);margin-top:5px}
+.list{display:flex;flex-direction:column;gap:10px}
+.star-card{display:flex;align-items:center;gap:12px;background:white;border:1px solid #e9ddff;border-radius:16px;padding:13px;box-shadow:0 4px 14px #6d28d90b}
+.rank{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:13px;background:#f0e7ff;color:#6d28d9;font-weight:800;font-size:16px}
+.medal{font-size:28px;flex:0 0 34px;text-align:center}
+.details{min-width:0;flex:1}
+.star-name{font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#7c3aed;margin-bottom:4px}
+.username{font-size:16px;font-weight:700;overflow-wrap:anywhere}
+.points{font-size:13px;color:var(--muted);margin-top:4px}
+.points b{color:#6d28d9}
+.empty,.error{background:white;border:1px solid #e9ddff;border-radius:16px;padding:24px;text-align:center;color:var(--muted);line-height:1.5}
+.error{color:#9f1239}
+footer{text-align:center;font-size:12px;color:#88799e;padding:18px}
+button{border:0;background:#7c3aed;color:white;border-radius:10px;padding:10px 15px;font-weight:700;margin-top:10px;cursor:pointer}
+@media(min-width:520px){.star-card{padding:15px 17px}.rank{width:46px;height:46px;flex-basis:46px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bigstar">⭐</div>
+  <h1>ChatZone Star List</h1>
+  <p>Top 10 members ranked by points</p>
+</header>
+<main>
+  <section class="summary">
+    <div>🌟 <strong>Star Ranking</strong> — more points means a higher position.</div>
+    <div class="status" id="status">Loading Star List…</div>
+  </section>
+  <section class="list" id="starList" aria-live="polite"></section>
+</main>
+<footer>ChatZone 💬 · Star positions update from member points</footer>
+
+<script>
+const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const starNames = [
+  {name:"Royal Star", emoji:"👑"},
+  {name:"Diamond Star", emoji:"💎"},
+  {name:"Super Star", emoji:"🌟"},
+  {name:"Platinum Star", emoji:"🏆"},
+  {name:"Purple Star", emoji:"💜"},
+  {name:"Power Star", emoji:"⚡"},
+  {name:"Shining Star", emoji:"✨"},
+  {name:"Rising Star", emoji:"🌠"},
+  {name:"Gold Star", emoji:"🥇"},
+  {name:"Lucky Star", emoji:"🍀"}
+];
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+async function loadStarList() {
+  const list = document.getElementById("starList");
+  const status = document.getElementById("status");
+  status.textContent = "Loading latest points…";
+  list.innerHTML = "";
+
+  try {
+    // Load points first, then profiles separately to avoid depending on a foreign-key join.
+    const { data: pointRows, error: pointsError } = await supabaseClient
+      .from("member_points")
+      .select("user_id,points")
+      .order("points", { ascending: false })
+      .limit(100);
+
+    if (pointsError) throw pointsError;
+
+    const eligible = (pointRows || [])
+      .map(row => ({user_id: row.user_id, points: Number(row.points) || 0}))
+      .filter(row => row.points >= 2000)
+      .sort((a,b) => b.points - a.points)
+      .slice(0,10);
+
+    if (!eligible.length) {
+      status.textContent = "Star List updated";
+      list.innerHTML = '<div class="empty">⭐ Abhi Star List mein koi member 2,000 points tak nahi pohncha.<br>Points barhne par Top 10 yahan show honge.</div>';
+      return;
+    }
+
+    const ids = eligible.map(row => row.user_id);
+    const { data: profiles, error: profilesError } = await supabaseClient
+      .from("profiles")
+      .select("id,username,name")
+      .in("id", ids);
+
+    if (profilesError) throw profilesError;
+
+    const profileMap = new Map((profiles || []).map(profile => [profile.id, profile]));
+    list.innerHTML = eligible.map((member, index) => {
+      const profile = profileMap.get(member.user_id) || {};
+      const displayName = profile.username || profile.name || "ChatZone Member";
+      const star = starNames[index];
+      return `<article class="star-card">
+        <div class="rank">#${index + 1}</div>
+        <div class="medal" aria-hidden="true">${star.emoji}</div>
+        <div class="details">
+          <div class="star-name">${star.name}</div>
+          <div class="username">${safeText(displayName)}</div>
+          <div class="points">⭐ <b>${member.points.toLocaleString()}</b> points</div>
+        </div>
+      </article>`;
+    }).join("");
+
+    status.textContent = `Showing ${eligible.length} of 10 Star positions · Highest points first`;
+  } catch (error) {
+    console.error("Star List error:", error);
+    status.textContent = "Star List could not load";
+    list.innerHTML = '<div class="error">Star List load nahi ho saki. Supabase mein member_points aur profiles tables ki read permissions (RLS) check karein, phir page refresh karein.<br><button onclick="loadStarList()">Try Again</button></div>';
+  }
+}
+loadStarList();
+</script>
+</body>
+</html>
