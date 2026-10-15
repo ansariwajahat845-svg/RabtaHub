@@ -1007,38 +1007,39 @@ font-size:8.5px
 }
 
 
-/* CHATZONE THEME 3: DARK PURPLE + GOLD */
-:root{--cz-purple:#211038;--cz-purple2:#351653;--cz-gold:#f5c65d;--cz-gold2:#ffe6a0}
-body{background:linear-gradient(135deg,#170a27,#43205f)!important;color:#f8f2ff!important}
-.app{background:#1d102b!important;color:#f8f2ff!important}
-.header{background:linear-gradient(135deg,#1b0d2b,#492269)!important;border-bottom:1px solid rgba(245,198,93,.45)}
-.logo{color:var(--cz-gold2)!important}
-.header-buttons button{background:#5a3478!important;color:#fff!important;border:1px solid rgba(245,198,93,.25)!important}
-.header-buttons .share-header-btn{background:linear-gradient(135deg,#f5c65d,#ffe6a0)!important;color:#281239!important}
-.online-section,.welcome,.create-box,.post-card,.post,.likes-content,.comments,.comment-reply-box,.modal-content{background:#2a183b!important;color:#f8f2ff!important;border:1px solid rgba(245,198,93,.22)!important;box-shadow:0 4px 16px rgba(0,0,0,.22)!important}
-.online-title,.online-user-name,.comment-user,.post-author,.post-username{color:#ffe6a0!important}
-.online-user{background:#3a2450!important;color:#fff!important}
-textarea,input,select{background:#21132f!important;color:#fff!important;border-color:#70518a!important}
-textarea::placeholder,input::placeholder{color:#c4b2d5!important}
+/* CHATZONE THEME: LIGHT PURPLE + LAVENDER */
+:root{--cz-purple:#8b5cf6;--cz-purple2:#a78bfa;--cz-lavender:#f3eeff;--cz-ink:#352451}
+body{background:linear-gradient(135deg,#f8f5ff,#e9ddff)!important;color:#352451!important}
+.app{background:#f8f5ff!important;color:#352451!important}
+.header{background:linear-gradient(135deg,#8b5cf6,#a78bfa)!important;border-bottom:1px solid #d8c7ff}
+.logo{color:#fff!important}
+.header-buttons button{background:#ede5ff!important;color:#59359a!important;border:1px solid #d8c7ff!important}
+.header-buttons .share-header-btn{background:linear-gradient(135deg,#fff,#f0e8ff)!important;color:#6541a5!important}
+.online-section,.welcome,.create-box,.post-card,.post,.likes-content,.comments,.comment-reply-box,.modal-content{background:#fff!important;color:#352451!important;border:1px solid #e5d9ff!important;box-shadow:0 4px 16px rgba(91,55,145,.10)!important}
+.online-title,.online-user-name,.comment-user,.post-author,.post-username{color:#7044bd!important}
+.online-user{background:#f0e8ff!important;color:#503477!important}
+textarea,input,select{background:#fff!important;color:#352451!important;border-color:#cbb8f4!important}
+textarea::placeholder,input::placeholder{color:#9b8ab5!important}
 button{transition:filter .15s ease}
-.create-actions button,.post-actions button,.comment-input-row button,.comment-reply-box button{background:#593477!important;color:#fff!important;border:1px solid rgba(245,198,93,.28)!important}
-.like-btn{background:#49254f!important;color:#ffe6a0!important}
-.dislike-btn{background:#352442!important;color:#f7d6e7!important}
-.comment-btn{background:#392550!important;color:#eadbff!important}
-.bottom-nav{background:#1b0d2a!important;border-top:1px solid rgba(245,198,93,.4)!important}
-.bottom-nav button{color:#f6d98a!important}
-.empty{background:#2a183b!important;color:#e8d8f4!important}
-.points-panel{margin:12px;padding:13px;border-radius:15px;background:linear-gradient(135deg,#351653,#211038);border:1px solid #f5c65d;box-shadow:0 4px 14px #0003;color:#fff}
+.create-actions button,.post-actions button,.comment-input-row button,.comment-reply-box button{background:#8b5cf6!important;color:#fff!important;border:1px solid #7c4de6!important}
+.like-btn{background:#f0e8ff!important;color:#7044bd!important}
+.dislike-btn{background:#f8eaf2!important;color:#a14c79!important}
+.comment-btn{background:#eee7ff!important;color:#6541a5!important}
+.bottom-nav{background:#fff!important;border-top:1px solid #ded0ff!important;box-shadow:0 -3px 14px rgba(91,55,145,.08)!important}
+.bottom-nav button{color:#7044bd!important}
+.empty{background:#fff!important;color:#76628e!important}
+.points-panel{margin:12px;padding:13px;border-radius:15px;background:linear-gradient(135deg,#fff,#f0e8ff);border:1px solid #cbb8f4;box-shadow:0 4px 14px rgba(91,55,145,.12);color:#352451}
 .points-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.points-title{font-weight:800;color:#ffe6a0}
-.points-total{font-size:23px;font-weight:900;color:#f5c65d}
-.points-note{font-size:11px;color:#ddc9ee;margin-top:4px}
-.points-top{margin-top:10px;border-top:1px solid #64427d;padding-top:8px}
-.points-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff12;font-size:12px}
-.points-rank{width:22px;color:#f5c65d;font-weight:bold}
+.points-title{font-weight:800;color:#7044bd}
+.points-total{font-size:23px;font-weight:900;color:#7c3aed}
+.points-note{font-size:11px;color:#76628e;margin-top:4px}
+.points-top{margin-top:10px;border-top:1px solid #ded0ff;padding-top:8px}
+.points-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #eee7ff;font-size:12px}
+.points-rank{width:22px;color:#7c3aed;font-weight:bold}
 .points-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.points-value{color:#ffe6a0;font-weight:bold}
-.points-error{font-size:11px;color:#e8d8f4;padding-top:6px}
+.points-value{color:#7044bd;font-weight:bold}
+.points-error{font-size:11px;color:#76628e;padding-top:6px}
+.user-points-badge{display:inline-block;margin-left:5px;padding:2px 6px;border-radius:999px;background:#efe7ff;color:#7044bd;border:1px solid #d8c7ff;font-size:10px;font-weight:800;white-space:nowrap}
 </style>
 </head>
 
@@ -1409,6 +1410,7 @@ let currentPosts=[];
 let onlineChannel=null;
 let followMap={};
 let roleMap={};
+let pointsMap={};
 
 let activeCommentReply={
 postId:null,
@@ -1806,6 +1808,15 @@ Array.isArray(posts)
 currentPosts=safePosts;
 profileMap={};
 followMap={};
+pointsMap={};
+const pointUserIds=[...new Set(safePosts.map(p=>p.user_id).filter(Boolean))];
+if(pointUserIds.length){
+  const {data:pointRows,error:pointError}=await supabaseClient
+    .from("member_points").select("user_id,points").in("user_id",pointUserIds);
+  if(!pointError&&(pointRows||[]).length){
+    (pointRows||[]).forEach(row=>{pointsMap[row.user_id]=Number(row.points||0);});
+  }
+}
 
 if(safePosts.length===0){
 
@@ -2205,6 +2216,7 @@ onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openO
 ${escapeHtml(name||username)}
 </span>
 ${getRoleBadge(post.user_id)}
+<span class="user-points-badge">⭐ ${Number(pointsMap[post.user_id]||0).toLocaleString()} pts</span>
 ${
 name&&username
 ?`
@@ -2738,14 +2750,14 @@ buttons.forEach(button=>{
 
 if(followMap[userId]){
 
-button.textContent="&#9989; Following";
+button.textContent="✅ Following";
 
 button.className=
 "following-btn";
 
 }else{
 
-button.textContent="&#10133; Follow";
+button.textContent="➕ Follow";
 
 button.className=
 "follow-btn";
