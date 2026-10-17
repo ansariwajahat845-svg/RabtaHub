@@ -128,8 +128,19 @@ async function loadStarList() {
   } catch (error) {
     console.error("Star List error:", error);
     status.textContent = "Star List could not load";
-    list.innerHTML = '<div class="error">Star List load nahi ho saki. Supabase mein member_points aur profiles tables ki read permissions (RLS) check karein, phir page refresh karein.<br><button onclick="loadStarList()">Try Again</button></div>';
-  }
+
+    const message = safeText(
+      error?.message || error?.details || "Unknown Supabase error"
+    );
+
+    list.innerHTML = `
+      <div class="error">
+        <b>Star List error:</b><br>
+        ${message}
+        <br>
+        <button onclick="loadStarList()">Try Again</button>
+      </div>`;
+}
 }
 loadStarList();
 </script>
