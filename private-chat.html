@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chat - ChatZone 💬</title>
@@ -11,7 +32,11 @@ header{height:64px;background:#6d28d9;color:#fff;display:flex;align-items:center
 button{cursor:pointer;border:0}#back{font-size:26px;color:#fff;background:transparent;padding:4px}
 #avatar{height:42px;width:42px;border-radius:50%;object-fit:cover;background:#dce7e3;display:grid;place-items:center;font-size:22px}
 .identity{flex:1;min-width:0}.identity h1{font-size:16px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.identity p{font-size:12px;margin:0;color:#ede9fe}
-#refresh{font-size:20px;color:white;background:transparent;padding:8px}
+#refresh{font-size:18px;color:white;background:transparent;padding:8px}
+.header-actions{display:flex;gap:6px;align-items:center}
+.action-btn{background:rgba(255,255,255,0.15);color:white;padding:6px 10px;border-radius:8px;font-size:13px}
+.action-btn.delete{background:#ef4444}
+.action-btn.leave{background:#f59e0b}
 main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);display:flex;flex-direction:column;padding-bottom:76px}
 #messages{flex:1;min-height:0;overflow-y:auto;padding:16px 12px 24px;display:flex;flex-direction:column;gap:8px;background-color:#f3e8ff;background-image:radial-gradient(#ddd6fe 0.6px,transparent .6px);background-size:12px 12px}
 .notice{text-align:center;align-self:center;background:#ede9fe;color:#4c1d95;border-radius:8px;padding:8px 12px;font-size:12px;max-width:90%;margin:4px auto}
@@ -36,7 +61,11 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 <button id="back" onclick="goBack()" aria-label="Back">‹</button>
 <div id="avatar">👤</div>
 <div class="identity"><h1 id="chatName">Private Chat</h1><p id="chatStatus">Connecting...</p></div>
-<button id="refresh" onclick="loadMessages()" aria-label="Refresh">🔄</button>
+<div class="header-actions">
+  <button id="leaveBtn" class="action-btn leave" onclick="leaveChat()">🚪 Leave</button>
+  <button id="deleteBtn" class="action-btn delete" onclick="deleteConversation()">🗑️ Clear</button>
+  <button id="refresh" onclick="loadMessages()" aria-label="Refresh">🔄</button>
+</div>
 </header>
 <main>
 <div id="messages"><div class="notice">Messages are shown here.</div></div>
@@ -62,6 +91,28 @@ const otherId=params.get("user_id")||params.get("id")||params.get("receiver_id")
 let me=null,other=null,sending=false,lastLoad=0,mediaRecorder=null,voiceChunks=[],recording=false;
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function goBack(){location.href="private.html"}
+function leaveChat(){
+  if(confirm("Chat leave karke private list pe wapis jana hai?")){
+    location.href="private.html";
+  }
+}
+// --- JUST FOR ME DELETE LOGIC ---
+function getDeleteKey(){ return `chatzone_cleared_${me?.id}_${otherId}`; }
+function getDeletedTime(){
+  try{
+    const t = localStorage.getItem(getDeleteKey());
+    return t ? new Date(t) : null;
+  }catch{ return null; }
+}
+function deleteConversation(){
+  if(!me || !otherId) return;
+  if(!confirm("Ye chat sirf TUMHARI taraf se clear hogi. Dusre user ki chat me ye messages rahenge. Clear kar dun?")) return;
+  try{
+    localStorage.setItem(getDeleteKey(), new Date().toISOString());
+  }catch(e){}
+  document.getElementById("messages").innerHTML='<div class="notice">🗑️ Conversation cleared for you. New messages will appear here.</div>';
+  showStatus("Chat tumhare liye clear ho gayi");
+}
 function showStatus(t){document.getElementById("status").textContent=t||""}
 function timeText(v){if(!v)return"";let d=new Date(v);return Number.isNaN(d.getTime())?"":d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}
 async function init(){
@@ -70,7 +121,7 @@ let {data,error}=await db.auth.getSession();if(error)throw error;let session=dat
 if(!session){await new Promise(r=>setTimeout(r,500));session=(await db.auth.getSession()).data?.session}
 if(!session?.user){location.href="login.html";return}me=session.user;
 if(!otherId||otherId===me.id){showStatus("Chat user ID is missing or invalid.");document.getElementById("chatName").textContent="Chat unavailable";return}
-let {data:profile,error:pe}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();
+let {data:profile,[STRIPPED] db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();
 if(pe)throw pe;if(!profile){showStatus("User profile not found.");return}other=profile;
 document.getElementById("chatName").textContent=profile.name||profile.username||"ChatZone User";
 document.getElementById("chatStatus").textContent=profile.last_seen&&Date.now()-Date.parse(profile.last_seen)<300000?"🟢 Online":(profile.username?"@"+profile.username:"Private conversation");
@@ -80,14 +131,19 @@ await loadMessages();
 }
 function messageText(row){return row.content??row.message??""}
 function renderMessages(rows){
-let box=document.getElementById("messages");
-if(!rows.length){box.innerHTML='<div class="notice">👋 Say hello and start the conversation.</div>';return}
-box.innerHTML=rows.map(r=>{let mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text",body="";
-if(type==="image"&&r.media_url)body=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
-else if(type==="voice"&&r.media_url)body=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
-else body=esc(text);
-return `<div class="bubble ${mine?"mine":"theirs"}">${body}<span class="time">${timeText(r.created_at)}${mine?" ✓":""}</span></div>`}).join("");
-box.scrollTop=box.scrollHeight;
+  let box=document.getElementById("messages");
+  let deletedTime = getDeletedTime();
+  // Sirf us time ke baad wale messages dikhao
+  if(deletedTime){
+    rows = rows.filter(r => new Date(r.created_at) > deletedTime);
+  }
+  if(!rows.length){box.innerHTML='<div class="notice">👋 No messages. Say hello and start the conversation.</div>';return}
+  box.innerHTML=rows.map(r=>{let mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text",body="";
+  if(type==="image"&&r.media_url)body=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
+  else if(type==="voice"&&r.media_url)body=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
+  else body=esc(text);
+  return `<div class="bubble ${mine?"mine":"theirs"}">${body}<span class="time">${timeText(r.created_at)}${mine?" ✓":""}</span></div>`}).join("");
+  box.scrollTop=box.scrollHeight;
 }
 async function loadMessages(){
 if(!me||!otherId)return;
@@ -102,7 +158,7 @@ sending=true;showStatus("Uploading media...");
 try{
 const safeName=String(file.name||(`${type}-${Date.now()}`)).replace(/[^a-zA-Z0-9._-]/g,"_");
 const path=`${me.id}/${Date.now()}-${safeName}`;
-const {data:up,error:uploadError}=await db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});
+const {data:up,[STRIPPED] db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});
 if(uploadError)throw uploadError;
 const {data:pub}=db.storage.from("chat-media").getPublicUrl(up.path);
 if(!pub?.publicUrl)throw new Error("Could not create media URL.");
@@ -144,5 +200,5 @@ input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventD
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me){me=session.user;init()}});
 init();setInterval(()=>{if(Date.now()-lastLoad>2500)loadMessages()},5000);
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
