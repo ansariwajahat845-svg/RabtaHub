@@ -7,8 +7,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3e8ff;color:#2e1065}
-header{height:64px;background:#6d28d9;color:#fff;display:flex;align-items:center;gap:10px;padding:8px 12px;position:sticky;top:0;z-index:4}
-button{cursor:pointer;border:0}#back{font-size:26px;color:#fff;background:transparent;padding:4px}
+header{min-height:64px;background:#6d28d9;color:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;position:sticky;top:0;z-index:4}
+button{cursor:pointer;border:0}#back{font-size:26px;color:#fff;background:transparent;padding:4px;flex:0 0 auto}
+.header-action{font-size:11px;font-weight:700;color:#fff;background:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:8px 7px;white-space:nowrap;flex:0 0 auto}
+#leaveBtn{background:#7f1d1d;border-color:#fecaca}
+#clearBtn{background:#5b21b6}
 #avatar{height:42px;width:42px;border-radius:50%;object-fit:cover;background:#dce7e3;display:grid;place-items:center;font-size:22px}
 .identity{flex:1;min-width:0}.identity h1{font-size:16px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.identity p{font-size:12px;margin:0;color:#ede9fe}
 #refresh{font-size:20px;color:white;background:transparent;padding:8px}
@@ -18,7 +21,7 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 .bubble{max-width:82%;padding:8px 10px 6px;border-radius:9px;box-shadow:0 1px 1px #0001;overflow-wrap:anywhere;font-size:14px;line-height:1.4;white-space:pre-wrap}
 .bubble.mine{align-self:flex-end;background:#c4b5fd;color:#2e1065;border-top-right-radius:2px}
 .bubble.theirs{align-self:flex-start;background:#fff;border-top-left-radius:2px}
-.time{display:block;text-align:right;color:#667781;font-size:10px;margin-top:4px}
+.message-footer{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:4px;min-height:17px}.time{display:inline-block;text-align:right;color:#667781;font-size:10px}.delete-msg{font-size:10px;line-height:1;color:#7f1d1d;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:5px;padding:4px 5px;font-weight:700}.delete-msg:disabled{opacity:.5}
 .image-message{max-width:100%;max-height:280px;border-radius:6px;display:block;margin-bottom:5px}
 .composer{display:flex;align-items:flex-end;gap:6px;padding:9px;background:#f3e8ff;max-width:760px;width:100%;margin:auto;border:2px solid #7c3aed;border-radius:16px;position:relative}
 #messageInput{flex:1;resize:none;max-height:120px;min-height:42px;border:0;outline:0;border-radius:22px;padding:12px 15px;font-size:15px;font-family:inherit;background:#fff}
@@ -36,7 +39,8 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 <button id="back" onclick="goBack()" aria-label="Back">‹</button>
 <div id="avatar">👤</div>
 <div class="identity"><h1 id="chatName">Private Chat</h1><p id="chatStatus">Connecting...</p></div>
-<button id="refresh" onclick="loadMessages()" aria-label="Refresh">🔄</button>
+<button class="header-action" id="clearBtn" type="button" title="Delete your messages in this chat">🧹 Clear</button>
+<button class="header-action" id="leaveBtn" type="button">Leave</button>
 </header>
 <main>
 <div id="messages"><div class="notice">Messages are shown here.</div></div>
@@ -86,7 +90,7 @@ box.innerHTML=rows.map(r=>{let mine=r.sender_id===me.id,text=messageText(r),type
 if(type==="image"&&r.media_url)body=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
 else if(type==="voice"&&r.media_url)body=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
 else body=esc(text);
-return `<div class="bubble ${mine?"mine":"theirs"}">${body}<span class="time">${timeText(r.created_at)}${mine?" ✓":""}</span></div>`}).join("");
+return `<div class="bubble ${mine?"mine":"theirs"}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}${mine?" ✓":""}</span>${mine&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}" title="Delete your message">Delete</button>`:""}</div></div>`}).join("");
 box.scrollTop=box.scrollHeight;
 }
 async function loadMessages(){
@@ -96,6 +100,33 @@ const {data,error}=await db.from("private_messages").select("*").or(`and(sender_
 if(error)throw error;renderMessages(data||[]);lastLoad=Date.now();showStatus("");
 }catch(e){console.error(e);showStatus("Messages could not load. Check private_messages table and RLS policies.")}
 }
+async function deleteOwnMessage(id,button){
+if(!me||!id)return;
+if(!confirm("Delete this message? This removes it from the chat for both people."))return;
+if(button)button.disabled=true;
+try{
+const {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);
+if(error)throw error;
+showStatus("");await loadMessages();
+}catch(err){console.error(err);showStatus("Message delete nahi hua. private_messages DELETE RLS policy check karein.");if(button)button.disabled=false}
+}
+document.getElementById("messages").addEventListener("click",e=>{
+const b=e.target.closest("[data-delete-id]");if(b)deleteOwnMessage(b.dataset.deleteId,b);
+});
+document.getElementById("clearBtn").addEventListener("click",async()=>{
+if(!me||!otherId)return;
+if(!confirm("Clear chat? Sirf aap ke bheje hue messages delete honge. Doosre person ke messages rahenge."))return;
+const btn=document.getElementById("clearBtn");btn.disabled=true;showStatus("Clearing your messages...");
+try{
+const {error}=await db.from("private_messages").delete().eq("sender_id",me.id).eq("receiver_id",otherId);
+if(error)throw error;
+showStatus("");await loadMessages();
+}catch(err){console.error(err);showStatus("Chat clear nahi hui. private_messages DELETE RLS policy check karein.")}
+finally{btn.disabled=false}
+});
+document.getElementById("leaveBtn").addEventListener("click",()=>{
+if(confirm("Leave this chat and return to Private Chat list? Messages will not be deleted."))goBack();
+});
 async function uploadAndSend(file,type){
 if(!me||!otherId||sending||!file)return;
 sending=true;showStatus("Uploading media...");
