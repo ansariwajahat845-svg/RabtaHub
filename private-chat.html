@@ -100,13 +100,17 @@ box.scrollTop=box.scrollHeight;
 }
 function startReply(id){const row=chatRows.find(r=>String(r.id)===String(id));if(!row)return;replyTarget=row;const preview=document.getElementById("replyPreview");preview.textContent=`Replying to ${row.sender_id===me.id?"yourself":(other?.name||other?.username||"message")}: ${replySnippet(row)}`;document.getElementById("replyBar").classList.add("show");document.getElementById("messageInput").focus()}
 function cancelReply(){replyTarget=null;document.getElementById("replyBar").classList.remove("show");document.getElementById("replyPreview").textContent=""}
-async function markIncomingSeen(){if(!me||!otherId||document.visibilityState!=="visible")return;try{const now=new Date().toISOString();await db.from("private_messages").update({seen_at:now}).eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null)}catch(e){console.warn("Seen status update failed; check private_messages UPDATE policy/columns",e)}}
+async function markIncomingSeen(){if(!me||!otherId||document.visibilityState!=="visible")return false;try{const now=new Date().toISOString();const {error}=await db.from("private_messages").update({seen_at:now}).eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null);if(error)throw error;return true}catch(e){console.warn("Seen status update failed; check private_messages UPDATE policy/columns",e);showStatus("Seen status save nahi hua. Supabase SQL/RLS policy check karein.");return false}}
 async function refreshOtherStatus(){if(!otherId)return;try{const {data}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();if(data){other=data;document.getElementById("chatStatus").textContent=onlineNow()?"🟢 Online":(other.username?"@"+other.username:"Private conversation")}}catch(e){}}
 async function loadMessages(){
 if(!me||!otherId)return;
 try{
-const {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:true}).limit(300);
-if(error)throw error;await markIncomingSeen();await refreshOtherStatus();renderMessages(data||[]);lastLoad=Date.now();showStatus("");
+let {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:true}).limit(300);
+if(error)throw error;
+await markIncomingSeen();
+({data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:true}).limit(300));
+if(error)throw error;
+await refreshOtherStatus();renderMessages(data||[]);lastLoad=Date.now();
 }catch(e){console.error(e);showStatus("Messages could not load. Check private_messages table and RLS policies.")}
 }
 async function deleteOwnMessage(id,button){
@@ -183,7 +187,9 @@ const input=document.getElementById("messageInput");
 input.addEventListener("input",()=>{input.style.height="42px";input.style.height=Math.min(input.scrollHeight,120)+"px"});
 input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("sendForm").requestSubmit()}});
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me){me=session.user;init()}});
-init();setInterval(()=>{if(Date.now()-lastLoad>2500)loadMessages()},5000);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadMessages()});
+init();setInterval(()=>{if(Date.now()-lastLoad>2500)loadMessages()},5000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadMessages()});
+window.addEventListener("focus",()=>loadMessages());document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadMessages()});
 </script>
 </body>
 </html>
