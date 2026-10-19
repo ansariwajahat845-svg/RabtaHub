@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chat - ChatZone 💬</title>
@@ -31,6 +52,8 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 #emojiPanel button{background:#ede9fe;color:#5b21b6;font-size:24px;padding:5px;border-radius:7px}
 #send:disabled{opacity:.5}
 #status{font-size:12px;color:#b42318;padding:0 12px 5px;background:#f3e8ff}
+#loadOlder{margin:8px auto;display:none;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700}
+#loadOlder:disabled{opacity:.5}
 @media(min-width:761px){body{background:#ede9fe}main{border-left:1px solid #ddd;border-right:1px solid #ddd}#composerWrap{left:50%;transform:translateX(-50%);border-left:1px solid #ddd;border-right:1px solid #ddd}}
 </style>
 </head>
@@ -43,7 +66,9 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 <button class="header-action" id="leaveBtn" type="button">Leave</button>
 </header>
 <main>
-<div id="messages"><div class="notice">Messages are shown here.</div></div>
+<div id="messages"><div class="notice">Messages are shown here.</div>
+<button id="loadOlder" type="button">⬆️ Load older messages</button>
+</div>
 <div id="status"></div>
 <div id="composerWrap" style="position:fixed;bottom:0;left:0;right:0;z-index:10;max-width:760px;width:100%;margin:0 auto;background:#f3e8ff;padding-bottom:env(safe-area-inset-bottom)">
 <div id="replyBar" class="reply-bar"><div class="reply-preview" id="replyPreview"></div><button class="reply-cancel" id="cancelReply" type="button" aria-label="Cancel reply">✕</button></div>
@@ -65,6 +90,13 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSe
 const params=new URLSearchParams(location.search);
 const otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
 let me=null,other=null,sending=false,lastLoad=0,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
+
+// UNLIMITED CONFIG
+const PAGE_SIZE = 50;
+let loadedCount = 0;
+let hasMoreOlder = true;
+let isLoadingOlder = false;
+
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function goBack(){location.href="private.html"}
 function showStatus(t){document.getElementById("status").textContent=t||""}
@@ -80,39 +112,123 @@ if(pe)throw pe;if(!profile){showStatus("User profile not found.");return}other=p
 document.getElementById("chatName").textContent=profile.name||profile.username||"ChatZone User";
 document.getElementById("chatStatus").textContent=profile.last_seen&&Date.now()-Date.parse(profile.last_seen)<300000?"🟢 Online":(profile.username?"@"+profile.username:"Private conversation");
 if(profile.avatar_url)document.getElementById("avatar").outerHTML=`<img id="avatar" src="${esc(profile.avatar_url)}" alt="" style="height:42px;width:42px;border-radius:50%;object-fit:cover">`;
-await loadMessages();
+loadedCount=0; hasMoreOlder=true;
+await loadMessages(true);
 }catch(e){console.error(e);showStatus("Could not open chat: "+(e.message||"Check Supabase permissions."))}
 }
 function messageText(row){return row.content??row.message??""}
 function onlineNow(){return !!(other?.last_seen&&Date.now()-Date.parse(other.last_seen)<300000)}
 function replySnippet(r){const t=messageText(r).trim();if(t)return t;const type=r.message_type||"text";return type==="image"?"📷 Photo":type==="voice"?"🎤 Voice message":"Message"}
-function renderMessages(rows){
-chatRows=rows;let box=document.getElementById("messages");
-if(!rows.length){box.innerHTML='<div class="notice">👋 Say hello and start the conversation.</div>';return}
-box.innerHTML=rows.map(r=>{let mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text",body="";
-if(r.reply_to_content)body+=`<div class="reply-quote"><b>${r.reply_to_sender_id===me.id?"You":esc(other?.name||other?.username||"User")}</b><br>${esc(r.reply_to_content)}</div>`;
-if(type==="image"&&r.media_url)body+=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
-else if(type==="voice"&&r.media_url)body+=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
-else body+=esc(text);
-let tick="";if(mine){let seen=!!r.seen_at,delivered=!!r.delivered_at||onlineNow();tick=`<span class="ticks ${seen?"seen":""}" title="${seen?"Seen":delivered?"Online / delivered":"Sent"}">${seen?"✓✓":delivered?"✓✓":"✓"}</span>`}
-return `<div class="bubble ${mine?"mine":"theirs"}" data-message-id="${esc(r.id)}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}</span>${tick}<button class="reply-msg" type="button" data-reply-id="${esc(r.id)}">↩ Reply</button>${mine&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}" title="Delete your message">Delete</button>`:""}</div></div>`}).join("");
-box.scrollTop=box.scrollHeight;
+function bubbleHtml(r){
+  let mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text",body="";
+  if(r.reply_to_content)body+=`<div class="reply-quote"><b>${r.reply_to_sender_id===me.id?"You":esc(other?.name||other?.username||"User")}</b><br>${esc(r.reply_to_content)}</div>`;
+  if(type==="image"&&r.media_url)body+=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
+  else if(type==="voice"&&r.media_url)body+=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
+  else body+=esc(text);
+  let tick="";if(mine){let seen=!!r.seen_at,delivered=!!r.delivered_at||onlineNow();tick=`<span class="ticks ${seen?"seen":""}" title="${seen?"Seen":delivered?"Online / delivered":"Sent"}">${seen?"✓✓":delivered?"✓✓":"✓"}</span>`}
+  return `<div class="bubble ${mine?"mine":"theirs"}" data-message-id="${esc(r.id)}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}</span>${tick}<button class="reply-msg" type="button" data-reply-id="${esc(r.id)}">↩ Reply</button>${mine&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}" title="Delete your message">Delete</button>`:""}</div></div>`;
 }
+function renderMessagesInitial(rows){
+chatRows=rows;
+let box=document.getElementById("messages");
+let loadBtnHtml = `<button id="loadOlder" type="button" style="display:${hasMoreOlder && rows.length>=PAGE_SIZE ? 'block':'none'}">⬆️ Load older messages (${loadedCount} loaded)</button>`;
+if(!rows.length){box.innerHTML=loadBtnHtml+'<div class="notice">👋 Say hello and start the conversation.</div>';return}
+box.innerHTML=loadBtnHtml + rows.map(r=>bubbleHtml(r)).join("");
+box.scrollTop=box.scrollHeight;
+attachLoadOlder();
+}
+function prependOlderMessages(rows){
+  if(!rows.length) return;
+  let box=document.getElementById("messages");
+  let oldHeight = box.scrollHeight;
+  let oldScroll = box.scrollTop;
+  // save current html without load button
+  let currentBubbles = box.querySelectorAll('.bubble');
+  let newHtml = rows.map(r=>bubbleHtml(r)).join("");
+  // insert after load button
+  let loadBtn = document.getElementById('loadOlder');
+  // create temp container for new bubbles
+  let temp = document.createElement('div');
+  temp.innerHTML = newHtml;
+  // prepend before first bubble
+  let firstBubble = box.querySelector('.bubble');
+  if(firstBubble){
+    // insert each new bubble before first
+    Array.from(temp.children).reverse().forEach(node=>{
+      box.insertBefore(node, firstBubble);
+    });
+  }
+  chatRows = [...rows, ...chatRows];
+  // restore scroll position
+  box.scrollTop = box.scrollHeight - oldHeight + oldScroll;
+}
+async function markIncomingSeen(){if(!me||!otherId||document.visibilityState!=="visible")return false;try{const now=new Date().toISOString();const {error}=await db.from("private_messages").update({seen_at:now}).eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null);if(error)throw error;return true}catch(e){console.warn("Seen status update failed",e);return false}}
+async function refreshOtherStatus(){if(!otherId)return;try{const {data}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();if(data){other=data;document.getElementById("chatStatus").textContent=onlineNow()?"🟢 Online":(other.username?"@"+other.username:"Private conversation")}}catch(e){}}
+
+// UNLIMITED LOAD LOGIC
+async function loadMessages(isInitial=false){
+if(!me||!otherId)return;
+if(isLoadingOlder) return;
+try{
+if(isInitial){
+  isLoadingOlder=true;
+  showStatus("Loading chat...");
+  let {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:false}).range(0, PAGE_SIZE-1);
+  if(error)throw error;
+  await markIncomingSeen();
+  // re-fetch after seen update to get correct seen_at? but keep data
+  let sorted = (data||[]).reverse();
+  loadedCount = data ? data.length : 0;
+  hasMoreOlder = data && data.length === PAGE_SIZE;
+  await refreshOtherStatus();
+  renderMessagesInitial(sorted);
+  lastLoad=Date.now();
+  showStatus("");
+  isLoadingOlder=false;
+  return;
+}
+}catch(e){console.error(e);showStatus("Messages could not load. Check RLS."); isLoadingOlder=false}
+}
+
+async function loadOlderMessages(){
+ if(!me||!otherId||isLoadingOlder||!hasMoreOlder) return;
+ isLoadingOlder=true;
+ let btn=document.getElementById('loadOlder');
+ if(btn){btn.disabled=true; btn.textContent="Loading...";}
+ try{
+  let {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:false}).range(loadedCount, loadedCount+PAGE_SIZE-1);
+  if(error)throw error;
+  if(!data || data.length===0){
+    hasMoreOlder=false;
+    if(btn) btn.style.display='none';
+  } else {
+    let sorted = data.reverse();
+    prependOlderMessages(sorted);
+    loadedCount += data.length;
+    hasMoreOlder = data.length === PAGE_SIZE;
+    if(btn){
+      btn.style.display = hasMoreOlder ? 'block' : 'none';
+      btn.textContent = `⬆️ Load older messages (${loadedCount} loaded)`;
+    }
+  }
+ }catch(e){console.error(e); showStatus("Older messages load nahi hue.");}
+ finally{
+  isLoadingOlder=false;
+  if(btn) btn.disabled=false;
+ }
+}
+
+function attachLoadOlder(){
+ let btn=document.getElementById('loadOlder');
+ if(btn){
+  btn.onclick = loadOlderMessages;
+  btn.style.display = hasMoreOlder && chatRows.length>=PAGE_SIZE ? 'block' : (hasMoreOlder && loadedCount>0 ? 'block':'none');
+  if(hasMoreOlder) btn.textContent = `⬆️ Load older messages (${loadedCount} loaded)`;
+ }
+}
+
 function startReply(id){const row=chatRows.find(r=>String(r.id)===String(id));if(!row)return;replyTarget=row;const preview=document.getElementById("replyPreview");preview.textContent=`Replying to ${row.sender_id===me.id?"yourself":(other?.name||other?.username||"message")}: ${replySnippet(row)}`;document.getElementById("replyBar").classList.add("show");document.getElementById("messageInput").focus()}
 function cancelReply(){replyTarget=null;document.getElementById("replyBar").classList.remove("show");document.getElementById("replyPreview").textContent=""}
-async function markIncomingSeen(){if(!me||!otherId||document.visibilityState!=="visible")return false;try{const now=new Date().toISOString();const {error}=await db.from("private_messages").update({seen_at:now}).eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null);if(error)throw error;return true}catch(e){console.warn("Seen status update failed; check private_messages UPDATE policy/columns",e);showStatus("Seen status save nahi hua. Supabase SQL/RLS policy check karein.");return false}}
-async function refreshOtherStatus(){if(!otherId)return;try{const {data}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();if(data){other=data;document.getElementById("chatStatus").textContent=onlineNow()?"🟢 Online":(other.username?"@"+other.username:"Private conversation")}}catch(e){}}
-async function loadMessages(){
-if(!me||!otherId)return;
-try{
-let {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:true}).limit(300);
-if(error)throw error;
-await markIncomingSeen();
-({data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:true}).limit(300));
-if(error)throw error;
-await refreshOtherStatus();renderMessages(data||[]);lastLoad=Date.now();
-}catch(e){console.error(e);showStatus("Messages could not load. Check private_messages table and RLS policies.")}
-}
 async function deleteOwnMessage(id,button){
 if(!me||!id)return;
 if(!confirm("Delete this message? This removes it from the chat for both people."))return;
@@ -120,8 +236,8 @@ if(button)button.disabled=true;
 try{
 const {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);
 if(error)throw error;
-showStatus("");await loadMessages();
-}catch(err){console.error(err);showStatus("Message delete nahi hua. private_messages DELETE RLS policy check karein.");if(button)button.disabled=false}
+showStatus("");await loadMessages(true);
+}catch(err){console.error(err);showStatus("Message delete nahi hua. DELETE RLS check karein.");if(button)button.disabled=false}
 }
 document.getElementById("messages").addEventListener("click",e=>{
 const rb=e.target.closest("[data-reply-id]");if(rb){startReply(rb.dataset.replyId);return}const b=e.target.closest("[data-delete-id]");if(b)deleteOwnMessage(b.dataset.deleteId,b);
@@ -133,8 +249,8 @@ const btn=document.getElementById("clearBtn");btn.disabled=true;showStatus("Clea
 try{
 const {error}=await db.from("private_messages").delete().eq("sender_id",me.id).eq("receiver_id",otherId);
 if(error)throw error;
-showStatus("");await loadMessages();
-}catch(err){console.error(err);showStatus("Chat clear nahi hui. private_messages DELETE RLS policy check karein.")}
+showStatus("");loadedCount=0; hasMoreOlder=true; await loadMessages(true);
+}catch(err){console.error(err);showStatus("Chat clear nahi hui. DELETE RLS check karein.")}
 finally{btn.disabled=false}
 });
 document.getElementById("leaveBtn").addEventListener("click",()=>{
@@ -152,8 +268,8 @@ const {data:pub}=db.storage.from("chat-media").getPublicUrl(up.path);
 if(!pub?.publicUrl)throw new Error("Could not create media URL.");
 const payload={sender_id:me.id,receiver_id:otherId,message_type:type,content:"",media_url:pub.publicUrl};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}const {error}=await db.from("private_messages").insert(payload);
 if(error)throw error;
-cancelReply();showStatus("");await loadMessages();
-}catch(err){console.error(err);showStatus("Media not sent: "+(err.message||"Check chat-media bucket and private_messages.media_url column."))}
+cancelReply();showStatus("");await loadMessages(true);
+}catch(err){console.error(err);showStatus("Media not sent: "+(err.message||"Check chat-media bucket."))}
 finally{sending=false}
 }
 document.getElementById("sendForm").addEventListener("submit",async e=>{
@@ -162,8 +278,8 @@ const input=document.getElementById("messageInput"),content=input.value.trim();i
 sending=true;document.getElementById("send").disabled=true;
 try{
 const payload={sender_id:me.id,receiver_id:otherId,message_type:"text",content};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}const {error}=await db.from("private_messages").insert(payload);
-if(error)throw error;input.value="";input.style.height="42px";cancelReply();showStatus("");await loadMessages();
-}catch(err){console.error(err);showStatus("Message not sent: "+(err.message||"Check table permissions."))}
+if(error)throw error;input.value="";input.style.height="42px";cancelReply();showStatus("");await loadMessages(true);
+}catch(err){console.error(err);showStatus("Message not sent: "+(err.message||"Check permissions."))}
 finally{sending=false;document.getElementById("send").disabled=false;input.focus()}
 });
 document.getElementById("cancelReply").addEventListener("click",cancelReply);
@@ -187,9 +303,11 @@ const input=document.getElementById("messageInput");
 input.addEventListener("input",()=>{input.style.height="42px";input.style.height=Math.min(input.scrollHeight,120)+"px"});
 input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("sendForm").requestSubmit()}});
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me){me=session.user;init()}});
-init();setInterval(()=>{if(Date.now()-lastLoad>2500)loadMessages()},5000);
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadMessages()});
-window.addEventListener("focus",()=>loadMessages());document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadMessages()});
+init();
+// Polling - only refresh latest, not full history
+setInterval(()=>{if(Date.now()-lastLoad>4000 && !isLoadingOlder) loadMessages(true)},6000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadMessages(true)});
+window.addEventListener("focus",()=>loadMessages(true));
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
