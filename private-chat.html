@@ -149,13 +149,20 @@ async function loadMessages(isInitial=false){
   if(!me || !otherId || isLoadingOlder) return;
   isLoadingOlder = true;
   try {
-    if(isInitial) showStatus("Loading chat...");
-    const {data, error} = await db
+    if(isInitial && loadedCount === 0) showStatus("Loading chat...");
+    const query = db
       .from("private_messages")
       .select("*")
       .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`)
       .order("created_at", {ascending:false})
       .range(0, PAGE_SIZE-1);
+    const {data, error} = await Promise.race([
+      query,
+      new Promise((_, reject) => setTimeout(
+        () => reject(new Error("Chat request timed out. Check your internet and Supabase connection.")),
+        15000
+      ))
+    ]);
     if(error) throw error;
 
     const rows = data || [];
