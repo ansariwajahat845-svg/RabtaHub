@@ -24,128 +24,100 @@
 </style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ChatZone - Final Stable</title>
+<title>ChatZone 💬 - Fixed Feed</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;padding:0;overflow-x:hidden}body{font-family:Arial;background:linear-gradient(135deg,#f8f5ff,#e9ddff);min-height:100vh;color:#352451}
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f8f5ff;color:#352451}
 .app{max-width:680px;margin:auto;min-height:100vh;background:#f8f5ff;padding-bottom:80px}
-.header{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;padding:11px 7px;position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center}
-.logo{font-weight:bold;font-size:18px}
-.header button{border:0;background:rgba(255,255,255,.2);color:white;border-radius:12px;padding:8px 12px;font-weight:700}
-.welcome,.points-panel,.post{background:white;border:1px solid #e5d9ff;border-radius:14px;margin:12px;padding:12px;box-shadow:0 4px 12px rgba(91,55,145,.08)}
-.points-panel{padding:13px}
-.points-total{font-size:22px;font-weight:900;color:#7c3aed}
-.post{padding:12px}
-.post-content{white-space:pre-wrap;word-break:break-word;margin:8px 0}
+.header{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;padding:12px;position:sticky;top:0;z-index:20;display:flex;justify-content:space-between}
+.post{background:white;border:1px solid #e5d9ff;border-radius:14px;margin:10px 12px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.post-content{white-space:pre-wrap;word-break:break-word;margin:10px 0}
 .post-image{width:100%;max-height:400px;object-fit:cover;border-radius:12px}
-.empty{text-align:center;padding:30px;color:#777}
-.skeleton{background:linear-gradient(90deg,#eee 25%,#f5f5f5 50%,#eee 75%);background-size:200% 100%;animation:shimmer 1.2s infinite linear;border-radius:14px;height:100px;margin:12px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:680px;height:70px;background:white;border-top:1px solid #ded0ff;display:flex;justify-content:space-between;padding:5px;z-index:30}
-.bottom-nav button{flex:1;border:0;background:none;color:#555;font-weight:700;font-size:11px}
+.empty{text-align:center;padding:40px;color:#777}
+button{cursor:pointer}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="header"><div class="logo">ChatZone 💬</div><div><button onclick="showShare()">📤 Share</button> <span id="status" style="font-size:11px;margin-left:8px"></span></div></div>
-<div class="welcome">👋 Welcome to ChatZone!</div>
-<div class="points-panel" id="pointsPanel"><div style="display:flex;justify-content:space-between"><div><b style="color:#7044bd">⭐ Points</b><div style="font-size:11px;color:#888">Posts +10 · Likes +50</div></div><div class="points-total"><span id="myPoints">...</span> pts</div></div><div id="pointsLeaderboard" style="margin-top:10px;font-size:12px;color:#888">Loading Top 10...</div></div>
-<div style="padding:5px 12px;display:flex;justify-content:space-between;align-items:center"><h3 style="margin:8px 0">Home Feed</h3><button id="loadMoreBtn" onclick="loadMore()" style="border:0;background:#f0edff;color:#6c5ce7;border-radius:20px;padding:6px 14px;font-weight:700;display:none">Load More ↓</button></div>
-<div id="feed"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+<div class="header"><div style="font-weight:bold;font-size:18px">ChatZone 💬</div><div id="status" style="font-size:12px">Loading...</div></div>
+<div id="feed"><div class="empty">Loading feed...<br><small id="debug"></small></div></div>
+<div style="text-align:center;padding:10px"><button id="loadMoreBtn" onclick="loadMore()" style="border:0;background:#f0edff;color:#6c5ce7;padding:10px 20px;border-radius:20px;font-weight:bold;display:none">Load More ↓</button></div>
 </div>
-<div class="bottom-nav"><button>🏠<br>Home</button><button onclick="location.href='private.html'">💌<br>Private</button><button onclick="location.href='profile.html'">👤<br>Profile</button></div>
 <script>
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let currentUser=null, currentPage=0, pageSize=12, isLoading=false, hasMore=true, profileMap={};
+let currentUser=null, currentPage=0, pageSize=10, isLoading=false, hasMore=true;
+let profileMap={};
 
 async function init(){
  try{
-  const {data} = await supabaseClient.auth.getSession();
+  document.getElementById("debug").textContent="Checking session...";
+  const {data, error} = await supabaseClient.auth.getSession();
+  if(error) throw error;
   currentUser=data.session?.user||null;
-  if(!currentUser){ location.href="login.html"; return; }
-  document.getElementById("status").textContent="Online";
-  // Load feed FIRST - don't wait for points
-  loadFeed(false);
-  // Load points in background - won't block feed
-  setTimeout(()=>{ loadPointsBoard(); }, 500);
+  if(!currentUser){ document.getElementById("status").textContent="Not logged in"; document.getElementById("feed").innerHTML='<div class="empty">Please login first<br><a href="login.html">Go to Login</a></div>'; return; }
+  document.getElementById("status").textContent="Logged in: "+(currentUser.email||"");
+  await loadFeed();
  }catch(e){
-  document.getElementById("feed").innerHTML='<div class="empty">Error: '+e.message+'</div>';
- }
-}
-
-async function loadPointsBoard(){
- try{
-  const board=document.getElementById("pointsLeaderboard");
-  const {data:rows} = await supabaseClient.from("member_points").select("user_id,points").order("points",{ascending:false}).limit(10);
-  const list=rows||[];
-  if(currentUser){
-    const mine=list.find(x=>x.user_id===currentUser.id);
-    if(mine) document.getElementById("myPoints").textContent=Number(mine.points).toLocaleString();
-    else {
-      const {data:own}=await supabaseClient.from("member_points").select("points").eq("user_id",currentUser.id).maybeSingle();
-      document.getElementById("myPoints").textContent=Number(own?.points||0).toLocaleString();
-    }
-  }
-  if(!list.length){ board.textContent="No ranking yet"; return; }
-  const ids=list.map(x=>x.user_id);
-  const {data:profiles}=await supabaseClient.from("profiles").select("id,username,name").in("id",ids);
-  const names={}; (profiles||[]).forEach(p=>names[p.id]=p.username||p.name||"Member");
-  board.innerHTML=list.map((x,i)=>`<div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #f0edff"><span style="width:20px;font-weight:bold;color:#7c3aed">${i+1}.</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${names[x.user_id]||"Member"} ${x.user_id===currentUser?.id?'(You)':''}</span><span style="font-weight:bold;color:#7044bd">${Number(x.points).toLocaleString()} pts</span></div>`).join("");
- }catch(e){
-  console.warn("Points failed", e.message);
-  document.getElementById("pointsLeaderboard").innerHTML='<small>Points: '+e.message+' - SQL run karo</small>';
-  document.getElementById("myPoints").textContent="0";
+  console.error(e);
+  document.getElementById("feed").innerHTML='<div class="empty">Init Error:<br><b style="color:red">'+e.message+'</b><br><br><small>Open console (F12) and send screenshot</small></div>';
  }
 }
 
 async function loadFeed(append=false){
  if(isLoading) return; isLoading=true;
  const feed=document.getElementById("feed");
- if(!append){ currentPage=0; hasMore=true; }
+ if(!append) feed.innerHTML='<div class="empty">Loading posts from Supabase...</div>';
  try{
   const from=currentPage*pageSize;
   const to=from+pageSize-1;
-  console.log("Fetching", from, to);
-  const {data:posts, error} = await supabaseClient.from("posts").select("id,user_id,content,created_at,category,image_url").order("created_at",{ascending:false}).range(from,to);
-  if(error) throw error;
-  const safePosts=posts||[];
-  if(safePosts.length===0 && !append){ feed.innerHTML='<div class="empty">No posts yet<br><small>Be first to post!</small></div>'; isLoading=false; return; }
+  document.getElementById("debug").textContent="Fetching posts "+from+"-"+to;
+  // TRY SIMPLEST QUERY FIRST
+  let posts=null, error=null;
+  try{
+    const r = await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url").order("created_at",{ascending:false}).range(from,to);
+    posts=r.data; error=r.error;
+  }catch(e){ error=e; }
+  if(error){
+    console.error("Posts error:", error);
+    // Show exact supabase error
+    feed.innerHTML='<div class="empty" style="color:red"><b>Supabase Error:</b><br>'+error.message+'<br><br><small>Code: '+(error.code||"")+'<br>Details: '+(error.details||"")+'<br>Hint: '+(error.hint||"")+'</small><br><br><b>Fix:</b> Go to Supabase > Authentication > Policies > posts table > Enable SELECT for all users<br><br><button onclick="loadFeed()" style="background:#6c5ce7;color:white;border:0;padding:10px 20px;border-radius:12px">Retry</button></div>';
+    isLoading=false; return;
+  }
+  const safePosts = posts||[];
+  if(safePosts.length===0 && !append){ feed.innerHTML='<div class="empty">No posts found in database.<br><small>Table is empty or RLS blocking</small></div>'; isLoading=false; return; }
   if(safePosts.length < pageSize) hasMore=false;
-  
+  // Try profiles but don't fail if it fails
   const userIds=[...new Set(safePosts.map(p=>p.user_id).filter(Boolean))];
   try{
     if(userIds.length){
-      const {data:profs}=await supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",userIds);
-      (profs||[]).forEach(p=>profileMap[p.id]=p);
+      const r=await supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",userIds);
+      if(r.data) r.data.forEach(p=>profileMap[p.id]=p);
     }
-  }catch(e){}
-
+  }catch(e){ console.warn("profiles failed", e.message); }
+  
   let html="";
   safePosts.forEach(post=>{
     const prof=profileMap[post.user_id]||{};
     const name=prof.name||prof.username||"User";
-    const uname=prof.username||"";
-    html+=`<div class="post"><div style="display:flex;gap:8px;align-items:center"><div style="width:40px;height:40px;border-radius:50%;background:#eee;display:flex;align-items:center;justify-content:center;overflow:hidden">${prof.avatar_url?'<img src="'+prof.avatar_url+'" style="width:100%;height:100%;object-fit:cover">':'👤'}</div><div><div style="font-weight:bold">${escapeHtml(name)} ${uname?'<small style="color:#6c5ce7">@'+escapeHtml(uname)+'</small>':''}</div><div style="font-size:11px;color:#888">${new Date(post.created_at).toLocaleString()}</div></div></div>${post.category?'<div style="margin-top:8px;display:inline-block;background:#f0edff;color:#6c5ce7;padding:3px 8px;border-radius:12px;font-size:11px">#'+escapeHtml(post.category)+'</div>':''}${post.content?'<div class="post-content">'+escapeHtml(post.content)+'</div>':''}${post.image_url?'<img class="post-image" src="'+escapeHtml(post.image_url)+'" loading="lazy">':''}<div style="margin-top:8px;display:flex;gap:6px"><button style="flex:1;border:0;background:#fff0f3;border-radius:10px;padding:8px;font-weight:700">❤️ Like</button><button style="flex:1;border:0;background:#f0edff;border-radius:10px;padding:8px;font-weight:700">💬 Comment</button></div></div>`;
+    const username=prof.username||"";
+    const avatar=prof.avatar_url||"";
+    html+=`<div class="post"><div style="display:flex;gap:8px;align-items:center"><div style="width:40px;height:40px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;overflow:hidden">${avatar?'<img src="'+avatar+'" style="width:100%;height:100%;object-fit:cover">':'👤'}</div><div><div style="font-weight:bold">${name} ${username?'<small style="color:#6c5ce7">@'+username+'</small>':''}</div><div style="font-size:11px;color:#888">${new Date(post.created_at).toLocaleString()}</div></div></div>${post.category?'<div style="margin-top:8px;background:#f0edff;color:#6c5ce7;display:inline-block;padding:4px 8px;border-radius:12px;font-size:11px">#'+post.category+'</div>':''}${post.content?'<div class="post-content">'+escapeHtml(post.content)+'</div>':''}${post.image_url?'<img class="post-image" src="'+post.image_url+'" loading="lazy">':''}</div>`;
   });
-  
   if(!append) feed.innerHTML=html; else feed.insertAdjacentHTML('beforeend', html);
   currentPage++;
   document.getElementById("loadMoreBtn").style.display=hasMore?"inline-block":"none";
-  document.getElementById("status").textContent=safePosts.length+" posts";
+  document.getElementById("status").textContent=safePosts.length+" posts loaded";
  }catch(e){
   console.error(e);
-  if(!append) feed.innerHTML='<div class="empty"><b style="color:red">Feed Error:</b><br>'+escapeHtml(e.message)+'<br><br><button onclick="loadFeed(false)" style="background:#6c5ce7;color:white;border:0;padding:10px 20px;border-radius:12px;font-weight:bold">🔄 Retry</button><br><br><small>Supabase > Policies > posts table pe SELECT allow karo</small></div>';
+  feed.innerHTML='<div class="empty">Fatal Error:<br><b style="color:red">'+e.message+'</b><br><br><button onclick="loadFeed()">Retry</button></div>';
  }
  isLoading=false;
 }
 function loadMore(){ loadFeed(true); }
-function escapeHtml(v){ return String(v||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
-function showShare(){ alert("Share ke liye purana wala share box use karo ya is page me add kar dunga"); }
+function escapeHtml(v){ return String(v||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
 init();
-// Infinite scroll
-window.addEventListener('scroll', ()=>{ if(window.innerHeight+window.scrollY >= document.body.offsetHeight-600 && hasMore && !isLoading) loadMore(); });
 </script>
 <script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
