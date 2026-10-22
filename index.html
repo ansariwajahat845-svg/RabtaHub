@@ -207,66 +207,61 @@ async function renderOnlineUsers(){
 function openOnlineProfile(userId){ if(!userId)return; window.location.href="profile.html?user="+encodeURIComponent(userId); }
 
 // ---- OPTIMIZED FEED ----
+
+// ---- ULTRA RESILIENT FAST FEED - FIXED LOADING ISSUE ----
 async function loadFeed(preserveScroll=false, append=false){
  if(isLoading) return; isLoading=true;
  const feed=document.getElementById("feed");
  try{
-  if(!append){ currentPage=0; hasMore=true; feed.innerHTML='<div class="loading skeleton" style="height:120px;border-radius:14px;margin:12px"></div>'; }
+  if(!append){ currentPage=0; hasMore=true; feed.innerHTML='<div class="loading skeleton" style="height:120px;border-radius:14px;margin:12px"></div><div class="loading skeleton" style="height:120px;border-radius:14px;margin:12px"></div>'; }
   const from=currentPage*pageSize; const to=from+pageSize-1;
-  // ONE query only, with limit
-  let {data:posts,error}=await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration").order("created_at",{ascending:false}).range(from,to);
-  if(error){
-    const msg=String(error.message||"").toLowerCase();
-    if(msg.includes("voice_url")||msg.includes("does not exist")){
-      const retry=await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url").order("created_at",{ascending:false}).range(from,to);
-      posts=retry.data; error=retry.error;
-    }
+  let postsData=null;
+  try{
+    const res = await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration").order("created_at",{ascending:false}).range(from,to);
+    if(res.error) throw res.error;
+    postsData=res.data;
+  }catch(e1){
+    const res2 = await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url").order("created_at",{ascending:false}).range(from,to);
+    if(res2.error) throw res2.error;
+    postsData=res2.data;
   }
-  if(error) throw error;
-  const safePosts=Array.isArray(posts)?posts:[];
-  if(safePosts.length<pageSize) hasMore=false; else document.getElementById("loadMoreBtn").style.display="block";
+  const safePosts=Array.isArray(postsData)?postsData:[];
+  if(safePosts.length<pageSize) hasMore=false; 
+  if(hasMore) document.getElementById("loadMoreBtn").style.display="block"; else document.getElementById("loadMoreBtn").style.display="none";
   if(safePosts.length===0 && !append){ feed.innerHTML='<div class="empty">There are no posts yet.</div>'; isLoading=false; return; }
-  
-  // Batch all extra data in parallel
-  const postIds=safePosts.map(p=>p.id); const userIds=[...new Set(safePosts.map(p=>p.user_id).filter(Boolean))];
-  const [profilesRes, followsRes, actionsRes, commentsRes, pointsRes, rolesRes, adminRes] = await Promise.all([
-    userIds.length? supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",userIds) : {data:[]},
-    currentUser&&userIds.length? supabaseClient.from("user_follows").select("following_id").eq("follower_id",currentUser.id).in("following_id",userIds) : {data:[]},
-    postIds.length? supabaseClient.from("post_actions").select("post_id,action_type").in("post_id",postIds) : {data:[]},
-    postIds.length? supabaseClient.from("comments").select("post_id").in("post_id",postIds) : {data:[]},
-    userIds.length? supabaseClient.from("member_points").select("user_id,points").in("id",userIds) : {data:[]}, // fix: wrong column, use user_id
-    supabaseClient.from("user_roles").select("*").limit(100).then(r=>r).catch(()=>({data:[]})),
-    supabaseClient.from("chatzone_admins").select("user_id,role").limit(100).then(r=>r).catch(()=>({data:[]}))
-  ]);
-  // Correct points query (previous had bug)
-  let pointsData = pointsRes.data;
-  if(userIds.length){
-    const {data:pr}=await supabaseClient.from("member_points").select("user_id,points").in("user_id",userIds);
-    pointsData=pr;
-  }
-
-  if(!append){ profileMap={}; followMap={}; pointsMap={}; roleMap={}; } // reset only on first page, keep roles cumulative
-  (profilesRes.data||[]).forEach(p=>profileMap[p.id]=p);
-  (followsRes.data||[]).forEach(r=>followMap[r.following_id]=true);
-  (pointsData||[]).forEach(r=>pointsMap[r.user_id]=Number(r.points||0));
-  // roles
-  (rolesRes.data||[]).forEach(row=>{ const uid=row.user_id||row.profile_id||row.id; const raw=row.role||row.role_name||""; if(uid&&raw) roleMap[String(uid)]=String(raw).toLowerCase().trim().replace(/[-\s]+/g,"_"); });
-  (adminRes.data||[]).forEach(row=>{ if(row.user_id&&row.role) roleMap[String(row.user_id)]=String(row.role).toLowerCase().replace(/[-\s]+/g,"_"); });
-
-  const actionCounts={}; (actionsRes.data||[]).forEach(a=>{ if(!actionCounts[a.post_id]) actionCounts[a.post_id]={like:0,dislike:0}; if(a.action_type==="like") actionCounts[a.post_id].like++; if(a.action_type==="dislike") actionCounts[a.post_id].dislike++; });
-  const commentCounts={}; (commentsRes.data||[]).forEach(c=>{ commentCounts[c.post_id]=(commentCounts[c.post_id]||0)+1; });
-
+  const postIds=safePosts.map(p=>p.id); 
+  const userIds=[...new Set(safePosts.map(p=>p.user_id).filter(Boolean))];
+  let profilesData=[], followsData=[], actionsData=[], commentsData=[], pointsData=[], rolesData=[], adminData=[];
+  try{ if(userIds.length){ const r=await supabaseClient.from("profiles").select("id,username,name,avatar_url").in("id",userIds); profilesData=r.data||[]; } }catch(e){}
+  try{ if(currentUser&&userIds.length){ const r=await supabaseClient.from("user_follows").select("following_id").eq("follower_id",currentUser.id).in("following_id",userIds); followsData=r.data||[]; } }catch(e){}
+  try{ if(postIds.length){ const r=await supabaseClient.from("post_actions").select("post_id,action_type").in("post_id",postIds); actionsData=r.data||[]; } }catch(e){}
+  try{ if(postIds.length){ const r=await supabaseClient.from("comments").select("post_id").in("post_id",postIds); commentsData=r.data||[]; } }catch(e){}
+  try{ if(userIds.length){ const r=await supabaseClient.from("member_points").select("user_id,points").in("user_id",userIds); pointsData=r.data||[]; } }catch(e){}
+  try{ const r=await supabaseClient.from("user_roles").select("*").limit(100); rolesData=r.data||[]; }catch(e){}
+  try{ const r=await supabaseClient.from("chatzone_admins").select("user_id,role").limit(100); adminData=r.data||[]; }catch(e){}
+  if(!append){ profileMap={}; followMap={}; pointsMap={}; roleMap={}; }
+  profilesData.forEach(p=>profileMap[p.id]=p);
+  followsData.forEach(r=>followMap[r.following_id]=true);
+  pointsData.forEach(r=>pointsMap[r.user_id]=Number(r.points||0));
+  rolesData.forEach(row=>{ const uid=row.user_id||row.profile_id||row.id; const raw=row.role||row.role_name||""; if(uid&&raw) roleMap[String(uid)]=String(raw).toLowerCase().trim().replace(/-/g,"_").replace(/\s+/g,"_"); });
+  adminData.forEach(row=>{ if(row.user_id&&row.role) roleMap[String(row.user_id)]=String(row.role).toLowerCase().replace(/-/g,"_").replace(/\s+/g,"_"); });
+  const actionCounts={}; actionsData.forEach(a=>{ if(!actionCounts[a.post_id]) actionCounts[a.post_id]={like:0,dislike:0}; if(a.action_type==="like") actionCounts[a.post_id].like++; if(a.action_type==="dislike") actionCounts[a.post_id].dislike++; });
+  const commentCounts={}; commentsData.forEach(c=>{ commentCounts[c.post_id]=(commentCounts[c.post_id]||0)+1; });
   if(!append) currentPosts=safePosts; else currentPosts=currentPosts.concat(safePosts);
-
   let html=""; safePosts.forEach(post=>{ html+=renderPost(post, actionCounts[post.id]||{like:0,dislike:0}, commentCounts[post.id]||0); });
   if(!append) feed.innerHTML=html; else feed.insertAdjacentHTML('beforeend', html);
-  updateTrending(currentPosts, profileMap);
+  try{ updateTrending(currentPosts, profileMap); }catch(e){}
   currentPage++;
   if(!hasMore) document.getElementById("loadMoreBtn").style.display="none";
- }catch(e){ console.error(e); if(!append) feed.innerHTML=`<div class="empty">Could not load feed.<br><small>${escapeHtml(e.message||"")}</small></div>`; }
+ }catch(e){ 
+   console.error("Feed fatal:", e); 
+   if(!append) feed.innerHTML=`<div class="empty">Feed error:<br><small style="color:red">${escapeHtml(e.message||"Unknown")}</small><br><br><button onclick="loadFeed(false,false)" style="border:0;background:#6c5ce7;color:white;padding:10px 18px;border-radius:12px;font-weight:bold">Retry</button></div>`; 
+ }
  isLoading=false;
 }
 function loadMore(){ loadFeed(false,true); }
+
+
 
 function getRoleBadge(userId){
   const id=String(userId||"");
