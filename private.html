@@ -11,17 +11,12 @@
 body{margin:0;background:#f7f3ff;color:var(--text);font-family:Arial,Helvetica,sans-serif}
 header{
   background:linear-gradient(135deg, #4c1d95 0%, #6d28d9 15%, #7c3aed 35%, #8b5cf6 55%, #a855f7 75%, #9333ea 100%);
-  color:#fff;
-  position:sticky;
-  top:0;
-  z-index:5;
+  color:#fff;position:sticky;top:0;z-index:5;
   box-shadow:0 6px 24px rgba(124,58,237,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
   border-bottom:4px solid #c4b5fd;
 }
 header::after{
-  content:"";
-  position:absolute;
-  left:0;right:0;bottom:-4px;height:4px;
+  content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;
   background: linear-gradient(90deg, #a855f7 0%, #c084fc 20%, #8b5cf6 40%, #a78bfa 60%, #9333ea 80%, #7c3aed 100%);
 }
 .head{max-width:760px;margin:auto;padding:13px 15px;display:flex;align-items:center;gap:12px}
@@ -47,7 +42,6 @@ main{max-width:760px;min-height:calc(100vh - 70px);margin:auto;background:#fff;p
 .open,.accept{background:#eee6ff;color:#6541bc}.open:active,.accept:active{background:#dfd1ff}.decline{background:#f4f1f8;color:#696176}
 .btn.leave{background:rgba(239,68,68,0.1); color:#c53030; border:1px solid rgba(239,68,68,0.22)}
 .btn.leave:hover{background:rgba(239,68,68,0.18); color:#9b2c2c}
-.btn.leave:active{transform:scale(0.97)}
 .empty,.loading,.error{padding:30px 18px;text-align:center;color:var(--muted);font-size:14px;overflow-wrap:anywhere}.error{color:#b42318}
 .bottom{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg, #6d28d9 0%, #7c3aed 25%, #8b5cf6 50%, #a855f7 100%);border-top:3px solid #c4b5fd;display:flex;justify-content:center;z-index:6; box-shadow:0 -4px 20px rgba(124,58,237,0.3)}
 .bottom a{flex:1;max-width:150px;text-align:center;padding:10px 3px 8px;text-decoration:none;color:#e9e5ff;font-size:11px}.bottom a span{display:block;font-size:19px;margin-bottom:3px}.bottom a.active{color:#ffffff;font-weight:700; background:rgba(255,255,255,0.15); border-radius:12px}
@@ -80,7 +74,6 @@ const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 let currentUser=null,currentTab="chats",chatPeople=[],requestPeople=[],onlinePeople=[],busy=false;
-
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(s){let e=document.getElementById("toast");e.textContent=s;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2600)}
 function goBack(){if(history.length>1)history.back();else location.href="index.html"}
@@ -88,55 +81,51 @@ function showTab(t){currentTab=t;["chats","requests","online"].forEach(x=>docume
 function isOnline(p){let t=Date.parse(p?.last_seen||"");return Number.isFinite(t)&&Date.now()-t<300000&&Date.now()-t>=-60000}
 function nameOf(p){return p.name||p.username||"ChatZone User"}
 function avatar(p){return p.avatar_url?`<img class="avatar" src="${esc(p.avatar_url)}" alt="" onerror="this.onerror=null;this.outerHTML='<div class=&quot;avatar&quot;>👤</div>'">`:`<div class="avatar">👤</div>`}
-
-// ================= LEAVE CHAT - SAFE PERSISTENT SOLUTION =================
-// Uses existing schema safely: localStorage + optional Supabase table if you create it
 function getLeftKey(){ return `chatzone_left_chats_${currentUser?.id || 'guest'}`; }
-function getLeftIds(){
-  try{ return JSON.parse(localStorage.getItem(getLeftKey())||"[]"); }catch{ return []; }
-}
-function saveLeftIds(ids){
-  localStorage.setItem(getLeftKey(), JSON.stringify([...new Set(ids)]));
-}
-// Optional: tries to persist in Supabase for cross-device, if table exists - never fails
+function getLeftIds(){ try{ return JSON.parse(localStorage.getItem(getLeftKey())||"[]"); }catch{ return []; } }
+function saveLeftIds(ids){ localStorage.setItem(getLeftKey(), JSON.stringify([...new Set(ids)])); }
 async function supabaseHideChat(otherUserId){
   if(!currentUser) return;
   const payload = { user_id: currentUser.id, hidden_user_id: otherUserId, created_at: new Date().toISOString() };
   const tables = ["hidden_private_chats","left_chats","private_chat_hides","chat_hides","hidden_chats"];
-  for(const t of tables){
-    try{
-      const { error } = await db.from(t).insert(payload);
-      if(!error) return;
-    }catch(e){}
-  }
+  for(const t of tables){ try{ const { error } = await db.from(t).insert(payload); if(!error) return; }catch(e){} }
 }
 async function fetchSupabaseHidden(){
   if(!currentUser) return [];
   const tables = ["hidden_private_chats","left_chats","private_chat_hides","chat_hides","hidden_chats"];
-  for(const t of tables){
-    try{
-      const { data, error } = await db.from(t).select("hidden_user_id").eq("user_id", currentUser.id);
-      if(!error && data) return data.map(r=>r.hidden_user_id);
-    }catch(e){}
-  }
+  for(const t of tables){ try{ const { data, error } = await db.from(t).select("hidden_user_id").eq("user_id", currentUser.id); if(!error && data) return data.map(r=>r.hidden_user_id); }catch(e){} }
   return [];
 }
 async function leaveChat(otherUserId, displayName){
   if(!otherUserId) return;
   if(!confirm(`Leave chat with ${displayName||'this user'}?\n\nYe chat aapki private list se hat jayega aur refresh ke baad bhi wapas nahi aayega.`)) return;
   const hidden = getLeftIds();
-  if(!hidden.includes(otherUserId)){
-    hidden.push(otherUserId);
-    saveLeftIds(hidden);
-  }
-  // Try supabase optional
+  if(!hidden.includes(otherUserId)){ hidden.push(otherUserId); saveLeftIds(hidden); }
   supabaseHideChat(otherUserId);
-  // Remove from UI instantly
   chatPeople = chatPeople.filter(p=>p.id !== otherUserId);
   renderCurrent();
   toast(`Chat left - list se hata diya`);
 }
-
+async function pushNotification(toUserId, type, title, message){
+  if(!toUserId || toUserId === currentUser?.id) return;
+  try{
+    const payloads = [
+      { user_id: toUserId, type: type, title: title, message: message, sender_id: currentUser?.id, is_read: false, created_at: new Date().toISOString() },
+      { receiver_id: toUserId, type: type, title: title, body: message, sender_id: currentUser?.id, read: false, created_at: new Date().toISOString() },
+      { profile_id: toUserId, type: type, content: `${title}: ${message}`, is_read: false, created_at: new Date().toISOString() }
+    ];
+    const tables = ["notifications", "user_notifications", "app_notifications"];
+    for(const table of tables){
+      for(const payload of payloads){
+        try{
+          const { error } = await db.from(table).insert(payload);
+          if(!error){ console.log(`Notification sent to ${table}`); return; }
+        }catch(e){}
+      }
+    }
+    console.log(`Notification for ${toUserId}: ${title} - ${message}`);
+  }catch(e){ console.warn("Notification push failed:", e.message); }
+}
 function personHTML(p,type){
   let online=isOnline(p),sub=type==="request"?"Wants to connect with you":online?"🟢 Online":"Offline";
   let buttons=type==="request"?`<div class="actions"><button class="btn accept" onclick="acceptRequest('${esc(p.id)}')">Accept</button><button class="btn decline" onclick="declineRequest('${esc(p.id)}')">Decline</button></div>`:type==="chat"?`<div class="actions"><button class="btn open" onclick="openChat('${esc(p.id)}')">Message</button><button class="btn leave" onclick="leaveChat('${esc(p.id)}','${esc(nameOf(p))}')">Leave Chat</button></div>`:`<div class="actions"><button class="btn open" onclick="sendRequest('${esc(p.id)}')">Connect</button></div>`;
@@ -170,19 +159,12 @@ let sent=sentR.data||[],recv=recvR.data||[];
 let accepted=[...sent,...recv].filter(r=>r.status==="accepted");
 let ids=accepted.map(r=>r.sender_id===currentUser.id?r.receiver_id:r.sender_id).filter(Boolean);
 chatPeople=await profiles(ids);
-
-// --- SAFE LEAVE FILTER (existing schema friendly) ---
 try{
   const supHidden = await fetchSupabaseHidden();
   const localHidden = getLeftIds();
   const combinedHidden = [...new Set([...supHidden, ...localHidden])];
-  if(combinedHidden.length){
-    // keep storage in sync
-    saveLeftIds(combinedHidden);
-    chatPeople = chatPeople.filter(p=> !combinedHidden.includes(p.id));
-  }
+  if(combinedHidden.length){ saveLeftIds(combinedHidden); chatPeople = chatPeople.filter(p=> !combinedHidden.includes(p.id)); }
 }catch(e){ console.warn("hide filter error", e); }
-
 let incoming=recv.filter(r=>r.status==="pending");
 requestPeople=await profiles(incoming.map(r=>r.sender_id));
 let excluded=new Set([...ids,...incoming.map(r=>r.sender_id),...sent.filter(r=>r.status==="pending").map(r=>r.receiver_id),currentUser.id]);
@@ -197,20 +179,60 @@ console.error("Private list load error:",e);
 content.innerHTML=`<div class="error">Could not load private chats.<br><br>${esc(e.message||"Check Supabase table permissions.")}<br><br><button class="btn open" onclick="loadPage()">Try Again</button></div>`;
 }finally{busy=false}
 }
-async function acceptRequest(sender){if(!currentUser)return;try{let {error}=await db.from("private_requests").update({status:"accepted"}).eq("sender_id",sender).eq("receiver_id",currentUser.id).eq("status","pending");if(error)throw error;toast("Request accepted");await loadPage();showTab("chats")}catch(e){toast("Could not accept request: "+e.message)}}
-async function declineRequest(sender){if(!currentUser)return;try{let {error}=await db.from("private_requests").update({status:"declined"}).eq("sender_id",sender).eq("receiver_id",currentUser.id).eq("status","pending");if(error)throw error;toast("Request declined");await loadPage();showTab("requests")}catch(e){toast("Could not decline request: "+e.message)}}
-async function sendRequest(receiver){if(!currentUser||receiver===currentUser.id)return;try{
-let {data:old,error}=await db.from("private_requests").select("id,status").eq("sender_id",currentUser.id).eq("receiver_id",receiver).maybeSingle();
-if(error)throw error;
-if(old?.status==="accepted"){toast("Already connected");return}
-if(old?.status==="pending"){toast("Request already sent");return}
-let result=old?.id?await db.from("private_requests").update({status:"pending"}).eq("id",old.id):await db.from("private_requests").insert({sender_id:currentUser.id,receiver_id:receiver,status:"pending"});
-if(result.error)throw result.error;toast("Request sent");await loadPage();showTab("online")
-}catch(e){toast("Could not send request: "+e.message)}}
+async function acceptRequest(sender){
+  if(!currentUser) return;
+  try{
+    let {error}=await db.from("private_requests").update({status:"accepted"}).eq("sender_id",sender).eq("receiver_id",currentUser.id).eq("status","pending");
+    if(error)throw error;
+    const myName = currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || "Someone";
+    await pushNotification(sender, "request_accepted", "Private Request Accepted", `${myName} accepted your private chat request. You can now message.`);
+    toast("Request accepted - notification bheja");
+    await loadPage(); showTab("chats")
+  }catch(e){toast("Could not accept request: "+e.message)}
+}
+async function declineRequest(sender){
+  if(!currentUser) return;
+  try{
+    let {error}=await db.from("private_requests").update({status:"declined"}).eq("sender_id",sender).eq("receiver_id",currentUser.id).eq("status","pending");
+    if(error)throw error;
+    const myName = currentUser.user_metadata?.name || "Someone";
+    await pushNotification(sender, "request_declined", "Request Declined", `${myName} declined your request.`);
+    toast("Request declined");
+    await loadPage(); showTab("requests")
+  }catch(e){toast("Could not decline request: "+e.message)}
+}
+async function sendRequest(receiver){
+  if(!currentUser||receiver===currentUser.id) return;
+  try{
+    let {data:old,error}=await db.from("private_requests").select("id,status").eq("sender_id",currentUser.id).eq("receiver_id",receiver).maybeSingle();
+    if(error)throw error;
+    if(old?.status==="accepted"){toast("Already connected");return}
+    if(old?.status==="pending"){toast("Request already sent");return}
+    let result=old?.id?await db.from("private_requests").update({status:"pending"}).eq("id",old.id):await db.from("private_requests").insert({sender_id:currentUser.id,receiver_id:receiver,status:"pending"});
+    if(result.error)throw result.error;
+    const myName = currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || "Someone";
+    await pushNotification(receiver, "private_request", "New Private Chat Request", `${myName} wants to connect with you in private chat.`);
+    toast("Request sent - notification bhi bhej diya");
+    await loadPage(); showTab("online")
+  }catch(e){toast("Could not send request: "+e.message)}
+}
 function openChat(id){if(!id){toast("User ID not found");return}location.href="private-chat.html?user_id="+encodeURIComponent(id)}
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!currentUser&&!busy){currentUser=session.user;loadPage()}});
 loadPage();
 setInterval(()=>{if(currentUser)db.from("profiles").update({last_seen:new Date().toISOString()}).eq("id",currentUser.id).then(({error})=>{if(error)console.warn("Heartbeat failed:",error.message)})},60000);
+try{
+  db.channel('private_requests_notify')
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'private_requests'}, payload=>{
+      if(payload.new?.receiver_id === currentUser?.id && payload.new?.status === 'pending'){
+        toast("📩 New private request received!");
+        loadPage();
+      }
+    })
+    .on('postgres_changes', {event:'UPDATE', schema:'public', table:'private_requests'}, payload=>{
+      if(payload.new?.receiver_id === currentUser?.id || payload.new?.sender_id === currentUser?.id){ loadPage(); }
+    })
+    .subscribe();
+}catch(e){ console.warn("Realtime failed", e); }
 </script>
 </body>
 </html>
