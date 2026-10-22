@@ -2,196 +2,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ChatZone</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; font-family: Arial, sans-serif;
-      background: #f3f5f9; color: #182033;
-    }
-    header {
-      background: #5546e8; color: white; padding: 18px;
-      font-size: 23px; font-weight: bold;
-    }
-    main { max-width: 700px; margin: auto; padding: 16px; }
-    .card {
-      background: white; padding: 16px; border-radius: 12px;
-      margin-bottom: 14px; box-shadow: 0 2px 8px #0000000c;
-    }
-    textarea {
-      width: 100%; min-height: 90px; padding: 12px;
-      border: 1px solid #d6d9e4; border-radius: 8px;
-      font: inherit; resize: vertical;
-    }
-    button {
-      background: #5546e8; color: white; border: 0;
-      border-radius: 8px; padding: 11px 16px;
-      margin-top: 10px; cursor: pointer;
-    }
-    button:disabled { opacity: .6; cursor: wait; }
-    .muted { color: #73798a; font-size: 13px; }
-    .post { white-space: pre-wrap; overflow-wrap: anywhere; }
-    #status { padding: 12px 0; }
-    .error { color: #b42318; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ChatZone</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+:root{--purple:#6246ea;--bg:#f5f6fb;--text:#202139;--muted:#85879b}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;padding-bottom:82px}
+button{cursor:pointer;font:inherit}
+.topbar{background:linear-gradient(120deg,#6045e8,#8c4eea);color:white;padding:15px 16px 13px;position:sticky;top:0;z-index:5;box-shadow:0 3px 12px #30208022}
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-size:24px;font-weight:800;letter-spacing:-.6px}
+.brand span{color:#ffe17a}
+.topactions{display:flex;gap:8px}
+.iconbtn{width:39px;height:39px;border:1px solid #ffffff45;border-radius:13px;background:#ffffff19;color:white;font-size:19px;display:grid;place-items:center}
+.trending{display:flex;align-items:center;gap:8px;margin-top:15px;font-size:14px;font-weight:700}
+.trending span{background:#ffffff22;padding:7px 11px;border-radius:20px}
+main{max-width:650px;margin:auto;padding:14px 12px}
+.card{background:white;border:1px solid #ececf5;border-radius:17px;padding:14px;margin-bottom:13px;box-shadow:0 3px 12px #24204a08}
+.composerhead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+h3{font-size:16px;margin:0}
+.muted{font-size:12px;color:var(--muted)}
+.avatar{width:43px;height:43px;border-radius:50%;object-fit:cover;background:#e7e2ff;display:grid;place-items:center;color:#6045e8;font-weight:bold;flex-shrink:0;border:2px solid #eeeaff}
+textarea{width:100%;min-height:82px;resize:vertical;border:0;outline:0;background:#f7f7fc;border-radius:12px;padding:13px;font:inherit;font-size:15px}
+.primary{background:var(--purple);color:white;border:0;border-radius:11px;padding:11px 19px;font-weight:bold}
+.composerfoot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+#postStatus{font-size:12px;color:var(--muted);max-width:65%}
+.feedtitle{display:flex;justify-content:space-between;align-items:center;padding:5px 3px 12px}
+.feedtitle h3{font-size:18px}
+.posthead{display:flex;align-items:center;gap:10px}
+.postidentity{min-width:0;flex:1}
+.username{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.posttime{font-size:11px;color:var(--muted);margin-top:4px}
+.morebtn{border:0;background:transparent;color:#777;font-size:23px}
+.post{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;font-size:15px;margin:15px 0 13px}
+.postactions{display:flex;justify-content:space-around;border-top:1px solid #eeeef5;padding-top:10px;gap:4px}
+.action{border:0;background:transparent;color:#77758b;padding:7px 4px;border-radius:9px;font-size:13px;flex:1}
+.action:active,.action.liked{color:#e84f76;background:#fff0f4}
+#status{text-align:center;padding:12px;font-size:13px;color:var(--muted)}
+.error{color:#c0392b!important}
+.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:10;display:grid;grid-template-columns:repeat(5,1fr);background:#fff;border-top:1px solid #e9e8f2;padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 18px #28204a0a}
+.navbtn{border:0;background:transparent;color:#89899b;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;padding:4px 0}
+.navicon{font-size:21px;line-height:24px}
+.navbtn.active{color:var(--purple);font-weight:bold}
+.toast{font-size:13px;color:var(--purple);margin-top:8px}
+.empty{padding:25px 8px;text-align:center;color:var(--muted);font-size:14px}
+@media(min-width:600px){main{padding-top:20px}.topbar{padding-left:max(16px,calc((100% - 620px)/2));padding-right:max(16px,calc((100% - 620px)/2))}}
+</style>
 </head>
 <body>
-  <header>ChatZone</header>
-  <main>
-    <section class="card">
-      <h3>Share a post</h3>
-      <textarea id="postText" placeholder="What's on your mind?"></textarea>
-      <button id="postButton">Post</button>
-      <div id="postStatus" class="muted"></div>
-    </section>
+<header class="topbar">
+ <div class="brandrow">
+  <div class="brand">Chat<span>Zone</span> 💬</div>
+  <div class="topactions">
+   <button class="iconbtn" id="shareApp" aria-label="Share">↗</button>
+   <button class="iconbtn" id="starApp" aria-label="Star">☆</button>
+   <button class="iconbtn" id="notifyApp" aria-label="Notifications">♧</button>
+  </div>
+ </div>
+ <div class="trending"><span>🔥 Trending Posts</span><span>✨ Community</span></div>
+</header>
 
-    <div id="status">Loading feed...</div>
-    <section id="feed"></section>
-  </main>
+<main>
+ <section class="card">
+  <div class="composerhead">
+   <div class="avatar">CZ</div>
+   <div><h3>Create a post</h3><div class="muted">Share something with your community</div></div>
+  </div>
+  <textarea id="postText" maxlength="5000" placeholder="What's on your mind? ✨"></textarea>
+  <div class="composerfoot">
+   <span id="postStatus"></span>
+   <button class="primary" id="postButton">＋ Post</button>
+  </div>
+ </section>
 
-  <script>
-    // Replace these with your original Supabase project credentials.
-    const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+ <div class="feedtitle"><h3>🏆 Latest Posts</h3><span class="muted">Community feed</span></div>
+ <div id="status">Loading posts...</div>
+ <section id="feed"></section>
+</main>
 
-    const statusEl = document.getElementById("status");
-    const feedEl = document.getElementById("feed");
-    const postStatus = document.getElementById("postStatus");
-    const postButton = document.getElementById("postButton");
+<nav class="bottomnav">
+ <button class="navbtn active" data-page="Home"><span class="navicon">⌂</span>Home</button>
+ <button class="navbtn" data-page="Private"><span class="navicon">🔒</span>Private</button>
+ <button class="navbtn" data-page="Mehfil"><span class="navicon">👥</span>Mehfil</button>
+ <button class="navbtn" data-page="More"><span class="navicon">☰</span>More</button>
+ <button class="navbtn" data-page="Profile"><span class="navicon">👤</span>Profile</button>
+</nav>
 
-    let supabaseClient = null;
+<script>
+const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 
-    function showError(message) {
-      statusEl.textContent = message;
-      statusEl.className = "error";
-    }
+const statusEl=document.getElementById("status");
+const feedEl=document.getElementById("feed");
+const postStatus=document.getElementById("postStatus");
+const postButton=document.getElementById("postButton");
+let db=null;
 
-    async function loadFeed() {
-      statusEl.textContent = "Loading feed...";
-      statusEl.className = "";
-      feedEl.replaceChildren();
+function setStatus(msg,isError=false){
+ statusEl.textContent=msg;
+ statusEl.className=isError?"error":"";
+}
+function avatarUrl(post){
+ return post.avatar_url||post.profile_photo||post.avatar||post.photo_url||"";
+}
+function initials(name){
+ return (name||"CZ").trim().split(/\s+/).slice(0,2).map(s=>s[0]||"").join("").toUpperCase()||"CZ";
+}
+function makeAvatar(post,name){
+ const img=avatarUrl(post);
+ if(img){
+  const el=document.createElement("img");
+  el.className="avatar";el.alt="Profile photo";el.src=img;
+  el.onerror=()=>{const fallback=document.createElement("div");fallback.className="avatar";fallback.textContent=initials(name);el.replaceWith(fallback)};
+  return el;
+ }
+ const el=document.createElement("div");el.className="avatar";el.textContent=initials(name);return el;
+}
+function timeText(value){
+ if(!value)return "";
+ const d=new Date(value);
+ return Number.isNaN(d.getTime())?"":d.toLocaleString();
+}
+function makeButton(label,action,extraClass=""){
+ const b=document.createElement("button");
+ b.className="action "+extraClass;b.textContent=label;
+ b.addEventListener("click",action);return b;
+}
+function renderPost(post){
+ const card=document.createElement("article");card.className="card";
+ const name=post.username||post.display_name||post.full_name||"Member";
+ const head=document.createElement("div");head.className="posthead";
+ head.appendChild(makeAvatar(post,name));
+ const identity=document.createElement("div");identity.className="postidentity";
+ const username=document.createElement("div");username.className="username";username.textContent=name;
+ const date=document.createElement("div");date.className="posttime";date.textContent=timeText(post.created_at);
+ identity.append(username,date);
+ const more=document.createElement("button");more.className="morebtn";more.textContent="⋯";more.setAttribute("aria-label","More");
+ more.addEventListener("click",()=>alert("Post options ke liye report/delete permissions aur database setup zaroori hai."));
+ head.append(identity,more);
+ const content=document.createElement("p");content.className="post";
+ content.textContent=post.content||post.body||post.text||"";
+ const actions=document.createElement("div");actions.className="postactions";
+ const like=makeButton("♡ Like",()=>{
+  const liked=like.classList.toggle("liked");
+  like.textContent=liked?"♥ Liked":"♡ Like";
+  like.setAttribute("aria-pressed",String(liked));
+ });
+ const comment=makeButton("💬 Comment",()=>{
+  alert("Comments ke liye comments table aur database policy configure karni hogi.");
+ });
+ const share=makeButton("↗ Share",async()=>{
+  const text=(name+": "+content.textContent).trim();
+  try{
+   if(navigator.share)await navigator.share({title:"ChatZone post",text});
+   else if(navigator.clipboard){await navigator.clipboard.writeText(text);alert("Post text copied!")}
+   else alert(text);
+  }catch(e){if(e.name!=="AbortError")alert("Share nahi ho saka.");}
+ });
+ actions.append(like,comment,share);
+ card.append(head,content,actions);
+ return card;
+}
+async function loadFeed(){
+ setStatus("Loading posts...");
+ feedEl.replaceChildren();
+ try{
+  const {data,error}=await db.from("posts").select("*").order("created_at",{ascending:false}).limit(50);
+  if(error)throw error;
+  if(!data||!data.length){
+   setStatus("Abhi koi post nahi. Pehli post tum share karo! ✨");return;
+  }
+  data.forEach(p=>feedEl.appendChild(renderPost(p)));
+  setStatus("Latest posts loaded");
+ }catch(e){
+  console.error("Feed error:",e);
+  setStatus("Feed load nahi hui. Supabase posts table, SELECT RLS policy aur connection check karo.",true);
+ }
+}
+async function createPost(){
+ const box=document.getElementById("postText");
+ const content=box.value.trim();postStatus.textContent="";
+ if(!content){postStatus.textContent="Pehle post likho.";return}
+ postButton.disabled=true;
+ try{
+  const {data:{user},error:authError}=await db.auth.getUser();
+  if(authError)throw authError;
+  if(!user){postStatus.textContent="Post karne ke liye pehle login karo.";return}
+  const {error}=await db.from("posts").insert({user_id:user.id,content});
+  if(error)throw error;
+  box.value="";postStatus.textContent="Post publish ho gayi! 🎉";
+  await loadFeed();
+ }catch(e){
+  console.error("Post error:",e);
+  postStatus.textContent="Post nahi hui. Login, columns aur INSERT RLS policy check karo.";
+ }finally{postButton.disabled=false}
+}
+document.getElementById("shareApp").addEventListener("click",async()=>{
+ try{
+  if(navigator.share)await navigator.share({title:"ChatZone",text:"Join me on ChatZone!",url:location.href});
+  else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);alert("ChatZone link copied!")}
+  else alert("ChatZone: "+location.href);
+ }catch(e){if(e.name!=="AbortError")console.error(e)}
+});
+document.getElementById("starApp").addEventListener("click",e=>{
+ const b=e.currentTarget;b.textContent=b.textContent==="☆"?"★":"☆";
+ b.setAttribute("aria-pressed",String(b.textContent==="★"));
+});
+document.getElementById("notifyApp").addEventListener("click",()=>{
+ alert("Notifications abhi UI button hai. Real notifications ke liye notifications table aur notification system chahiye.");
+});
+document.querySelectorAll(".navbtn").forEach(b=>b.addEventListener("click",()=>{
+ document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");
+ const page=b.dataset.page;
+ if(page==="Home"){loadFeed();return}
+ if(page==="Profile"){alert("Profile page ko tumhare user/profile table ke saath connect karna hoga.");return}
+ if(page==="Private"){alert("Private chats ke liye messages table aur access policies configure karni hongi.");return}
+ if(page==="Mehfil"){alert("Mehfil rooms ko database se connect karna hoga.");return}
+ if(page==="More"){alert("More options — profile settings, help aur logout yahan add kiye ja sakte hain.");return}
+}));
+document.getElementById("postButton").addEventListener("click",createPost);
 
-      try {
-        const { data, error } = await supabaseClient
-          .from("posts")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(50);
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-          statusEl.textContent = "No posts yet. Be the first to post!";
-          return;
-        }
-
-        data.forEach(post => {
-          const card = document.createElement("article");
-          card.className = "card";
-
-          const author = document.createElement("div");
-          author.className = "muted";
-          author.textContent =
-            post.username || post.display_name || post.user_id || "Member";
-
-          const content = document.createElement("p");
-          content.className = "post";
-          content.textContent =
-            post.content || post.body || post.text || "";
-
-          const date = document.createElement("div");
-          date.className = "muted";
-          if (post.created_at) {
-            const parsed = new Date(post.created_at);
-            date.textContent = Number.isNaN(parsed.getTime())
-              ? ""
-              : parsed.toLocaleString();
-          }
-
-          card.append(author, content, date);
-          feedEl.appendChild(card);
-        });
-
-        statusEl.textContent = "Latest posts";
-      } catch (error) {
-        console.error("Feed error:", error);
-        showError(
-          "Feed load nahi hui. Supabase URL/key, posts table aur SELECT RLS policy check karo. Details console mein hain."
-        );
-      }
-    }
-
-    async function createPost() {
-      const content = document.getElementById("postText").value.trim();
-      postStatus.textContent = "";
-
-      if (!content) {
-        postStatus.textContent = "Pehle post likho.";
-        return;
-      }
-
-      postButton.disabled = true;
-
-      try {
-        const { data: { user }, error: authError } =
-          await supabaseClient.auth.getUser();
-
-        if (authError) throw authError;
-        if (!user) {
-          postStatus.textContent =
-            "Post karne ke liye pehle login karna hoga.";
-          return;
-        }
-
-        // Make sure these column names match your posts table.
-        const { error } = await supabaseClient
-          .from("posts")
-          .insert({
-            user_id: user.id,
-            content: content
-          });
-
-        if (error) throw error;
-
-        document.getElementById("postText").value = "";
-        postStatus.textContent = "Post published!";
-        await loadFeed();
-      } catch (error) {
-        console.error("Post error:", error);
-        postStatus.textContent =
-          "Post nahi hui. Login, table columns aur INSERT RLS policy check karo.";
-      } finally {
-        postButton.disabled = false;
-      }
-    }
-
-    async function init() {
-      if (
-        SUPABASE_URL === "YOUR_SUPABASE_URL" ||
-        SUPABASE_ANON_KEY === "YOUR_SUPABASE_ANON_KEY"
-      ) {
-        showError("HTML mein apna Supabase URL aur anon key set karo.");
-        return;
-      }
-
-      if (!window.supabase) {
-        showError("Supabase library load nahi hui. Internet connection check karo.");
-        return;
-      }
-
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-      );
-
-      postButton.addEventListener("click", createPost);
-      await loadFeed();
-    }
-
-    init();
-  </script>
+async function init(){
+ if(!window.supabase){setStatus("Supabase library load nahi hui. Internet check karo.",true);return}
+ db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+ await loadFeed();
+}
+init();
+</script>
 </body>
 </html>
