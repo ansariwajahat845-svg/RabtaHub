@@ -9,11 +9,20 @@
 *{box-sizing:border-box}
 :root{--purple:#8e6be8;--purple-dark:#7350cf;--purple-light:#f1ebff;--line:#e8e0f6;--muted:#77718a;--text:#29233a;--online:#32b768}
 body{margin:0;background:#f7f3ff;color:var(--text);font-family:Arial,Helvetica,sans-serif}
-header{background:linear-gradient(120deg,#173b8f,#0b2460);color:#fff;position:sticky;top:0;z-index:5;box-shadow:0 2px 7px #081b4b35;border-bottom:3px solid #071a4a}
+header{
+  background:linear-gradient(135deg, #0a122e 0%, #0f1e4a 25%, #162a6b 50%, #1e3a8a 75%, #1e40af 100%);
+  color:#fff;
+  position:sticky;
+  top:0;
+  z-index:5;
+  box-shadow:0 4px 20px rgba(8,27,75,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-bottom:3px solid transparent;
+  border-image: linear-gradient(90deg, #a855f7 0%, #8b5cf6 20%, #6366f1 40%, #ec4899 60%, #a855f7 80%, #7c3aed 100%) 1;
+}
 .head{max-width:760px;margin:auto;padding:13px 15px;display:flex;align-items:center;gap:12px}
-.logo{width:42px;height:42px;border-radius:50%;background:#ffffff35;display:grid;place-items:center;font-size:23px}
-.heading{flex:1;min-width:0}.heading h1{font-size:19px;margin:0 0 4px}.heading p{font-size:12px;margin:0;color:#f8f4ff}
-.iconbtn{width:39px;height:39px;border:0;border-radius:50%;background:#ffffff2b;color:white;font-size:18px;cursor:pointer}
+.logo{width:42px;height:42px;border-radius:50%;background:#ffffff25;display:grid;place-items:center;font-size:23px; border:1px solid rgba(255,255,255,0.15)}
+.heading{flex:1;min-width:0}.heading h1{font-size:19px;margin:0 0 4px}.heading p{font-size:12px;margin:0;color:#e8e4ff}
+.iconbtn{width:39px;height:39px;border:0;border-radius:50%;background:#ffffff2b;color:white;font-size:18px;cursor:pointer; border:1px solid rgba(255,255,255,0.15)}
 main{max-width:760px;min-height:calc(100vh - 70px);margin:auto;background:#fff;padding-bottom:78px}
 .search{padding:12px;background:#fff;position:sticky;top:68px;z-index:3;border-bottom:1px solid var(--line)}
 .search input{width:100%;border:1px solid #eee7fb;outline:0;background:#f7f4ff;border-radius:24px;padding:13px 17px;font-size:14px;color:var(--text)}
@@ -22,18 +31,23 @@ main{max-width:760px;min-height:calc(100vh - 70px);margin:auto;background:#fff;p
 .tab{flex:1;border:0;background:#fff;color:var(--muted);padding:14px 5px;font-weight:700;font-size:13px;border-bottom:3px solid transparent;cursor:pointer}
 .tab.active{color:var(--purple-dark);border-bottom-color:#a78bfa;background:#fcfaff}
 .section{font-size:12px;font-weight:700;color:var(--muted);padding:16px 16px 7px;text-transform:uppercase;letter-spacing:.5px}
-.person{display:flex;align-items:center;gap:12px;padding:12px 15px;min-height:78px;border-bottom:1px solid #f5f1fb}
+.person{display:flex;align-items:center;gap:12px;padding:12px 15px;min-height:78px;border-bottom:1px solid #f5f1fb; transition:0.15s}
+.person:hover{background:#fcf9ff}
 .avatarwrap{position:relative;flex-shrink:0}.avatar{height:52px;width:52px;border-radius:50%;object-fit:cover;background:#eee7ff;display:grid;place-items:center;color:var(--purple-dark);font-size:23px;overflow:hidden}
 .dot{position:absolute;right:0;bottom:1px;width:13px;height:13px;border:2px solid white;border-radius:50%;background:#b9b4c6}.dot.online{background:var(--online)}
 .details{flex:1;min-width:0}.personname{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .username,.statusline{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.actions{display:flex;gap:6px;flex-shrink:0}.btn{border:0;border-radius:20px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.actions{display:flex;gap:6px;flex-shrink:0; flex-wrap:wrap; justify-content:flex-end}
+.btn{border:0;border-radius:20px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer; transition:0.2s}
 .open,.accept{background:#eee6ff;color:#6541bc}.open:active,.accept:active{background:#dfd1ff}.decline{background:#f4f1f8;color:#696176}
+.btn.leave{background:rgba(239,68,68,0.1); color:#c53030; border:1px solid rgba(239,68,68,0.22)}
+.btn.leave:hover{background:rgba(239,68,68,0.18); color:#9b2c2c}
+.btn.leave:active{transform:scale(0.97)}
 .empty,.loading,.error{padding:30px 18px;text-align:center;color:var(--muted);font-size:14px;overflow-wrap:anywhere}.error{color:#b42318}
 .bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e0f6;display:flex;justify-content:center;z-index:6}
 .bottom a{flex:1;max-width:150px;text-align:center;padding:10px 3px 8px;text-decoration:none;color:#77718a;font-size:11px}.bottom a span{display:block;font-size:19px;margin-bottom:3px}.bottom a.active{color:var(--purple-dark);font-weight:700}
-#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:#49366e;color:#fff;padding:11px 16px;border-radius:22px;font-size:13px;z-index:10;display:none;max-width:90%;text-align:center}
-@media(max-width:430px){.head{gap:8px}.actions{gap:4px}.btn{padding:8px;font-size:11px}.person{gap:9px;padding-left:11px;padding-right:11px}.avatar{height:48px;width:48px}.tab{font-size:12px}}
+#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:#49366e;color:#fff;padding:11px 16px;border-radius:22px;font-size:13px;z-index:10;display:none;max-width:90%;text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.25)}
+@media(max-width:430px){.head{gap:8px}.actions{gap:4px}.btn{padding:8px 10px;font-size:11px}.person{gap:9px;padding-left:11px;padding-right:11px}.avatar{height:48px;width:48px}.tab{font-size:12px}}
 </style>
 </head>
 <body>
@@ -61,6 +75,7 @@ const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 let currentUser=null,currentTab="chats",chatPeople=[],requestPeople=[],onlinePeople=[],busy=false;
+
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(s){let e=document.getElementById("toast");e.textContent=s;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",2600)}
 function goBack(){if(history.length>1)history.back();else location.href="index.html"}
@@ -68,9 +83,60 @@ function showTab(t){currentTab=t;["chats","requests","online"].forEach(x=>docume
 function isOnline(p){let t=Date.parse(p?.last_seen||"");return Number.isFinite(t)&&Date.now()-t<300000&&Date.now()-t>=-60000}
 function nameOf(p){return p.name||p.username||"ChatZone User"}
 function avatar(p){return p.avatar_url?`<img class="avatar" src="${esc(p.avatar_url)}" alt="" onerror="this.onerror=null;this.outerHTML='<div class=&quot;avatar&quot;>👤</div>'">`:`<div class="avatar">👤</div>`}
-function personHTML(p,type){let online=isOnline(p),sub=type==="request"?"Wants to connect with you":online?"🟢 Online":"Offline";
-let buttons=type==="request"?`<div class="actions"><button class="btn accept" onclick="acceptRequest('${esc(p.id)}')">Accept</button><button class="btn decline" onclick="declineRequest('${esc(p.id)}')">Decline</button></div>`:type==="chat"?`<div class="actions"><button class="btn open" onclick="openChat('${esc(p.id)}')">Message</button></div>`:`<div class="actions"><button class="btn open" onclick="sendRequest('${esc(p.id)}')">Connect</button></div>`;
-return `<div class="person"><div class="avatarwrap">${avatar(p)}<span class="dot ${online?"online":""}"></span></div><div class="details"><div class="personname">${esc(nameOf(p))}</div><div class="username">${esc(p.username?"@"+p.username:"")}</div><div class="statusline">${esc(sub)}</div></div>${buttons}</div>`}
+
+// ================= LEAVE CHAT - SAFE PERSISTENT SOLUTION =================
+// Uses existing schema safely: localStorage + optional Supabase table if you create it
+function getLeftKey(){ return `chatzone_left_chats_${currentUser?.id || 'guest'}`; }
+function getLeftIds(){
+  try{ return JSON.parse(localStorage.getItem(getLeftKey())||"[]"); }catch{ return []; }
+}
+function saveLeftIds(ids){
+  localStorage.setItem(getLeftKey(), JSON.stringify([...new Set(ids)]));
+}
+// Optional: tries to persist in Supabase for cross-device, if table exists - never fails
+async function supabaseHideChat(otherUserId){
+  if(!currentUser) return;
+  const payload = { user_id: currentUser.id, hidden_user_id: otherUserId, created_at: new Date().toISOString() };
+  const tables = ["hidden_private_chats","left_chats","private_chat_hides","chat_hides","hidden_chats"];
+  for(const t of tables){
+    try{
+      const { error } = await db.from(t).insert(payload);
+      if(!error) return;
+    }catch(e){}
+  }
+}
+async function fetchSupabaseHidden(){
+  if(!currentUser) return [];
+  const tables = ["hidden_private_chats","left_chats","private_chat_hides","chat_hides","hidden_chats"];
+  for(const t of tables){
+    try{
+      const { data, error } = await db.from(t).select("hidden_user_id").eq("user_id", currentUser.id);
+      if(!error && data) return data.map(r=>r.hidden_user_id);
+    }catch(e){}
+  }
+  return [];
+}
+async function leaveChat(otherUserId, displayName){
+  if(!otherUserId) return;
+  if(!confirm(`Leave chat with ${displayName||'this user'}?\n\nYe chat aapki private list se hat jayega aur refresh ke baad bhi wapas nahi aayega.`)) return;
+  const hidden = getLeftIds();
+  if(!hidden.includes(otherUserId)){
+    hidden.push(otherUserId);
+    saveLeftIds(hidden);
+  }
+  // Try supabase optional
+  supabaseHideChat(otherUserId);
+  // Remove from UI instantly
+  chatPeople = chatPeople.filter(p=>p.id !== otherUserId);
+  renderCurrent();
+  toast(`Chat left - list se hata diya`);
+}
+
+function personHTML(p,type){
+  let online=isOnline(p),sub=type==="request"?"Wants to connect with you":online?"🟢 Online":"Offline";
+  let buttons=type==="request"?`<div class="actions"><button class="btn accept" onclick="acceptRequest('${esc(p.id)}')">Accept</button><button class="btn decline" onclick="declineRequest('${esc(p.id)}')">Decline</button></div>`:type==="chat"?`<div class="actions"><button class="btn open" onclick="openChat('${esc(p.id)}')">Message</button><button class="btn leave" onclick="leaveChat('${esc(p.id)}','${esc(nameOf(p))}')">Leave Chat</button></div>`:`<div class="actions"><button class="btn open" onclick="sendRequest('${esc(p.id)}')">Connect</button></div>`;
+  return `<div class="person"><div class="avatarwrap">${avatar(p)}<span class="dot ${online?"online":""}"></span></div><div class="details"><div class="personname">${esc(nameOf(p))}</div><div class="username">${esc(p.username?"@"+p.username:"")}</div><div class="statusline">${esc(sub)}</div></div>${buttons}</div>`
+}
 function filtered(arr){let q=document.getElementById("searchInput").value.trim().toLowerCase().replace(/^@/,"");return q?arr.filter(p=>String(p.name||"").toLowerCase().includes(q)||String(p.username||"").toLowerCase().includes(q)):arr}
 function renderCurrent(){let arr=currentTab==="chats"?filtered(chatPeople):currentTab==="requests"?filtered(requestPeople):filtered(onlinePeople),title=currentTab==="chats"?"Your private chats":currentTab==="requests"?"Private chat requests":"Online members",empty=currentTab==="chats"?"💬 No private chats yet. Accept a request to start chatting.":currentTab==="requests"?"📩 No pending requests.":"🟢 No other members are online right now.",type=currentTab==="chats"?"chat":currentTab==="requests"?"request":"online";
 document.getElementById("mainContent").innerHTML=`<div class="section">${title}</div>`+(arr.length?arr.map(p=>personHTML(p,type)).join(""):`<div class="empty">${empty}</div>`)}
@@ -88,7 +154,6 @@ currentUser=null;document.getElementById("accountStatus").textContent="Please lo
 content.innerHTML=`<div class="empty">🔐 Please log in to view private chats.<br><br><button class="btn open" onclick="location.href='login.html'">Go to Login</button></div>`;return
 }
 currentUser=session.user;document.getElementById("accountStatus").textContent="Your private conversations";
-// Update this page's own heartbeat, but don't block loading if RLS disallows profile updates.
 const heartbeat=await db.from("profiles").update({last_seen:new Date().toISOString()}).eq("id",currentUser.id);
 if(heartbeat.error)console.warn("Could not update last_seen:",heartbeat.error.message);
 let [sentR,recvR]=await Promise.all([
@@ -100,6 +165,19 @@ let sent=sentR.data||[],recv=recvR.data||[];
 let accepted=[...sent,...recv].filter(r=>r.status==="accepted");
 let ids=accepted.map(r=>r.sender_id===currentUser.id?r.receiver_id:r.sender_id).filter(Boolean);
 chatPeople=await profiles(ids);
+
+// --- SAFE LEAVE FILTER (existing schema friendly) ---
+try{
+  const supHidden = await fetchSupabaseHidden();
+  const localHidden = getLeftIds();
+  const combinedHidden = [...new Set([...supHidden, ...localHidden])];
+  if(combinedHidden.length){
+    // keep storage in sync
+    saveLeftIds(combinedHidden);
+    chatPeople = chatPeople.filter(p=> !combinedHidden.includes(p.id));
+  }
+}catch(e){ console.warn("hide filter error", e); }
+
 let incoming=recv.filter(r=>r.status==="pending");
 requestPeople=await profiles(incoming.map(r=>r.sender_id));
 let excluded=new Set([...ids,...incoming.map(r=>r.sender_id),...sent.filter(r=>r.status==="pending").map(r=>r.receiver_id),currentUser.id]);
