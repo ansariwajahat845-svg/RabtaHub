@@ -11,9 +11,11 @@
 :root{--purple:#6d28d9;--purple2:#7c3aed;--purple3:#a78bfa;--bg:#f7f6fc;--muted:#77738a;--line:#eeeaf8}
 html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:var(--bg);color:#171329;accent-color:var(--purple);-webkit-tap-highlight-color:#6d28d922}
 body{padding-bottom:env(safe-area-inset-bottom)}
-header{background:#6d28d9;color:#fff;padding:16px 16px 13px;box-shadow:0 2px 8px #34208030}
+header{background:#6d28d9;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px #34208030}
 .headrow{display:flex;align-items:center;gap:12px}
-.brandicon{width:42px;height:42px;border-radius:50%;background:#ffffff24;display:grid;place-items:center;font-size:23px}
+.back-btn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 12px;border:1px solid #ffffff70;border-radius:22px;background:#ffffff20;color:#fff;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.back-btn:active{background:#ffffff38;transform:scale(.98)}
+.brandicon{width:42px;height:42px;border-radius:50%;background:#ffffff24;display:grid;place-items:center;font-size:23px;flex-shrink:0}
 .brand{font-size:20px;font-weight:700;letter-spacing:.1px}
 .status{font-size:12px;font-weight:400;color:#e8e1ff;margin-top:4px}
 .tabs{display:flex;background:#6d28d9;position:sticky;top:0;z-index:5;box-shadow:0 2px 5px #34208020}
@@ -40,12 +42,14 @@ header{background:#6d28d9;color:#fff;padding:16px 16px 13px;box-shadow:0 2px 8px
 .empty{text-align:center;color:#77738a;padding:48px 22px;line-height:1.5;font-size:14px}
 .emptyicon{font-size:35px;display:block;margin-bottom:12px}
 .hint{font-size:12px;color:#86949c;margin-top:7px}
+@media(max-width:380px){header{padding-left:10px;padding-right:10px}.headrow{gap:8px}.back-btn{padding:8px 10px;font-size:12px}.brandicon{width:38px;height:38px}.brand{font-size:18px}}
 @media(min-width:700px){body{max-width:760px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 18px #0000000b}header{padding-left:22px;padding-right:22px}}
 </style>
 </head>
 <body>
 <header>
   <div class="headrow">
+    <a class="back-btn" href="index.html" aria-label="Back to Home">← Back</a>
     <div class="brandicon">💬</div>
     <div>
       <div class="brand">ChatZone</div>
