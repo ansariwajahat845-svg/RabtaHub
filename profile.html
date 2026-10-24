@@ -32,13 +32,13 @@
 </div>
 <div id="stats" class="stats"><button class="stat" onclick="openPeople('posts')"><div id="postCount" class="stat-number">0</div><div class="stat-label">Posts</div></button><button class="stat" onclick="openPeople('followers')"><div id="followersCount" class="stat-number">0</div><div class="stat-label">Followers</div></button><button class="stat" onclick="openPeople('following')"><div id="followingCount" class="stat-number">0</div><div class="stat-label">Following</div></button></div>
 <div id="infoCard" class="info-card">
-<div class="info-row"><div class="info-icon">🏙️</div><div><div class="info-label">City</div><div id="city" class="info-value">Not added</div></div></div>
+<div class="info-row"><div class="info-icon">🏙️</div><div><div class="info-label">City / Location</div><div id="city" class="info-value">Not added</div></div></div>
 <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-label">Date of Birth</div><div id="dob" class="info-value">Not added</div></div></div>
 <div class="info-row"><div class="info-icon">⚧️</div><div><div class="info-label">Gender</div><div id="gender" class="info-value">Not added</div></div></div>
 </div>
 <div id="editPanel" class="edit-panel">
 <div class="edit-dp"><img id="editPreview" class="edit-preview" alt="Picture preview"><input id="avatarFile" class="file-input" type="file" accept="image/*" onchange="previewDP(event)"></div>
-<input id="editName" class="input" maxlength="80" placeholder="Your name"><textarea id="editBio" class="input" maxlength="250" placeholder="📝 Write your bio..."></textarea><input id="editCity" class="input" maxlength="100" placeholder="🏙️ City">
+<input id="editName" class="input" maxlength="80" placeholder="Your name"><textarea id="editBio" class="input" maxlength="250" placeholder="📝 Write your bio..."></textarea><input id="editCity" class="input" maxlength="100" placeholder="🏙️ City / Location">
 <label class="info-label" for="editDob">🎂 Date of Birth</label><input id="editDob" class="input" type="date">
 <select id="editGender" class="input"><option value="">⚧️ Select gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select>
 <label class="info-label" for="editPrivacy">Profile privacy</label><select id="editPrivacy" class="input"><option value="public">🌐 Public</option><option value="private">🔒 Private</option></select>
