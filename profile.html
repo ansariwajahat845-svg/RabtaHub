@@ -17,6 +17,39 @@
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;min-height:68px;background:white;display:flex;justify-content:center;box-shadow:0 -3px 15px #0003;padding-bottom:env(safe-area-inset-bottom)}.nav-inner{width:100%;max-width:680px;display:flex;justify-content:space-around;align-items:center}.nav-item{flex:1;text-align:center;color:#777;font-size:11px;padding:8px 2px;cursor:pointer}.nav-item .icon{display:block;font-size:21px;margin-bottom:3px}.nav-item.active{color:#6c5ce7;font-weight:bold}
 .modal-backdrop{position:fixed;inset:0;z-index:100;background:#160d2dbb;display:none;align-items:flex-end;justify-content:center}.modal{background:white;width:100%;max-width:600px;max-height:80vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px}.modal-head{display:flex;align-items:center;justify-content:space-between;font-weight:bold;font-size:18px;margin-bottom:12px}.close-modal{border:0;background:#eee;border-radius:9px;padding:8px 12px}.user-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eee}.user-row img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#eee}.user-row button{margin-left:auto;border:0;background:#eeeaff;color:#5b43c7;border-radius:9px;padding:8px}
 @media(max-width:390px){.profile-card{margin:10px;padding:14px}.actions{gap:6px}.action-btn{font-size:12px;padding:11px 5px}.name{font-size:21px}.avatar-wrap{height:300px}}
+
+/* Home Feed style for Profile posts; profile header/layout above remains unchanged */
+#postsList .post-card{margin:10px 15px;background:#fff;border:1px solid #e5d9ff;border-radius:14px;padding:12px;box-shadow:0 4px 16px #5b37951a;white-space:normal;color:#352451;overflow-wrap:anywhere}
+#postsList .post-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#postsList .user-info{display:flex;align-items:center;gap:8px;min-width:0}
+#postsList .post-avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#eee;flex-shrink:0}
+#postsList .user-name{font-size:14px;font-weight:800;overflow-wrap:anywhere;color:#7044bd}
+#postsList .post-author-name{background:linear-gradient(90deg,#6c5ce7,#e84393,#0984e3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#postsList .post-date{font-size:11px;color:#888;margin-top:3px}
+#postsList .post-category{display:inline-block;background:#f0edff;color:#6c5ce7;font-size:11px;font-weight:bold;padding:5px 9px;border-radius:15px;margin-top:8px}
+#postsList .post-content{margin:12px 0;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+#postsList .post-image{width:100%;max-height:450px;object-fit:contain;border-radius:12px;margin-top:8px;background:#f7f5ff}
+#postsList .post-voice{margin-top:10px;background:#f7f5ff;padding:8px;border-radius:12px}
+#postsList .post-voice audio{width:100%}
+#postsList .likes-summary{width:100%;margin-top:8px;border:0;border-radius:18px;padding:9px;text-align:left;background:#f0e8ff;color:#7044bd;font-weight:bold}
+#postsList .post-actions,#postsList .user-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:nowrap}
+#postsList .post-actions{border-top:1px solid #eee;padding-top:8px}
+#postsList .post-actions button,#postsList .user-actions button{flex:1;min-width:0;border:0;border-radius:11px;padding:8px 3px;font-size:11px;font-weight:bold;cursor:pointer;overflow-wrap:anywhere}
+#postsList .like-btn{background:#f0e8ff;color:#7044bd}
+#postsList .dislike-btn{background:#f8eaf2;color:#a14c79}
+#postsList .comment-btn{background:#eee7ff;color:#6541a5}
+#postsList .delete-post-btn,#postsList .block-btn{background:#ffe5e5;color:#d00000}
+#postsList .user-actions button{background:#edf8ed;color:#16833b}
+#postsList .user-actions .report-btn{background:#fff0e8;color:#c2410c}
+#postsList .comments{display:none;margin-top:10px;border-top:1px solid #eee;padding-top:10px;white-space:normal}
+#postsList .comment-item{background:#f5f2fb;border-radius:10px;padding:8px;margin:6px 0;font-size:13px;white-space:normal}
+#postsList .comment-input-row{display:flex;gap:6px;margin-top:8px}
+#postsList .comment-input-row input{flex:1;min-width:0;padding:10px;border:1px solid #cbb8f4;border-radius:10px;font-size:14px}
+#postsList .comment-input-row button,#postsList .post-menu{flex-shrink:0;border:0;border-radius:11px;padding:9px;background:#8b5cf6;color:white;font-weight:bold}
+#postsList .post-menu{padding:6px 10px;background:#f0e8ff;color:#6541a5}
+#postsList .empty-post{margin:10px 15px;background:white;border:1px solid #e5d9ff;border-radius:14px;padding:22px;text-align:center;color:#76628e}
+@media(max-width:400px){#postsList .post-actions button,#postsList .user-actions button{font-size:9px;padding:7px 2px}}
+
 </style>
 </head>
 <body>
@@ -217,12 +250,44 @@ async function loadStats(){
  if(!followers.error)$("followersCount").textContent=followers.count||0;
  if(!following.error)$("followingCount").textContent=following.count||0;
 }
+let profilePosts=[],profilePostCounts={},profileCommentCounts={},profileActionMap={};
 async function loadPosts(){
- const {data,error}=await supabaseClient.from("posts").select("id,content,created_at,image_url").eq("user_id",profileUser.id).order("created_at",{ascending:false});
- const list=$("postsList");if(error){list.textContent="Posts load nahi ho sakin.";console.warn(error.message);return}
- if(!data?.length){list.innerHTML='<div class="post-card">Abhi koi post nahi hai.</div>';return}
- list.innerHTML=data.map(post=>`<article class="post-card"><div>${escapeHtml(post.content||"")}</div>${post.image_url?`<img class="post-image" loading="lazy" src="${escapeHtml(post.image_url)}" alt="Post image" onerror="this.style.display='none'">`:""}<div class="post-date">${formatDate(post.created_at)}</div></article>`).join("");
+ const list=$("postsList");list.innerHTML='<div class="empty-post">Loading posts...</div>';
+ try{
+  let r=await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration").eq("user_id",profileUser.id).order("created_at",{ascending:false});
+  if(r.error&&/voice_url|voice_duration|column/i.test(r.error.message))r=await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url").eq("user_id",profileUser.id).order("created_at",{ascending:false});
+  if(r.error)throw r.error;profilePosts=r.data||[];
+  if(!profilePosts.length){list.innerHTML='<div class="empty-post">Abhi koi post nahi hai.</div>';return}
+  const ids=profilePosts.map(p=>p.id),[actions,comments]=await Promise.all([
+   supabaseClient.from("post_actions").select("post_id,user_id,action_type").in("post_id",ids),
+   supabaseClient.from("comments").select("post_id").in("post_id",ids)
+  ]);
+  if(actions.error)console.warn("Post actions:",actions.error.message);if(comments.error)console.warn("Comments:",comments.error.message);
+  profilePostCounts={};profileCommentCounts={};profileActionMap={};
+  (actions.data||[]).forEach(a=>{profilePostCounts[a.post_id]??={like:0,dislike:0};if(a.action_type==="like")profilePostCounts[a.post_id].like++;if(a.action_type==="dislike")profilePostCounts[a.post_id].dislike++;if(a.user_id===currentUser.id)profileActionMap[a.post_id]=a.action_type});
+  (comments.data||[]).forEach(c=>profileCommentCounts[c.post_id]=(profileCommentCounts[c.post_id]||0)+1);
+  renderProfilePosts();
+ }catch(e){list.innerHTML='<div class="empty-post">Posts load nahi ho sakin: '+escapeHtml(e.message)+'<br><button onclick="loadPosts()">Try again</button></div>';console.warn(e)}
 }
+function renderProfilePosts(){
+ const list=$("postsList");list.innerHTML=profilePosts.map(p=>{
+  const own=p.user_id===currentUser.id,counts=profilePostCounts[p.id]||{like:0,dislike:0},cc=profileCommentCounts[p.id]||0;
+  const authorName=profileUser.name||profileUser.username||"Member",username=profileUser.username||"user";
+  return `<article class="post-card" id="profile-post-${p.id}"><div class="post-head"><div class="user-info"><img class="post-avatar" src="${escapeHtml(profileUser.avatar_url||PLACEHOLDER)}" alt="" onerror="this.src='${PLACEHOLDER}'"><div><div class="user-name"><span class="post-author-name">${escapeHtml(authorName)}</span> <small>@${escapeHtml(username)}</small></div><div class="post-date">${formatDate(p.created_at)}</div></div></div>${own?'':'<button class="post-menu" onclick="profilePostMenu(\''+p.id+'\')">⋮</button>'}</div>${p.category?`<div class="post-category">#${escapeHtml(p.category)}</div>`:''}${p.content?`<div class="post-content">${escapeHtml(p.content)}</div>`:''}${p.image_url?`<img class="post-image" loading="lazy" src="${escapeHtml(p.image_url)}" alt="Post image" onerror="this.style.display='none'">`:''}${p.voice_url?`<div class="post-voice"><audio controls src="${escapeHtml(p.voice_url)}"></audio></div>`:''}<button class="likes-summary" onclick="showProfileLikes('${p.id}')">❤️ ${counts.like} Likes</button><div class="post-actions"><button class="like-btn" onclick="profileSetPostAction('${p.id}','like')">${profileActionMap[p.id]==='like'?'💜':'❤️'} ${counts.like}</button><button class="dislike-btn" onclick="profileSetPostAction('${p.id}','dislike')">👎 ${counts.dislike}</button><button class="comment-btn" onclick="toggleProfileComments('${p.id}')">💬 ${cc}</button>${own?`<button class="delete-post-btn" onclick="profileDeletePost('${p.id}')">🗑 Delete</button>`:`<button onclick="profileReplyPost('${escapeJsProfile(username)}')">↩ Reply</button>`}</div>${own?'':`<div class="user-actions"><button class="report-btn" onclick="profileReportPost('${p.id}','${p.user_id}')">🚩 Report</button><button onclick="profileToggleFollow('${p.user_id}')">➕ Follow</button><button class="block-btn" onclick="profileBlockUser('${p.user_id}')">🚫 Block</button></div>`}<div class="comments" id="profile-comments-${p.id}"><div id="profile-clist-${p.id}">Tap comments to load.</div><div class="comment-input-row"><input id="profile-cin-${p.id}" placeholder="Write a comment..." onkeydown="if(event.key==='Enter')addProfileComment('${p.id}')"><button onclick="addProfileComment('${p.id}')">Send</button></div></div></article>`;
+ }).join('');
+}
+function escapeJsProfile(v){return String(v??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n')}
+async function profileSetPostAction(id,type){try{let r=await supabaseClient.from('post_actions').select('id,action_type').eq('post_id',id).eq('user_id',currentUser.id).maybeSingle();if(r.error)throw r.error;let q;if(r.data)q=r.data.action_type===type?await supabaseClient.from('post_actions').delete().eq('id',r.data.id):await supabaseClient.from('post_actions').update({action_type:type}).eq('id',r.data.id);else q=await supabaseClient.from('post_actions').insert({post_id:id,user_id:currentUser.id,action_type:type});if(q.error)throw q.error;await loadPosts()}catch(e){alert('Action failed: '+e.message)}}
+async function showProfileLikes(id){$('modalTitle').textContent='❤️ Liked by';$('modalContent').textContent='Loading...';$('peopleModal').style.display='flex';try{let r=await supabaseClient.from('post_actions').select('user_id').eq('post_id',id).eq('action_type','like');if(r.error)throw r.error;let ids=[...new Set((r.data||[]).map(x=>x.user_id))];if(!ids.length){$('modalContent').textContent='No likes yet.';return}let pr=await supabaseClient.from('profiles').select('id,name,username,avatar_url').in('id',ids);if(pr.error)throw pr.error;$('modalContent').innerHTML=(pr.data||[]).map(u=>`<div class="user-row"><img src="${escapeHtml(u.avatar_url||PLACEHOLDER)}" alt=""><div><strong>${escapeHtml(u.name||u.username||'Member')}</strong><div class="info-label">@${escapeHtml(u.username||'user')}</div></div><button onclick="location.href='profile.html?user=${encodeURIComponent(u.id)}'">View</button></div>`).join('')||'No likes yet.'}catch(e){$('modalContent').textContent=e.message}}
+async function toggleProfileComments(id){const box=$('profile-comments-'+id);box.style.display=box.style.display==='block'?'none':'block';if(box.style.display==='none')return;try{let r=await supabaseClient.from('comments').select('id,user_id,comment,created_at').eq('post_id',id).order('created_at');if(r.error)throw r.error;let ids=[...new Set((r.data||[]).map(c=>c.user_id))],pr=ids.length?await supabaseClient.from('profiles').select('id,name,username').in('id',ids):{data:[]};if(pr.error)throw pr.error;let m={};(pr.data||[]).forEach(u=>m[u.id]=u);$('profile-clist-'+id).innerHTML=(r.data||[]).map(c=>`<div class="comment-item"><b>${escapeHtml(m[c.user_id]?.name||m[c.user_id]?.username||'Member')}</b><div>${escapeHtml(c.comment)}</div><small>${formatDate(c.created_at)}</small></div>`).join('')||'No comments yet.'}catch(e){$('profile-clist-'+id).textContent=e.message}}
+async function addProfileComment(id){let input=$('profile-cin-'+id),comment=input.value.trim();if(!comment)return;try{let r=await supabaseClient.from('comments').insert({post_id:id,user_id:currentUser.id,comment});if(r.error)throw r.error;input.value='';await loadPosts();let box=$('profile-comments-'+id);if(box)box.style.display='block';await toggleProfileComments(id);$('profile-comments-'+id).style.display='block'}catch(e){alert('Comment send nahi hua: '+e.message)}}
+async function profileDeletePost(id){if(!confirm('Apni post delete karni hai?'))return;try{let r=await supabaseClient.from('posts').delete().eq('id',id).eq('user_id',currentUser.id);if(r.error)throw r.error;await loadStats();await loadPosts()}catch(e){alert('Delete nahi hui: '+e.message)}}
+function profileReplyPost(username){const input=document.createElement('textarea');input.className='input';input.placeholder='Reply likhein...';input.value='@'+username+' ';const old=$('profileReplyBox');if(old)old.remove();input.id='profileReplyBox';$('postsSection').insertBefore(input,$('postsList'));input.focus();input.scrollIntoView({behavior:'smooth',block:'center'})}
+function profilePostMenu(id){const choice=prompt('1 = Report post, 2 = Block user');if(choice==='1')profileReportPost(id,profileUser.id);else if(choice==='2')profileBlockUser(profileUser.id)}
+async function profileToggleFollow(id){if(!id||id===currentUser.id)return;try{const q=isFollowing?await supabaseClient.from('follows').delete().eq('follower_id',currentUser.id).eq('following_id',id):await supabaseClient.from('follows').insert({follower_id:currentUser.id,following_id:id});if(q.error)throw q.error;alert(isFollowing?'Unfollowed.':'Followed.');isFollowing=!isFollowing;await loadStats();renderProfilePosts()}catch(e){alert('Follow action failed: '+e.message)}}
+async function profileBlockUser(id){if(!confirm('Is user ko block karna hai?'))return;try{let r=await supabaseClient.from('user_blocks').insert({blocker_id:currentUser.id,blocked_id:id});if(r.error)throw r.error;alert('User blocked')}catch(e){alert('Block nahi hua: '+e.message)}}
+async function profileReportPost(id,uid){let reason=prompt('Report karne ki wajah?');if(!reason)return;try{let r=await supabaseClient.from('post_reports').insert({post_id:id,reporter_id:currentUser.id,reported_user_id:uid,reason});if(r.error)throw r.error;alert('Report submitted')}catch(e){alert('Report submit nahi hui: '+e.message)}}
+
 async function openPeople(type){
  if(isPrivate&&!isOwner&&!isFollowing){alert("🔒 Private profile ki followers/following list dekhne ke liye approval zaroori hai.");return}
  if(type==="posts"){$("postsSection").scrollIntoView({behavior:"smooth"});return}
