@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#6c5ce7">
 <title>ChatZone Admin 👑</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -20,7 +21,7 @@ label{display:block;font-weight:bold;font-size:13px;margin:10px 0 5px}
 input,select,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;font-size:14px;background:white}
 textarea{min-height:65px;resize:vertical}
 button{border:0;border-radius:9px;padding:11px 13px;color:white;font-weight:bold;font-size:13px;cursor:pointer}
-button:disabled{opacity:.5}
+button:disabled{opacity:.5;cursor:not-allowed}
 .purple{background:#6c5ce7}.red{background:#d63031}.green{background:#218c54}.gray{background:#777}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .status{background:#f5f2ff;padding:11px;border-radius:9px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -30,12 +31,14 @@ button:disabled{opacity:.5}
 .hidden{display:none!important}
 .tag{display:inline-block;background:#eee7ff;color:#5935a6;padding:4px 8px;border-radius:20px;font-size:11px;margin-top:5px}
 footer{text-align:center;color:#777;font-size:12px;padding:15px}
+hr{border:0;border-top:1px solid #eee;margin:18px 0}
 </style>
 </head>
 <body>
+
 <header>
   <h1>👑 ChatZone Admin</h1>
-  <p>Creator Dashboard • Member Management • Ban System</p>
+  <p>Creator Dashboard • Member Management • Ban System • Points</p>
 </header>
 
 <main>
@@ -49,9 +52,10 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
   </section>
 
   <div id="dashboard" class="hidden">
+
     <section class="card">
       <h2>🔎 Search Members</h2>
-      <p class="muted">Username ya display name se search karein.</p>
+      <p class="muted">Username ya display name se search karein. Points manage karne ke liye member ka UUID copy karein.</p>
       <form id="searchForm">
         <input id="searchInput" placeholder="Username ya name..." required minlength="2">
         <div class="actions">
@@ -60,6 +64,37 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
       </form>
       <p id="searchStatus" class="muted"></p>
       <div id="searchResults"></div>
+    </section>
+
+    <!-- CREATOR-ONLY POINTS MANAGEMENT -->
+    <section class="card hidden" id="pointsCard">
+      <h2>💎 Points Management</h2>
+      <p class="muted">Member ke points add, deduct ya zero karein. Yeh controls sirf Creator ke liye hain.</p>
+
+      <form id="pointsForm">
+        <label>Member UUID</label>
+        <input id="pointsUserId" placeholder="Search results se member UUID paste karein" required>
+
+        <label>Points ki quantity</label>
+        <input id="pointsAmount" type="number" min="1" step="1" placeholder="Misal: 50" required>
+
+        <label>Reason</label>
+        <input id="pointsReason" maxlength="300" placeholder="Points change karne ki wajah" required>
+
+        <div class="actions">
+          <button class="green" type="submit" id="addPointsBtn">➕ Add Points</button>
+          <button class="red" type="button" id="deductPointsBtn">➖ Deduct Points</button>
+          <button class="gray" type="button" id="resetUserPointsBtn">🔄 User Points Zero</button>
+        </div>
+      </form>
+
+      <hr>
+
+      <h2>⚠️ Reset All Members</h2>
+      <p class="muted">Is action se tamam members ke points zero ho jayenge. Isay sirf tab use karein jab aap waqai sab points reset karna chahte hon.</p>
+      <button class="red" type="button" id="resetAllPointsBtn">⚠️ Reset All Members Points</button>
+
+      <p id="pointsStatus" class="status" style="margin-top:12px">Points management ready.</p>
     </section>
 
     <section class="card">
@@ -77,6 +112,7 @@ footer{text-align:center;color:#777;font-size:12px;padding:15px}
       <p id="adminStatus" class="muted"></p>
       <div id="adminList"></div>
     </section>
+
   </div>
 </main>
 
@@ -106,8 +142,11 @@ const el = id => document.getElementById(id);
 
 function safe(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;",
-    '"':"&quot;", "'":"&#39;"
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   })[c]);
 }
 
@@ -132,13 +171,15 @@ function remainingText(value) {
     : Math.ceil(hours / 24) + " day(s) remaining";
 }
 
-/* Creator ya registered admin ki verification */
+/* CREATOR YA REGISTERED ADMIN VERIFICATION */
 async function verifyAccess() {
   if (checkingAccess) return accessGranted;
+
   checkingAccess = true;
   accessGranted = false;
   currentRole = null;
   el("dashboard").classList.add("hidden");
+  el("pointsCard").classList.add("hidden");
   status("authStatus", "Checking login and admin role...");
 
   try {
@@ -146,6 +187,7 @@ async function verifyAccess() {
     if (error) throw error;
 
     const user = data.session?.user;
+
     if (!user) {
       currentUser = null;
       status("authStatus", "Login required. Pehle ChatZone mein login karein.");
@@ -180,6 +222,7 @@ async function verifyAccess() {
       if (adminError) throw adminError;
 
       const role = String(admin?.role || "").toLowerCase();
+
       if (!["senior_admin", "admin"].includes(role)) {
         status(
           "authStatus",
@@ -206,12 +249,19 @@ async function verifyAccess() {
 
     el("dashboard").classList.remove("hidden");
 
+    /* Points controls sirf Creator ko */
+    el("pointsCard").classList.toggle(
+      "hidden",
+      !(currentRole === "creator" && user.id === CREATOR_ID)
+    );
+
     el("adminHelp").textContent = currentRole === "creator"
       ? "Aap Admin aur Senior Admin assign/remove kar sakte hain."
       : "Admin list dekh sakte hain. Role assign/remove sirf Creator kar sakta hai.";
 
     await Promise.allSettled([loadBans(), loadAdmins()]);
     return true;
+
   } catch (error) {
     status("authStatus", "Verification error: " + (error.message || error));
     return false;
@@ -220,12 +270,13 @@ async function verifyAccess() {
   }
 }
 
-/* Har sensitive operation se pehle current access dobara check karein */
+/* HAR SENSITIVE OPERATION PAR ACCESS CHECK */
 async function ensureAuthorized() {
   const { data, error } = await db.auth.getSession();
   if (error) throw error;
 
   const user = data.session?.user;
+
   if (!user || !currentUser || user.id !== currentUser.id) {
     accessGranted = false;
     throw new Error("Session expired. Please login again.");
@@ -247,6 +298,7 @@ async function ensureAuthorized() {
   if (adminError) throw adminError;
 
   const role = String(admin?.role || "").toLowerCase();
+
   if (!["senior_admin", "admin"].includes(role)) {
     accessGranted = false;
     throw new Error("Admin permission nahi mili. Verify Again karein.");
@@ -258,27 +310,32 @@ async function ensureAuthorized() {
 
 async function ensureCreator() {
   await ensureAuthorized();
+
   if (currentUser?.id !== CREATOR_ID || currentRole !== "creator") {
     throw new Error("Yeh action sirf Creator kar sakta hai.");
   }
 }
 
+/* REFRESH ACCESS & LOGOUT */
 el("refreshAccess").addEventListener("click", verifyAccess);
 
 el("logoutBtn").addEventListener("click", async () => {
   accessGranted = false;
+
   try {
     const { error } = await db.auth.signOut();
     if (error) throw error;
   } catch (error) {
     alert("Logout error: " + (error.message || error));
   }
+
   location.href = "login.html";
 });
 
-/* Member search */
+/* MEMBER SEARCH */
 el("searchForm").addEventListener("submit", async event => {
   event.preventDefault();
+
   try {
     await ensureAuthorized();
     await searchMembers();
@@ -289,6 +346,7 @@ el("searchForm").addEventListener("submit", async event => {
 
 async function searchMembers() {
   const term = el("searchInput").value.trim();
+
   if (term.length < 2) {
     status("searchStatus", "Kam az kam 2 characters likhein.");
     return;
@@ -326,9 +384,10 @@ async function searchMembers() {
         <div class="muted">ID: ${safe(member.id)}</div>
         ${isCreator ? '<span class="tag">👑 Creator</span>' : ""}
         <div class="actions">
-          <button class="red" data-open-ban ${isCreator ? "disabled" : ""}>🚫 Ban Member</button>
+          <button class="purple" type="button" data-copy-id>📋 Copy ID for Points</button>
+          <button class="red" type="button" data-open-ban ${isCreator ? "disabled" : ""}>🚫 Ban Member</button>
           ${currentRole === "creator" && !isCreator
-            ? '<button class="green" data-assign-admin>🛡️ Assign Admin</button>'
+            ? '<button class="green" type="button" data-assign-admin>🛡️ Assign Admin</button>'
             : ""}
         </div>
         <div class="ban-form hidden">
@@ -343,8 +402,8 @@ async function searchMembers() {
           <label>Ban Reason</label>
           <textarea data-reason maxlength="500" placeholder="Ban ki wajah likhein..."></textarea>
           <div class="actions">
-            <button class="red" data-confirm-ban>Confirm Ban</button>
-            <button class="gray" data-cancel-ban>Cancel</button>
+            <button class="red" type="button" data-confirm-ban>Confirm Ban</button>
+            <button class="gray" type="button" data-cancel-ban>Cancel</button>
           </div>
         </div>
         ${currentRole === "creator" && !isCreator ? `
@@ -355,11 +414,17 @@ async function searchMembers() {
               <option value="senior_admin">Senior Admin</option>
             </select>
             <div class="actions">
-              <button class="green" data-confirm-admin>Confirm Role</button>
-              <button class="gray" data-cancel-admin>Cancel</button>
+              <button class="green" type="button" data-confirm-admin>Confirm Role</button>
+              <button class="gray" type="button" data-cancel-admin>Cancel</button>
             </div>
           </div>` : ""}
       `;
+
+      item.querySelector("[data-copy-id]").addEventListener("click", () => {
+        el("pointsUserId").value = member.id;
+        el("pointsCard").scrollIntoView({ behavior: "smooth", block: "start" });
+        status("pointsStatus", "Member selected: @" + (member.username || "unknown"));
+      });
 
       item.querySelector("[data-open-ban]").addEventListener("click", () => {
         item.querySelector(".ban-form").classList.remove("hidden");
@@ -370,6 +435,7 @@ async function searchMembers() {
       });
 
       const assignBtn = item.querySelector("[data-assign-admin]");
+
       if (assignBtn) {
         assignBtn.addEventListener("click", () => {
           item.querySelector(".admin-form").classList.remove("hidden");
@@ -381,6 +447,7 @@ async function searchMembers() {
 
         item.querySelector("[data-confirm-admin]").addEventListener("click", async event => {
           const role = item.querySelector("[data-admin-role]").value;
+
           if (!confirm("Is member ko " + role + " assign karna hai?")) return;
 
           const button = event.currentTarget;
@@ -388,15 +455,18 @@ async function searchMembers() {
 
           try {
             await ensureCreator();
+
             const { error } = await db.rpc("assign_chatzone_admin", {
               target_user_id: member.id,
               target_role: role
             });
+
             if (error) throw error;
 
             alert("Admin role assign ho gaya.");
             item.querySelector(".admin-form").classList.add("hidden");
             await loadAdmins();
+
           } catch (error) {
             alert("Admin assign error: " + (error.message || error));
           } finally {
@@ -413,6 +483,7 @@ async function searchMembers() {
           alert("Ban reason likhna zaroori hai.");
           return;
         }
+
         if (!confirm("Kya aap is account ko ban karna chahte hain?")) return;
 
         const button = event.currentTarget;
@@ -430,11 +501,13 @@ async function searchMembers() {
             ban_reason: reason,
             ban_until: banUntil
           });
+
           if (error) throw error;
 
           alert("Ban record save ho gaya.");
           item.querySelector(".ban-form").classList.add("hidden");
           await loadBans();
+
         } catch (error) {
           alert("Ban error: " + (error.message || error));
         } finally {
@@ -444,16 +517,126 @@ async function searchMembers() {
 
       el("searchResults").appendChild(item);
     });
+
   } catch (error) {
     status("searchStatus", "Search error: " + (error.message || error));
   }
 }
 
-/* Active bans */
+/* ================================
+   CREATOR-ONLY POINTS MANAGEMENT
+   ================================ */
+
+async function changeMemberPoints(action) {
+  try {
+    await ensureCreator();
+
+    const userId = el("pointsUserId").value.trim();
+    const reason = el("pointsReason").value.trim();
+    const amount = Number(el("pointsAmount").value);
+
+    if (action !== "reset-all" && !userId) {
+      throw new Error("Member UUID zaroor select karein.");
+    }
+
+    if (!reason) {
+      throw new Error("Points change karne ki reason likhein.");
+    }
+
+    if (action === "add" || action === "deduct") {
+      if (!Number.isSafeInteger(amount) || amount < 1) {
+        throw new Error("Points quantity 1 ya us se zyada whole number honi chahiye.");
+      }
+    }
+
+    if (action === "reset-user") {
+      if (!confirm("Is member ke points zero karne hain?")) return;
+    }
+
+    if (action === "reset-all") {
+      if (!confirm("WARNING: Tamam members ke points zero karne hain?")) return;
+      if (!confirm("Final confirmation: tamam members ke points reset honge. Continue?")) return;
+    }
+
+    const buttons = [
+      el("addPointsBtn"),
+      el("deductPointsBtn"),
+      el("resetUserPointsBtn"),
+      el("resetAllPointsBtn")
+    ];
+
+    buttons.forEach(button => button.disabled = true);
+    status("pointsStatus", "Processing points request...");
+
+    let result;
+
+    if (action === "add" || action === "deduct") {
+      result = await db.rpc("chatzone_admin_adjust_points", {
+        target_user_id: userId,
+        points_delta: action === "add" ? amount : -amount,
+        change_reason: reason
+      });
+    } else if (action === "reset-user") {
+      result = await db.rpc("chatzone_admin_reset_user_points", {
+        target_user_id: userId,
+        change_reason: reason
+      });
+    } else if (action === "reset-all") {
+      result = await db.rpc("chatzone_admin_reset_all_points", {
+        change_reason: reason
+      });
+    }
+
+    if (result?.error) throw result.error;
+
+    if (action === "reset-all") {
+      status("pointsStatus", "✅ All members points reset successfully.");
+    } else if (action === "reset-user") {
+      status("pointsStatus", "✅ Member ke points zero kar diye gaye.");
+    } else if (action === "add") {
+      status("pointsStatus", "✅ " + amount + " points add ho gaye.");
+    } else {
+      status("pointsStatus", "✅ " + amount + " points deduct ho gaye.");
+    }
+
+    el("pointsAmount").value = "";
+    el("pointsReason").value = "";
+
+  } catch (error) {
+    status("pointsStatus", "❌ Points error: " + (error.message || error));
+  } finally {
+    [
+      el("addPointsBtn"),
+      el("deductPointsBtn"),
+      el("resetUserPointsBtn"),
+      el("resetAllPointsBtn")
+    ].forEach(button => button.disabled = false);
+  }
+}
+
+el("pointsForm").addEventListener("submit", event => {
+  event.preventDefault();
+  changeMemberPoints("add");
+});
+
+el("deductPointsBtn").addEventListener("click", () => {
+  changeMemberPoints("deduct");
+});
+
+el("resetUserPointsBtn").addEventListener("click", () => {
+  changeMemberPoints("reset-user");
+});
+
+el("resetAllPointsBtn").addEventListener("click", () => {
+  changeMemberPoints("reset-all");
+});
+
+/* ACTIVE BANS */
 el("refreshBans").addEventListener("click", loadBans);
 
 async function loadBans() {
   if (!accessGranted) return;
+
   status("banStatus", "Loading bans...");
   el("banList").replaceChildren();
 
@@ -464,6 +647,7 @@ async function loadBans() {
     if (error) throw error;
 
     const bans = data || [];
+
     if (!bans.length) {
       status("banStatus", "Koi active ban nahi mila.");
       return;
@@ -474,6 +658,7 @@ async function loadBans() {
     bans.forEach(ban => {
       const item = document.createElement("div");
       item.className = "item";
+
       item.innerHTML = `
         <strong>@${safe(ban.username || "unknown")}</strong>
         <div class="muted">${safe(ban.name || "")}</div>
@@ -482,7 +667,9 @@ async function loadBans() {
         <div class="muted">Banned: ${safe(dateText(ban.banned_at))}</div>
         <div class="muted">Expires: ${safe(dateText(ban.expires_at))}</div>
         <span class="tag">${safe(remainingText(ban.expires_at))}</span>
-        <div class="actions"><button class="green" data-unban>✅ Unban</button></div>
+        <div class="actions">
+          <button class="green" type="button" data-unban>✅ Unban</button>
+        </div>
       `;
 
       item.querySelector("[data-unban]").addEventListener("click", async event => {
@@ -497,10 +684,12 @@ async function loadBans() {
           const { error } = await db.rpc("chatzone_unban_user", {
             target_user_id: ban.user_id
           });
+
           if (error) throw error;
 
           alert("Unban successful.");
           await loadBans();
+
         } catch (error) {
           alert("Unban error: " + (error.message || error));
         } finally {
@@ -510,16 +699,18 @@ async function loadBans() {
 
       el("banList").appendChild(item);
     });
+
   } catch (error) {
     status("banStatus", "Ban list error: " + (error.message || error));
   }
 }
 
-/* Admin list: role removal Creator-only */
+/* ADMIN LIST: ROLE REMOVAL CREATOR-ONLY */
 el("refreshAdmins").addEventListener("click", loadAdmins);
 
 async function loadAdmins() {
   if (!accessGranted) return;
+
   status("adminStatus", "Loading admins...");
   el("adminList").replaceChildren();
 
@@ -534,6 +725,7 @@ async function loadAdmins() {
     if (error) throw error;
 
     const admins = data || [];
+
     if (!admins.length) {
       status("adminStatus", "Koi admin assigned nahi hai.");
       return;
@@ -552,6 +744,7 @@ async function loadAdmins() {
 
       const item = document.createElement("div");
       item.className = "item";
+
       item.innerHTML = `
         <strong>${safe(profile?.name || profile?.username || "ChatZone Member")}</strong>
         <div class="muted">@${safe(profile?.username || "unknown")}</div>
@@ -559,11 +752,12 @@ async function loadAdmins() {
         <div class="muted">ID: ${safe(admin.user_id)}</div>
         <div class="muted">Assigned: ${safe(dateText(admin.created_at))}</div>
         ${currentRole === "creator"
-          ? '<div class="actions"><button class="red" data-remove-admin>Remove Admin</button></div>'
+          ? '<div class="actions"><button class="red" type="button" data-remove-admin>Remove Admin</button></div>'
           : '<span class="tag">View only</span>'}
       `;
 
       const removeBtn = item.querySelector("[data-remove-admin]");
+
       if (removeBtn) {
         removeBtn.addEventListener("click", async event => {
           if (!confirm("Is admin ka role remove karna hai?")) return;
@@ -577,10 +771,12 @@ async function loadAdmins() {
             const { error } = await db.rpc("remove_chatzone_admin", {
               target_user_id: admin.user_id
             });
+
             if (error) throw error;
 
             alert("Admin role remove ho gaya.");
             await loadAdmins();
+
           } catch (error) {
             alert("Remove error: " + (error.message || error));
           } finally {
@@ -591,17 +787,20 @@ async function loadAdmins() {
 
       el("adminList").appendChild(item);
     }
+
   } catch (error) {
     status("adminStatus", "Admin list error: " + (error.message || error));
   }
 }
 
-db.auth.onAuthStateChange((event) => {
+/* AUTH STATE CHANGES */
+db.auth.onAuthStateChange(event => {
   if (event === "SIGNED_OUT") {
     accessGranted = false;
     currentUser = null;
     currentRole = null;
     el("dashboard").classList.add("hidden");
+    el("pointsCard").classList.add("hidden");
     status("authStatus", "Signed out. Please login again.");
   } else if (event === "SIGNED_IN") {
     setTimeout(() => verifyAccess(), 0);
