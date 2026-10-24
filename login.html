@@ -83,44 +83,70 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
   button.disabled = true;
   button.textContent = "Logging in...";
-  showMessage("Username check ho raha hai...", "#666");
+  showMessage("Login check ho raha hai...", "#666");
 
   try {
-    // Signup page creates accounts with username@rbtahub.local.
-    // Do not reveal whether a username exists.
-    const { data: profile, error: profileError } = await supabaseClient
-      .from("profiles")
-      .select("id, username")
-      .eq("username", username)
-      .maybeSingle();
+    /*
+      Signup code creates Supabase Auth users using:
+      username@rbtahub.local
 
-    if(profileError){
-      console.error("Profile lookup error:", profileError);
-      throw new Error("Username check nahi ho saka. Supabase profiles table ki SELECT policy check karein.");
-    }
-    if(!profile){
-      throw new Error("Username ya password ghalat hai. Username check karein ya signup wale account se login karein.");
-    }
-
+      First attempt direct Auth login. This avoids blocking users whose
+      profiles row is missing or hidden by a SELECT policy.
+    */
     const systemEmail = username + "@rbtahub.local";
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: systemEmail,
-      password: password
+      password
     });
 
     if(error){
       console.error("Supabase login error:", error.message);
-      throw new Error("Username ya password ghalat hai. Agar account pehle banaya tha, signup ke waqt use hui email format bhi check karni hogi.");
+      showMessage("Login nahi ho saka. Username/password check karein. Agar yaqeen hai ke password sahi hai, neeche wali troubleshooting follow karein.");
+      return;
     }
-    if(!data.session){
-      throw new Error("Login session create nahi hui. Dobara try karein.");
+
+    if(!data.session || !data.user){
+      showMessage("Login session create nahi hui. Dobara try karein.");
+      return;
+    }
+
+    /*
+      After successful Auth, try to ensure a basic profile exists.
+      If the current RLS policies do not allow this, do not sign the user out:
+      the Auth login itself has already succeeded. Profile creation should
+      be fixed securely with a database trigger or suitable RLS policy.
+    */
+    const userId = data.user.id;
+    const metadataUsername = (data.user.user_metadata?.username || username).toLowerCase();
+    const metadataName = data.user.user_metadata?.name || metadataUsername;
+
+    const { data: existingProfile, error: profileReadError } = await supabaseClient
+      .from("profiles")
+      .select("id, username")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if(profileReadError){
+      console.warn("Profile lookup after Auth login failed:", profileReadError.message);
+    } else if(!existingProfile){
+      const { error: profileInsertError } = await supabaseClient
+        .from("profiles")
+        .insert({
+          id: userId,
+          username: metadataUsername,
+          name: metadataName
+        });
+
+      if(profileInsertError){
+        console.warn("Could not create profile from browser:", profileInsertError.message);
+      }
     }
 
     showMessage("Login successful! Home khul raha hai...", "#00a86b");
     window.location.href = "index.html";
   } catch(error) {
     console.error("LOGIN ERROR:", error);
-    showMessage(error.message || "Login failed.");
+    showMessage("Koi technical masla hua. Page refresh karke dobara try karein.");
   } finally {
     button.disabled = false;
     button.textContent = "Login";
