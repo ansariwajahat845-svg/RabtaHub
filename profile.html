@@ -58,43 +58,64 @@ const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{pers
 const $=id=>document.getElementById(id);
 const PLACEHOLDER="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='430'%3E%3Crect width='100%25' height='100%25' fill='%23eeeaff'/%3E%3Ctext x='50%25' y='50%25' font-size='72' text-anchor='middle' dominant-baseline='middle'%3E👤%3C/text%3E%3C/svg%3E";
 let currentUser=null,profileUser=null,isOwner=false,isPrivate=false,isFollowing=false,privateRequestStatus="none",onlineChannel=null,followRequestId=null;
-async function init(){try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;currentUser=data.session?.user||null;if(!currentUser){location.href="login.html";return;}startGlobalPresence();const params=new URLSearchParams(location.search);await loadProfile(params.get("user")||currentUser.id);}catch(e){showError("Profile load nahi ho saki: "+e.message)}}
+
+// Profile links may contain a UUID, username, @username, or a username query parameter.
+async function init(){
+ try{
+  const {data,error}=await supabaseClient.auth.getSession();
+  if(error)throw error;
+  currentUser=data.session?.user||null;
+  if(!currentUser){location.href="login.html";return;}
+  startGlobalPresence();
+  const params=new URLSearchParams(location.search);
+  const requestedUser=params.get("user")||params.get("username")||params.get("id")||currentUser.id;
+  await loadProfile(requestedUser);
+ }catch(e){showError("Profile load nahi ho saki: "+(e.message||String(e)));}
+}
 async function startGlobalPresence(){if(!currentUser||onlineChannel)return;try{onlineChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});onlineChannel.subscribe(async status=>{if(status==="SUBSCRIBED"){try{await onlineChannel.track({user_id:String(currentUser.id),online_at:new Date().toISOString()})}catch(e){console.warn("Presence track:",e.message)}}});}catch(e){console.warn("Presence:",e.message);onlineChannel=null}}
 window.addEventListener("beforeunload",()=>{if(onlineChannel)onlineChannel.untrack()});
 supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){if(onlineChannel)supabaseClient.removeChannel(onlineChannel);location.href="login.html";}else if(session?.user&&!currentUser){currentUser=session.user;startGlobalPresence()}});
-async function loadProfile(userId){
- const {data,error}=await supabaseClient.from("profiles").select("id,username,name,avatar_url,profile_privacy,bio,city,dob,gender").eq("id",userId).maybeSingle();
- if(error)throw error;if(!data){showError("Profile nahi mili. Profiles table ki SELECT policy check karein.");return}
- profileUser=data;isOwner=currentUser.id===data.id;isPrivate=String(data.profile_privacy||"public").toLowerCase()==="private";
+
+async function loadProfile(userIdentifier){
+ const identifier=String(userIdentifier||"").trim().replace(/^@/,"");
+ if(!identifier){showError("Username ya user ID nahi mili.");return;}
+ const isUUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
+ let query=supabaseClient.from("profiles").select("id,username,name,avatar_url,profile_privacy,bio,city,dob,gender");
+ // UUIDs are looked up by id; non-UUID values are looked up as usernames.
+ query=isUUID?query.eq("id",identifier):query.ilike("username",identifier);
+ const {data,error}=await query.maybeSingle();
+ if(error)throw error;
+ if(!data){showError("Profile nahi mili. Username ya ID check karein. Agar link sahi hai to Supabase profiles table ki SELECT policy check karein.");return;}
+ profileUser=data;isOwner=currentUser.id===data.id;isPrivate=String(data.profile_privacy||"public").toLowerCase()==="private";isFollowing=false;
  if(!isOwner&&isPrivate){
-   // A private profile is shown only after an accepted follow relationship.
-   const {data:rel,error:relError}=await supabaseClient.from("follows").select("id").eq("follower_id",currentUser.id).eq("following_id",data.id).maybeSingle();
-   if(!relError&&rel)isFollowing=true;
- }else if(!isOwner){await loadFollowStatus()}
+  const {data:rel,error:relError}=await supabaseClient.from("follows").select("id").eq("follower_id",currentUser.id).eq("following_id",data.id).maybeSingle();
+  if(!relError&&rel)isFollowing=true;
+ }else if(!isOwner){await loadFollowStatus();}
  renderProfile();
- if(!isOwner){$("followBtn").style.display="block";$("chatBtn").style.display="block";await loadPrivateRequestStatus();updateFollowButton()}
- if(isOwner||!isPrivate||isFollowing){$("stats").style.display="flex";$("infoCard").style.display="block";$("postsSection").style.display="block";$("privateBox").style.display="none";await loadStats();await loadPosts()}
- else{$("stats").style.display="none";$("infoCard").style.display="none";$("postsSection").style.display="none";$("privateBox").style.display="block";$("privateText").textContent=privateRequestStatus==="pending"?"Follow request pending. Approval ke baad profile details aur posts dekh sakoge.":"Is profile ke posts aur details dekhne ke liye follow request bhejein."}
+ if(!isOwner){$("followBtn").style.display="block";$("chatBtn").style.display="block";await loadPrivateRequestStatus();updateFollowButton();}
+ if(isOwner||!isPrivate||isFollowing){
+  $("stats").style.display="flex";$("infoCard").style.display="block";$("postsSection").style.display="block";$("privateBox").style.display="none";await loadStats();await loadPosts();
+ }else{
+  $("stats").style.display="none";$("infoCard").style.display="none";$("postsSection").style.display="none";$("privateBox").style.display="block";
+  $("privateText").textContent=privateRequestStatus==="pending"?"Follow request pending. Approval ke baad profile details aur posts dekh sakoge.":"Is profile ke posts aur details dekhne ke liye follow request bhejein.";
+ }
  $("loading").style.display="none";$("profileArea").style.display="block";
 }
 function renderProfile(){
  $("name").textContent=profileUser.name||profileUser.username||"User";$("username").textContent="@"+(profileUser.username||"user");$("avatar").src=profileUser.avatar_url||PLACEHOLDER;$("bio").textContent=profileUser.bio||"";$("city").textContent=profileUser.city||"Not added";
- // DOB is personal data: show it only to profile owner.
  $("dob").textContent=isOwner?(profileUser.dob||"Not added"):(profileUser.dob?formatDOB(profileUser.dob):"Hidden");
  $("gender").textContent=isOwner?(profileUser.gender||"Not added"):(profileUser.gender||"Not added");
  $("privacyBadge").innerHTML=`<span class="badge ${isPrivate?"private-badge":"public-badge"}">${isPrivate?"🔒 Private":"🌐 Public"}</span>`;
  $("editBtn").style.display=isOwner?"block":"none";$("followBtn").style.display=isOwner?"none":"block";$("chatBtn").style.display=isOwner?"none":"block";
 }
-function toggleEdit(){const panel=$("editPanel");if(panel.style.display==="block"){panel.style.display="none";return}
- $("editName").value=profileUser.name||"";$("editBio").value=profileUser.bio||"";$("editCity").value=profileUser.city||"";$("editDob").value=profileUser.dob||"";$("editGender").value=profileUser.gender||"";$("editPrivacy").value=isPrivate?"private":"public";$("editPreview").src=profileUser.avatar_url||PLACEHOLDER;panel.style.display="block";panel.scrollIntoView({behavior:"smooth",block:"start"})}
+function toggleEdit(){const panel=$("editPanel");if(panel.style.display==="block"){panel.style.display="none";return}$("editName").value=profileUser.name||"";$("editBio").value=profileUser.bio||"";$("editCity").value=profileUser.city||"";$("editDob").value=profileUser.dob||"";$("editGender").value=profileUser.gender||"";$("editPrivacy").value=isPrivate?"private":"public";$("editPreview").src=profileUser.avatar_url||PLACEHOLDER;panel.style.display="block";panel.scrollIntoView({behavior:"smooth",block:"start"})}
 function previewDP(event){const file=event.target.files[0];if(!file)return;if(!file.type.startsWith("image/")){alert("Sirf image select karein.");event.target.value="";return}if(file.size>5*1024*1024){alert("Image 5 MB se chhoti honi chahiye.");event.target.value="";return}const reader=new FileReader();reader.onload=e=>$("editPreview").src=e.target.result;reader.readAsDataURL(file)}
 async function saveProfile(){const btn=document.querySelector(".save-btn");btn.disabled=true;btn.textContent="Saving...";try{
  let avatarUrl=profileUser.avatar_url||null;const file=$("avatarFile").files[0];
  if(file){const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");const path=`${currentUser.id}/avatar_${Date.now()}.${ext||"jpg"}`;const up=await supabaseClient.storage.from("avatars").upload(path,file,{upsert:true,contentType:file.type});if(up.error)throw new Error("DP upload nahi hui: "+up.error.message);const pub=supabaseClient.storage.from("avatars").getPublicUrl(path);avatarUrl=pub.data.publicUrl}
  const updates={name:$("editName").value.trim()||null,bio:$("editBio").value.trim()||null,city:$("editCity").value.trim()||null,dob:$("editDob").value||null,gender:$("editGender").value||null,profile_privacy:$("editPrivacy").value,avatar_url:avatarUrl};
  const {data,error}=await supabaseClient.from("profiles").update(updates).eq("id",currentUser.id).select("id,username,name,avatar_url,profile_privacy,bio,city,dob,gender").maybeSingle();if(error)throw error;if(!data)throw new Error("Profile update nahi hui. profiles UPDATE RLS policy check karein.");
- profileUser=data;isPrivate=data.profile_privacy==="private";renderProfile();$("editPanel").style.display="none";
- // Refresh page access after privacy change; don't leave private content visible.
+ profileUser=data;isPrivate=String(data.profile_privacy||"public").toLowerCase()==="private";renderProfile();$("editPanel").style.display="none";
  if(isPrivate&&!isOwner){$("stats").style.display="none";$("infoCard").style.display="none";$("postsSection").style.display="none";$("privateBox").style.display="block"}else{$("stats").style.display="flex";$("infoCard").style.display="block";$("postsSection").style.display="block";$("privateBox").style.display="none";await loadStats();await loadPosts()}
  alert("✅ Profile updated successfully!");
  }catch(e){alert("Profile save nahi hui:\n"+e.message)}finally{btn.disabled=false;btn.textContent="💾 Save Profile"}}
@@ -102,49 +123,16 @@ async function loadFollowStatus(){const {data,error}=await supabaseClient.from("
 function updateFollowButton(){const btn=$("followBtn");if(isFollowing){btn.textContent="✓ Following";return}btn.textContent=isPrivate&&privateRequestStatus==="pending"?"⏳ Requested":"➕ Follow"}
 async function toggleFollow(){if(!profileUser||isOwner)return;const btn=$("followBtn");btn.disabled=true;try{
  if(isFollowing){const {error}=await supabaseClient.from("follows").delete().eq("follower_id",currentUser.id).eq("following_id",profileUser.id);if(error)throw error;isFollowing=false;privateRequestStatus="none"}
- else if(isPrivate){
-   // Schema uses follow_requests(follower_id, following_id, status).
-   const {data:existing,error:findError}=await supabaseClient.from("follow_requests").select("id,status").eq("follower_id",currentUser.id).eq("following_id",profileUser.id).eq("status","pending").maybeSingle();if(findError)throw findError;
-   if(existing){privateRequestStatus="pending";alert("⏳ Follow request pehle se pending hai.")}
-   else{const {error}=await supabaseClient.from("follow_requests").insert({follower_id:currentUser.id,following_id:profileUser.id,status:"pending"});if(error)throw error;privateRequestStatus="pending";alert("✅ Follow request sent! Approval ke baad private profile unlock hogi.")}
- }else{
-   // Public profile: direct follow. Database RLS must also block unauthorized private follows.
-   const {error}=await supabaseClient.from("follows").insert({follower_id:currentUser.id,following_id:profileUser.id});if(error)throw error;isFollowing=true;
- }
- updateFollowButton();await loadStats();
- if(isPrivate&&!isFollowing){$("privateText").textContent="Follow request pending. Approval ke baad profile details aur posts dekh sakoge.";$("privateBox").style.display="block"}
+ else if(isPrivate){const {data:existing,error:findError}=await supabaseClient.from("follow_requests").select("id,status").eq("follower_id",currentUser.id).eq("following_id",profileUser.id).eq("status","pending").maybeSingle();if(findError)throw findError;if(existing){privateRequestStatus="pending";alert("⏳ Follow request pehle se pending hai.")}else{const {error}=await supabaseClient.from("follow_requests").insert({follower_id:currentUser.id,following_id:profileUser.id,status:"pending"});if(error)throw error;privateRequestStatus="pending";alert("✅ Follow request sent! Approval ke baad private profile unlock hogi.")}}
+ else{const {error}=await supabaseClient.from("follows").insert({follower_id:currentUser.id,following_id:profileUser.id});if(error)throw error;isFollowing=true;}
+ updateFollowButton();await loadStats();if(isPrivate&&!isFollowing){$("privateText").textContent="Follow request pending. Approval ke baad profile details aur posts dekh sakoge.";$("privateBox").style.display="block"}
  }catch(e){alert("Follow action nahi ho saki:\n"+e.message)}finally{btn.disabled=false}}
-async function loadPrivateRequestStatus(){
- if(isOwner)return;
- const {data,error}=await supabaseClient.from("private_requests").select("id,status,sender_id,receiver_id,created_at").or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${profileUser.id}),and(sender_id.eq.${profileUser.id},receiver_id.eq.${currentUser.id})`).order("created_at",{ascending:false}).limit(1).maybeSingle();
- if(error){console.warn("1-on-1 request status:",error.message);updatePrivateButton();return}
- if(data){const status=String(data.status||"pending").toLowerCase();privateRequestStatus=status==="accepted"?"accepted":(status==="pending"?"pending":"none")}
- updatePrivateButton()
-}
+async function loadPrivateRequestStatus(){if(isOwner)return;const {data,error}=await supabaseClient.from("private_requests").select("id,status,sender_id,receiver_id,created_at").or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${profileUser.id}),and(sender_id.eq.${profileUser.id},receiver_id.eq.${currentUser.id})`).order("created_at",{ascending:false}).limit(1).maybeSingle();if(error){console.warn("1-on-1 request status:",error.message);updatePrivateButton();return}if(data){const status=String(data.status||"pending").toLowerCase();privateRequestStatus=status==="accepted"?"accepted":(status==="pending"?"pending":"none")}updatePrivateButton()}
 function updatePrivateButton(){const b=$("chatBtn");if(privateRequestStatus==="accepted"){b.textContent="💬 Open Chat";b.disabled=false}else if(privateRequestStatus==="pending"){b.textContent="⏳ Request Sent";b.disabled=true}else{b.textContent="💬 1-on-1";b.disabled=false}}
-async function openPrivateChat(){if(!profileUser||isOwner)return;
- // Don't allow a chat request unless an existing accepted follow relationship exists for a private profile.
- if(isPrivate&&!isFollowing){alert("🔒 Pehle follow request bhejein aur profile owner ki approval ka wait karein.");return}
- if(privateRequestStatus==="accepted"){location.href="private-chat.html?user="+encodeURIComponent(profileUser.id);return}
- if(privateRequestStatus==="pending"){alert("⏳ 1-on-1 request already pending hai.");return}
- const btn=$("chatBtn");btn.disabled=true;btn.textContent="Sending...";try{const {error}=await supabaseClient.from("private_requests").insert({sender_id:currentUser.id,receiver_id:profileUser.id,status:"pending"});if(error)throw error;privateRequestStatus="pending";updatePrivateButton();alert("✅ 1-on-1 request sent!")}catch(e){btn.disabled=false;updatePrivateButton();alert("Request send nahi ho saki:\n"+e.message)}}
-async function loadStats(){
- const [posts,followers,following]=await Promise.all([
-  supabaseClient.from("posts").select("id",{count:"exact",head:true}).eq("user_id",profileUser.id),
-  supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("following_id",profileUser.id),
-  supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("follower_id",profileUser.id)
- ]);
- if(!posts.error)$("postCount").textContent=posts.count||0;if(!followers.error)$("followersCount").textContent=followers.count||0;if(!following.error)$("followingCount").textContent=following.count||0;
-}
-async function loadPosts(){const {data,error}=await supabaseClient.from("posts").select("id,content,created_at,image_url").eq("user_id",profileUser.id).order("created_at",{ascending:false});const list=$("postsList");if(error){list.textContent="Posts load nahi ho sakin.";return}if(!data?.length){list.innerHTML='<div class="post-card">Abhi koi post nahi hai.</div>';return}
- list.innerHTML=data.map(post=>`<article class="post-card"><div>${escapeHtml(post.content||"")}</div>${post.image_url?`<img class="post-image" loading="lazy" src="${escapeHtml(post.image_url)}" alt="Post image" onerror="this.style.display='none'">`:""}<div class="post-date">${formatDate(post.created_at)}</div></article>`).join("")}
-async function openPeople(type){if(isPrivate&&!isOwner&&!isFollowing){alert("🔒 Private profile ki followers/following list dekhne ke liye approval zaroori hai.");return}if(type==="posts"){ $("postsSection").scrollIntoView({behavior:"smooth"});return}
- $("modalTitle").textContent=type==="followers"?"Followers":"Following";$("modalContent").textContent="Loading...";$("peopleModal").style.display="flex";
- const col=type==="followers"?"follower_id":"following_id";const match=type==="followers"?"following_id":"follower_id";
- const {data,error}=await supabaseClient.from("follows").select(col).eq(match,profileUser.id).limit(100);if(error){$("modalContent").textContent="List load nahi hui: "+error.message;return}
- const ids=[...new Set((data||[]).map(x=>x[col]).filter(Boolean))];if(!ids.length){$("modalContent").textContent="Abhi koi nahi.";return}
- const {data:profiles,error:profileError}=await supabaseClient.from("profiles").select("id,name,username,avatar_url").in("id",ids);if(profileError){$("modalContent").textContent="User list access nahi hui.";return}
- $("modalContent").innerHTML=(profiles||[]).map(p=>`<div class="user-row"><img src="${escapeHtml(p.avatar_url||PLACEHOLDER)}" alt=""><div><strong>${escapeHtml(p.name||p.username||"User")}</strong><div class="info-label">@${escapeHtml(p.username||"user")}</div></div><button onclick="location.href='profile.html?user=${encodeURIComponent(p.id)}'">View</button></div>`).join("")||"Abhi koi nahi."}
+async function openPrivateChat(){if(!profileUser||isOwner)return;if(isPrivate&&!isFollowing){alert("🔒 Pehle follow request bhejein aur profile owner ki approval ka wait karein.");return}if(privateRequestStatus==="accepted"){location.href="private-chat.html?user="+encodeURIComponent(profileUser.id);return}if(privateRequestStatus==="pending"){alert("⏳ 1-on-1 request already pending hai.");return}const btn=$("chatBtn");btn.disabled=true;btn.textContent="Sending...";try{const {error}=await supabaseClient.from("private_requests").insert({sender_id:currentUser.id,receiver_id:profileUser.id,status:"pending"});if(error)throw error;privateRequestStatus="pending";updatePrivateButton();alert("✅ 1-on-1 request sent!")}catch(e){btn.disabled=false;updatePrivateButton();alert("Request send nahi ho saki:\n"+e.message)}}
+async function loadStats(){const [posts,followers,following]=await Promise.all([supabaseClient.from("posts").select("id",{count:"exact",head:true}).eq("user_id",profileUser.id),supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("following_id",profileUser.id),supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("follower_id",profileUser.id)]);if(!posts.error)$("postCount").textContent=posts.count||0;if(!followers.error)$("followersCount").textContent=followers.count||0;if(!following.error)$("followingCount").textContent=following.count||0}
+async function loadPosts(){const {data,error}=await supabaseClient.from("posts").select("id,content,created_at,image_url").eq("user_id",profileUser.id).order("created_at",{ascending:false});const list=$("postsList");if(error){list.textContent="Posts load nahi ho sakin.";return}if(!data?.length){list.innerHTML='<div class="post-card">Abhi koi post nahi hai.</div>';return}list.innerHTML=data.map(post=>`<article class="post-card"><div>${escapeHtml(post.content||"")}</div>${post.image_url?`<img class="post-image" loading="lazy" src="${escapeHtml(post.image_url)}" alt="Post image" onerror="this.style.display='none'">`:""}<div class="post-date">${formatDate(post.created_at)}</div></article>`).join("")}
+async function openPeople(type){if(isPrivate&&!isOwner&&!isFollowing){alert("🔒 Private profile ki followers/following list dekhne ke liye approval zaroori hai.");return}if(type==="posts"){$("postsSection").scrollIntoView({behavior:"smooth"});return}$("modalTitle").textContent=type==="followers"?"Followers":"Following";$("modalContent").textContent="Loading...";$("peopleModal").style.display="flex";const col=type==="followers"?"follower_id":"following_id";const match=type==="followers"?"following_id":"follower_id";const {data,error}=await supabaseClient.from("follows").select(col).eq(match,profileUser.id).limit(100);if(error){$("modalContent").textContent="List load nahi hui: "+error.message;return}const ids=[...new Set((data||[]).map(x=>x[col]).filter(Boolean))];if(!ids.length){$("modalContent").textContent="Abhi koi nahi.";return}const {data:profiles,error:profileError}=await supabaseClient.from("profiles").select("id,name,username,avatar_url").in("id",ids);if(profileError){$("modalContent").textContent="User list access nahi hui.";return}$("modalContent").innerHTML=(profiles||[]).map(p=>`<div class="user-row"><img src="${escapeHtml(p.avatar_url||PLACEHOLDER)}" alt=""><div><strong>${escapeHtml(p.name||p.username||"User")}</strong><div class="info-label">@${escapeHtml(p.username||"user")}</div></div><button onclick="location.href='profile.html?user=${encodeURIComponent(p.id)}'">View</button></div>`).join("")||"Abhi koi nahi."}
 function closePeople(){$("peopleModal").style.display="none"}
 function formatDate(value){if(!value)return"";const d=new Date(value);if(Number.isNaN(d.getTime()))return"";const seconds=Math.floor((Date.now()-d.getTime())/1000);if(seconds<60)return"Just now";if(seconds<3600)return Math.floor(seconds/60)+" min ago";if(seconds<86400)return Math.floor(seconds/3600)+" hr ago";if(seconds<604800)return Math.floor(seconds/86400)+" days ago";return d.toLocaleDateString()}
 function formatDOB(value){const d=new Date(value+"T00:00:00");return Number.isNaN(d.getTime())?value:d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"})}
