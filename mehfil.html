@@ -70,7 +70,23 @@ const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let currentUser=null,currentProfile=null,currentMehfil=null,currentMembership=null,selectedImageFile=null,currentPage="list",currentReply=null;
-document.addEventListener("DOMContentLoaded",async()=>{try{const {data:{session}}=await supabaseClient.auth.getSession();if(!session){window.location.href="login.html";return;}currentUser=session.user;await loadCurrentProfile();await loadMehfils();}catch(error){console.error(error);showToast(error.message||"Page load nahi ho saki.");}});
+// ChatZone shared online status: same Presence channel used by Home and Private Chat.
+let chatZonePresenceChannel=null;
+async function startChatZonePresence(){
+  if(!currentUser?.id || chatZonePresenceChannel) return;
+  try{
+    chatZonePresenceChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});
+    chatZonePresenceChannel.subscribe(async status=>{
+      if(status==="SUBSCRIBED"){
+        try{await chatZonePresenceChannel.track({user_id:String(currentUser.id),online_at:new Date().toISOString(),page:location.pathname});}
+        catch(error){console.warn("ChatZone presence track:",error);}
+      }
+    });
+  }catch(error){console.warn("ChatZone presence:",error);chatZonePresenceChannel=null;}
+}
+window.addEventListener("beforeunload",()=>{if(chatZonePresenceChannel){try{chatZonePresenceChannel.untrack();}catch(error){}}});
+
+document.addEventListener("DOMContentLoaded",async()=>{try{const {data:{session}}=await supabaseClient.auth.getSession();if(!session){window.location.href="login.html";return;}currentUser=session.user;startChatZonePresence();await loadCurrentProfile();await loadMehfils();}catch(error){console.error(error);showToast(error.message||"Page load nahi ho saki.");}});
 function escapeHtml(value){return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
 function escapeJs(value){return String(value??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g,"\\n").replace(/\r/g,"\\r");}
 function showToast(message){const toast=document.getElementById("toast");toast.textContent=message;toast.style.display="block";clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>toast.style.display="none",4000);}
