@@ -70,6 +70,46 @@ const params=new URLSearchParams(location.search);
 const otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
 let me=null,other=null,sending=false,lastLoad=0,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
 
+// Shared ChatZone online presence: use the SAME channel name as index.html.
+// This lets Home see the user as online while they are using private chat.
+let chatZonePresenceChannel=null;
+let presenceRetryTimer=null;
+async function startChatZonePresence(user){
+  if(!user?.id || chatZonePresenceChannel) return;
+  try{
+    chatZonePresenceChannel=db.channel("chatzone-online-users",{
+      config:{presence:{key:String(user.id)}}
+    });
+    chatZonePresenceChannel.subscribe(async status=>{
+      if(status==="SUBSCRIBED"){
+        try{
+          await chatZonePresenceChannel.track({
+            user_id:String(user.id),
+            online_at:new Date().toISOString(),
+            page:"private"
+          });
+        }catch(error){console.warn("Presence track failed:",error)}
+      }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
+        console.warn("ChatZone presence channel status:",status);
+      }
+    });
+  }catch(error){
+    console.warn("ChatZone presence error:",error);
+    chatZonePresenceChannel=null;
+  }
+}
+async function stopChatZonePresence(){
+  if(presenceRetryTimer){clearTimeout(presenceRetryTimer);presenceRetryTimer=null}
+  if(chatZonePresenceChannel){
+    const channel=chatZonePresenceChannel;
+    chatZonePresenceChannel=null;
+    try{await channel.untrack()}catch(e){}
+    try{await db.removeChannel(channel)}catch(e){}
+  }
+}
+window.addEventListener("pagehide",()=>{if(chatZonePresenceChannel){try{chatZonePresenceChannel.untrack()}catch(e){}}});
+
+
 // UNLIMITED CONFIG
 const PAGE_SIZE = 50;
 let loadedCount = 0;
@@ -85,6 +125,8 @@ try{
 let {data,error}=await db.auth.getSession();if(error)throw error;let session=data?.session;
 if(!session){await new Promise(r=>setTimeout(r,500));session=(await db.auth.getSession()).data?.session}
 if(!session?.user){location.href="login.html";return}me=session.user;
+// Start shared presence as soon as authenticated, without waiting for chat profile/messages.
+startChatZonePresence(me);
 if(!otherId||otherId===me.id){showStatus("Chat user ID is missing or invalid.");document.getElementById("chatName").textContent="Chat unavailable";return}
 let {data:profile,error:pe}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();
 if(pe)throw pe;if(!profile){showStatus("User profile not found.");return}other=profile;
@@ -121,24 +163,12 @@ function prependOlderMessages(rows){
   let box=document.getElementById("messages");
   let oldHeight = box.scrollHeight;
   let oldScroll = box.scrollTop;
-  // save current html without load button
-  let currentBubbles = box.querySelectorAll('.bubble');
   let newHtml = rows.map(r=>bubbleHtml(r)).join("");
-  // insert after load button
-  let loadBtn = document.getElementById('loadOlder');
-  // create temp container for new bubbles
   let temp = document.createElement('div');
   temp.innerHTML = newHtml;
-  // prepend before first bubble
   let firstBubble = box.querySelector('.bubble');
-  if(firstBubble){
-    // insert each new bubble before first
-    Array.from(temp.children).reverse().forEach(node=>{
-      box.insertBefore(node, firstBubble);
-    });
-  }
+  if(firstBubble){Array.from(temp.children).reverse().forEach(node=>{box.insertBefore(node, firstBubble);});}
   chatRows = [...rows, ...chatRows];
-  // restore scroll position
   box.scrollTop = box.scrollHeight - oldHeight + oldScroll;
 }
 async function markIncomingSeen(){if(!me||!otherId||document.visibilityState!=="visible")return false;try{const now=new Date().toISOString();const {error}=await db.from("private_messages").update({seen_at:now}).eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null);if(error)throw error;return true}catch(e){console.warn("Seen status update failed",e);return false}}
@@ -150,21 +180,14 @@ async function loadMessages(isInitial=false){
   isLoadingOlder = true;
   try {
     if(isInitial && loadedCount === 0) showStatus("Loading chat...");
-    const query = db
-      .from("private_messages")
-      .select("*")
+    const query = db.from("private_messages").select("*")
       .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`)
-      .order("created_at", {ascending:false})
-      .range(0, PAGE_SIZE-1);
+      .order("created_at", {ascending:false}).range(0, PAGE_SIZE-1);
     const {data, error} = await Promise.race([
       query,
-      new Promise((_, reject) => setTimeout(
-        () => reject(new Error("Chat request timed out. Check your internet and Supabase connection.")),
-        15000
-      ))
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Chat request timed out. Check your internet and Supabase connection.")),15000))
     ]);
     if(error) throw error;
-
     const rows = data || [];
     if(isInitial) await markIncomingSeen();
     loadedCount = rows.length;
@@ -176,11 +199,8 @@ async function loadMessages(isInitial=false){
   } catch(e) {
     console.error("loadMessages failed:", e);
     showStatus("Messages could not load: " + (e.message || "Check Supabase permissions."));
-  } finally {
-    isLoadingOlder = false;
-  }
+  } finally {isLoadingOlder = false;}
 }
-
 async function loadOlderMessages(){
  if(!me||!otherId||isLoadingOlder||!hasMoreOlder) return;
  isLoadingOlder=true;
@@ -189,97 +209,56 @@ async function loadOlderMessages(){
  try{
   let {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:false}).range(loadedCount, loadedCount+PAGE_SIZE-1);
   if(error)throw error;
-  if(!data || data.length===0){
-    hasMoreOlder=false;
-    if(btn) btn.style.display='none';
-  } else {
-    let sorted = data.reverse();
-    prependOlderMessages(sorted);
-    loadedCount += data.length;
-    hasMoreOlder = data.length === PAGE_SIZE;
-    if(btn){
-      btn.style.display = hasMoreOlder ? 'block' : 'none';
-      btn.textContent = `⬆️ Load older messages (${loadedCount} loaded)`;
-    }
+  if(!data || data.length===0){hasMoreOlder=false;if(btn)btn.style.display='none';}
+  else{
+    let sorted=data.reverse();prependOlderMessages(sorted);loadedCount+=data.length;hasMoreOlder=data.length===PAGE_SIZE;
+    if(btn){btn.style.display=hasMoreOlder?'block':'none';btn.textContent=`⬆️ Load older messages (${loadedCount} loaded)`;}
   }
- }catch(e){console.error(e); showStatus("Older messages load nahi hue.");}
- finally{
-  isLoadingOlder=false;
-  if(btn) btn.disabled=false;
- }
+ }catch(e){console.error(e);showStatus("Older messages load nahi hue.");}
+ finally{isLoadingOlder=false;if(btn)btn.disabled=false;}
 }
-
 function attachLoadOlder(){
  let btn=document.getElementById('loadOlder');
- if(btn){
-  btn.onclick = loadOlderMessages;
-  btn.style.display = hasMoreOlder && chatRows.length>=PAGE_SIZE ? 'block' : (hasMoreOlder && loadedCount>0 ? 'block':'none');
-  if(hasMoreOlder) btn.textContent = `⬆️ Load older messages (${loadedCount} loaded)`;
- }
+ if(btn){btn.onclick=loadOlderMessages;btn.style.display=hasMoreOlder&&chatRows.length>=PAGE_SIZE?'block':(hasMoreOlder&&loadedCount>0?'block':'none');if(hasMoreOlder)btn.textContent=`⬆️ Load older messages (${loadedCount} loaded)`;}
 }
-
 function startReply(id){const row=chatRows.find(r=>String(r.id)===String(id));if(!row)return;replyTarget=row;const preview=document.getElementById("replyPreview");preview.textContent=`Replying to ${row.sender_id===me.id?"yourself":(other?.name||other?.username||"message")}: ${replySnippet(row)}`;document.getElementById("replyBar").classList.add("show");document.getElementById("messageInput").focus()}
 function cancelReply(){replyTarget=null;document.getElementById("replyBar").classList.remove("show");document.getElementById("replyPreview").textContent=""}
 async function deleteOwnMessage(id,button){
-if(!me||!id)return;
-if(!confirm("Delete this message? This removes it from the chat for both people."))return;
-if(button)button.disabled=true;
-try{
-const {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);
-if(error)throw error;
-showStatus("");await loadMessages(true);
-}catch(err){console.error(err);showStatus("Message delete nahi hua. DELETE RLS check karein.");if(button)button.disabled=false}
+if(!me||!id)return;if(!confirm("Delete this message? This removes it from the chat for both people."))return;if(button)button.disabled=true;
+try{const {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);if(error)throw error;showStatus("");await loadMessages(true);}
+catch(err){console.error(err);showStatus("Message delete nahi hua. DELETE RLS check karein.");if(button)button.disabled=false}
 }
-document.getElementById("messages").addEventListener("click",e=>{
-const rb=e.target.closest("[data-reply-id]");if(rb){startReply(rb.dataset.replyId);return}const b=e.target.closest("[data-delete-id]");if(b)deleteOwnMessage(b.dataset.deleteId,b);
-});
+document.getElementById("messages").addEventListener("click",e=>{const rb=e.target.closest("[data-reply-id]");if(rb){startReply(rb.dataset.replyId);return}const b=e.target.closest("[data-delete-id]");if(b)deleteOwnMessage(b.dataset.deleteId,b);});
 document.getElementById("clearBtn").addEventListener("click",async()=>{
-if(!me||!otherId)return;
-if(!confirm("Clear chat? Sirf aap ke bheje hue messages delete honge. Doosre person ke messages rahenge."))return;
+if(!me||!otherId)return;if(!confirm("Clear chat? Sirf aap ke bheje hue messages delete honge. Doosre person ke messages rahenge."))return;
 const btn=document.getElementById("clearBtn");btn.disabled=true;showStatus("Clearing your messages...");
-try{
-const {error}=await db.from("private_messages").delete().eq("sender_id",me.id).eq("receiver_id",otherId);
-if(error)throw error;
-showStatus("");loadedCount=0; hasMoreOlder=true; await loadMessages(true);
-}catch(err){console.error(err);showStatus("Chat clear nahi hui. DELETE RLS check karein.")}
+try{const {error}=await db.from("private_messages").delete().eq("sender_id",me.id).eq("receiver_id",otherId);if(error)throw error;showStatus("");loadedCount=0;hasMoreOlder=true;await loadMessages(true);}
+catch(err){console.error(err);showStatus("Chat clear nahi hui. DELETE RLS check karein.")}
 finally{btn.disabled=false}
 });
 document.getElementById("leaveBtn").addEventListener("click",()=>{
- if(!me || !otherId) return;
- if(!confirm("Leave this chat and return to Private Chat list? Messages will not be deleted.")) return;
- try {
-   const key = "chatzone_hidden_private_chats_" + me.id;
-   const hidden = JSON.parse(localStorage.getItem(key) || "[]");
-   if(!hidden.includes(otherId)) hidden.push(otherId);
-   localStorage.setItem(key, JSON.stringify(hidden));
- } catch(e) {
-   console.warn("Could not save hidden chat locally", e);
- }
+ if(!me||!otherId)return;if(!confirm("Leave this chat and return to Private Chat list? Messages will not be deleted."))return;
+ try{const key="chatzone_hidden_private_chats_"+me.id;const hidden=JSON.parse(localStorage.getItem(key)||"[]");if(!hidden.includes(otherId))hidden.push(otherId);localStorage.setItem(key,JSON.stringify(hidden));}
+ catch(e){console.warn("Could not save hidden chat locally",e)}
  goBack();
 });
 async function uploadAndSend(file,type){
-if(!me||!otherId||sending||!file)return;
-sending=true;showStatus("Uploading media...");
+if(!me||!otherId||sending||!file)return;sending=true;showStatus("Uploading media...");
 try{
-const safeName=String(file.name||(`${type}-${Date.now()}`)).replace(/[^a-zA-Z0-9._-]/g,"_");
-const path=`${me.id}/${Date.now()}-${safeName}`;
-const {data:up,error:uploadError}=await db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});
-if(uploadError)throw uploadError;
-const {data:pub}=db.storage.from("chat-media").getPublicUrl(up.path);
-if(!pub?.publicUrl)throw new Error("Could not create media URL.");
-const payload={sender_id:me.id,receiver_id:otherId,message_type:type,content:"",media_url:pub.publicUrl};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}const {error}=await db.from("private_messages").insert(payload);
-if(error)throw error;
-cancelReply();showStatus("");await loadMessages(true);
+const safeName=String(file.name||(`${type}-${Date.now()}`)).replace(/[^a-zA-Z0-9._-]/g,"_");const path=`${me.id}/${Date.now()}-${safeName}`;
+const {data:up,error:uploadError}=await db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});if(uploadError)throw uploadError;
+const {data:pub}=db.storage.from("chat-media").getPublicUrl(up.path);if(!pub?.publicUrl)throw new Error("Could not create media URL.");
+const payload={sender_id:me.id,receiver_id:otherId,message_type:type,content:"",media_url:pub.publicUrl};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}
+const {error}=await db.from("private_messages").insert(payload);if(error)throw error;cancelReply();showStatus("");await loadMessages(true);
 }catch(err){console.error(err);showStatus("Media not sent: "+(err.message||"Check chat-media bucket."))}
 finally{sending=false}
 }
 document.getElementById("sendForm").addEventListener("submit",async e=>{
-e.preventDefault();if(sending||!me||!otherId)return;
-const input=document.getElementById("messageInput"),content=input.value.trim();if(!content)return;
+e.preventDefault();if(sending||!me||!otherId)return;const input=document.getElementById("messageInput"),content=input.value.trim();if(!content)return;
 sending=true;document.getElementById("send").disabled=true;
 try{
-const payload={sender_id:me.id,receiver_id:otherId,message_type:"text",content};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}const {error}=await db.from("private_messages").insert(payload);
-if(error)throw error;input.value="";input.style.height="42px";cancelReply();showStatus("");await loadMessages(true);
+const payload={sender_id:me.id,receiver_id:otherId,message_type:"text",content};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}
+const {error}=await db.from("private_messages").insert(payload);if(error)throw error;input.value="";input.style.height="42px";cancelReply();showStatus("");await loadMessages(true);
 }catch(err){console.error(err);showStatus("Message not sent: "+(err.message||"Check permissions."))}
 finally{sending=false;document.getElementById("send").disabled=false;input.focus()}
 });
@@ -291,8 +270,7 @@ const emojiPanel=document.getElementById("emojiPanel");emojiPanel.innerHTML=emoj
 emojiPanel.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{const inp=document.getElementById("messageInput"),a=inp.selectionStart,z=inp.selectionEnd;inp.value=inp.value.slice(0,a)+b.textContent+inp.value.slice(z);inp.focus();inp.selectionStart=inp.selectionEnd=a+b.textContent.length;emojiPanel.style.display="none"}));
 document.getElementById("emojiBtn").addEventListener("click",()=>{emojiPanel.style.display=emojiPanel.style.display==="flex"?"none":"flex"});
 document.getElementById("voiceBtn").addEventListener("click",async()=>{
-if(recording){mediaRecorder?.stop();return}
-if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showStatus("Voice recording is not supported in this browser.");return}
+if(recording){mediaRecorder?.stop();return}if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showStatus("Voice recording is not supported in this browser.");return}
 try{
 const stream=await navigator.mediaDevices.getUserMedia({audio:true});voiceChunks=[];mediaRecorder=new MediaRecorder(stream);
 mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};
@@ -306,9 +284,9 @@ input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventD
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me){me=session.user;init()}});
 init();
 // Polling - only refresh latest, not full history
-setInterval(()=>{if(Date.now()-lastLoad>5000 && !isLoadingOlder) loadMessages(true)},6000);
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible" && !isLoadingOlder) loadMessages(true)});
-window.addEventListener("focus",()=>{if(!isLoadingOlder) loadMessages(true)});
+setInterval(()=>{if(Date.now()-lastLoad>5000&&!isLoadingOlder)loadMessages(true)},6000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!isLoadingOlder)loadMessages(true)});
+window.addEventListener("focus",()=>{if(!isLoadingOlder)loadMessages(true)});
 </script>
 <script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
