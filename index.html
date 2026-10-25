@@ -7,12 +7,76 @@
 <title>ChatZone 💬</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;padding:0;width:100%;overflow-x:hidden}body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#f8f5ff,#e9ddff);color:#352451}.app{width:100%;max-width:680px;margin:auto;min-height:100vh;background:#f8f5ff;padding-bottom:82px}.header{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;padding:10px 7px;position:sticky;top:0;z-index:20}.header-top{display:flex;align-items:center;gap:6px}.logo{font-size:18px;font-weight:bold;white-space:nowrap}.header-buttons{display:flex;gap:4px;flex:1;justify-content:flex-end;min-width:0}.header-buttons button{flex:1;min-width:0;height:39px;border:1px solid #d8c7ff;background:#ede5ff;color:#59359a;border-radius:12px;padding:0 4px;font-size:11px;font-weight:bold;white-space:nowrap}.online-section,.welcome,.create-box,.post,.points-panel{background:#fff;margin:12px;padding:12px;border-radius:14px;border:1px solid #e5d9ff;box-shadow:0 4px 16px #5b37951a}.online-title{font-size:13px;font-weight:bold;margin-bottom:8px}.online-users{display:flex;gap:8px;overflow:auto}.online-user{display:flex;align-items:center;gap:5px;background:#f0e8ff;border-radius:22px;padding:4px 9px;flex-shrink:0;font-size:12px;cursor:pointer}.online-user-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0}.online-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;flex-shrink:0}.welcome{text-align:center;font-weight:bold}.points-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.points-title{font-weight:800;color:#7044bd}.points-total{font-size:22px;font-weight:900;color:#7c3aed}.points-note{font-size:11px;color:#76628e;margin-top:4px}.points-top{margin-top:10px;border-top:1px solid #ded0ff;padding-top:8px}.points-row{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #eee7ff;font-size:12px}.points-name{flex:1;overflow:hidden;text-overflow:ellipsis}.points-value{font-weight:bold;color:#7044bd}textarea,input,select{width:100%;background:white;color:#352451;border:1px solid #cbb8f4;border-radius:12px;padding:11px;font:15px Arial;outline:none}textarea{min-height:78px;resize:vertical}.create-actions,.post-actions,.user-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.create-actions button,.post-actions button,.user-actions button,.comment-input-row button{border:0;border-radius:11px;padding:10px;background:#8b5cf6;color:white;font-weight:bold;cursor:pointer;min-height:38px}.create-actions button{flex:1}.upload-btn,.voice-btn{background:#eee!important;color:#6541a5!important}.feed-header{padding:0 12px}.feed-header h3{margin:8px 0}.post{margin:10px 12px}.post-head{display:flex;justify-content:space-between;align-items:center;gap:7px}.user-info{display:flex;align-items:center;gap:8px;min-width:0}.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0;cursor:pointer}.user-name{font-size:14px;font-weight:800;overflow-wrap:anywhere;cursor:pointer}.post-author-name{background:linear-gradient(90deg,#6c5ce7,#e84393,#0984e3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.role-badge{display:inline-block;padding:3px 7px;margin-left:3px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle;-webkit-text-fill-color:initial}.role-creator{background:#fff0c2;color:#875500}.role-senior{background:#dbeafe;color:#1d4ed8}.post-date{font-size:11px;color:#888;margin-top:3px}.post-category{display:inline-block;background:#f0edff;color:#6c5ce7;font-size:11px;font-weight:bold;padding:5px 9px;border-radius:15px;margin-top:8px}.post-content{margin:12px 0;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.post-image{width:100%;max-height:450px;object-fit:contain;border-radius:12px;margin-top:8px}.post-voice{margin-top:10px;background:#f7f5ff;padding:8px;border-radius:12px}.post-voice audio{width:100%}.post-actions{border-top:1px solid #eee;padding-top:8px;flex-wrap:nowrap}.post-actions button,.user-actions button{flex:1;min-width:0;padding:7px 3px;font-size:11px;overflow:hidden}.like-btn{background:#f0e8ff!important;color:#7044bd!important}.dislike-btn{background:#f8eaf2!important;color:#a14c79!important}.comment-btn{background:#eee7ff!important;color:#6541a5!important}.delete-post-btn,.block-btn{background:#ffe5e5!important;color:#d00000!important}.user-actions button{background:#edf0ff;color:#6541a5}.report-btn{background:#fff0e8!important;color:#c2410c!important}.comments{display:none;margin-top:10px;border-top:1px solid #eee;padding-top:10px}.comment-item{background:#f5f2fb;border-radius:10px;padding:8px;margin:6px 0;font-size:13px}.comment-input-row{display:flex;gap:6px;margin-top:8px}.comment-input-row input{flex:1;min-width:0}.comment-input-row button{flex-shrink:0}.empty,.loading{text-align:center;padding:25px 10px;color:#777;overflow-wrap:anywhere}.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:680px;height:70px;background:#fff;border-top:1px solid #ded0ff;display:flex;align-items:center;justify-content:space-around;padding:4px;gap:3px;z-index:30;box-shadow:0 -3px 14px #5b379514}.bottom-nav button{border:0;background:none;flex:1;min-width:0;height:60px;color:#7044bd;font-size:10px;font-weight:bold;border-radius:10px}.bottom-nav button.active{background:#f1edff}.popup{display:none;position:fixed;inset:0;background:#0007;z-index:100;padding:12vh 4% 20px}.popup-content{max-width:600px;max-height:76vh;overflow:auto;margin:auto;background:white;border-radius:18px;padding:15px}.popup-head{display:flex;justify-content:space-between;align-items:center}.popup-head button{border:0;border-radius:15px;padding:8px 12px}.share-option{display:block;width:100%;text-align:left;margin-top:8px;background:#f0e8ff;color:#6541a5;border:0;border-radius:11px;padding:10px;font-weight:bold}.share-form{display:none;margin-top:12px}.share-submit{width:100%;margin-top:9px;border:0;border-radius:11px;padding:10px;background:#8b5cf6;color:#fff;font-weight:bold}.cancel-share{width:100%;margin-top:7px;background:#eee;color:#555;border:0;border-radius:11px;padding:10px}.hidden-input{display:none}.image-preview{width:100%;max-height:250px;object-fit:contain;display:none;margin-top:8px}.likes-content{max-width:430px}.like-user{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #eee;cursor:pointer}.like-user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#ddd}.trend-item{padding:10px;border-bottom:1px solid #eee}@media(max-width:400px){.logo{font-size:13px}.header-buttons button{font-size:9px;padding:0 2px}.post-actions button,.user-actions button{font-size:9px}.bottom-nav button{font-size:9px}}
+*{box-sizing:border-box}
+:root{
+ --page-bg:linear-gradient(135deg,#f8f5ff,#e9ddff);
+ --app-bg:#f8f5ff;--surface:#fff;--surface-soft:#f0e8ff;--surface-soft-2:#f7f5ff;
+ --text:#352451;--muted:#76628e;--border:#e5d9ff;--input-border:#cbb8f4;
+ --accent:#8b5cf6;--accent-2:#a78bfa;--accent-text:#7044bd;--button-text:#fff;
+ --shadow:0 4px 16px #5b37951a;--nav-shadow:0 -3px 14px #5b379514;
+}
+html[data-theme="dark"]{
+ color-scheme:dark;
+ --page-bg:linear-gradient(135deg,#100d18,#1c1430);
+ --app-bg:#171222;--surface:#211a30;--surface-soft:#302344;--surface-soft-2:#282036;
+ --text:#f0e9ff;--muted:#b5a7cb;--border:#403054;--input-border:#59416f;
+ --accent:#8b5cf6;--accent-2:#a78bfa;--accent-text:#d5c2ff;--button-text:#fff;
+ --shadow:0 4px 16px #00000035;--nav-shadow:0 -3px 14px #00000035;
+}
+html,body{margin:0;padding:0;width:100%;min-height:100%;overflow-x:hidden}
+body{font-family:Arial,sans-serif;background:var(--page-bg);color:var(--text);transition:background .2s,color .2s}
+.app{width:100%;max-width:680px;margin:auto;min-height:100vh;background:var(--app-bg);padding-bottom:82px;transition:background .2s}
+.header{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;padding:10px 7px;position:sticky;top:0;z-index:20}
+.header-top{display:flex;align-items:center;gap:6px}.logo{font-size:18px;font-weight:bold;white-space:nowrap}
+.header-buttons{display:flex;gap:4px;flex:1;justify-content:flex-end;min-width:0}
+.header-buttons button{flex:1;min-width:0;height:39px;border:1px solid #d8c7ff;background:#ede5ff;color:#59359a;border-radius:12px;padding:0 4px;font-size:11px;font-weight:bold;white-space:nowrap}
+.online-section,.welcome,.create-box,.post,.points-panel{background:var(--surface);margin:12px;padding:12px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.online-title{font-size:13px;font-weight:bold;margin-bottom:8px}.online-users{display:flex;gap:8px;overflow:auto}
+.online-user{display:flex;align-items:center;gap:5px;background:var(--surface-soft);border-radius:22px;padding:4px 9px;flex-shrink:0;font-size:12px;cursor:pointer}
+.online-user-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0}.online-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;flex-shrink:0}
+.welcome{text-align:center;font-weight:bold}.points-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.points-title{font-weight:800;color:var(--accent-text)}.points-total{font-size:22px;font-weight:900;color:#a78bfa}
+.points-note{font-size:11px;color:var(--muted);margin-top:4px}.points-top{margin-top:10px;border-top:1px solid var(--border);padding-top:8px}
+.points-row{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}.points-name{flex:1;overflow:hidden;text-overflow:ellipsis}.points-value{font-weight:bold;color:var(--accent-text)}
+textarea,input,select{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--input-border);border-radius:12px;padding:11px;font:15px Arial;outline:none}
+textarea{min-height:78px;resize:vertical}textarea::placeholder,input::placeholder{color:var(--muted)}
+.create-actions,.post-actions,.user-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.create-actions button,.post-actions button,.user-actions button,.comment-input-row button{border:0;border-radius:11px;padding:10px;background:var(--accent);color:white;font-weight:bold;cursor:pointer;min-height:38px}
+.create-actions button{flex:1}.upload-btn,.voice-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}
+.feed-header{padding:0 12px}.feed-header h3{margin:8px 0}.post{margin:10px 12px}
+.post-head{display:flex;justify-content:space-between;align-items:center;gap:7px}.user-info{display:flex;align-items:center;gap:8px;min-width:0}
+.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0;cursor:pointer}
+.user-name{font-size:14px;font-weight:800;overflow-wrap:anywhere;cursor:pointer}.post-author-name{background:linear-gradient(90deg,#6c5ce7,#e84393,#0984e3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.role-badge{display:inline-block;padding:3px 7px;margin-left:3px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle;-webkit-text-fill-color:initial}
+.role-creator{background:#fff0c2;color:#875500}.role-senior{background:#dbeafe;color:#1d4ed8}
+.post-date{font-size:11px;color:var(--muted);margin-top:3px}.post-category{display:inline-block;background:var(--surface-soft);color:var(--accent-text);font-size:11px;font-weight:bold;padding:5px 9px;border-radius:15px;margin-top:8px}
+.post-content{margin:12px 0;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.post-image{width:100%;max-height:450px;object-fit:contain;border-radius:12px;margin-top:8px}
+.post-voice{margin-top:10px;background:var(--surface-soft-2);padding:8px;border-radius:12px}.post-voice audio{width:100%}
+.post-actions{border-top:1px solid var(--border);padding-top:8px;flex-wrap:nowrap}.post-actions button,.user-actions button{flex:1;min-width:0;padding:7px 3px;font-size:11px;overflow:hidden}
+.like-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}.dislike-btn{background:#f8eaf2!important;color:#a14c79!important}
+.comment-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}.delete-post-btn,.block-btn{background:#ffe5e5!important;color:#d00000!important}
+.user-actions button{background:var(--surface-soft);color:var(--accent-text)}.report-btn{background:#fff0e8!important;color:#c2410c!important}
+.comments{display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}.comment-item{background:var(--surface-soft-2);border-radius:10px;padding:8px;margin:6px 0;font-size:13px}
+.comment-input-row{display:flex;gap:6px;margin-top:8px}.comment-input-row input{flex:1;min-width:0}.comment-input-row button{flex-shrink:0}
+.empty,.loading{text-align:center;padding:25px 10px;color:var(--muted);overflow-wrap:anywhere}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:680px;height:70px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:4px;gap:3px;z-index:30;box-shadow:var(--nav-shadow)}
+.bottom-nav button{border:0;background:none;flex:1;min-width:0;height:60px;color:var(--accent-text);font-size:10px;font-weight:bold;border-radius:10px}
+.bottom-nav button.active{background:var(--surface-soft)}
+.popup{display:none;position:fixed;inset:0;background:#0009;z-index:100;padding:12vh 4% 20px}.popup-content{max-width:600px;max-height:76vh;overflow:auto;margin:auto;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:18px;padding:15px}
+.popup-head{display:flex;justify-content:space-between;align-items:center}.popup-head button{border:0;border-radius:15px;padding:8px 12px;background:var(--surface-soft);color:var(--text)}
+.share-option{display:block;width:100%;text-align:left;margin-top:8px;background:var(--surface-soft);color:var(--accent-text);border:0;border-radius:11px;padding:10px;font-weight:bold}
+.share-form{display:none;margin-top:12px}.share-submit{width:100%;margin-top:9px;border:0;border-radius:11px;padding:10px;background:var(--accent);color:#fff;font-weight:bold}
+.cancel-share{width:100%;margin-top:7px;background:var(--surface-soft);color:var(--text);border:0;border-radius:11px;padding:10px}
+.hidden-input{display:none}.image-preview{width:100%;max-height:250px;object-fit:contain;display:none;margin-top:8px}
+.likes-content{max-width:430px}.like-user{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.like-user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#ddd}.trend-item{padding:10px;border-bottom:1px solid var(--border)}
+.theme-toggle{flex:0 0 40px!important;width:40px;height:39px!important;border-radius:12px!important;font-size:17px!important;padding:0!important}
+@media(max-width:400px){.logo{font-size:13px}.header-buttons button{font-size:9px;padding:0 2px}.post-actions button,.user-actions button{font-size:9px}.bottom-nav button{font-size:9px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="header"><div class="header-top"><div class="logo">ChatZone 💬</div><div class="header-buttons"><button onclick="showTrending()">🔥 Trending</button><button onclick="showShare()">📤 Share</button><button onclick="goStars()">⭐</button><button onclick="goNotifications()">🔔</button></div></div></header>
+<header class="header"><div class="header-top"><div class="logo">ChatZone 💬</div><div class="header-buttons"><button onclick="showTrending()">🔥 Trending</button><button onclick="showShare()">📤 Share</button><button onclick="goStars()">⭐</button><button onclick="goNotifications()">🔔</button><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Switch to dark mode" title="Switch theme">🌙</button></div></div></header>
 <div id="homeView">
 <section class="online-section"><div class="online-title">🟢 <span id="onlineCount">0</span> Users Online</div><div id="onlineUsers" class="online-users">Online users loading...</div></section>
 <div class="welcome">👋 Welcome to ChatZone! 💜💬</div>
@@ -34,6 +98,31 @@ let currentUser=null,currentPosts=[],profileMap={},followMap={},pointsMap={},pos
 const CREATOR_ID="db4d3669-e3ec-42ec-a716-791f43cebd8d";
 const SENIOR_ID="21e46d48-cd2c-4824-992e-5beb7f797c5b";
 const SENIOR_USERNAME="dream_girl";
+
+/* Dark / Light theme: saved on this device and applied immediately. */
+function applyTheme(theme){
+  const chosen=theme==="dark"?"dark":"light";
+  document.documentElement.dataset.theme=chosen;
+  try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}
+  const btn=document.getElementById("themeToggle");
+  if(btn){
+    btn.textContent=chosen==="dark"?"☀️":"🌙";
+    btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";
+    btn.setAttribute("aria-label",btn.title);
+  }
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6";
+}
+function toggleTheme(){
+  const current=document.documentElement.dataset.theme==="dark"?"dark":"light";
+  applyTheme(current==="dark"?"light":"dark");
+}
+(function initTheme(){
+  let saved="light";
+  try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}
+  applyTheme(saved);
+})();
+
 function $(id){return document.getElementById(id)}
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 function escJs(v){return String(v??"").replaceAll("\\","\\\\").replaceAll("'","\\'").replaceAll("\n","\\n")}
@@ -137,9 +226,9 @@ function renderPost(p,c={like:0,dislike:0},cc=0,prefix=""){
   let pr=profileMap[p.user_id]||{},u=pr.username||"Member",name=pr.name||pr.username||"Member",own=p.user_id===currentUser.id;
   return '<article class="post" id="post-'+prefix+p.id+'"><div class="post-head"><div class="user-info">'+
     (pr.avatar_url?'<img class="avatar" src="'+esc(pr.avatar_url)+'" alt="'+esc(name)+'" onclick="openProfile(\''+escJs(p.user_id)+'\')" onerror="this.style.visibility=\'hidden\'">':'<div class="avatar" style="display:grid;place-items:center" onclick="openProfile(\''+escJs(p.user_id)+'\')">👤</div>')+
-    '<div><div class="user-name" onclick="openProfile(\''+escJs(p.user_id)+'\')"><span class="post-author-name">'+esc(name)+'</span> '+getRoleBadge(p.user_id,pr.username)+' <span style="font-size:10px;background:#efe7ff;border-radius:8px;padding:3px">⭐ '+Number(pointsMap[p.user_id]||0)+' pts</span>'+(pr.username?'<small> @'+esc(pr.username)+'</small>':'')+'</div><div class="post-date">'+formatDate(p.created_at)+'</div></div></div>'+(own?'':'<button onclick="blockUser(\''+escJs(p.user_id)+'\')">⋮</button>')+'</div>'+
+    '<div><div class="user-name" onclick="openProfile(\''+escJs(p.user_id)+'\')"><span class="post-author-name">'+esc(name)+'</span> '+getRoleBadge(p.user_id,pr.username)+' <span style="font-size:10px;background:var(--surface-soft);color:var(--accent-text);border-radius:8px;padding:3px">⭐ '+Number(pointsMap[p.user_id]||0)+' pts</span>'+(pr.username?'<small> @'+esc(pr.username)+'</small>':'')+'</div><div class="post-date">'+formatDate(p.created_at)+'</div></div></div>'+(own?'':'<button onclick="blockUser(\''+escJs(p.user_id)+'\')">⋮</button>')+'</div>'+
     (p.category?'<div class="post-category">#'+esc(p.category)+'</div>':'')+(p.content?'<div class="post-content">'+esc(p.content)+'</div>':'')+(p.image_url?'<img class="post-image" src="'+esc(p.image_url)+'" loading="lazy" alt="Post image">':'')+(p.voice_url?'<div class="post-voice"><audio controls src="'+esc(p.voice_url)+'"></audio></div>':'')+
-    '<button onclick="showLikes('+p.id+')" style="width:100%;margin-top:8px;border:0;border-radius:18px;padding:9px;text-align:left;background:#f0e8ff;color:#7044bd">❤️ '+c.like+' Likes</button><div class="post-actions"><button class="like-btn" onclick="setPostAction('+p.id+',\'like\')">❤️ '+c.like+'</button><button class="dislike-btn" onclick="setPostAction('+p.id+',\'dislike\')">👎 '+c.dislike+'</button><button class="comment-btn" id="cc-'+prefix+p.id+'" onclick="toggleComments('+p.id+',\''+prefix+'\')">💬 '+cc+'</button>'+(own?'<button class="comment-btn" onclick="editPost('+p.id+')">✏️ Edit</button><button class="delete-post-btn" onclick="deletePost('+p.id+')">🗑 Delete</button>':'<button onclick="replyPost(\''+escJs(u)+'\')">↩ Reply</button>')+'</div>'+
+    '<button onclick="showLikes('+p.id+')" style="width:100%;margin-top:8px;border:0;border-radius:18px;padding:9px;text-align:left;background:var(--surface-soft);color:var(--accent-text)">❤️ '+c.like+' Likes</button><div class="post-actions"><button class="like-btn" onclick="setPostAction('+p.id+',\'like\')">❤️ '+c.like+'</button><button class="dislike-btn" onclick="setPostAction('+p.id+',\'dislike\')">👎 '+c.dislike+'</button><button class="comment-btn" id="cc-'+prefix+p.id+'" onclick="toggleComments('+p.id+',\''+prefix+'\')">💬 '+cc+'</button>'+(own?'<button class="comment-btn" onclick="editPost('+p.id+')">✏️ Edit</button><button class="delete-post-btn" onclick="deletePost('+p.id+')">🗑 Delete</button>':'<button onclick="replyPost(\''+escJs(u)+'\')">↩ Reply</button>')+'</div>'+
     (own?'':'<div class="user-actions"><button class="report-btn" onclick="reportPost('+p.id+',\''+escJs(p.user_id)+'\')">🚩 Report</button><button onclick="toggleFollow(\''+escJs(p.user_id)+'\')">'+(followMap[p.user_id]?'✅ Following':'➕ Follow')+'</button><button class="block-btn" onclick="blockUser(\''+escJs(p.user_id)+'\')">🚫 Block</button></div>')+
     '<div class="comments" id="comments-'+prefix+p.id+'"><div id="clist-'+prefix+p.id+'">Tap comments to load.</div><div class="comment-input-row"><input id="cin-'+prefix+p.id+'" placeholder="Write a comment..." onkeydown="if(event.key===\'Enter\')addComment('+p.id+',\''+prefix+'\')"><button onclick="addComment('+p.id+',\''+prefix+'\')">Send</button></div></div></article>';
 }
@@ -216,16 +305,10 @@ async function editPost(id){
   const content=updated.trim();
   if(!content && !post.image_url && !post.voice_url)return alert("Post khaali nahi ho sakti.");
   try{
-    const result=await supabaseClient.from("posts")
-      .update({content})
-      .eq("id",id)
-      .eq("user_id",currentUser.id);
+    const result=await supabaseClient.from("posts").update({content}).eq("id",id).eq("user_id",currentUser.id);
     if(result.error)throw result.error;
-    await loadFeed();
-    alert("Post update ho gayi 💜");
-  }catch(e){
-    alert("Post edit nahi ho saki: "+e.message);
-  }
+    await loadFeed();alert("Post update ho gayi 💜");
+  }catch(e){alert("Post edit nahi ho saki: "+e.message)}
 }
 async function deletePost(id){
   if(!confirm("Delete your post?"))return;
