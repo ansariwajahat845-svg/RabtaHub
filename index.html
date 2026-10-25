@@ -16,6 +16,87 @@ html,body{margin:0;padding:0;width:100%;min-height:100%;overflow-x:hidden}body{f
 textarea,input,select{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--input-border);border-radius:12px;padding:11px;font:15px Arial;outline:none}textarea{min-height:78px;resize:vertical}textarea::placeholder,input::placeholder{color:var(--muted)}.create-actions,.post-actions,.user-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.create-actions button,.post-actions button,.user-actions button,.comment-input-row button{border:0;border-radius:11px;padding:10px;background:var(--accent);color:white;font-weight:bold;cursor:pointer;min-height:38px}.create-actions button{flex:1}.upload-btn,.voice-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}.feed-header{padding:0 12px}.feed-header h3{margin:8px 0}.post{margin:10px 12px}.post-head{display:flex;justify-content:space-between;align-items:center;gap:7px}.user-info{display:flex;align-items:center;gap:8px;min-width:0}.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0;cursor:pointer}.user-name{font-size:14px;font-weight:800;overflow-wrap:anywhere;cursor:pointer}.post-author-name{background:linear-gradient(90deg,#6c5ce7,#e84393,#0984e3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.role-badge{display:inline-block;padding:3px 7px;margin-left:3px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle;-webkit-text-fill-color:initial}.role-creator{background:#fff0c2;color:#875500}.role-senior{background:#dbeafe;color:#1d4ed8}.post-date{font-size:11px;color:var(--muted);margin-top:3px}.post-category{display:inline-block;background:var(--surface-soft);color:var(--accent-text);font-size:11px;font-weight:bold;padding:5px 9px;border-radius:15px;margin-top:8px}.post-content{margin:12px 0;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.post-image{width:100%;max-height:450px;object-fit:contain;border-radius:12px;margin-top:8px}.post-voice{margin-top:10px;background:var(--surface-soft-2);padding:8px;border-radius:12px}.post-voice audio{width:100%}.post-actions{border-top:1px solid var(--border);padding-top:8px;flex-wrap:nowrap}.post-actions button,.user-actions button{flex:1;min-width:0;padding:7px 3px;font-size:11px;overflow:hidden}.like-btn,.comment-btn{background:var(--surface-soft)!important;color:var(--accent-text)!important}.dislike-btn{background:#f8eaf2!important;color:#a14c79!important}.delete-post-btn,.block-btn{background:#ffe5e5!important;color:#d00000!important}.user-actions button{background:var(--surface-soft);color:var(--accent-text)}.report-btn{background:#fff0e8!important;color:#c2410c!important}.comments{display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}.comment-item{background:var(--surface-soft-2);border-radius:10px;padding:8px;margin:6px 0;font-size:13px}.comment-input-row{display:flex;gap:6px;margin-top:8px}.comment-input-row input{flex:1;min-width:0}.comment-input-row button{flex-shrink:0}.empty,.loading{text-align:center;padding:25px 10px;color:var(--muted);overflow-wrap:anywhere}.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:680px;height:70px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:4px;gap:3px;z-index:30;box-shadow:var(--nav-shadow)}.bottom-nav button{border:0;background:none;flex:1;min-width:0;height:60px;color:var(--accent-text);font-size:10px;font-weight:bold;border-radius:10px}.bottom-nav button.active{background:var(--surface-soft)}
 .popup{display:none;position:fixed;inset:0;background:#0009;z-index:100;padding:12vh 4% 20px}.popup-content{max-width:600px;max-height:76vh;overflow:auto;margin:auto;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:18px;padding:15px}.popup-head{display:flex;justify-content:space-between;align-items:center}.popup-head button{border:0;border-radius:15px;padding:8px 12px;background:var(--surface-soft);color:var(--text)}.share-option{display:block;width:100%;text-align:left;margin-top:8px;background:var(--surface-soft);color:var(--accent-text);border:0;border-radius:11px;padding:10px;font-weight:bold}.share-form{display:none;margin-top:12px}.share-submit{width:100%;margin-top:9px;border:0;border-radius:11px;padding:10px;background:var(--accent);color:#fff;font-weight:bold}.cancel-share{width:100%;margin-top:7px;background:var(--surface-soft);color:var(--text);border:0;border-radius:11px;padding:10px}.hidden-input{display:none}.image-preview{width:100%;max-height:250px;object-fit:contain;display:none;margin-top:8px}.likes-content{max-width:430px}.like-user{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer}.like-user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#ddd}.points-row{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.points-name{flex:1;overflow:hidden;text-overflow:ellipsis}.points-value{font-weight:bold;color:var(--accent-text)}.theme-toggle{flex:0 0 40px!important;width:40px;height:39px!important;border-radius:12px!important;font-size:17px!important;padding:0!important}
 @media(max-width:400px){.logo{font-size:13px}.header-buttons button{font-size:9px;padding:0 2px}.post-actions button,.user-actions button{font-size:9px}.bottom-nav button{font-size:9px}}
+
+/* ChatZone modern post composer */
+.create-box{
+  padding:16px;
+  border-radius:22px;
+  background:linear-gradient(145deg,var(--surface),var(--surface-soft-2));
+  border:1px solid var(--border);
+  box-shadow:0 8px 26px #8b5cf625;
+}
+.composer-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:19px;
+  font-weight:800;
+  color:var(--accent-text);
+  margin-bottom:14px;
+}
+.composer-icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  background:linear-gradient(135deg,#8b5cf6,#a78bfa);
+  color:white;
+  font-size:22px;
+  box-shadow:0 4px 12px #8b5cf640;
+}
+.create-box textarea{
+  min-height:125px;
+  padding:17px;
+  border:1.5px solid var(--input-border);
+  border-radius:20px;
+  background:var(--surface-soft-2);
+  font-size:17px;
+  line-height:1.5;
+  box-shadow:inset 0 2px 5px #8b5cf60a;
+}
+.create-box .create-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.12fr;
+  gap:8px;
+  margin-top:14px;
+}
+.create-box .create-actions button{
+  min-width:0;
+  min-height:72px;
+  padding:10px 5px;
+  border:1px solid var(--border);
+  border-radius:17px;
+  font-size:13px;
+  line-height:1.4;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  box-shadow:0 4px 12px #8b5cf612;
+  transition:transform .15s,box-shadow .15s;
+}
+.create-box .create-actions button:active{transform:scale(.97)}
+.create-box .create-actions .voice-btn,
+.create-box .create-actions .upload-btn{
+  background:var(--surface-soft)!important;
+  color:var(--accent-text)!important;
+}
+.create-box .create-actions .send-post-btn{
+  background:linear-gradient(135deg,#8b5cf6,#7138ed)!important;
+  color:#fff!important;
+  border-color:#a78bfa;
+  box-shadow:0 6px 16px #8b5cf640;
+  font-weight:800;
+}
+@media(max-width:400px){
+  .create-box{padding:12px}
+  .create-box .create-actions{gap:6px}
+  .create-box .create-actions button{
+    font-size:11px;
+    min-height:66px;
+    padding:8px 3px;
+  }
+}
+
 </style>
 </head>
 <body><div class="app">
@@ -24,7 +105,18 @@ textarea,input,select{width:100%;background:var(--surface);color:var(--text);bor
 <section class="online-section"><div class="online-title">🟢 <span id="onlineCount">0</span> Users Online</div><div id="onlineUsers" class="online-users">Online users loading...</div></section>
 <div class="welcome">👋 Welcome to ChatZone! 💜💬</div>
 <section class="points-panel"><div class="points-head"><div><div class="points-title">⭐ ChatZone Points</div><div class="points-note">Posts +10 · Likes on your post +50 · Trending post like +500</div></div><div class="points-total"><span id="myPoints">0</span> pts</div></div></section>
-<section class="create-box"><textarea id="postText" placeholder="What's on your mind?"></textarea><div class="create-actions"><button onclick="createPost()">📤 Send Post</button><button class="upload-btn" onclick="showImagePost()">📷 Image Post</button><button class="voice-btn" onclick="startVoice()">🎙️ Voice</button></div></section>
+<section class="create-box">
+  <div class="composer-title">
+    <span class="composer-icon">✍️</span>
+    <span>Create a Post ✨</span>
+  </div>
+  <textarea id="postText" placeholder="What's on your mind?"></textarea>
+  <div class="create-actions">
+    <button class="voice-btn" onclick="startVoice()">🎙️ Voice</button>
+    <button class="upload-btn" onclick="showImagePost()">📷 Image Post</button>
+    <button class="send-post-btn" onclick="createPost()">🚀 Send Post</button>
+  </div>
+</section>
 <div class="feed-header"><h3>Home Feed</h3></div><div id="feed"><div class="loading">Loading feed...</div></div>
 </div>
 <div id="starsBox" class="popup"><div class="popup-content"><div class="popup-head"><h3>⭐ ChatZone Top Scorers</h3><button onclick="closePopup('starsBox')">✕</button></div><p class="points-note">Yahan sirf sab se zyada points walay members show honge.</p><div id="starsList" class="loading">Loading top scorers...</div></div></div>
