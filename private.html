@@ -12,7 +12,7 @@
 :root[data-theme="dark"]{color-scheme:dark;--bg:#15121f;--muted:#b4adc8;--line:#332a46;--text:#f4efff;--surface:#211b2e;--soft:#1c1728;--input:#211b2e;--outline:#403452;--avatar:#38294f;--leave-bg:#38294f;--leave-text:#e4d7ff;--leave-border:#514066;--active-row:#302440;--error-bg:#421f28;--error-text:#ffb7bd;--hint:#a79bbd}
 html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:var(--bg);color:var(--text);accent-color:var(--purple);-webkit-tap-highlight-color:#6d28d922;transition:background .18s,color .18s}
 body{padding-bottom:env(safe-area-inset-bottom)}
-header{background:#6d28d9;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px #34208030}
+header{background:#8b5cf6;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px #34208030}
 .headrow{display:flex;align-items:center;gap:12px}
 .back-btn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 12px;border:1px solid #ffffff70;border-radius:22px;background:#ffffff20;color:#fff;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
 .back-btn:active{background:#ffffff38;transform:scale(.98)}
@@ -21,7 +21,7 @@ header{background:#6d28d9;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px
 .status{font-size:12px;font-weight:400;color:#e8e1ff;margin-top:4px}
 .theme-toggle{margin-left:auto;flex-shrink:0;width:40px;height:40px;border:1px solid #ffffff70;border-radius:50%;background:#ffffff20;color:#fff;font-size:20px;display:grid;place-items:center;cursor:pointer}
 .theme-toggle:active{background:#ffffff38;transform:scale(.97)}
-.tabs{display:flex;background:#6d28d9;position:sticky;top:0;z-index:5;box-shadow:0 2px 5px #34208020}
+.tabs{display:flex;background:#8b5cf6;position:sticky;top:0;z-index:5;box-shadow:0 2px 5px #34208020}
 .tabs button{flex:1;min-height:48px;padding:13px 4px 11px;border:0;border-bottom:3px solid transparent;background:transparent;color:#e5deff;font-size:12px;font-weight:700;letter-spacing:.5px}
 .tabs button.active{color:#fff;border-bottom-color:#fff}
 .searchwrap{padding:11px 12px;background:var(--soft)}
@@ -85,7 +85,7 @@ const SUPABASE_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 function applyTheme(theme) {
   const chosen = theme === "dark" ? "dark" : "light";
   document.documentElement.dataset.theme = chosen;
-  try { localStorage.setItem("chatzone-private-list-theme", chosen); } catch (e) {}
+  try { localStorage.setItem("chatzone-theme", chosen); } catch (e) {}
   const btn = document.getElementById("themeToggle");
   if (btn) {
     btn.textContent = chosen === "dark" ? "☀️" : "🌙";
@@ -93,17 +93,20 @@ function applyTheme(theme) {
     btn.setAttribute("aria-label", btn.title);
   }
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = chosen === "dark" ? "#211b2e" : "#6d28d9";
+  if (meta) meta.content = chosen === "dark" ? "#171222" : "#8b5cf6";
 }
 function toggleTheme() {
   applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
 }
 (function initTheme() {
   let saved = "light";
-  try { saved = localStorage.getItem("chatzone-private-list-theme") || "light"; } catch (e) {}
+  try { saved = localStorage.getItem("chatzone-theme") || "light"; } catch (e) {}
   applyTheme(saved);
 })();
 document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+window.addEventListener("storage", event => {
+  if (event.key === "chatzone-theme" && event.newValue) applyTheme(event.newValue);
+});
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true }
