@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#6d28d9">
 <title>Chat - ChatZone 💬</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -34,6 +35,34 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 #loadOlder{margin:8px auto;display:none;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700}
 #loadOlder:disabled{opacity:.5}
 @media(min-width:761px){body{background:#ede9fe}main{border-left:1px solid #ddd;border-right:1px solid #ddd}#composerWrap{left:50%;transform:translateX(-50%);border-left:1px solid #ddd;border-right:1px solid #ddd}}
+/* Dark theme overrides; light theme remains the original default. */
+#themeToggle{font-size:18px;line-height:1;min-width:34px;height:34px;padding:0 7px;border-radius:9px;background:#5b21b6;color:#fff;border:1px solid #c4b5fd;flex:0 0 auto}
+html[data-theme="dark"] body{background:#111018;color:#eeeaf8}
+html[data-theme="dark"] header{background:#211632}
+html[data-theme="dark"] .header-action{background:#342248;border-color:#59456d;color:#f5efff}
+html[data-theme="dark"] #leaveBtn{background:#702d39;border-color:#a65b67}
+html[data-theme="dark"] #avatar{background:#393044}
+html[data-theme="dark"] #chatStatus{color:#d5c8e7}
+html[data-theme="dark"] main{background:#111018}
+html[data-theme="dark"] #messages{background-color:#111018;background-image:radial-gradient(#30253b .6px,transparent .6px)}
+html[data-theme="dark"] .notice{background:#282033;color:#e6d8f8}
+html[data-theme="dark"] .bubble.mine{background:#573b7d;color:#fff}
+html[data-theme="dark"] .bubble.theirs{background:#28242f;color:#f4effa}
+html[data-theme="dark"] .time{color:#b8acbf}
+html[data-theme="dark"] .reply-msg,html[data-theme="dark"] .delete-msg{background:#33283e;color:#e7d6ff;border-color:#59456d}
+html[data-theme="dark"] .reply-quote{background:#33263f;color:#eadcf9;border-left-color:#b794f6}
+html[data-theme="dark"] .reply-bar{background:#251b30;color:#eadcf9;border-color:#493657}
+html[data-theme="dark"] .reply-cancel{color:#ff9ba8}
+html[data-theme="dark"] #composerWrap{background:#17121f!important;border-color:#40304e}
+html[data-theme="dark"] .composer{background:#17121f;border-color:#7852a1}
+html[data-theme="dark"] #messageInput{background:#292331;color:#f8f4ff;border:1px solid #51415f}
+html[data-theme="dark"] #messageInput::placeholder{color:#b7aabd}
+html[data-theme="dark"] #emojiPanel{background:#211a2a;border-color:#7852a1}
+html[data-theme="dark"] #emojiPanel button{background:#33263f;color:#eadcff}
+html[data-theme="dark"] #status{background:#111018;color:#ffaaa9}
+html[data-theme="dark"] #loadOlder{background:#30233d;color:#eadcff;border-color:#59456d}
+html[data-theme="dark"] #themeToggle{background:#eadcff;color:#2d1a3d;border-color:#b794f6}
+@media(min-width:761px){html[data-theme="dark"] body{background:#17121f}html[data-theme="dark"] main{border-color:#393040}html[data-theme="dark"] #composerWrap{border-color:#393040}}
 </style>
 </head>
 <body>
@@ -41,6 +70,7 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 <button id="back" onclick="goBack()" aria-label="Back">‹</button>
 <div id="avatar">👤</div>
 <div class="identity"><h1 id="chatName">Private Chat</h1><p id="chatStatus">Connecting...</p></div>
+<button id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
 <button class="header-action" id="clearBtn" type="button" title="Delete your messages in this chat">🧹 Clear</button>
 <button class="header-action" id="leaveBtn" type="button">Leave</button>
 </header>
@@ -66,6 +96,23 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+/* Dark/light theme: remembers the selected theme on this device. */
+function applyTheme(theme){
+  const chosen=theme==="dark"?"dark":"light";
+  document.documentElement.dataset.theme=chosen;
+  try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}
+  const btn=document.getElementById("themeToggle");
+  if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6";
+}
+function toggleTheme(){applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark")}
+(function initTheme(){let saved="light";try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}applyTheme(saved)})();
+document.getElementById("themeToggle").addEventListener("click",toggleTheme);
+window.addEventListener("storage",event=>{
+  if(event.key==="chatzone-theme"&&event.newValue)applyTheme(event.newValue);
+});
+
 const params=new URLSearchParams(location.search);
 const otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
 let me=null,other=null,sending=false,lastLoad=0,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
