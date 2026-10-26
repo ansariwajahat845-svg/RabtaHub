@@ -8,8 +8,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-:root{--purple:#6d28d9;--purple2:#7c3aed;--purple3:#a78bfa;--bg:#f7f6fc;--muted:#77738a;--line:#eeeaf8}
-html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:var(--bg);color:#171329;accent-color:var(--purple);-webkit-tap-highlight-color:#6d28d922}
+:root{color-scheme:light;--purple:#6d28d9;--purple2:#7c3aed;--purple3:#a78bfa;--bg:#f7f6fc;--muted:#77738a;--line:#eeeaf8;--text:#171329;--surface:#fff;--soft:#f7f5ff;--input:#fff;--outline:#e5e0f2;--avatar:#eee9ff;--leave-bg:#f3efff;--leave-text:#5b3ed8;--leave-border:#e1d9ff;--active-row:#f0edff;--error-bg:#fff0ef;--error-text:#b42318;--hint:#86949c}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#15121f;--muted:#b4adc8;--line:#332a46;--text:#f4efff;--surface:#211b2e;--soft:#1c1728;--input:#211b2e;--outline:#403452;--avatar:#38294f;--leave-bg:#38294f;--leave-text:#e4d7ff;--leave-border:#514066;--active-row:#302440;--error-bg:#421f28;--error-text:#ffb7bd;--hint:#a79bbd}
+html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:var(--bg);color:var(--text);accent-color:var(--purple);-webkit-tap-highlight-color:#6d28d922;transition:background .18s,color .18s}
 body{padding-bottom:env(safe-area-inset-bottom)}
 header{background:#6d28d9;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px #34208030}
 .headrow{display:flex;align-items:center;gap:12px}
@@ -18,32 +19,37 @@ header{background:#6d28d9;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px
 .brandicon{width:42px;height:42px;border-radius:50%;background:#ffffff24;display:grid;place-items:center;font-size:23px;flex-shrink:0}
 .brand{font-size:20px;font-weight:700;letter-spacing:.1px}
 .status{font-size:12px;font-weight:400;color:#e8e1ff;margin-top:4px}
+.theme-toggle{margin-left:auto;flex-shrink:0;width:40px;height:40px;border:1px solid #ffffff70;border-radius:50%;background:#ffffff20;color:#fff;font-size:20px;display:grid;place-items:center;cursor:pointer}
+.theme-toggle:active{background:#ffffff38;transform:scale(.97)}
 .tabs{display:flex;background:#6d28d9;position:sticky;top:0;z-index:5;box-shadow:0 2px 5px #34208020}
 .tabs button{flex:1;min-height:48px;padding:13px 4px 11px;border:0;border-bottom:3px solid transparent;background:transparent;color:#e5deff;font-size:12px;font-weight:700;letter-spacing:.5px}
 .tabs button.active{color:#fff;border-bottom-color:#fff}
-.searchwrap{padding:11px 12px;background:#f7f5ff}
-#search{display:block;width:100%;padding:12px 15px;border:0;border-radius:24px;background:#fff;font-size:15px;outline:1px solid #e5e0f2;color:#171329}
+.searchwrap{padding:11px 12px;background:var(--soft)}
+#search{display:block;width:100%;padding:12px 15px;border:0;border-radius:24px;background:var(--input);font-size:15px;outline:1px solid var(--outline);color:var(--text)}
+#search::placeholder{color:var(--muted)}
 #search:focus{outline:2px solid #b7a6ff}
-#error{color:#b42318;background:#fff0ef;padding:12px;border-radius:10px;margin:10px 12px;font-size:13px;display:none;line-height:1.45}
+#error{color:var(--error-text);background:var(--error-bg);padding:12px;border-radius:10px;margin:10px 12px;font-size:13px;display:none;line-height:1.45}
 #list{padding:0 0 18px}
-.person{display:flex;align-items:center;gap:11px;background:#fff;padding:11px 12px;min-height:78px;border-bottom:1px solid var(--line);transition:background .15s}
-.person:active{background:#f0edff}
+.person{display:flex;align-items:center;gap:11px;background:var(--surface);padding:11px 12px;min-height:78px;border-bottom:1px solid var(--line);transition:background .15s}
+.person:active{background:var(--active-row)}
 .person-main{display:flex;align-items:center;gap:12px;flex:1;min-width:0;cursor:pointer;min-height:54px}
-.avatar{width:51px;height:51px;border-radius:50%;background:#eee9ff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--purple);flex-shrink:0;position:relative;overflow:hidden}
+.avatar{width:51px;height:51px;border-radius:50%;background:var(--avatar);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--purple3);flex-shrink:0;position:relative;overflow:hidden}
+:root:not([data-theme="dark"]) .avatar{color:var(--purple)}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.dot{position:absolute;width:13px;height:13px;background:#8b5cf6;border:2px solid white;border-radius:50%;bottom:0;right:0}
+.dot{position:absolute;width:13px;height:13px;background:#8b5cf6;border:2px solid var(--surface);border-radius:50%;bottom:0;right:0}
 .details{flex:1;min-width:0}
-.name{font-weight:600;font-size:16px;overflow-wrap:anywhere;color:#171329}
+.name{font-weight:600;font-size:16px;overflow-wrap:anywhere;color:var(--text)}
 .preview{font-size:13px;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.time{font-size:11px;color:var(--purple);white-space:nowrap;align-self:flex-start;padding-top:3px}
-.leave-btn{flex-shrink:0;border:1px solid #e1d9ff;background:#f3efff;color:#5b3ed8;border-radius:18px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer}
-.leave-btn:active{background:#e4dcff}
+.time{font-size:11px;color:var(--purple3);white-space:nowrap;align-self:flex-start;padding-top:3px}
+:root:not([data-theme="dark"]) .time{color:var(--purple)}
+.leave-btn{flex-shrink:0;border:1px solid var(--leave-border);background:var(--leave-bg);color:var(--leave-text);border-radius:18px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer}
+.leave-btn:active{filter:brightness(.95)}
 .leave-btn:disabled{opacity:.55}
-.empty{text-align:center;color:#77738a;padding:48px 22px;line-height:1.5;font-size:14px}
+.empty{text-align:center;color:var(--muted);padding:48px 22px;line-height:1.5;font-size:14px}
 .emptyicon{font-size:35px;display:block;margin-bottom:12px}
-.hint{font-size:12px;color:#86949c;margin-top:7px}
-@media(max-width:380px){header{padding-left:10px;padding-right:10px}.headrow{gap:8px}.back-btn{padding:8px 10px;font-size:12px}.brandicon{width:38px;height:38px}.brand{font-size:18px}}
-@media(min-width:700px){body{max-width:760px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 18px #0000000b}header{padding-left:22px;padding-right:22px}}
+.hint{font-size:12px;color:var(--hint);margin-top:7px}
+@media(max-width:380px){header{padding-left:10px;padding-right:10px}.headrow{gap:8px}.back-btn{padding:8px 10px;font-size:12px}.brandicon{width:38px;height:38px}.brand{font-size:18px}.theme-toggle{width:36px;height:36px}}
+@media(min-width:700px){body{max-width:760px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 18px #0000000b}header{padding-left:22px;padding-right:22px}}
 </style>
 </head>
 <body>
@@ -55,6 +61,7 @@ header{background:#6d28d9;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px
       <div class="brand">ChatZone</div>
       <div class="status" id="status">Connecting...</div>
     </div>
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
   </div>
 </header>
 
@@ -73,6 +80,30 @@ header{background:#6d28d9;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px
 <script>
 const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+
+/* Dark/light theme: saves the choice on this device. */
+function applyTheme(theme) {
+  const chosen = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = chosen;
+  try { localStorage.setItem("chatzone-private-list-theme", chosen); } catch (e) {}
+  const btn = document.getElementById("themeToggle");
+  if (btn) {
+    btn.textContent = chosen === "dark" ? "☀️" : "🌙";
+    btn.title = chosen === "dark" ? "Switch to light mode" : "Switch to dark mode";
+    btn.setAttribute("aria-label", btn.title);
+  }
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = chosen === "dark" ? "#211b2e" : "#6d28d9";
+}
+function toggleTheme() {
+  applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+}
+(function initTheme() {
+  let saved = "light";
+  try { saved = localStorage.getItem("chatzone-private-list-theme") || "light"; } catch (e) {}
+  applyTheme(saved);
+})();
+document.getElementById("themeToggle").addEventListener("click", toggleTheme);
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true }
@@ -202,7 +233,7 @@ function render() {
       button.disabled = true;
       button.textContent = "Leaving…";
       try {
-        // Delete only this user's relationship row(s) from the private_requests table.
+        // Delete only the relationship row(s) for this pair.
         const { error } = await db.from("private_requests")
           .delete()
           .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`);
