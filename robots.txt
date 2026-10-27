@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ansariwajahat845-svg.github.io/ChatZone/sitemap.xml
