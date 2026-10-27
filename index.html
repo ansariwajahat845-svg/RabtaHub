@@ -70,7 +70,7 @@ button:disabled{opacity:.6;cursor:wait}
 </head>
 <body>
 <div class="app">
-<header class="header"><div class="header-top"><div class="logo">ChatZone 💬</div><div class="header-buttons"><button onclick="showTrending()">🔥 Trending</button><button onclick="showShare()">📤 Share</button><button onclick="goStars()">⭐</button><button onclick="goNotifications()">🔔</button><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme">🌙</button></div></div></header>
+<header class="header"><div class="header-top"><div class="logo">ChatZone 💬</div><div class="header-buttons"><button onclick="showTrending()">🔥 Trending</button><button onclick="showShare()">📤 Share</button><button onclick="goStars()">⭐</button><button id="notificationButton" onclick="goNotifications()" style="position:relative" aria-label="Notifications">🔔<span id="notificationBadge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 4px;background:#ef4444;color:#fff;border-radius:20px;font-size:10px;line-height:18px;text-align:center">0</span></button><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme">🌙</button></div></div></header>
 <div id="homeView">
 <section class="online-section"><div class="online-title">🟢 <span id="onlineCount">0</span> Users Online</div><div id="onlineUsers" class="online-users">Connecting to online users…</div></section>
 <div class="welcome">👋 Welcome to ChatZone! 💜💬</div>
@@ -91,6 +91,25 @@ const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 let currentUser=null,currentPosts=[],profileMap={},followMap={},pointsMap={},postActionCounts={},postCommentCounts={},onlineChannel=null,voiceRecorder=null,voiceStream=null,voiceChunks=[],voiceBlob=null,voiceStartedAt=0,voiceTimerInterval=null;
+let notificationChannel=null;
+async function loadUnreadNotificationCount(){
+  if(!currentUser)return;
+  try{
+    const result=await timeout(supabaseClient.from("notifications").select("id",{count:"exact",head:true}).eq("user_id",currentUser.id).is("read_at",null),8000);
+    if(result.error)throw result.error;
+    const badge=$("notificationBadge");if(!badge)return;
+    const count=result.count||0;badge.textContent=count>99?"99+":String(count);badge.style.display=count>0?"inline-block":"none";
+  }catch(error){console.warn("Notification count:",error.message)}
+}
+function startNotifications(){
+  if(!currentUser)return;
+  loadUnreadNotificationCount();
+  if(notificationChannel)supabaseClient.removeChannel(notificationChannel);
+  notificationChannel=supabaseClient.channel("chatzone-notifications-"+currentUser.id)
+    .on("postgres_changes",{event:"*",schema:"public",table:"notifications",filter:"user_id=eq."+currentUser.id},()=>loadUnreadNotificationCount())
+    .subscribe(status=>{if(status==="SUBSCRIBED")loadUnreadNotificationCount()});
+}
+
 const CREATOR_ID="db4d3669-e3ec-42ec-a716-791f43cebd8d",SENIOR_ID="21e46d48-cd2c-4824-992e-5beb7f797c5b",SENIOR_USERNAME="dream_girl";
 function $(id){return document.getElementById(id)}
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
@@ -109,6 +128,7 @@ async function init(){
     const r=await timeout(supabaseClient.auth.getSession(),10000);
     if(r.error)throw r.error;
     currentUser=r.data?.session?.user||null;
+    if(currentUser)startNotifications();
     if(!currentUser){$("feed").innerHTML='<div class="empty">Please log in to open Home.<br><button onclick="location.href=\'login.html\'">Open Login</button></div>';return}
     $("feed").innerHTML='<div class="loading">Loading feed…</div>';
     // Feed is the primary page content; slow optional widgets cannot hold it up.
@@ -239,7 +259,7 @@ async function recordVoice(){try{if(!navigator.mediaDevices?.getUserMedia)throw 
 function stopVoice(){if(voiceRecorder&&voiceRecorder.state!=="inactive")voiceRecorder.stop();if(voiceStream)voiceStream.getTracks().forEach(t=>t.stop());voiceStream=null}
 async function sendVoice(){if(!currentUser)return alert("Please log in again.");if(!voiceBlob)return alert("Pehle voice record karein.");try{const path=currentUser.id+"/"+Date.now()+".webm",u=await timeout(supabaseClient.storage.from("voice-posts").upload(path,voiceBlob,{upsert:false}),15000);if(u.error)throw u.error;const url=supabaseClient.storage.from("voice-posts").getPublicUrl(path).data.publicUrl,r=await timeout(supabaseClient.from("posts").insert({user_id:currentUser.id,content:"",post_type:"voice",voice_url:url}),10000);if(r.error)throw r.error;closeVoice();voiceBlob=null;$("voicePreview").style.display="none";await loadFeed()}catch(e){alert("Voice post failed: "+e.message)}}
 function closeVoice(){if(voiceStream)voiceStream.getTracks().forEach(t=>t.stop());voiceStream=null;if(voiceTimerInterval){clearInterval(voiceTimerInterval);voiceTimerInterval=null}$("voicePopup").style.display="none"}
-window.addEventListener("beforeunload",()=>{if(onlineChannel)supabaseClient.removeChannel(onlineChannel);if(voiceStream)voiceStream.getTracks().forEach(t=>t.stop());if(voiceTimerInterval)clearInterval(voiceTimerInterval)});
+window.addEventListener("beforeunload",()=>{if(onlineChannel)supabaseClient.removeChannel(onlineChannel);if(notificationChannel)supabaseClient.removeChannel(notificationChannel);if(voiceStream)voiceStream.getTracks().forEach(t=>t.stop());if(voiceTimerInterval)clearInterval(voiceTimerInterval)});
 window.addEventListener("online",()=>{if(currentUser)loadFeed()});
 init();
 </script>
