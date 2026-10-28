@@ -13,32 +13,23 @@
 .actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}.action-btn{flex:1;min-width:100px;border:0;border-radius:12px;padding:12px 7px;font-size:14px;font-weight:bold;cursor:pointer}.action-btn:disabled{cursor:not-allowed;opacity:.65}.edit-btn,.follow-btn{background:#6c5ce7;color:white}.chat-btn{background:#eeeaff;color:#5b43c7}
 .stats{display:flex;justify-content:space-around;margin-top:20px;padding-top:18px;border-top:1px solid #eee}.stat{text-align:center;cursor:pointer;border:0;background:transparent;color:inherit}.stat-number{font-size:19px;font-weight:bold}.stat-label{color:#777;font-size:12px;margin-top:3px}
 .info-card,.edit-panel{margin-top:15px;background:#fafafa;border-radius:15px;padding:15px}.info-row{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #eee}.info-row:last-child{border-bottom:0}.info-icon{width:25px}.info-label{color:#777;font-size:12px}.info-value{font-size:14px;margin-top:2px;overflow-wrap:anywhere}.edit-panel{display:none}.edit-dp{text-align:center;margin-bottom:15px}.edit-preview{width:min(210px,100%);height:230px;border-radius:18px;object-fit:cover;border:3px solid #6c5ce7;background:#eee}.file-input{display:block;width:100%;margin-top:10px;padding:10px;border:1px solid #ddd;border-radius:10px;background:white}.input{width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:10px;font-size:14px;outline:none;background:white;color:#21183a}textarea.input{min-height:90px;resize:vertical}.save-btn,.cancel-btn{width:100%;padding:12px;border:0;border-radius:11px;font-weight:bold}.save-btn{background:#6c5ce7;color:white}.cancel-btn{margin-top:8px;background:#eee;color:#333}
-.private-box{margin:15px;background:white;border-radius:18px;padding:30px 20px;text-align:center;box-shadow:0 5px 18px #0003}.private-icon{font-size:48px}.private-title{font-size:20px;font-weight:bold;margin-top:10px}.private-text{color:#777;margin-top:8px;line-height:1.5}.section-title{margin:18px 15px 10px;color:white;font-size:18px;font-weight:bold}.post-card{margin:10px 15px;background:white;border-radius:16px;padding:15px;box-shadow:0 3px 12px #0002;overflow-wrap:anywhere;white-space:pre-wrap}.post-date{color:#888;font-size:12px;margin-top:8px}.post-image{width:100%;max-height:400px;object-fit:contain;border-radius:12px;margin-top:10px;background:#f6f3fb}.loading{color:white;text-align:center;padding:40px 15px}.error{margin:15px;background:white;color:#d63031;padding:15px;border-radius:12px;overflow-wrap:anywhere}
+.private-box{margin:15px;background:white;border-radius:18px;padding:30px 20px;text-align:center;box-shadow:0 5px 18px #0003}.private-icon{font-size:48px}.private-title{font-size:20px;font-weight:bold;margin-top:10px}.private-text{color:#777;margin-top:8px;line-height:1.5}.section-title{margin:18px 15px 10px;color:white;font-size:18px;font-weight:bold}.post-card{margin:10px 15px;background:white;border-radius:16px;padding:15px;box-shadow:0 3px 12px #0002;overflow-wrap:anywhere;white-space:normal}.post-content{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}.post-date{color:#888;font-size:12px;margin-top:8px}.post-image{width:100%;max-height:400px;object-fit:contain;border-radius:12px;margin-top:10px;background:#f6f3fb}.post-voice{display:block;width:100%;margin-top:10px}.post-type{display:inline-block;font-size:11px;color:#6c5ce7;background:#eeeaff;border-radius:20px;padding:4px 8px;margin-bottom:8px}.loading{color:white;text-align:center;padding:40px 15px}.error{margin:15px;background:white;color:#d63031;padding:15px;border-radius:12px;overflow-wrap:anywhere}
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;min-height:68px;background:white;display:flex;justify-content:center;box-shadow:0 -3px 15px #0003;padding-bottom:env(safe-area-inset-bottom)}.nav-inner{width:100%;max-width:680px;display:flex;justify-content:space-around;align-items:center}.nav-item{flex:1;text-align:center;color:#777;font-size:11px;padding:8px 2px;cursor:pointer}.nav-item .icon{display:block;font-size:21px;margin-bottom:3px}.nav-item.active{color:#6c5ce7;font-weight:bold}
 .modal-backdrop{position:fixed;inset:0;z-index:100;background:#160d2dbb;display:none;align-items:flex-end;justify-content:center}.modal{background:white;width:100%;max-width:600px;max-height:80vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px}.modal-head{display:flex;align-items:center;justify-content:space-between;font-weight:bold;font-size:18px;margin-bottom:12px}.close-modal{border:0;background:#eee;border-radius:9px;padding:8px 12px}.user-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eee}.user-row img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#eee}.user-row button{margin-left:auto;border:0;background:#eeeaff;color:#5b43c7;border-radius:9px;padding:8px}
 @media(max-width:390px){.profile-card{margin:10px;padding:14px}.actions{gap:6px}.action-btn{font-size:12px;padding:11px 5px}.name{font-size:21px}.avatar-wrap{height:300px}}
-
-/* ChatZone shared Home theme: localStorage key "chatzone-theme" */
-:root{color-scheme:light}
-html[data-theme="dark"]{color-scheme:dark}
+:root{color-scheme:light}html[data-theme="dark"]{color-scheme:dark}
 html[data-theme="dark"] body{background:#171222;color:#f2edf9}
 html[data-theme="dark"] .header{background:rgba(35,27,51,.98);color:#fff}
 html[data-theme="dark"] .profile-card,html[data-theme="dark"] .private-box,html[data-theme="dark"] .post-card,html[data-theme="dark"] #postsList .post-card,html[data-theme="dark"] .modal{background:#241c33;color:#f2edf9;border-color:#3b2d50}
 html[data-theme="dark"] .info-card,html[data-theme="dark"] .edit-panel{background:#2c2340;color:#f2edf9}
-html[data-theme="dark"] .info-row,html[data-theme="dark"] .stats,html[data-theme="dark"] #postsList .post-actions{border-color:#443653}
-html[data-theme="dark"] .name,html[data-theme="dark"] .info-value,html[data-theme="dark"] .stat,html[data-theme="dark"] #postsList .post-content,html[data-theme="dark"] #postsList .user-name{color:#f2edf9}
+html[data-theme="dark"] .info-row,html[data-theme="dark"] .stats{border-color:#443653}
+html[data-theme="dark"] .name,html[data-theme="dark"] .info-value,html[data-theme="dark"] .stat,html[data-theme="dark"] #postsList .post-content{color:#f2edf9}
 html[data-theme="dark"] .username,html[data-theme="dark"] .bio,html[data-theme="dark"] .info-label,html[data-theme="dark"] .stat-label,html[data-theme="dark"] .private-text,html[data-theme="dark"] .post-date{color:#c2b6d2}
-html[data-theme="dark"] .input,html[data-theme="dark"] .file-input,html[data-theme="dark"] #postsList .comment-input-row input{background:#1b1527;color:#f2edf9;border-color:#514064}
-html[data-theme="dark"] .bottom-nav{background:#21192f}
-html[data-theme="dark"] .nav-item{color:#c2b6d2}
-html[data-theme="dark"] .nav-item.active{color:#b8a2ff}
+html[data-theme="dark"] .input,html[data-theme="dark"] .file-input{background:#1b1527;color:#f2edf9;border-color:#514064}
+html[data-theme="dark"] .bottom-nav{background:#21192f}html[data-theme="dark"] .nav-item{color:#c2b6d2}html[data-theme="dark"] .nav-item.active{color:#b8a2ff}
 html[data-theme="dark"] .cancel-btn,html[data-theme="dark"] .close-modal{background:#40344f;color:#f2edf9}
-html[data-theme="dark"] #postsList .likes-summary,html[data-theme="dark"] #postsList .like-btn,html[data-theme="dark"] #postsList .comment-btn,html[data-theme="dark"] #postsList .post-menu{background:#3b2d50;color:#d9caff}
-html[data-theme="dark"] #postsList .post-voice,html[data-theme="dark"] #postsList .comment-item{background:#30253f;color:#f2edf9}
-html[data-theme="dark"] #postsList .empty-post{background:#241c33;color:#c2b6d2;border-color:#3b2d50}
-html[data-theme="dark"] .error{background:#2c1d2b;color:#ffb4b4}
-html[data-theme="dark"] .section-title{color:#e6dcff}
-
+html[data-theme="dark"] .post-type{background:#3b2d50;color:#d9caff}
+html[data-theme="dark"] .error{background:#2c1d2b;color:#ffb4b4}html[data-theme="dark"] .section-title{color:#e6dcff}
 </style>
 </head>
 <body>
@@ -73,21 +64,7 @@ html[data-theme="dark"] .section-title{color:#e6dcff}
 <nav class="bottom-nav"><div class="nav-inner"><div class="nav-item" onclick="goHome()"><span class="icon">🏠</span>Home</div><div class="nav-item" onclick="goPrivate()"><span class="icon">💬</span>Private</div><div class="nav-item" onclick="goMehfil()"><span class="icon">👥</span>Mehfil</div><div class="nav-item active"><span class="icon">👤</span>Profile</div><div class="nav-item" onclick="goMore()"><span class="icon">☰</span>More</div></div></nav>
 <div id="peopleModal" class="modal-backdrop" onclick="if(event.target===this)closePeople()"><div class="modal"><div class="modal-head"><span id="modalTitle">People</span><button class="close-modal" onclick="closePeople()">✕</button></div><div id="modalContent">Loading...</div></div></div>
 <script>
-
-/* Shared theme synchronization with Home: localStorage key chatzone-theme */
-(function(){
- function applySharedTheme(){
-  let theme="light";
-  try{const saved=localStorage.getItem("chatzone-theme");if(saved==="dark"||saved==="light")theme=saved}catch(e){}
-  document.documentElement.setAttribute("data-theme",theme);
-  const meta=document.querySelector('meta[name="theme-color"]');
-  if(meta)meta.content=theme==="dark"?"#171222":"#6c5ce7";
- }
- applySharedTheme();
- window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"||e.key===null)applySharedTheme()});
- window.addEventListener("pageshow",applySharedTheme);
-})();
-
+(function(){function applySharedTheme(){let theme="light";try{const saved=localStorage.getItem("chatzone-theme");if(saved==="dark"||saved==="light")theme=saved}catch(e){}document.documentElement.setAttribute("data-theme",theme);const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=theme==="dark"?"#171222":"#6c5ce7"}applySharedTheme();window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"||e.key===null)applySharedTheme()});window.addEventListener("pageshow",applySharedTheme)})();
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
@@ -96,182 +73,60 @@ const PLACEHOLDER="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 let currentUser=null,profileUser=null,isOwner=false,isPrivate=false,isFollowing=false;
 let followRequestStatus="none",chatRequestStatus="none",onlineChannel=null;
 
-async function init(){
- try{
-  const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;
-  currentUser=data.session?.user||null;if(!currentUser){location.href="login.html";return}
-  startGlobalPresence();
-  const params=new URLSearchParams(location.search);
-  await loadProfile(params.get("user")||params.get("username")||params.get("id")||currentUser.id);
- }catch(e){showError("Profile load nahi ho saki: "+(e.message||String(e)))}
-}
-async function startGlobalPresence(){
- if(!currentUser||onlineChannel)return;
- try{onlineChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});onlineChannel.subscribe(async status=>{if(status==="SUBSCRIBED"){try{await onlineChannel.track({user_id:String(currentUser.id),online_at:new Date().toISOString()})}catch(e){console.warn(e.message)}}})}
- catch(e){console.warn("Presence:",e.message);onlineChannel=null}
-}
+async function init(){try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;currentUser=data.session?.user||null;if(!currentUser){location.href="login.html";return}startGlobalPresence();const params=new URLSearchParams(location.search);await loadProfile(params.get("user")||params.get("username")||params.get("id")||currentUser.id)}catch(e){showError("Profile load nahi ho saki: "+(e.message||String(e)))}}
+async function startGlobalPresence(){if(!currentUser||onlineChannel)return;try{onlineChannel=supabaseClient.channel("chatzone-online-users",{config:{presence:{key:String(currentUser.id)}}});onlineChannel.subscribe(async status=>{if(status==="SUBSCRIBED"){try{await onlineChannel.track({user_id:String(currentUser.id),online_at:new Date().toISOString()})}catch(e){console.warn(e.message)}}})}catch(e){console.warn("Presence:",e.message);onlineChannel=null}}
 window.addEventListener("beforeunload",()=>{if(onlineChannel)onlineChannel.untrack()});
 supabaseClient.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT"){if(onlineChannel)supabaseClient.removeChannel(onlineChannel);location.href="login.html"}});
 async function loadProfile(userIdentifier){
  const identifier=String(userIdentifier||"").trim().replace(/^@/,"");if(!identifier)throw new Error("Username ya user ID nahi mili.");
  const isUUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
- let query=supabaseClient.from("profiles").select("id,username,name,avatar_url,profile_privacy,bio,city,dob,gender");
- query=isUUID?query.eq("id",identifier):query.ilike("username",identifier);
+ let query=supabaseClient.from("profiles").select("id,username,name,avatar_url,profile_privacy,bio,city,dob,gender");query=isUUID?query.eq("id",identifier):query.ilike("username",identifier);
  const {data,error}=await query.maybeSingle();if(error)throw error;if(!data)throw new Error("Profile nahi mili. Username/ID aur profiles table ki SELECT RLS policy check karein.");
- profileUser=data;isOwner=currentUser.id===data.id;isPrivate=String(data.profile_privacy||"public").toLowerCase()==="private";
- isFollowing=false;followRequestStatus="none";chatRequestStatus="none";
- if(!isOwner){
-   await loadFollowStatus();
-   await loadFollowRequestStatus();
-   await loadChatRequestStatus();
- }
- renderProfile();
- const canView=isOwner||!isPrivate||isFollowing;
- $("stats").style.display=canView?"flex":"none";
- $("infoCard").style.display=canView?"block":"none";
- $("postsSection").style.display=canView?"block":"none";
- $("privateBox").style.display=canView?"none":"block";
+ profileUser=data;isOwner=currentUser.id===data.id;isPrivate=String(data.profile_privacy||"public").toLowerCase()==="private";isFollowing=false;followRequestStatus="none";chatRequestStatus="none";
+ if(!isOwner){await loadFollowStatus();await loadFollowRequestStatus();await loadChatRequestStatus()}
+ renderProfile();const canView=isOwner||!isPrivate||isFollowing;$("stats").style.display=canView?"flex":"none";$("infoCard").style.display=canView?"block":"none";$("postsSection").style.display=canView?"block":"none";$("privateBox").style.display=canView?"none":"block";
  if(!canView)$("privateText").textContent=followRequestStatus==="pending"?"⏳ Follow request pending. Approval ke baad profile details aur posts dekh sakoge.":"Is profile ke posts aur details dekhne ke liye Follow request bhejein.";
- if(canView){await loadStats();await loadPosts()}
- $("loading").style.display="none";$("profileArea").style.display="block";
+ if(canView){await loadStats();await loadPosts()}$("loading").style.display="none";$("profileArea").style.display="block";
 }
-function renderProfile(){
- $("name").textContent=profileUser.name||profileUser.username||"User";
- $("username").textContent="@"+(profileUser.username||"user");
- $("avatar").src=profileUser.avatar_url||PLACEHOLDER;
- $("bio").textContent=profileUser.bio||"";
- $("city").textContent=profileUser.city||"Not added";
- $("dob").textContent=isOwner?(profileUser.dob||"Not added"):(profileUser.dob?formatDOB(profileUser.dob):"Hidden");
- $("gender").textContent=isOwner?(profileUser.gender||"Not added"):(profileUser.gender||"Hidden");
- $("privacyBadge").innerHTML=`<span class="badge ${isPrivate?"private-badge":"public-badge"}">${isPrivate?"🔒 Private":"🌐 Public"}</span>`;
- $("editBtn").style.display=isOwner?"block":"none";
- $("followBtn").style.display=isOwner?"none":"block";
- $("chatBtn").style.display=isOwner?"none":"block";
- updateFollowButton();updatePrivateButton();
-}
-function toggleEdit(){
- const panel=$("editPanel");
- if(panel.style.display==="block"){panel.style.display="none";return}
- $("editName").value=profileUser.name||"";$("editBio").value=profileUser.bio||"";$("editCity").value=profileUser.city||"";
- $("editDob").value=profileUser.dob||"";$("editGender").value=profileUser.gender||"";$("editPrivacy").value=isPrivate?"private":"public";
- $("editPreview").src=profileUser.avatar_url||PLACEHOLDER;$("avatarFile").value="";
- panel.style.display="block";panel.scrollIntoView({behavior:"smooth",block:"start"});
-}
-function previewDP(event){
- const file=event.target.files[0];if(!file)return;
- if(!file.type.startsWith("image/")){alert("Sirf image select karein.");event.target.value="";return}
- if(file.size>5*1024*1024){alert("Image 5 MB se chhoti honi chahiye.");event.target.value="";return}
- const reader=new FileReader();reader.onload=e=>$("editPreview").src=e.target.result;reader.readAsDataURL(file);
-}
-async function saveProfile(){
- const btn=document.querySelector(".save-btn");btn.disabled=true;btn.textContent="Saving...";
- try{
-  let avatarUrl=profileUser.avatar_url||null;const file=$("avatarFile").files[0];
-  if(file){
-   const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
-   const path=`${currentUser.id}/avatar_${Date.now()}.${ext||"jpg"}`;
-   const up=await supabaseClient.storage.from("avatars").upload(path,file,{upsert:true,contentType:file.type});
-   if(up.error)throw new Error("DP upload nahi hui: "+up.error.message);
-   avatarUrl=supabaseClient.storage.from("avatars").getPublicUrl(path).data.publicUrl;
-  }
-  const updates={name:$("editName").value.trim()||null,bio:$("editBio").value.trim()||null,city:$("editCity").value.trim()||null,dob:$("editDob").value||null,gender:$("editGender").value||null,profile_privacy:$("editPrivacy").value,avatar_url:avatarUrl};
-  const {data,error}=await supabaseClient.from("profiles").update(updates).eq("id",currentUser.id).select("id,username,name,avatar_url,profile_privacy,bio,city,dob,gender").maybeSingle();
-  if(error)throw error;if(!data)throw new Error("Profile update nahi hui. profiles UPDATE RLS policy check karein.");
-  profileUser=data;isPrivate=String(data.profile_privacy||"public").toLowerCase()==="private";renderProfile();$("editPanel").style.display="none";
-  await loadProfile(currentUser.id);alert("✅ Profile updated successfully!");
- }catch(e){alert("Profile save nahi hui:\n"+e.message)}
- finally{btn.disabled=false;btn.textContent="💾 Save Profile"}
-}
-async function loadFollowStatus(){
- const {data,error}=await supabaseClient.from("follows").select("id").eq("follower_id",currentUser.id).eq("following_id",profileUser.id).maybeSingle();
- if(error){console.warn("Follow status:",error.message);return}isFollowing=!!data;
-}
-async function loadFollowRequestStatus(){
- if(isOwner||!isPrivate)return;
- const {data,error}=await supabaseClient.from("follow_requests").select("id,status").eq("follower_id",currentUser.id).eq("following_id",profileUser.id).eq("status","pending").maybeSingle();
- if(error){console.warn("Follow request status:",error.message);return}
- followRequestStatus=data?"pending":"none";
-}
-function updateFollowButton(){
- const btn=$("followBtn");if(isOwner)return;
- if(isFollowing){btn.textContent="✓ Following";btn.disabled=false}
- else if(isPrivate&&followRequestStatus==="pending"){btn.textContent="⏳ Requested";btn.disabled=false}
- else{btn.textContent="➕ Follow";btn.disabled=false}
-}
-async function toggleFollow(){
- if(!profileUser||isOwner)return;const btn=$("followBtn");btn.disabled=true;
- try{
-  if(isFollowing){
-   const {error}=await supabaseClient.from("follows").delete().eq("follower_id",currentUser.id).eq("following_id",profileUser.id);
-   if(error)throw error;isFollowing=false;
-  }else if(isPrivate){
-   if(followRequestStatus==="pending"){alert("⏳ Follow request pehle se pending hai.");return}
-   const {error}=await supabaseClient.from("follow_requests").insert({follower_id:currentUser.id,following_id:profileUser.id,status:"pending"});
-   if(error)throw error;followRequestStatus="pending";alert("✅ Follow request sent! Owner ki approval ka wait karein.");
-  }else{
-   const {error}=await supabaseClient.from("follows").insert({follower_id:currentUser.id,following_id:profileUser.id});
-   if(error)throw error;isFollowing=true;
-  }
-  updateFollowButton();
-  const canView=isOwner||!isPrivate||isFollowing;
-  $("stats").style.display=canView?"flex":"none";$("infoCard").style.display=canView?"block":"none";$("postsSection").style.display=canView?"block":"none";$("privateBox").style.display=canView?"none":"block";
-  if(canView){await loadStats();await loadPosts()}else{$("privateText").textContent="⏳ Follow request pending. Approval ke baad profile details aur posts dekh sakoge."}
- }catch(e){alert("Follow action nahi ho saki:\n"+e.message)}
- finally{btn.disabled=false;updateFollowButton()}
-}
-async function loadChatRequestStatus(){
- if(isOwner)return;
- const {data,error}=await supabaseClient.from("private_requests").select("id,status,sender_id,receiver_id,created_at")
- .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${profileUser.id}),and(sender_id.eq.${profileUser.id},receiver_id.eq.${currentUser.id})`)
- .order("created_at",{ascending:false}).limit(1).maybeSingle();
- if(error){console.warn("Chat request status:",error.message);chatRequestStatus="none";return}
- if(data){const status=String(data.status||"pending").toLowerCase();chatRequestStatus=status==="accepted"?"accepted":status==="pending"?"pending":"none"}
-}
-function updatePrivateButton(){
- const b=$("chatBtn");if(isPrivate&&!isOwner&&!isFollowing){b.textContent="🔒 Follow first";b.disabled=false;return}
- if(chatRequestStatus==="accepted"){b.textContent="💬 Open Chat";b.disabled=false}
- else if(chatRequestStatus==="pending"){b.textContent="⏳ Request Sent";b.disabled=true}
- else{b.textContent="💬 1-on-1";b.disabled=false}
-}
-async function openPrivateChat(){
- if(!profileUser||isOwner)return;
- if(isPrivate&&!isFollowing){alert("🔒 Pehle Follow request bhejein aur owner ki approval ka wait karein.");return}
- if(chatRequestStatus==="accepted"){location.href="private-chat.html?user="+encodeURIComponent(profileUser.id);return}
- if(chatRequestStatus==="pending"){alert("⏳ 1-on-1 request already pending hai.");return}
- const btn=$("chatBtn");btn.disabled=true;btn.textContent="Sending...";
- try{
-  const {error}=await supabaseClient.from("private_requests").insert({sender_id:currentUser.id,receiver_id:profileUser.id,status:"pending"});
-  if(error)throw error;chatRequestStatus="pending";updatePrivateButton();alert("✅ 1-on-1 request sent!");
- }catch(e){alert("Request send nahi ho saki:\n"+e.message);updatePrivateButton()}
-}
-async function loadStats(){
- const [posts,followers,following]=await Promise.all([
-  supabaseClient.from("posts").select("id",{count:"exact",head:true}).eq("user_id",profileUser.id),
-  supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("following_id",profileUser.id),
-  supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("follower_id",profileUser.id)
- ]);
- if(!posts.error)$("postCount").textContent=posts.count||0;
- if(!followers.error)$("followersCount").textContent=followers.count||0;
- if(!following.error)$("followingCount").textContent=following.count||0;
-}
+function renderProfile(){$("name").textContent=profileUser.name||profileUser.username||"User";$("username").textContent="@"+(profileUser.username||"user");$("avatar").src=profileUser.avatar_url||PLACEHOLDER;$("bio").textContent=profileUser.bio||"";$("city").textContent=profileUser.city||"Not added";$("dob").textContent=isOwner?(profileUser.dob||"Not added"):(profileUser.dob?formatDOB(profileUser.dob):"Hidden");$("gender").textContent=isOwner?(profileUser.gender||"Not added"):(profileUser.gender||"Hidden");$("privacyBadge").innerHTML=`<span class="badge ${isPrivate?"private-badge":"public-badge"}">${isPrivate?"🔒 Private":"🌐 Public"}</span>`;$("editBtn").style.display=isOwner?"block":"none";$("followBtn").style.display=isOwner?"none":"block";$("chatBtn").style.display=isOwner?"none":"block";updateFollowButton();updatePrivateButton()}
+function toggleEdit(){const panel=$("editPanel");if(panel.style.display==="block"){panel.style.display="none";return}$("editName").value=profileUser.name||"";$("editBio").value=profileUser.bio||"";$("editCity").value=profileUser.city||"";$("editDob").value=profileUser.dob||"";$("editGender").value=profileUser.gender||"";$("editPrivacy").value=isPrivate?"private":"public";$("editPreview").src=profileUser.avatar_url||PLACEHOLDER;$("avatarFile").value="";panel.style.display="block";panel.scrollIntoView({behavior:"smooth",block:"start"})}
+function previewDP(event){const file=event.target.files[0];if(!file)return;if(!file.type.startsWith("image/")){alert("Sirf image select karein.");event.target.value="";return}if(file.size>5*1024*1024){alert("Image 5 MB se chhoti honi chahiye.");event.target.value="";return}const reader=new FileReader();reader.onload=e=>$("editPreview").src=e.target.result;reader.readAsDataURL(file)}
+async function saveProfile(){const btn=document.querySelector(".save-btn");btn.disabled=true;btn.textContent="Saving...";try{let avatarUrl=profileUser.avatar_url||null;const file=$("avatarFile").files[0];if(file){const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");const path=`${currentUser.id}/avatar_${Date.now()}.${ext||"jpg"}`;const up=await supabaseClient.storage.from("avatars").upload(path,file,{upsert:true,contentType:file.type});if(up.error)throw new Error("DP upload nahi hui: "+up.error.message);avatarUrl=supabaseClient.storage.from("avatars").getPublicUrl(path).data.publicUrl}
+ const updates={name:$("editName").value.trim()||null,bio:$("editBio").value.trim()||null,city:$("editCity").value.trim()||null,dob:$("editDob").value||null,gender:$("editGender").value||null,profile_privacy:$("editPrivacy").value,avatar_url:avatarUrl};
+ const {data,error}=await supabaseClient.from("profiles").update(updates).eq("id",currentUser.id).select("id,username,name,avatar_url,profile_privacy,bio,city,dob,gender").maybeSingle();if(error)throw error;if(!data)throw new Error("Profile update nahi hui. profiles UPDATE RLS policy check karein.");profileUser=data;isPrivate=String(data.profile_privacy||"public").toLowerCase()==="private";renderProfile();$("editPanel").style.display="none";await loadProfile(currentUser.id);alert("✅ Profile updated successfully!")
+ }catch(e){alert("Profile save nahi hui:\n"+e.message)}finally{btn.disabled=false;btn.textContent="💾 Save Profile"}}
+async function loadFollowStatus(){const {data,error}=await supabaseClient.from("follows").select("id").eq("follower_id",currentUser.id).eq("following_id",profileUser.id).maybeSingle();if(error){console.warn("Follow status:",error.message);return}isFollowing=!!data}
+async function loadFollowRequestStatus(){if(isOwner||!isPrivate)return;const {data,error}=await supabaseClient.from("follow_requests").select("id,status").eq("follower_id",currentUser.id).eq("following_id",profileUser.id).eq("status","pending").maybeSingle();if(error){console.warn("Follow request status:",error.message);return}followRequestStatus=data?"pending":"none"}
+function updateFollowButton(){const btn=$("followBtn");if(isOwner)return;if(isFollowing){btn.textContent="✓ Following";btn.disabled=false}else if(isPrivate&&followRequestStatus==="pending"){btn.textContent="⏳ Requested";btn.disabled=false}else{btn.textContent="➕ Follow";btn.disabled=false}}
+async function toggleFollow(){if(!profileUser||isOwner)return;const btn=$("followBtn");btn.disabled=true;try{if(isFollowing){const {error}=await supabaseClient.from("follows").delete().eq("follower_id",currentUser.id).eq("following_id",profileUser.id);if(error)throw error;isFollowing=false}else if(isPrivate){if(followRequestStatus==="pending"){alert("⏳ Follow request pehle se pending hai.");return}const {error}=await supabaseClient.from("follow_requests").insert({follower_id:currentUser.id,following_id:profileUser.id,status:"pending"});if(error)throw error;followRequestStatus="pending";alert("✅ Follow request sent! Owner ki approval ka wait karein.")}else{const {error}=await supabaseClient.from("follows").insert({follower_id:currentUser.id,following_id:profileUser.id});if(error)throw error;isFollowing=true}updateFollowButton();const canView=isOwner||!isPrivate||isFollowing;$("stats").style.display=canView?"flex":"none";$("infoCard").style.display=canView?"block":"none";$("postsSection").style.display=canView?"block":"none";$("privateBox").style.display=canView?"none":"block";if(canView){await loadStats();await loadPosts()}else{$("privateText").textContent="⏳ Follow request pending. Approval ke baad profile details aur posts dekh sakoge."}}catch(e){alert("Follow action nahi ho saki:\n"+e.message)}finally{btn.disabled=false;updateFollowButton()}}
+async function loadChatRequestStatus(){if(isOwner)return;const {data,error}=await supabaseClient.from("private_requests").select("id,status,sender_id,receiver_id,created_at").or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${profileUser.id}),and(sender_id.eq.${profileUser.id},receiver_id.eq.${currentUser.id})`).order("created_at",{ascending:false}).limit(1).maybeSingle();if(error){console.warn("Chat request status:",error.message);chatRequestStatus="none";return}if(data){const status=String(data.status||"pending").toLowerCase();chatRequestStatus=status==="accepted"?"accepted":status==="pending"?"pending":"none"}}
+function updatePrivateButton(){const b=$("chatBtn");if(isPrivate&&!isOwner&&!isFollowing){b.textContent="🔒 Follow first";b.disabled=false;return}if(chatRequestStatus==="accepted"){b.textContent="💬 Open Chat";b.disabled=false}else if(chatRequestStatus==="pending"){b.textContent="⏳ Request Sent";b.disabled=true}else{b.textContent="💬 1-on-1";b.disabled=false}}
+async function openPrivateChat(){if(!profileUser||isOwner)return;if(isPrivate&&!isFollowing){alert("🔒 Pehle Follow request bhejein aur owner ki approval ka wait karein.");return}if(chatRequestStatus==="accepted"){location.href="private-chat.html?user="+encodeURIComponent(profileUser.id);return}if(chatRequestStatus==="pending"){alert("⏳ 1-on-1 request already pending hai.");return}const btn=$("chatBtn");btn.disabled=true;btn.textContent="Sending...";try{const {error}=await supabaseClient.from("private_requests").insert({sender_id:currentUser.id,receiver_id:profileUser.id,status:"pending"});if(error)throw error;chatRequestStatus="pending";updatePrivateButton();alert("✅ 1-on-1 request sent!")}catch(e){alert("Request send nahi ho saki:\n"+e.message);updatePrivateButton()}}
+async function loadStats(){const [posts,followers,following]=await Promise.all([supabaseClient.from("posts").select("id",{count:"exact",head:true}).eq("user_id",profileUser.id),supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("following_id",profileUser.id),supabaseClient.from("follows").select("id",{count:"exact",head:true}).eq("follower_id",profileUser.id)]);if(!posts.error)$("postCount").textContent=posts.count||0;if(!followers.error)$("followersCount").textContent=followers.count||0;if(!following.error)$("followingCount").textContent=following.count||0}
+
+/* IMPORTANT: Home and Profile read the SAME posts rows. No new post is inserted here.
+   Includes text, image and voice posts created by the Home page. */
 async function loadPosts(){
- const {data,error}=await supabaseClient.from("posts").select("id,content,created_at,image_url").eq("user_id",profileUser.id).order("created_at",{ascending:false});
- const list=$("postsList");if(error){list.textContent="Posts load nahi ho sakin.";console.warn(error.message);return}
- if(!data?.length){list.innerHTML='<div class="post-card">Abhi koi post nahi hai.</div>';return}
- list.innerHTML=data.map(post=>`<article class="post-card"><div>${escapeHtml(post.content||"")}</div>${post.image_url?`<img class="post-image" loading="lazy" src="${escapeHtml(post.image_url)}" alt="Post image" onerror="this.style.display='none'">`:""}<div class="post-date">${formatDate(post.created_at)}</div></article>`).join("");
+ const list=$("postsList");list.innerHTML='<div class="post-card">Posts load ho rahi hain...</div>';
+ let result=await supabaseClient.from("posts").select("id,user_id,content,created_at,post_type,category,image_url,voice_url,voice_duration").eq("user_id",profileUser.id).order("created_at",{ascending:false}).limit(100);
+ if(result.error){
+   console.warn("Posts query with media fields failed:",result.error.message);
+   result=await supabaseClient.from("posts").select("id,user_id,content,created_at,image_url").eq("user_id",profileUser.id).order("created_at",{ascending:false}).limit(100);
+ }
+ const {data,error}=result;if(error){list.innerHTML='<div class="post-card">Posts load nahi ho sakin. Supabase posts SELECT RLS policy check karein.</div>';console.warn(error.message);return}
+ if(!data||!data.length){list.innerHTML='<div class="post-card">Abhi koi post nahi hai.</div>';return}
+ list.innerHTML=data.map(post=>{
+   const type=String(post.post_type|| (post.image_url?"image":"text")).toLowerCase();
+   const category=post.category?`<div class="post-type">${escapeHtml(post.category)}</div>`:"";
+   const typeBadge=type==="voice"?'🎙️ Voice post':type==="image"?'🖼️ Image post':'📝 Text post';
+   const content=post.content?`<div class="post-content">${escapeHtml(post.content)}</div>`:"";
+   const image=post.image_url?`<img class="post-image" loading="lazy" src="${escapeHtml(post.image_url)}" alt="Post image" onerror="this.style.display='none'">`:"";
+   const voice=post.voice_url?`<audio class="post-voice" controls preload="none" src="${escapeHtml(post.voice_url)}">Aapka browser audio play nahi kar sakta.</audio>`:"";
+   const duration=post.voice_duration?`<div class="post-date">Voice duration: ${escapeHtml(post.voice_duration)} sec</div>`:"";
+   return `<article class="post-card"><div class="post-type">${typeBadge}</div>${category}${content}${image}${voice}${duration}<div class="post-date">${formatDate(post.created_at)}</div></article>`;
+ }).join("");
 }
-async function openPeople(type){
- if(isPrivate&&!isOwner&&!isFollowing){alert("🔒 Private profile ki followers/following list dekhne ke liye approval zaroori hai.");return}
- if(type==="posts"){$("postsSection").scrollIntoView({behavior:"smooth"});return}
- $("modalTitle").textContent=type==="followers"?"Followers":"Following";$("modalContent").textContent="Loading...";$("peopleModal").style.display="flex";
- const col=type==="followers"?"follower_id":"following_id",match=type==="followers"?"following_id":"follower_id";
- const {data,error}=await supabaseClient.from("follows").select(col).eq(match,profileUser.id).limit(100);
- if(error){$("modalContent").textContent="List load nahi hui: "+error.message;return}
- const ids=[...new Set((data||[]).map(x=>x[col]).filter(Boolean))];if(!ids.length){$("modalContent").textContent="Abhi koi nahi.";return}
- const {data:profiles,error:profileError}=await supabaseClient.from("profiles").select("id,name,username,avatar_url").in("id",ids);
- if(profileError){$("modalContent").textContent="User list access nahi hui.";return}
- $("modalContent").innerHTML=(profiles||[]).map(p=>`<div class="user-row"><img src="${escapeHtml(p.avatar_url||PLACEHOLDER)}" alt=""><div><strong>${escapeHtml(p.name||p.username||"User")}</strong><div class="info-label">@${escapeHtml(p.username||"user")}</div></div><button onclick="location.href='profile.html?user=${encodeURIComponent(p.id)}'">View</button></div>`).join("")||"Abhi koi nahi.";
-}
+async function openPeople(type){if(isPrivate&&!isOwner&&!isFollowing){alert("🔒 Private profile ki followers/following list dekhne ke liye approval zaroori hai.");return}if(type==="posts"){$("postsSection").scrollIntoView({behavior:"smooth"});return}$("modalTitle").textContent=type==="followers"?"Followers":"Following";$("modalContent").textContent="Loading...";$("peopleModal").style.display="flex";const col=type==="followers"?"follower_id":"following_id",match=type==="followers"?"following_id":"follower_id";const {data,error}=await supabaseClient.from("follows").select(col).eq(match,profileUser.id).limit(100);if(error){$("modalContent").textContent="List load nahi hui: "+error.message;return}const ids=[...new Set((data||[]).map(x=>x[col]).filter(Boolean))];if(!ids.length){$("modalContent").textContent="Abhi koi nahi.";return}const {data:profiles,error:profileError}=await supabaseClient.from("profiles").select("id,name,username,avatar_url").in("id",ids);if(profileError){$("modalContent").textContent="User list access nahi hui.";return}$("modalContent").innerHTML=(profiles||[]).map(p=>`<div class="user-row"><img src="${escapeHtml(p.avatar_url||PLACEHOLDER)}" alt=""><div><strong>${escapeHtml(p.name||p.username||"User")}</strong><div class="info-label">@${escapeHtml(p.username||"user")}</div></div><button onclick="location.href='profile.html?user=${encodeURIComponent(p.id)}'">View</button></div>`).join("")||"Abhi koi nahi."}
 function closePeople(){$("peopleModal").style.display="none"}
 function formatDate(value){if(!value)return"";const d=new Date(value);if(Number.isNaN(d.getTime()))return"";const seconds=Math.floor((Date.now()-d.getTime())/1000);if(seconds<60)return"Just now";if(seconds<3600)return Math.floor(seconds/60)+" min ago";if(seconds<86400)return Math.floor(seconds/3600)+" hr ago";if(seconds<604800)return Math.floor(seconds/86400)+" days ago";return d.toLocaleDateString()}
 function formatDOB(value){const d=new Date(value+"T00:00:00");return Number.isNaN(d.getTime())?value:d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"})}
