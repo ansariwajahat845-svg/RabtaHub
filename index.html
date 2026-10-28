@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#8b5cf6">
 <meta name="google-site-verification" content="mhEo4JUhhspflRW-XdA_XI_grR9fxNFalhk69ZGQ1eg">
+<meta name="description" content="Welcome to ChatZone 💬 — Connect with friends, chat privately, share posts and photos, explore Mehfil, follow trending topics, and earn points. Join the ChatZone community today!">
 <title>ChatZone 💬</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -32,7 +33,7 @@ textarea{min-height:78px;resize:vertical}textarea::placeholder,input::placeholde
 .post-head{display:flex;justify-content:space-between;align-items:center;gap:7px}.user-info{display:flex;align-items:center;gap:8px;min-width:0}
 .avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#ddd;flex-shrink:0;cursor:pointer}
 .user-name{font-size:14px;font-weight:800;overflow-wrap:anywhere;cursor:pointer}.post-author-name{background:linear-gradient(90deg,#6c5ce7,#e84393,#0984e3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.role-badge{display:inline-block;padding:3px 7px;margin-left:3px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle;-webkit-text-fill:initial}
+.role-badge{display:inline-block;padding:3px 7px;margin-left:3px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle;-webkit-text-fill-color:initial}
 .role-creator{background:#fff0c2;color:#875500}.role-senior{background:#dbeafe;color:#1d4ed8}.post-date{font-size:11px;color:var(--muted);margin-top:3px}
 .post-category{display:inline-block;background:var(--surface-soft);color:var(--accent-text);font-size:11px;font-weight:bold;padding:5px 9px;border-radius:15px;margin-top:8px}
 .post-content{margin:12px 0;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.post-image{width:100%;max-height:450px;object-fit:contain;border-radius:12px;margin-top:8px}
@@ -131,7 +132,6 @@ async function init(){
     if(currentUser)startNotifications();
     if(!currentUser){$("feed").innerHTML='<div class="empty">Please log in to open Home.<br><button onclick="location.href=\'login.html\'">Open Login</button></div>';return}
     $("feed").innerHTML='<div class="loading">Loading feed…</div>';
-    // Feed is the primary page content; slow optional widgets cannot hold it up.
     await loadFeed();
     loadPointsBoard().catch(e=>console.warn("Points:",e));
     loadOnlineUsers().catch(e=>console.warn("Online:",e));
@@ -201,7 +201,6 @@ async function loadFeed(){
     if(r.error)throw r.error;
     currentPosts=r.data||[];const ids=[...new Set(currentPosts.map(p=>p.user_id).filter(Boolean))];
     profileMap={};followMap={};pointsMap={};postActionCounts={};postCommentCounts={};
-    // Main posts should render even if optional counts/profile requests fail.
     if(!currentPosts.length){$("feed").innerHTML='<div class="empty">There are no posts yet.</div>';updateTrending();return}
     if(ids.length){
       const results=await Promise.allSettled([
