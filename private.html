@@ -53,366 +53,82 @@ header{background:#8b5cf6;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px
 </style>
 </head>
 <body>
-<header>
-  <div class="headrow">
-    <a class="back-btn" href="index.html" aria-label="Back to Home">← Back</a>
-    <div class="brandicon">💬</div>
-    <div>
-      <div class="brand">ChatZone</div>
-      <div class="status" id="status">Connecting...</div>
-    </div>
-    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
-  </div>
-</header>
-
+<header><div class="headrow">
+<a class="back-btn" href="index.html" aria-label="Back to Home">← Back</a>
+<div class="brandicon">💬</div><div><div class="brand">ChatZone</div><div class="status" id="status">Connecting...</div></div>
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+</div></header>
 <div class="tabs">
-  <button class="active" data-tab="chats">CHATS</button>
-  <button data-tab="requests">REQUESTS</button>
-  <button data-tab="online">ONLINE</button>
+<button class="active" data-tab="chats">CHATS</button><button data-tab="requests">REQUESTS</button><button data-tab="online">ONLINE</button>
 </div>
-
-<div class="searchwrap">
-  <input id="search" placeholder="🔎  Search accepted chats..." autocomplete="off" aria-label="Search">
-</div>
+<div class="searchwrap"><input id="search" placeholder="🔎  Search accepted chats..." autocomplete="off" aria-label="Search"></div>
 <div id="error" role="alert"></div>
 <div id="list"><div class="empty"><span class="emptyicon">⏳</span>Loading private chats...</div></div>
-
 <script>
-const SUPABASE_URL = "https://jhcpqjmxiovvqbghpxbf.supabase.co";
-const SUPABASE_KEY = "sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-
-/* Dark/light theme: saves the choice on this device. */
-function applyTheme(theme) {
-  const chosen = theme === "dark" ? "dark" : "light";
-  document.documentElement.dataset.theme = chosen;
-  try { localStorage.setItem("chatzone-theme", chosen); } catch (e) {}
-  const btn = document.getElementById("themeToggle");
-  if (btn) {
-    btn.textContent = chosen === "dark" ? "☀️" : "🌙";
-    btn.title = chosen === "dark" ? "Switch to light mode" : "Switch to dark mode";
-    btn.setAttribute("aria-label", btn.title);
-  }
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = chosen === "dark" ? "#171222" : "#8b5cf6";
+"use strict";
+const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
+const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
+function applyTheme(theme){
+ const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;
+ try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}
+ const btn=document.getElementById("themeToggle");if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}
+ const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6";
 }
-function toggleTheme() {
-  applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+(function(){let saved="light";try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}applyTheme(saved)})();
+document.getElementById("themeToggle").addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
+window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"&&e.newValue)applyTheme(e.newValue)});
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+let me=null,activeTab="chats",profiles=[],requests=[],acceptedIds=new Set(),presenceChannel=null,requestsRealtimeChannel=null,onlineIds=new Set(),refreshTimer=null,heartbeatTimer=null,loadingProfiles=false,loadingRequests=false,reloadQueued=false;
+const list=document.getElementById("list"),search=document.getElementById("search"),statusEl=document.getElementById("status"),errorEl=document.getElementById("error");
+function showError(m){errorEl.textContent=m;errorEl.style.display="block"}function hideError(){errorEl.style.display="none"}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function displayName(p){return p.full_name||p.username||p.name||"ChatZone Member"}
+function initials(p){return displayName(p).trim().charAt(0).toUpperCase()||"?"}
+function photoUrl(p){return p.avatar_url||p.profile_pic||p.profile_picture||p.photo_url||p.avatar||p.picture||p.image_url||p.photo||""}
+function isRecentlySeen(p){if(!p.last_seen)return false;const t=new Date(p.last_seen).getTime();return Number.isFinite(t)&&Date.now()-t<90000}
+function isOnline(p){return onlineIds.has(String(p.id))||isRecentlySeen(p)}
+function getOtherId(r){const s=r.sender_id||r.from_user_id||r.requester_id||r.user_id,rc=r.receiver_id||r.to_user_id||r.recipient_id;if(String(s||"")===String(me?.id))return rc?String(rc):null;if(String(rc||"")===String(me?.id))return s?String(s):null;return null}
+function requestStatus(r){return String(r.status||r.state||"").trim().toLowerCase()}
+function isAccepted(r){return ["accepted","approved","confirmed","active"].includes(requestStatus(r))}
+function isPendingIncoming(r){return String(r.receiver_id||r.to_user_id||r.recipient_id||"")===String(me?.id)&&(!requestStatus(r)||["pending","requested","sent"].includes(requestStatus(r)))}
+function openChat(id){if(id)location.href="private-chat.html?user_id="+encodeURIComponent(id)}
+function render(){
+ const term=search.value.trim().toLowerCase();let rows=profiles.filter(p=>String(p.id)!==String(me?.id));
+ if(activeTab==="online")rows=rows.filter(isOnline);
+ if(term)rows=rows.filter(p=>displayName(p).toLowerCase().includes(term)||String(p.username||"").toLowerCase().includes(term));
+ if(!rows.length){const m={chats:["No private chats yet","Accepted invitations will appear here. People who have not accepted your invite will not be shown."],requests:["No pending requests","New private chat invitations will appear here."],online:["No accepted chats online","When an accepted contact comes online, they will appear here."]}[activeTab];list.innerHTML=`<div class="empty"><span class="emptyicon">💬</span>${escapeHtml(m[0])}<div class="hint">${escapeHtml(m[1])}</div></div>`;return}
+ list.innerHTML=rows.map(p=>{const online=isOnline(p),preview=activeTab==="requests"?"Private chat invitation":online?"🟣 Online":"Tap to open private chat",photo=photoUrl(p),av=photo?`<img src="${escapeHtml(photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:escapeHtml(initials(p));return `<div class="person"><div class="person-main" data-open-id="${escapeHtml(p.id)}" role="button" tabindex="0" aria-label="Open chat with ${escapeHtml(displayName(p))}"><div class="avatar">${av}${online?'<span class="dot"></span>':''}</div><div class="details"><div class="name">${escapeHtml(displayName(p))}</div><div class="preview">${escapeHtml(preview)}</div></div></div>${activeTab==="requests"?"":`<button class="leave-btn" type="button" data-leave-id="${escapeHtml(p.id)}">Leave</button>`}<div class="time">${online?"online":""}</div></div>`}).join("");
+ list.querySelectorAll(".person-main").forEach(el=>{const go=()=>openChat(el.dataset.openId);el.addEventListener("click",go);el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}})});
+ list.querySelectorAll(".leave-btn").forEach(b=>b.addEventListener("click",async e=>{e.stopPropagation();const id=b.dataset.leaveId,p=profiles.find(x=>String(x.id)===String(id));if(!p||!confirm(`Leave private chat with ${displayName(p)}? This removes the connection for both sides.`))return;b.disabled=true;b.textContent="Leaving…";try{const {error}=await db.from("private_requests").delete().or(`and(sender_id.eq.${me.id},receiver_id.eq.${id}),and(sender_id.eq.${id},receiver_id.eq.${me.id})`);if(error)throw error;profiles=profiles.filter(x=>String(x.id)!==String(id));acceptedIds.delete(String(id));render()}catch(err){console.error(err);showError("Leave nahi ho saka. private_requests table ki DELETE RLS policy aur sender_id/receiver_id columns check karein.");b.disabled=false;b.textContent="Leave"}}));
 }
-(function initTheme() {
-  let saved = "light";
-  try { saved = localStorage.getItem("chatzone-theme") || "light"; } catch (e) {}
-  applyTheme(saved);
-})();
-document.getElementById("themeToggle").addEventListener("click", toggleTheme);
-window.addEventListener("storage", event => {
-  if (event.key === "chatzone-theme" && event.newValue) applyTheme(event.newValue);
-});
-
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true }
-});
-
-let me = null;
-let activeTab = "chats";
-let profiles = [];
-let requests = [];
-let acceptedIds = new Set();
-let presenceChannel = null;
-let onlineIds = new Set();
-let refreshTimer = null;
-let heartbeatTimer = null;
-let loadingProfiles = false;
-let loadingRequests = false;
-
-const list = document.getElementById("list");
-const search = document.getElementById("search");
-const statusEl = document.getElementById("status");
-const errorEl = document.getElementById("error");
-
-function showError(message) {
-  errorEl.textContent = message;
-  errorEl.style.display = "block";
+async function loadConnections(){
+ if(!me)return;if(loadingRequests){reloadQueued=true;return}loadingRequests=true;
+ try{const {data,error}=await db.from("private_requests").select("*").or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`).limit(500);if(error)throw error;
+ requests=data||[];acceptedIds=new Set();const pendingIds=new Set();
+ requests.forEach(r=>{const id=getOtherId(r);if(!id||id===String(me.id))return;if(isAccepted(r))acceptedIds.add(id);else if(isPendingIncoming(r))pendingIds.add(id)});
+ await loadProfilesForIds(activeTab==="requests"?pendingIds:acceptedIds);
+ }catch(e){console.error("Private connections load failed:",e);showError("Private invites load nahi ho sake. private_requests table ke sender_id, receiver_id, status aur SELECT RLS policies check karein.");profiles=[];render()}
+ finally{loadingRequests=false;if(reloadQueued){reloadQueued=false;loadProfiles()}}
 }
-function hideError() { errorEl.style.display = "none"; }
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+async function loadProfilesForIds(ids){const arr=Array.from(ids).filter(id=>id&&String(id)!==String(me.id));if(!arr.length){profiles=[];render();return}const {data,error}=await db.from("profiles").select("*").in("id",arr).limit(500);if(error)throw error;profiles=data||[];render()}
+async function loadProfiles(){if(!me)return;if(loadingProfiles){reloadQueued=true;return}loadingProfiles=true;try{await loadConnections();hideError()}catch(e){console.error(e);showError("Private chats load nahi ho rahe. Supabase permissions aur private_requests schema check karein.")}finally{loadingProfiles=false;if(reloadQueued&&!loadingRequests){reloadQueued=false;loadProfiles()}}}
+async function updateLastSeen(){if(!me||document.visibilityState==="hidden")return;const {error}=await db.from("profiles").update({last_seen:new Date().toISOString()}).eq("id",me.id);if(error)console.warn("last_seen update failed:",error.message)}
+function syncPresence(){if(!presenceChannel)return;const state=presenceChannel.presenceState(),next=new Set();Object.entries(state).forEach(([key,entries])=>{if(entries?.length){next.add(String(key));entries.forEach(x=>{if(x.user_id)next.add(String(x.user_id))})}});onlineIds=next;render()}
+function startPresence(){if(!me||presenceChannel)return;presenceChannel=db.channel("chatzone-online-users",{config:{presence:{key:String(me.id)}}}).on("presence",{event:"sync"},syncPresence).on("presence",{event:"join"},syncPresence).on("presence",{event:"leave"},syncPresence).subscribe(async state=>{if(state==="SUBSCRIBED"){await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()});statusEl.textContent="🟣 Connected"}else if(state==="CHANNEL_ERROR"||state==="TIMED_OUT")statusEl.textContent="Connection issue"});
+ if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{await updateLastSeen();if(presenceChannel&&document.visibilityState==="visible")await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()})},30000)}
+function startRequestRealtime(){
+ if(!me||requestsRealtimeChannel)return;
+ requestsRealtimeChannel=db.channel("chatzone-private-requests-"+me.id)
+ .on("postgres_changes",{event:"*",schema:"public",table:"private_requests"},payload=>{
+   if(document.visibilityState==="visible")loadProfiles();
+ })
+ .subscribe(state=>{if(state==="SUBSCRIBED")console.log("Private request realtime connected");else if(state==="CHANNEL_ERROR"||state==="TIMED_OUT")console.warn("Private request realtime unavailable; 10-second refresh remains active")});
 }
-function displayName(p) { return p.full_name || p.username || p.name || "ChatZone Member"; }
-function initials(p) { return displayName(p).trim().charAt(0).toUpperCase() || "?"; }
-function photoUrl(p) {
-  return p.avatar_url || p.profile_pic || p.profile_picture || p.photo_url ||
-    p.avatar || p.picture || p.image_url || p.photo || "";
-}
-function isRecentlySeen(p) {
-  if (!p.last_seen) return false;
-  const timestamp = new Date(p.last_seen).getTime();
-  return Number.isFinite(timestamp) && Date.now() - timestamp < 90000;
-}
-function isOnline(p) { return onlineIds.has(String(p.id)) || isRecentlySeen(p); }
-function getOtherId(r) {
-  const sender = r.sender_id || r.from_user_id || r.requester_id || r.user_id;
-  const receiver = r.receiver_id || r.to_user_id || r.recipient_id;
-  if (String(sender || "") === String(me?.id)) return receiver ? String(receiver) : null;
-  if (String(receiver || "") === String(me?.id)) return sender ? String(sender) : null;
-  return null;
-}
-function requestStatus(r) {
-  return String(r.status || r.state || "").trim().toLowerCase();
-}
-function isAccepted(r) {
-  return ["accepted","approved","confirmed","active"].includes(requestStatus(r));
-}
-function isPendingIncoming(r) {
-  const receiver = r.receiver_id || r.to_user_id || r.recipient_id;
-  const status = requestStatus(r);
-  return String(receiver || "") === String(me?.id) &&
-    (!status || ["pending","requested","sent"].includes(status));
-}
-function openChat(id) {
-  if (!id) return;
-  location.href = "private-chat.html?user_id=" + encodeURIComponent(id);
-}
-
-function render() {
-  const term = search.value.trim().toLowerCase();
-  let rows = profiles.filter(p => String(p.id) !== String(me?.id));
-
-  if (activeTab === "online") rows = rows.filter(p => isOnline(p));
-  if (term) {
-    rows = rows.filter(p =>
-      displayName(p).toLowerCase().includes(term) ||
-      String(p.username || "").toLowerCase().includes(term)
-    );
-  }
-
-  if (!rows.length) {
-    const messages = {
-      chats: ["No private chats yet", "Accepted invitations will appear here. People who have not accepted your invite will not be shown."],
-      requests: ["No pending requests", "New private chat invitations will appear here."],
-      online: ["No accepted chats online", "When an accepted contact comes online, they will appear here."]
-    };
-    const m = messages[activeTab];
-    list.innerHTML = `<div class="empty"><span class="emptyicon">💬</span>${escapeHtml(m[0])}<div class="hint">${escapeHtml(m[1])}</div></div>`;
-    return;
-  }
-
-  list.innerHTML = rows.map(p => {
-    const online = isOnline(p);
-    const preview = activeTab === "requests" ? "Private chat invitation" : (online ? "🟣 Online" : "Tap to open private chat");
-    const photo = photoUrl(p);
-    const avatarContent = photo
-      ? `<img src="${escapeHtml(photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`
-      : escapeHtml(initials(p));
-    return `
-      <div class="person" data-id="${escapeHtml(p.id)}">
-        <div class="person-main" data-open-id="${escapeHtml(p.id)}" role="button" tabindex="0" aria-label="Open chat with ${escapeHtml(displayName(p))}">
-          <div class="avatar">${avatarContent}${online ? '<span class="dot"></span>' : ''}</div>
-          <div class="details">
-            <div class="name">${escapeHtml(displayName(p))}</div>
-            <div class="preview">${escapeHtml(preview)}</div>
-          </div>
-        </div>
-        ${activeTab === "requests" ? '' : `<button class="leave-btn" type="button" data-leave-id="${escapeHtml(p.id)}">Leave</button>`}
-        <div class="time">${online ? "online" : ""}</div>
-      </div>`;
-  }).join("");
-
-  list.querySelectorAll(".person-main").forEach(el => {
-    const go = () => openChat(el.dataset.openId);
-    el.addEventListener("click", go);
-    el.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
-    });
-  });
-  list.querySelectorAll(".leave-btn").forEach(button => {
-    button.addEventListener("click", async e => {
-      e.stopPropagation();
-      const otherId = button.dataset.leaveId;
-      const person = profiles.find(p => String(p.id) === String(otherId));
-      if (!person || !confirm(`Leave private chat with ${displayName(person)}? This removes the connection for both sides.`)) return;
-      button.disabled = true;
-      button.textContent = "Leaving…";
-      try {
-        // Delete only the relationship row(s) for this pair.
-        const { error } = await db.from("private_requests")
-          .delete()
-          .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`);
-        if (error) throw error;
-        profiles = profiles.filter(p => String(p.id) !== String(otherId));
-        acceptedIds.delete(String(otherId));
-        render();
-      } catch (err) {
-        console.error("Leave chat failed:", err);
-        showError("Leave nahi ho saka. private_requests table ki DELETE RLS policy aur sender_id/receiver_id columns check karein.");
-        button.disabled = false;
-        button.textContent = "Leave";
-      }
-    });
-  });
-}
-
-async function loadConnections() {
-  if (!me || loadingRequests) return;
-  loadingRequests = true;
-  try {
-    const { data, error } = await db
-      .from("private_requests")
-      .select("*")
-      .or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`)
-      .limit(300);
-    if (error) throw error;
-
-    requests = data || [];
-    acceptedIds = new Set();
-    const pendingIds = new Set();
-
-    requests.forEach(r => {
-      const otherId = getOtherId(r);
-      if (!otherId || otherId === String(me.id)) return;
-      if (isAccepted(r)) acceptedIds.add(otherId);
-      else if (isPendingIncoming(r)) pendingIds.add(otherId);
-    });
-
-    if (activeTab === "requests") await loadProfilesForIds(pendingIds);
-    else await loadProfilesForIds(acceptedIds);
-  } catch (e) {
-    console.error("Private connections load failed:", e);
-    showError("Private invites load nahi ho sake. private_requests table ke sender_id, receiver_id, status aur SELECT RLS policies check karein. Safety ke liye all members show nahi kiye gaye.");
-    profiles = [];
-    render();
-  } finally {
-    loadingRequests = false;
-  }
-}
-
-async function loadProfilesForIds(ids) {
-  const idList = Array.from(ids).filter(id => id && String(id) !== String(me.id));
-  if (!idList.length) {
-    profiles = [];
-    render();
-    return;
-  }
-
-  const { data, error } = await db.from("profiles").select("*").in("id", idList).limit(300);
-  if (error) throw error;
-  profiles = data || [];
-  render();
-}
-
-async function loadProfiles() {
-  if (!me || loadingProfiles) return;
-  loadingProfiles = true;
-  try {
-    await loadConnections();
-    hideError();
-  } catch (e) {
-    console.error("Profiles/connections load failed:", e);
-    showError("Private chats load nahi ho rahe. Supabase permissions aur private_requests schema check karein.");
-  } finally {
-    loadingProfiles = false;
-  }
-}
-
-async function updateLastSeen() {
-  if (!me || document.visibilityState === "hidden") return;
-  const { error } = await db.from("profiles")
-    .update({ last_seen: new Date().toISOString() })
-    .eq("id", me.id);
-  if (error) console.warn("last_seen update failed:", error.message);
-}
-
-function syncPresence() {
-  if (!presenceChannel) return;
-  const state = presenceChannel.presenceState();
-  const next = new Set();
-  Object.entries(state).forEach(([key, entries]) => {
-    if (entries && entries.length) {
-      next.add(String(key));
-      entries.forEach(entry => { if (entry.user_id) next.add(String(entry.user_id)); });
-    }
-  });
-  onlineIds = next;
-  render();
-}
-
-function startPresence() {
-  if (!me || presenceChannel) return;
-  presenceChannel = db.channel("chatzone-online-users", { config: { presence: { key: String(me.id) } } });
-  presenceChannel
-    .on("presence", { event: "sync" }, syncPresence)
-    .on("presence", { event: "join" }, syncPresence)
-    .on("presence", { event: "leave" }, syncPresence)
-    .subscribe(async state => {
-      if (state === "SUBSCRIBED") {
-        await presenceChannel.track({ user_id: String(me.id), online_at: new Date().toISOString() });
-        statusEl.textContent = "🟣 Connected";
-      } else if (state === "CHANNEL_ERROR" || state === "TIMED_OUT") {
-        statusEl.textContent = "Connection issue";
-      }
-    });
-
-  if (heartbeatTimer) clearInterval(heartbeatTimer);
-  heartbeatTimer = setInterval(async () => {
-    await updateLastSeen();
-    if (presenceChannel && document.visibilityState === "visible") {
-      await presenceChannel.track({ user_id: String(me.id), online_at: new Date().toISOString() });
-    }
-  }, 30000);
-}
-
-async function boot() {
-  try {
-    const { data, error } = await db.auth.getSession();
-    if (error) throw error;
-    if (!data.session) {
-      statusEl.textContent = "Please log in";
-      list.innerHTML = '<div class="empty"><span class="emptyicon">🔐</span>Login first to see your private chats.</div>';
-      return;
-    }
-    me = data.session.user;
-    statusEl.textContent = "Loading private chats...";
-    await updateLastSeen();
-    startPresence();
-    await loadProfiles();
-    if (refreshTimer) clearInterval(refreshTimer);
-    refreshTimer = setInterval(() => loadProfiles(), 20000);
-  } catch (e) {
-    console.error(e);
-    statusEl.textContent = "Could not connect";
-    showError("Login/session ya Supabase connection check karein.");
-  }
-}
-
-document.querySelectorAll(".tabs button").forEach(button => {
-  button.addEventListener("click", async () => {
-    document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
-    button.classList.add("active");
-    activeTab = button.dataset.tab;
-    search.placeholder = activeTab === "requests" ? "🔎  Search requests..." : "🔎  Search accepted chats...";
-    await loadProfiles();
-  });
-});
-search.addEventListener("input", render);
-
-document.addEventListener("visibilitychange", async () => {
-  if (document.visibilityState === "visible" && me) {
-    await updateLastSeen();
-    if (presenceChannel) {
-      await presenceChannel.track({ user_id: String(me.id), online_at: new Date().toISOString() });
-    }
-    loadProfiles();
-  }
-});
-
-window.addEventListener("pagehide", () => {
-  if (heartbeatTimer) clearInterval(heartbeatTimer);
-  if (refreshTimer) clearInterval(refreshTimer);
-  if (presenceChannel) db.removeChannel(presenceChannel);
-});
-
+async function boot(){try{const {data,error}=await db.auth.getSession();if(error)throw error;if(!data.session){statusEl.textContent="Please log in";list.innerHTML='<div class="empty"><span class="emptyicon">🔐</span>Login first to see your private chats.</div>';return}me=data.session.user;statusEl.textContent="Loading private chats...";await updateLastSeen();startPresence();await loadProfiles();startRequestRealtime();if(refreshTimer)clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==="visible")loadProfiles()},10000)}catch(e){console.error(e);statusEl.textContent="Could not connect";showError("Login/session ya Supabase connection check karein.")}}
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",async()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeTab=b.dataset.tab;search.placeholder=activeTab==="requests"?"🔎  Search requests...":"🔎  Search accepted chats...";await loadProfiles()}));
+search.addEventListener("input",render);
+document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&me){await updateLastSeen();if(presenceChannel)await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()});await loadProfiles()}});
+window.addEventListener("pagehide",()=>{if(heartbeatTimer)clearInterval(heartbeatTimer);if(refreshTimer)clearInterval(refreshTimer);if(presenceChannel)db.removeChannel(presenceChannel);if(requestsRealtimeChannel)db.removeChannel(requestsRealtimeChannel)});
 boot();
 </script>
 </body>
