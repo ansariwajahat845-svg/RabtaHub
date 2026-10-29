@@ -11,8 +11,7 @@
 header{min-height:64px;background:#6d28d9;color:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;position:sticky;top:0;z-index:4}
 button{cursor:pointer;border:0}#back{font-size:26px;color:#fff;background:transparent;padding:4px;flex:0 0 auto}
 .header-action{font-size:11px;font-weight:700;color:#fff;background:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:8px 7px;white-space:nowrap;flex:0 0 auto}
-#leaveBtn{background:#7f1d1d;border-color:#fecaca}
-#clearBtn{background:#5b21b6}
+#leaveBtn{background:#7f1d1d;border-color:#fecaca}#clearBtn{background:#5b21b6}
 #avatar{height:42px;width:42px;border-radius:50%;object-fit:cover;background:#dce7e3;display:grid;place-items:center;font-size:22px}
 .identity{flex:1;min-width:0}.identity h1{font-size:16px;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.identity p{font-size:12px;margin:0;color:#ede9fe}
 #refresh{font-size:20px;color:white;background:transparent;padding:8px}
@@ -20,8 +19,7 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 #messages{flex:1;min-height:0;overflow-y:auto;padding:16px 12px 24px;display:flex;flex-direction:column;gap:8px;background-color:#f3e8ff;background-image:radial-gradient(#ddd6fe 0.6px,transparent .6px);background-size:12px 12px}
 .notice{text-align:center;align-self:center;background:#ede9fe;color:#4c1d95;border-radius:8px;padding:8px 12px;font-size:12px;max-width:90%;margin:4px auto}
 .bubble{max-width:82%;padding:8px 10px 6px;border-radius:9px;box-shadow:0 1px 1px #0001;overflow-wrap:anywhere;font-size:14px;line-height:1.4;white-space:pre-wrap}
-.bubble.mine{align-self:flex-end;background:#c4b5fd;color:#2e1065;border-top-right-radius:2px}
-.bubble.theirs{align-self:flex-start;background:#fff;border-top-left-radius:2px}
+.bubble.mine{align-self:flex-end;background:#c4b5fd;color:#2e1065;border-top-right-radius:2px}.bubble.theirs{align-self:flex-start;background:#fff;border-top-left-radius:2px}
 .message-footer{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:4px;min-height:17px}.time{display:inline-block;text-align:right;color:#667781;font-size:10px}.ticks{font-size:13px;letter-spacing:-4px;padding-right:3px;color:#667781;font-weight:700}.ticks.seen{color:#1686e0}.reply-msg{font-size:10px;line-height:1;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:5px;padding:4px 5px;font-weight:700}.reply-quote{border-left:3px solid #7c3aed;background:#ede9fe;border-radius:5px;padding:5px 7px;margin-bottom:6px;font-size:11px;color:#4c1d95;white-space:normal}.reply-bar{display:none;align-items:center;gap:8px;padding:7px 12px;background:#ede9fe;border-top:1px solid #c4b5fd;font-size:12px;color:#4c1d95}.reply-bar.show{display:flex}.reply-bar .reply-preview{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.reply-cancel{background:transparent;color:#7f1d1d;font-size:18px;padding:2px 7px}.delete-msg{font-size:10px;line-height:1;color:#7f1d1d;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:5px;padding:4px 5px;font-weight:700}.delete-msg:disabled{opacity:.5}
 .image-message{max-width:100%;max-height:280px;border-radius:6px;display:block;margin-bottom:5px}
 .composer{display:flex;align-items:flex-end;gap:6px;padding:9px;background:#f3e8ff;max-width:760px;width:100%;margin:auto;border:2px solid #7c3aed;border-radius:16px;position:relative}
@@ -30,310 +28,87 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 .tool-btn{height:42px;width:36px;flex:0 0 36px;border-radius:50%;background:#7c3aed;color:#fff;font-size:20px;border:1px solid #6d28d9;padding:0}
 #emojiPanel{display:none;position:absolute;bottom:70px;left:8px;right:8px;max-width:740px;margin:auto;background:#f5f3ff;border:1px solid #7c3aed;border-radius:12px;padding:8px;box-shadow:0 4px 18px #0002;z-index:8;flex-wrap:wrap;gap:4px}
 #emojiPanel button{background:#ede9fe;color:#5b21b6;font-size:24px;padding:5px;border-radius:7px}
-#send:disabled{opacity:.5}
-#status{font-size:12px;color:#b42318;padding:0 12px 5px;background:#f3e8ff}
-#loadOlder{margin:8px auto;display:none;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700}
-#loadOlder:disabled{opacity:.5}
+#send:disabled{opacity:.5}#status{font-size:12px;color:#b42318;padding:0 12px 5px;background:#f3e8ff}
+#loadOlder{margin:8px auto;display:none;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700}#loadOlder:disabled{opacity:.5}
 @media(min-width:761px){body{background:#ede9fe}main{border-left:1px solid #ddd;border-right:1px solid #ddd}#composerWrap{left:50%;transform:translateX(-50%);border-left:1px solid #ddd;border-right:1px solid #ddd}}
-/* Dark theme overrides; light theme remains the original default. */
 #themeToggle{font-size:18px;line-height:1;min-width:34px;height:34px;padding:0 7px;border-radius:9px;background:#5b21b6;color:#fff;border:1px solid #c4b5fd;flex:0 0 auto}
-html[data-theme="dark"] body{background:#111018;color:#eeeaf8}
-html[data-theme="dark"] header{background:#211632}
-html[data-theme="dark"] .header-action{background:#342248;border-color:#59456d;color:#f5efff}
-html[data-theme="dark"] #leaveBtn{background:#702d39;border-color:#a65b67}
-html[data-theme="dark"] #avatar{background:#393044}
-html[data-theme="dark"] #chatStatus{color:#d5c8e7}
-html[data-theme="dark"] main{background:#111018}
-html[data-theme="dark"] #messages{background-color:#111018;background-image:radial-gradient(#30253b .6px,transparent .6px)}
-html[data-theme="dark"] .notice{background:#282033;color:#e6d8f8}
-html[data-theme="dark"] .bubble.mine{background:#573b7d;color:#fff}
-html[data-theme="dark"] .bubble.theirs{background:#28242f;color:#f4effa}
-html[data-theme="dark"] .time{color:#b8acbf}
-html[data-theme="dark"] .reply-msg,html[data-theme="dark"] .delete-msg{background:#33283e;color:#e7d6ff;border-color:#59456d}
-html[data-theme="dark"] .reply-quote{background:#33263f;color:#eadcf9;border-left-color:#b794f6}
-html[data-theme="dark"] .reply-bar{background:#251b30;color:#eadcf9;border-color:#493657}
-html[data-theme="dark"] .reply-cancel{color:#ff9ba8}
-html[data-theme="dark"] #composerWrap{background:#17121f!important;border-color:#40304e}
-html[data-theme="dark"] .composer{background:#17121f;border-color:#7852a1}
-html[data-theme="dark"] #messageInput{background:#292331;color:#f8f4ff;border:1px solid #51415f}
-html[data-theme="dark"] #messageInput::placeholder{color:#b7aabd}
-html[data-theme="dark"] #emojiPanel{background:#211a2a;border-color:#7852a1}
-html[data-theme="dark"] #emojiPanel button{background:#33263f;color:#eadcff}
-html[data-theme="dark"] #status{background:#111018;color:#ffaaa9}
-html[data-theme="dark"] #loadOlder{background:#30233d;color:#eadcff;border-color:#59456d}
-html[data-theme="dark"] #themeToggle{background:#eadcff;color:#2d1a3d;border-color:#b794f6}
+html[data-theme="dark"] body{background:#111018;color:#eeeaf8}html[data-theme="dark"] header{background:#211632}html[data-theme="dark"] .header-action{background:#342248;border-color:#59456d;color:#f5efff}html[data-theme="dark"] #leaveBtn{background:#702d39;border-color:#a65b67}html[data-theme="dark"] #avatar{background:#393044}html[data-theme="dark"] #chatStatus{color:#d5c8e7}html[data-theme="dark"] main{background:#111018}html[data-theme="dark"] #messages{background-color:#111018;background-image:radial-gradient(#30253b .6px,transparent .6px)}html[data-theme="dark"] .notice{background:#282033;color:#e6d8f8}html[data-theme="dark"] .bubble.mine{background:#573b7d;color:#fff}html[data-theme="dark"] .bubble.theirs{background:#28242f;color:#f4effa}html[data-theme="dark"] .time{color:#b8acbf}html[data-theme="dark"] .reply-msg,html[data-theme="dark"] .delete-msg{background:#33283e;color:#e7d6ff;border-color:#59456d}html[data-theme="dark"] .reply-quote{background:#33263f;color:#eadcf9;border-left-color:#b794f6}html[data-theme="dark"] .reply-bar{background:#251b30;color:#eadcf9;border-color:#493657}html[data-theme="dark"] .reply-cancel{color:#ff9ba8}html[data-theme="dark"] #composerWrap{background:#17121f!important;border-color:#40304e}html[data-theme="dark"] .composer{background:#17121f;border-color:#7852a1}html[data-theme="dark"] #messageInput{background:#292331;color:#f8f4ff;border:1px solid #51415f}html[data-theme="dark"] #messageInput::placeholder{color:#b7aabd}html[data-theme="dark"] #emojiPanel{background:#211a2a;border-color:#7852a1}html[data-theme="dark"] #emojiPanel button{background:#33263f;color:#eadcff}html[data-theme="dark"] #status{background:#111018;color:#ffaaa9}html[data-theme="dark"] #loadOlder{background:#30233d;color:#eadcff;border-color:#59456d}html[data-theme="dark"] #themeToggle{background:#eadcff;color:#2d1a3d;border-color:#b794f6}
 @media(min-width:761px){html[data-theme="dark"] body{background:#17121f}html[data-theme="dark"] main{border-color:#393040}html[data-theme="dark"] #composerWrap{border-color:#393040}}
 </style>
 </head>
 <body>
 <header>
-<button id="back" onclick="goBack()" aria-label="Back">‹</button>
-<div id="avatar">👤</div>
+<button id="back" onclick="goBack()" aria-label="Back">‹</button><div id="avatar">👤</div>
 <div class="identity"><h1 id="chatName">Private Chat</h1><p id="chatStatus">Connecting...</p></div>
 <button id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
-<button class="header-action" id="clearBtn" type="button" title="Delete your messages in this chat">🧹 Clear</button>
+<button class="header-action" id="clearBtn" type="button" title="Delete all messages in this chat for both users">🧹 Clear</button>
 <button class="header-action" id="leaveBtn" type="button">Leave</button>
 </header>
 <main>
-<div id="messages"><div class="notice">Messages are shown here.</div>
-<button id="loadOlder" type="button">⬆️ Load older messages</button>
-</div>
+<div id="messages"><div class="notice">Messages are shown here.</div><button id="loadOlder" type="button">⬆️ Load older messages</button></div>
 <div id="status"></div>
 <div id="composerWrap" style="position:fixed;bottom:0;left:0;right:0;z-index:10;max-width:760px;width:100%;margin:0 auto;background:#f3e8ff;padding-bottom:env(safe-area-inset-bottom)">
 <div id="replyBar" class="reply-bar"><div class="reply-preview" id="replyPreview"></div><button class="reply-cancel" id="cancelReply" type="button" aria-label="Cancel reply">✕</button></div>
 <div id="emojiPanel" aria-label="Emoji picker"></div>
 <form class="composer" id="sendForm">
-<button class="tool-btn" type="button" id="emojiBtn" aria-label="Emojis">😀</button>
-<button class="tool-btn" type="button" id="imageBtn" aria-label="Send image">📷</button>
-<input id="imageInput" type="file" accept="image/*" hidden>
-<textarea id="messageInput" rows="1" placeholder="Message" autocomplete="off"></textarea>
-<button class="tool-btn" type="button" id="voiceBtn" aria-label="Record voice message">🎤</button>
-<button id="send" type="submit" aria-label="Send">➤</button>
-</form>
-</div>
-</main>
+<button class="tool-btn" type="button" id="emojiBtn" aria-label="Emojis">😀</button><button class="tool-btn" type="button" id="imageBtn" aria-label="Send image">📷</button>
+<input id="imageInput" type="file" accept="image/*" hidden><textarea id="messageInput" rows="1" placeholder="Message" autocomplete="off"></textarea>
+<button class="tool-btn" type="button" id="voiceBtn" aria-label="Record voice message">🎤</button><button id="send" type="submit" aria-label="Send">➤</button>
+</form></div></main>
 <script>
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-/* Dark/light theme: remembers the selected theme on this device. */
-function applyTheme(theme){
-  const chosen=theme==="dark"?"dark":"light";
-  document.documentElement.dataset.theme=chosen;
-  try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}
-  const btn=document.getElementById("themeToggle");
-  if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}
-  const meta=document.querySelector('meta[name="theme-color"]');
-  if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6";
-}
+function applyTheme(theme){const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}const btn=document.getElementById("themeToggle");if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6"}
 function toggleTheme(){applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark")}
-(function initTheme(){let saved="light";try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}applyTheme(saved)})();
+(function(){let saved="light";try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}applyTheme(saved)})();
 document.getElementById("themeToggle").addEventListener("click",toggleTheme);
-window.addEventListener("storage",event=>{
-  if(event.key==="chatzone-theme"&&event.newValue)applyTheme(event.newValue);
-});
-
-const params=new URLSearchParams(location.search);
-const otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
-let me=null,other=null,sending=false,lastLoad=0,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
-
-// Shared ChatZone online presence: use the SAME channel name as index.html.
-// This lets Home see the user as online while they are using private chat.
-let chatZonePresenceChannel=null;
-let presenceRetryTimer=null;
-async function startChatZonePresence(user){
-  if(!user?.id || chatZonePresenceChannel) return;
-  try{
-    chatZonePresenceChannel=db.channel("chatzone-online-users",{
-      config:{presence:{key:String(user.id)}}
-    });
-    chatZonePresenceChannel.subscribe(async status=>{
-      if(status==="SUBSCRIBED"){
-        try{
-          await chatZonePresenceChannel.track({
-            user_id:String(user.id),
-            online_at:new Date().toISOString(),
-            page:"private"
-          });
-        }catch(error){console.warn("Presence track failed:",error)}
-      }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
-        console.warn("ChatZone presence channel status:",status);
-      }
-    });
-  }catch(error){
-    console.warn("ChatZone presence error:",error);
-    chatZonePresenceChannel=null;
-  }
-}
-async function stopChatZonePresence(){
-  if(presenceRetryTimer){clearTimeout(presenceRetryTimer);presenceRetryTimer=null}
-  if(chatZonePresenceChannel){
-    const channel=chatZonePresenceChannel;
-    chatZonePresenceChannel=null;
-    try{await channel.untrack()}catch(e){}
-    try{await db.removeChannel(channel)}catch(e){}
-  }
-}
+window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"&&e.newValue)applyTheme(e.newValue)});
+const params=new URLSearchParams(location.search),otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
+let me=null,other=null,sending=false,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
+let chatZonePresenceChannel=null,privateRealtimeChannel=null,realtimeRefreshQueued=false;
+async function startChatZonePresence(user){if(!user?.id||chatZonePresenceChannel)return;try{chatZonePresenceChannel=db.channel("chatzone-online-users",{config:{presence:{key:String(user.id)}}});chatZonePresenceChannel.subscribe(async status=>{if(status==="SUBSCRIBED"){try{await chatZonePresenceChannel.track({user_id:String(user.id),online_at:new Date().toISOString(),page:"private"})}catch(e){console.warn("Presence track failed:",e)}}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")console.warn("Presence channel:",status)})}catch(e){console.warn(e);chatZonePresenceChannel=null}}
+async function stopPresence(){if(chatZonePresenceChannel){let c=chatZonePresenceChannel;chatZonePresenceChannel=null;try{await c.untrack()}catch(e){}try{await db.removeChannel(c)}catch(e){}}}
 window.addEventListener("pagehide",()=>{if(chatZonePresenceChannel){try{chatZonePresenceChannel.untrack()}catch(e){}}});
-
-
-// UNLIMITED CONFIG
-const PAGE_SIZE = 50;
-let loadedCount = 0;
-let hasMoreOlder = true;
-let isLoadingOlder = false;
-
+const PAGE_SIZE=50;let loadedCount=0,hasMoreOlder=true,isLoadingOlder=false;
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function goBack(){location.href="private.html"}
-function showStatus(t){document.getElementById("status").textContent=t||""}
-function timeText(v){if(!v)return"";let d=new Date(v);return Number.isNaN(d.getTime())?"":d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}
-async function init(){
-try{
-let {data,error}=await db.auth.getSession();if(error)throw error;let session=data?.session;
-if(!session){await new Promise(r=>setTimeout(r,500));session=(await db.auth.getSession()).data?.session}
-if(!session?.user){location.href="login.html";return}me=session.user;
-// Start shared presence as soon as authenticated, without waiting for chat profile/messages.
-startChatZonePresence(me);
-if(!otherId||otherId===me.id){showStatus("Chat user ID is missing or invalid.");document.getElementById("chatName").textContent="Chat unavailable";return}
-let {data:profile,error:pe}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();
-if(pe)throw pe;if(!profile){showStatus("User profile not found.");return}other=profile;
-document.getElementById("chatName").textContent=profile.name||profile.username||"ChatZone User";
-document.getElementById("chatStatus").textContent=profile.last_seen&&Date.now()-Date.parse(profile.last_seen)<300000?"🟢 Online":(profile.username?"@"+profile.username:"Private conversation");
-if(profile.avatar_url)document.getElementById("avatar").outerHTML=`<img id="avatar" src="${esc(profile.avatar_url)}" alt="" style="height:42px;width:42px;border-radius:50%;object-fit:cover">`;
-loadedCount=0; hasMoreOlder=true;
-await loadMessages(true);
-}catch(e){console.error(e);showStatus("Could not open chat: "+(e.message||"Check Supabase permissions."))}
-}
-function messageText(row){return row.content??row.message??""}
+function goBack(){location.href="private.html"}function showStatus(t){document.getElementById("status").textContent=t||""}
+function timeText(v){if(!v)return"";let d=new Date(v);return Number.isNaN(d.getTime())?"":d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}
+function messageText(r){return r.content??r.message??""}
 function onlineNow(){return !!(other?.last_seen&&Date.now()-Date.parse(other.last_seen)<300000)}
-function replySnippet(r){const t=messageText(r).trim();if(t)return t;const type=r.message_type||"text";return type==="image"?"📷 Photo":type==="voice"?"🎤 Voice message":"Message"}
-function bubbleHtml(r){
-  let mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text",body="";
-  if(r.reply_to_content)body+=`<div class="reply-quote"><b>${r.reply_to_sender_id===me.id?"You":esc(other?.name||other?.username||"User")}</b><br>${esc(r.reply_to_content)}</div>`;
-  if(type==="image"&&r.media_url)body+=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
-  else if(type==="voice"&&r.media_url)body+=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
-  else body+=esc(text);
-  let tick="";if(mine){let seen=!!r.seen_at,delivered=!!r.delivered_at||onlineNow();tick=`<span class="ticks ${seen?"seen":""}" title="${seen?"Seen":delivered?"Online / delivered":"Sent"}">${seen?"✓✓":delivered?"✓✓":"✓"}</span>`}
-  return `<div class="bubble ${mine?"mine":"theirs"}" data-message-id="${esc(r.id)}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}</span>${tick}<button class="reply-msg" type="button" data-reply-id="${esc(r.id)}">↩ Reply</button>${mine&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}" title="Delete your message">Delete</button>`:""}</div></div>`;
-}
-function renderMessagesInitial(rows){
-chatRows=rows;
-let box=document.getElementById("messages");
-let loadBtnHtml = `<button id="loadOlder" type="button" style="display:${hasMoreOlder && rows.length>=PAGE_SIZE ? 'block':'none'}">⬆️ Load older messages (${loadedCount} loaded)</button>`;
-if(!rows.length){box.innerHTML=loadBtnHtml+'<div class="notice">👋 Say hello and start the conversation.</div>';return}
-box.innerHTML=loadBtnHtml + rows.map(r=>bubbleHtml(r)).join("");
-box.scrollTop=box.scrollHeight;
-attachLoadOlder();
-}
-function prependOlderMessages(rows){
-  if(!rows.length) return;
-  let box=document.getElementById("messages");
-  let oldHeight = box.scrollHeight;
-  let oldScroll = box.scrollTop;
-  let newHtml = rows.map(r=>bubbleHtml(r)).join("");
-  let temp = document.createElement('div');
-  temp.innerHTML = newHtml;
-  let firstBubble = box.querySelector('.bubble');
-  if(firstBubble){Array.from(temp.children).reverse().forEach(node=>{box.insertBefore(node, firstBubble);});}
-  chatRows = [...rows, ...chatRows];
-  box.scrollTop = box.scrollHeight - oldHeight + oldScroll;
-}
-async function markIncomingSeen(){if(!me||!otherId||document.visibilityState!=="visible")return false;try{const now=new Date().toISOString();const {error}=await db.from("private_messages").update({seen_at:now}).eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null);if(error)throw error;return true}catch(e){console.warn("Seen status update failed",e);return false}}
-async function refreshOtherStatus(){if(!otherId)return;try{const {data}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();if(data){other=data;document.getElementById("chatStatus").textContent=onlineNow()?"🟢 Online":(other.username?"@"+other.username:"Private conversation")}}catch(e){}}
-
-// UNLIMITED LOAD LOGIC
-async function loadMessages(isInitial=false){
-  if(!me || !otherId || isLoadingOlder) return;
-  isLoadingOlder = true;
-  try {
-    if(isInitial && loadedCount === 0) showStatus("Loading chat...");
-    const query = db.from("private_messages").select("*")
-      .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`)
-      .order("created_at", {ascending:false}).range(0, PAGE_SIZE-1);
-    const {data, error} = await Promise.race([
-      query,
-      new Promise((_, reject) => setTimeout(() => reject(new Error("Chat request timed out. Check your internet and Supabase connection.")),15000))
-    ]);
-    if(error) throw error;
-    const rows = data || [];
-    if(isInitial) await markIncomingSeen();
-    loadedCount = rows.length;
-    hasMoreOlder = rows.length === PAGE_SIZE;
-    await refreshOtherStatus();
-    renderMessagesInitial(rows.reverse());
-    lastLoad = Date.now();
-    showStatus("");
-  } catch(e) {
-    console.error("loadMessages failed:", e);
-    showStatus("Messages could not load: " + (e.message || "Check Supabase permissions."));
-  } finally {isLoadingOlder = false;}
-}
-async function loadOlderMessages(){
- if(!me||!otherId||isLoadingOlder||!hasMoreOlder) return;
- isLoadingOlder=true;
- let btn=document.getElementById('loadOlder');
- if(btn){btn.disabled=true; btn.textContent="Loading...";}
- try{
-  let {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:false}).range(loadedCount, loadedCount+PAGE_SIZE-1);
-  if(error)throw error;
-  if(!data || data.length===0){hasMoreOlder=false;if(btn)btn.style.display='none';}
-  else{
-    let sorted=data.reverse();prependOlderMessages(sorted);loadedCount+=data.length;hasMoreOlder=data.length===PAGE_SIZE;
-    if(btn){btn.style.display=hasMoreOlder?'block':'none';btn.textContent=`⬆️ Load older messages (${loadedCount} loaded)`;}
-  }
- }catch(e){console.error(e);showStatus("Older messages load nahi hue.");}
- finally{isLoadingOlder=false;if(btn)btn.disabled=false;}
-}
-function attachLoadOlder(){
- let btn=document.getElementById('loadOlder');
- if(btn){btn.onclick=loadOlderMessages;btn.style.display=hasMoreOlder&&chatRows.length>=PAGE_SIZE?'block':(hasMoreOlder&&loadedCount>0?'block':'none');if(hasMoreOlder)btn.textContent=`⬆️ Load older messages (${loadedCount} loaded)`;}
-}
-function startReply(id){const row=chatRows.find(r=>String(r.id)===String(id));if(!row)return;replyTarget=row;const preview=document.getElementById("replyPreview");preview.textContent=`Replying to ${row.sender_id===me.id?"yourself":(other?.name||other?.username||"message")}: ${replySnippet(row)}`;document.getElementById("replyBar").classList.add("show");document.getElementById("messageInput").focus()}
+function replySnippet(r){let t=messageText(r).trim();if(t)return t;let type=r.message_type||"text";return type==="image"?"📷 Photo":type==="voice"?"🎤 Voice message":"Message"}
+function bubbleHtml(r){let mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text",body="";if(r.reply_to_content)body+=`<div class="reply-quote"><b>${r.reply_to_sender_id===me.id?"You":esc(other?.name||other?.username||"User")}</b><br>${esc(r.reply_to_content)}</div>`;if(type==="image"&&r.media_url)body+=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");else if(type==="voice"&&r.media_url)body+=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;else body+=esc(text);let tick="";if(mine){let seen=!!r.seen_at,delivered=!!r.delivered_at||onlineNow();tick=`<span class="ticks ${seen?"seen":""}" title="${seen?"Seen":delivered?"Delivered":"Sent"}">${seen?"✓✓":delivered?"✓✓":"✓"}</span>`}return `<div class="bubble ${mine?"mine":"theirs"}" data-message-id="${esc(r.id)}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}</span>${tick}<button class="reply-msg" type="button" data-reply-id="${esc(r.id)}">↩ Reply</button>${mine&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}">Delete</button>`:""}</div></div>`}
+function attachLoadOlder(){let b=document.getElementById("loadOlder");if(b){b.onclick=loadOlderMessages;b.style.display=hasMoreOlder&&loadedCount>0?"block":"none";if(hasMoreOlder)b.textContent=`⬆️ Load older messages (${loadedCount} loaded)`}}
+function renderMessagesInitial(rows){chatRows=rows;let box=document.getElementById("messages"),button=`<button id="loadOlder" type="button" style="display:${hasMoreOlder&&loadedCount>0?"block":"none"}">⬆️ Load older messages (${loadedCount} loaded)</button>`;if(!rows.length){box.innerHTML=button+'<div class="notice">👋 Say hello and start the conversation.</div>'}else{box.innerHTML=button+rows.map(bubbleHtml).join("");box.scrollTop=box.scrollHeight}attachLoadOlder()}
+function prependOlderMessages(rows){if(!rows.length)return;let box=document.getElementById("messages"),height=box.scrollHeight,scroll=box.scrollTop,temp=document.createElement("div");temp.innerHTML=rows.map(bubbleHtml).join("");let first=box.querySelector(".bubble");if(first)Array.from(temp.children).reverse().forEach(n=>box.insertBefore(n,first));chatRows=[...rows,...chatRows];box.scrollTop=box.scrollHeight-height+scroll}
+async function markIncomingSeen(){if(!me||!otherId||document.visibilityState!=="visible")return;try{let {error}=await db.from("private_messages").update({seen_at:new Date().toISOString()}).eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null);if(error)throw error}catch(e){console.warn("Seen update failed",e)}}
+async function refreshOtherStatus(){if(!otherId)return;try{let {data}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();if(data){other=data;document.getElementById("chatStatus").textContent=onlineNow()?"🟢 Online":(other.username?"@"+other.username:"Private conversation")}}catch(e){}}
+async function loadMessages(isInitial=false){if(!me||!otherId)return;if(isLoadingOlder){realtimeRefreshQueued=true;return}isLoadingOlder=true;try{const query=db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:false}).range(0,PAGE_SIZE-1);let result=await Promise.race([query,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Chat request timed out. Check internet.")),15000))]);if(result.error)throw result.error;let rows=result.data||[];loadedCount=rows.length;hasMoreOlder=rows.length===PAGE_SIZE;await refreshOtherStatus();renderMessagesInitial(rows.reverse());if(isInitial)await markIncomingSeen();showStatus("")}catch(e){console.error(e);showStatus("Messages could not load: "+(e.message||"Check Supabase permissions."))}finally{isLoadingOlder=false;if(realtimeRefreshQueued){realtimeRefreshQueued=false;setTimeout(()=>loadMessages(true),100)}}}
+async function loadOlderMessages(){if(!me||!otherId||isLoadingOlder||!hasMoreOlder)return;isLoadingOlder=true;let b=document.getElementById("loadOlder");if(b){b.disabled=true;b.textContent="Loading..."}try{let {data,error}=await db.from("private_messages").select("*").or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`).order("created_at",{ascending:false}).range(loadedCount,loadedCount+PAGE_SIZE-1);if(error)throw error;if(!data?.length){hasMoreOlder=false;if(b)b.style.display="none"}else{prependOlderMessages(data.reverse());loadedCount+=data.length;hasMoreOlder=data.length===PAGE_SIZE;attachLoadOlder()}}catch(e){console.error(e);showStatus("Older messages load nahi hue.")}finally{isLoadingOlder=false;if(b)b.disabled=false;if(realtimeRefreshQueued){realtimeRefreshQueued=false;setTimeout(()=>loadMessages(true),100)}}}
+function startPrivateRealtime(){if(!me||!otherId||privateRealtimeChannel)return;privateRealtimeChannel=db.channel("private-chat-"+me.id+"-"+otherId).on("postgres_changes",{event:"*",schema:"public",table:"private_messages"},async payload=>{let row=payload.new||payload.old;if(!row)return;let match=(row.sender_id===me.id&&row.receiver_id===otherId)||(row.sender_id===otherId&&row.receiver_id===me.id);if(!match)return;if(payload.eventType==="INSERT"&&row.receiver_id===me.id&&document.visibilityState==="visible")await markIncomingSeen();if(isLoadingOlder){realtimeRefreshQueued=true;return}await loadMessages(true)}).subscribe(status=>{console.log("Private chat realtime:",status);if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")showStatus("Realtime reconnecting…")})}
+async function stopPrivateRealtime(){if(privateRealtimeChannel){let c=privateRealtimeChannel;privateRealtimeChannel=null;try{await db.removeChannel(c)}catch(e){}}}
+async function init(){try{let {data,error}=await db.auth.getSession();if(error)throw error;let session=data?.session;if(!session){await new Promise(r=>setTimeout(r,500));session=(await db.auth.getSession()).data?.session}if(!session?.user){location.href="login.html";return}me=session.user;startChatZonePresence(me);if(!otherId||otherId===me.id){showStatus("Chat user ID is missing or invalid.");document.getElementById("chatName").textContent="Chat unavailable";return}let {data:profile,error:pe}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();if(pe)throw pe;if(!profile){showStatus("User profile not found.");return}other=profile;document.getElementById("chatName").textContent=profile.name||profile.username||"ChatZone User";document.getElementById("chatStatus").textContent=profile.last_seen&&Date.now()-Date.parse(profile.last_seen)<300000?"🟢 Online":(profile.username?"@"+profile.username:"Private conversation");if(profile.avatar_url)document.getElementById("avatar").outerHTML=`<img id="avatar" src="${esc(profile.avatar_url)}" alt="" style="height:42px;width:42px;border-radius:50%;object-fit:cover">`;startPrivateRealtime();loadedCount=0;hasMoreOlder=true;await loadMessages(true)}catch(e){console.error(e);showStatus("Could not open chat: "+(e.message||"Check Supabase permissions."))}}
+function startReply(id){let row=chatRows.find(r=>String(r.id)===String(id));if(!row)return;replyTarget=row;document.getElementById("replyPreview").textContent=`Replying to ${row.sender_id===me.id?"yourself":(other?.name||other?.username||"message")}: ${replySnippet(row)}`;document.getElementById("replyBar").classList.add("show");document.getElementById("messageInput").focus()}
 function cancelReply(){replyTarget=null;document.getElementById("replyBar").classList.remove("show");document.getElementById("replyPreview").textContent=""}
-async function deleteOwnMessage(id,button){
-if(!me||!id)return;if(!confirm("Delete this message? This removes it from the chat for both people."))return;if(button)button.disabled=true;
-try{const {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);if(error)throw error;showStatus("");await loadMessages(true);}
-catch(err){console.error(err);showStatus("Message delete nahi hua. DELETE RLS check karein.");if(button)button.disabled=false}
-}
-document.getElementById("messages").addEventListener("click",e=>{const rb=e.target.closest("[data-reply-id]");if(rb){startReply(rb.dataset.replyId);return}const b=e.target.closest("[data-delete-id]");if(b)deleteOwnMessage(b.dataset.deleteId,b);});
-document.getElementById("clearBtn").addEventListener("click",async()=>{
-if(!me||!otherId)return;if(!confirm("Clear chat? Sirf aap ke bheje hue messages delete honge. Doosre person ke messages rahenge."))return;
-const btn=document.getElementById("clearBtn");btn.disabled=true;showStatus("Clearing your messages...");
-try{const {error}=await db.from("private_messages").delete().eq("sender_id",me.id).eq("receiver_id",otherId);if(error)throw error;showStatus("");loadedCount=0;hasMoreOlder=true;await loadMessages(true);}
-catch(err){console.error(err);showStatus("Chat clear nahi hui. DELETE RLS check karein.")}
-finally{btn.disabled=false}
-});
-document.getElementById("leaveBtn").addEventListener("click",()=>{
- if(!me||!otherId)return;if(!confirm("Leave this chat and return to Private Chat list? Messages will not be deleted."))return;
- try{const key="chatzone_hidden_private_chats_"+me.id;const hidden=JSON.parse(localStorage.getItem(key)||"[]");if(!hidden.includes(otherId))hidden.push(otherId);localStorage.setItem(key,JSON.stringify(hidden));}
- catch(e){console.warn("Could not save hidden chat locally",e)}
- goBack();
-});
-async function uploadAndSend(file,type){
-if(!me||!otherId||sending||!file)return;sending=true;showStatus("Uploading media...");
-try{
-const safeName=String(file.name||(`${type}-${Date.now()}`)).replace(/[^a-zA-Z0-9._-]/g,"_");const path=`${me.id}/${Date.now()}-${safeName}`;
-const {data:up,error:uploadError}=await db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});if(uploadError)throw uploadError;
-const {data:pub}=db.storage.from("chat-media").getPublicUrl(up.path);if(!pub?.publicUrl)throw new Error("Could not create media URL.");
-const payload={sender_id:me.id,receiver_id:otherId,message_type:type,content:"",media_url:pub.publicUrl};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}
-const {error}=await db.from("private_messages").insert(payload);if(error)throw error;cancelReply();showStatus("");await loadMessages(true);
-}catch(err){console.error(err);showStatus("Media not sent: "+(err.message||"Check chat-media bucket."))}
-finally{sending=false}
-}
-document.getElementById("sendForm").addEventListener("submit",async e=>{
-e.preventDefault();if(sending||!me||!otherId)return;const input=document.getElementById("messageInput"),content=input.value.trim();if(!content)return;
-sending=true;document.getElementById("send").disabled=true;
-try{
-const payload={sender_id:me.id,receiver_id:otherId,message_type:"text",content};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}
-const {error}=await db.from("private_messages").insert(payload);if(error)throw error;input.value="";input.style.height="42px";cancelReply();showStatus("");await loadMessages(true);
-}catch(err){console.error(err);showStatus("Message not sent: "+(err.message||"Check permissions."))}
-finally{sending=false;document.getElementById("send").disabled=false;input.focus()}
-});
+document.getElementById("messages").addEventListener("click",e=>{let r=e.target.closest("[data-reply-id]");if(r){startReply(r.dataset.replyId);return}let d=e.target.closest("[data-delete-id]");if(d)deleteOwnMessage(d.dataset.deleteId,d)});
+async function deleteOwnMessage(id,button){if(!me||!id||!confirm("Delete this message for both people?"))return;if(button)button.disabled=true;try{let {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);if(error)throw error;showStatus("");await loadMessages(true)}catch(e){console.error(e);showStatus("Message delete nahi hua. DELETE RLS policy check karein.");if(button)button.disabled=false}}
+document.getElementById("clearBtn").addEventListener("click",async()=>{if(!me||!otherId)return;if(!confirm("Clear this entire conversation for BOTH users? All messages from both sides will be permanently deleted."))return;let btn=document.getElementById("clearBtn");btn.disabled=true;showStatus("Clearing conversation for both users…");try{const {error}=await db.from("private_messages").delete().or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`);if(error)throw error;chatRows=[];loadedCount=0;hasMoreOlder=true;cancelReply();showStatus("");await loadMessages(true)}catch(e){console.error(e);showStatus("Chat clear nahi hui. Supabase DELETE RLS policy/SQL check karein.")}finally{btn.disabled=false}});
+document.getElementById("leaveBtn").addEventListener("click",()=>{if(!me||!otherId)return;if(!confirm("Leave this chat and return to Private Chat list? Messages will not be deleted."))return;try{let key="chatzone_hidden_private_chats_"+me.id,hidden=JSON.parse(localStorage.getItem(key)||"[]");if(!hidden.includes(otherId))hidden.push(otherId);localStorage.setItem(key,JSON.stringify(hidden))}catch(e){console.warn(e)}goBack()});
+async function uploadAndSend(file,type){if(!me||!otherId||sending||!file)return;sending=true;showStatus("Uploading media…");try{let safe=String(file.name||(`${type}-${Date.now()}`)).replace(/[^a-zA-Z0-9._-]/g,"_"),path=`${me.id}/${Date.now()}-${safe}`;let {data:up,error:ue}=await db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});if(ue)throw ue;let pub=db.storage.from("chat-media").getPublicUrl(up.path).data?.publicUrl;if(!pub)throw new Error("Could not create media URL.");let payload={sender_id:me.id,receiver_id:otherId,message_type:type,content:"",media_url:pub};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}let {error}=await db.from("private_messages").insert(payload);if(error)throw error;cancelReply();showStatus("");await loadMessages(true)}catch(e){console.error(e);showStatus("Media not sent: "+(e.message||"Check chat-media bucket."))}finally{sending=false}}
+document.getElementById("sendForm").addEventListener("submit",async e=>{e.preventDefault();if(sending||!me||!otherId)return;let input=document.getElementById("messageInput"),content=input.value.trim();if(!content)return;sending=true;document.getElementById("send").disabled=true;try{let payload={sender_id:me.id,receiver_id:otherId,message_type:"text",content};if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}let {error}=await db.from("private_messages").insert(payload);if(error)throw error;input.value="";input.style.height="42px";cancelReply();showStatus("");await loadMessages(true)}catch(e){console.error(e);showStatus("Message not sent: "+(e.message||"Check permissions."))}finally{sending=false;document.getElementById("send").disabled=false;input.focus()}});
 document.getElementById("cancelReply").addEventListener("click",cancelReply);
 document.getElementById("imageBtn").addEventListener("click",()=>document.getElementById("imageInput").click());
-document.getElementById("imageInput").addEventListener("change",async e=>{const file=e.target.files?.[0];if(file){if(!file.type.startsWith("image/")){showStatus("Please choose an image file.");e.target.value="";return}await uploadAndSend(file,"image")}e.target.value=""});
-const emojiList=["😀","😂","🥹","😍","😘","😊","😉","😭","😎","🥰","❤️","💜","💖","💕","👍","👎","🙏","👏","🔥","🎉","🤔","😴","😡","😇","🙈","💯","✅","😋","🤗","😔","🤣","😜","🌹","✨","💯","🙌","🤝","💐","😅","😆","😃","😢","😱","🤩","🫶","💗","💞","💔","👀"];
-const emojiPanel=document.getElementById("emojiPanel");emojiPanel.innerHTML=emojiList.map(em=>`<button type="button" aria-label="${em}">${em}</button>`).join("");
-emojiPanel.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{const inp=document.getElementById("messageInput"),a=inp.selectionStart,z=inp.selectionEnd;inp.value=inp.value.slice(0,a)+b.textContent+inp.value.slice(z);inp.focus();inp.selectionStart=inp.selectionEnd=a+b.textContent.length;emojiPanel.style.display="none"}));
-document.getElementById("emojiBtn").addEventListener("click",()=>{emojiPanel.style.display=emojiPanel.style.display==="flex"?"none":"flex"});
-document.getElementById("voiceBtn").addEventListener("click",async()=>{
-if(recording){mediaRecorder?.stop();return}if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showStatus("Voice recording is not supported in this browser.");return}
-try{
-const stream=await navigator.mediaDevices.getUserMedia({audio:true});voiceChunks=[];mediaRecorder=new MediaRecorder(stream);
-mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};
-mediaRecorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());recording=false;document.getElementById("voiceBtn").textContent="🎤";const blob=new Blob(voiceChunks,{type:mediaRecorder.mimeType||"audio/webm"});if(blob.size)await uploadAndSend(new File([blob],`voice-${Date.now()}.webm`,{type:blob.type}),"voice")};
-mediaRecorder.start();recording=true;document.getElementById("voiceBtn").textContent="⏹️";showStatus("Recording voice… tap ⏹️ to finish and send.");
-}catch(err){console.error(err);showStatus("Microphone permission was not granted.")}
-});
-const input=document.getElementById("messageInput");
-input.addEventListener("input",()=>{input.style.height="42px";input.style.height=Math.min(input.scrollHeight,120)+"px"});
-input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("sendForm").requestSubmit()}});
+document.getElementById("imageInput").addEventListener("change",async e=>{let f=e.target.files?.[0];if(f){if(!f.type.startsWith("image/")){showStatus("Please choose an image file.");e.target.value="";return}await uploadAndSend(f,"image")}e.target.value=""});
+const emojiList=["😀","😂","🥹","😍","😘","😊","😉","😭","😎","🥰","❤️","💜","💖","💕","👍","👎","🙏","👏","🔥","🎉","🤔","😴","😡","😇","🙈","💯","✅","😋","🤗","😔","🤣","😜","🌹","✨","🙌","🤝","💐","😅","😆","😃","😢","😱","🤩","🫶","💗","💞","💔","👀"];
+const emojiPanel=document.getElementById("emojiPanel");emojiPanel.innerHTML=emojiList.map(x=>`<button type="button" aria-label="${x}">${x}</button>`).join("");emojiPanel.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{let i=document.getElementById("messageInput"),a=i.selectionStart,z=i.selectionEnd;i.value=i.value.slice(0,a)+b.textContent+i.value.slice(z);i.focus();i.selectionStart=i.selectionEnd=a+b.textContent.length;emojiPanel.style.display="none"}));
+document.getElementById("emojiBtn").addEventListener("click",()=>emojiPanel.style.display=emojiPanel.style.display==="flex"?"none":"flex");
+document.getElementById("voiceBtn").addEventListener("click",async()=>{if(recording){mediaRecorder?.stop();return}if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showStatus("Voice recording is not supported in this browser.");return}try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});voiceChunks=[];mediaRecorder=new MediaRecorder(stream);mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};mediaRecorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());recording=false;document.getElementById("voiceBtn").textContent="🎤";let blob=new Blob(voiceChunks,{type:mediaRecorder.mimeType||"audio/webm"});if(blob.size)await uploadAndSend(new File([blob],`voice-${Date.now()}.webm`,{type:blob.type}),"voice")};mediaRecorder.start();recording=true;document.getElementById("voiceBtn").textContent="⏹️";showStatus("Recording voice… tap ⏹️ to finish and send.")}catch(e){console.error(e);showStatus("Microphone permission was not granted.")}});
+const input=document.getElementById("messageInput");input.addEventListener("input",()=>{input.style.height="42px";input.style.height=Math.min(input.scrollHeight,120)+"px"});input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("sendForm").requestSubmit()}});
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me){me=session.user;init()}});
 init();
-// Polling - only refresh latest, not full history
-setInterval(()=>{if(Date.now()-lastLoad>5000&&!isLoadingOlder)loadMessages(true)},6000);
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!isLoadingOlder)loadMessages(true)});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!isLoadingOlder){loadMessages(true);markIncomingSeen()}});
 window.addEventListener("focus",()=>{if(!isLoadingOlder)loadMessages(true)});
+window.addEventListener("beforeunload",()=>{stopPrivateRealtime();stopPresence()});
 </script>
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</body>
 </html>
