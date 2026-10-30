@@ -72,6 +72,7 @@ window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"&&e.newValue)ap
 const params=new URLSearchParams(location.search),otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
 let me=null,other=null,sending=false,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
 let chatZonePresenceChannel=null,privateRealtimeChannel=null;
+let privateRealtimeRetryTimer=null,privateRealtimeRetryCount=0,privateRealtimeStarting=false;
 const PAGE_SIZE=50;
 let loadedCount=0,hasMoreOlder=true,isLoadingOlder=false,isLoadingMessages=false,realtimeRefreshQueued=false;
 let refreshTimer=null,lastSeenUpdate=0;
@@ -228,9 +229,23 @@ async function loadOlderMessages(){
     if(realtimeRefreshQueued){realtimeRefreshQueued=false;scheduleResync()}
   }
 }
+function schedulePrivateRealtimeRetry(channel,status,error){
+  console.warn("Private chat realtime retry:",status,error||"");
+  showStatus("Realtime reconnecting…");
+  if(privateRealtimeRetryTimer)return;
+  if(channel&&privateRealtimeChannel===channel)privateRealtimeChannel=null;
+  const delay=Math.min(30000,1000*Math.pow(2,Math.min(privateRealtimeRetryCount,5)));
+  privateRealtimeRetryCount++;
+  privateRealtimeRetryTimer=setTimeout(async()=>{
+    privateRealtimeRetryTimer=null;
+    if(channel){try{await db.removeChannel(channel)}catch(e){console.warn("Old realtime channel cleanup:",e)}}
+    if(document.visibilityState==="visible"&&navigator.onLine)startPrivateRealtime();
+  },delay);
+}
 function startPrivateRealtime(){
-  if(!me||!otherId||privateRealtimeChannel)return;
-  privateRealtimeChannel=db.channel("private-chat-"+me.id+"-"+otherId)
+  if(!me||!otherId||privateRealtimeChannel||privateRealtimeStarting||!navigator.onLine)return;
+  privateRealtimeStarting=true;
+  const channel=db.channel("private-chat-"+me.id+"-"+otherId)
     .on("postgres_changes",{event:"INSERT",schema:"public",table:"private_messages"},payload=>{
       const row=payload.new;if(!row)return;
       const match=(row.sender_id===me.id&&row.receiver_id===otherId)||(row.sender_id===otherId&&row.receiver_id===me.id);
@@ -245,16 +260,23 @@ function startPrivateRealtime(){
     })
     .on("postgres_changes",{event:"DELETE",schema:"public",table:"private_messages"},payload=>{
       const row=payload.old;if(row?.id)removeLiveMessage(row);else scheduleResync();
-    })
-    .subscribe(status=>{
-      console.log("Private chat realtime:",status);
-      if(status==="SUBSCRIBED"){showStatus("");scheduleResync()}
-      else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED"){
-        showStatus("Realtime reconnecting…");
-      }
     });
+  privateRealtimeChannel=channel;
+  channel.subscribe((status,error)=>{
+    console.log("Private chat realtime status:",status,error||"");
+    privateRealtimeStarting=false;
+    if(status==="SUBSCRIBED"){
+      privateRealtimeRetryCount=0;
+      if(privateRealtimeRetryTimer){clearTimeout(privateRealtimeRetryTimer);privateRealtimeRetryTimer=null}
+      showStatus("");scheduleResync();
+    }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED"){
+      schedulePrivateRealtimeRetry(channel,status,error);
+    }
+  });
 }
 async function stopPrivateRealtime(){
+  if(privateRealtimeRetryTimer){clearTimeout(privateRealtimeRetryTimer);privateRealtimeRetryTimer=null}
+  privateRealtimeStarting=false;
   if(privateRealtimeChannel){const c=privateRealtimeChannel;privateRealtimeChannel=null;try{await db.removeChannel(c)}catch(e){}}
 }
 async function startChatZonePresence(user){
@@ -396,6 +418,15 @@ document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState==="visible"){if(!isLoadingOlder&&!isLoadingMessages)loadMessages(false,true);markIncomingSeen()}
 });
 window.addEventListener("focus",()=>{if(!isLoadingOlder&&!isLoadingMessages)loadMessages(false,true)});
+window.addEventListener("online",()=>{
+  if(privateRealtimeRetryTimer){clearTimeout(privateRealtimeRetryTimer);privateRealtimeRetryTimer=null}
+  if(privateRealtimeChannel){const old=privateRealtimeChannel;privateRealtimeChannel=null;db.removeChannel(old).finally(()=>startPrivateRealtime())}
+  else startPrivateRealtime();
+});
+window.addEventListener("offline",()=>showStatus("Internet disconnected. Realtime will reconnect when online."));
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible"&&navigator.onLine&&!privateRealtimeChannel)startPrivateRealtime();
+});
 window.addEventListener("beforeunload",()=>{stopPrivateRealtime();stopPresence()});
 init();
 </script>
