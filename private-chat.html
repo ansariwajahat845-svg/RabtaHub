@@ -20,6 +20,7 @@ main{max-width:760px;margin:auto;background:#f3e8ff;height:calc(100dvh - 64px);d
 .notice{text-align:center;align-self:center;background:#ede9fe;color:#4c1d95;border-radius:8px;padding:8px 12px;font-size:12px;max-width:90%;margin:4px auto}
 .bubble{max-width:82%;padding:8px 10px 6px;border-radius:9px;box-shadow:0 1px 1px #0001;overflow-wrap:anywhere;font-size:14px;line-height:1.4;white-space:pre-wrap}
 .bubble.mine{align-self:flex-end;background:#c4b5fd;color:#2e1065;border-top-right-radius:2px}.bubble.theirs{align-self:flex-start;background:#fff;border-top-left-radius:2px}
+.bubble.pending{opacity:.78}.bubble.failed{outline:1px solid #dc2626}
 .message-footer{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:4px;min-height:17px}.time{display:inline-block;text-align:right;color:#667781;font-size:10px}.ticks{font-size:13px;letter-spacing:-4px;padding-right:3px;color:#667781;font-weight:700}.ticks.seen{color:#1686e0}
 .reply-msg{font-size:10px;line-height:1;color:#5b21b6;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:5px;padding:4px 5px;font-weight:700}
 .reply-quote{border-left:3px solid #7c3aed;background:#ede9fe;border-radius:5px;padding:5px 7px;margin-bottom:6px;font-size:11px;color:#4c1d95;white-space:normal}
@@ -62,20 +63,34 @@ html[data-theme="dark"] body{background:#111018;color:#eeeaf8}html[data-theme="d
 <script>
 const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
 const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-function applyTheme(theme){const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}const btn=document.getElementById("themeToggle");if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6"}
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},
+  realtime:{params:{eventsPerSecond:10}}
+});
+
+function applyTheme(theme){
+  const chosen=theme==="dark"?"dark":"light";
+  document.documentElement.dataset.theme=chosen;
+  try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}
+  const btn=document.getElementById("themeToggle");
+  if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6";
+}
 function toggleTheme(){applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark")}
 (function(){let saved="light";try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}applyTheme(saved)})();
 document.getElementById("themeToggle").addEventListener("click",toggleTheme);
 window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"&&e.newValue)applyTheme(e.newValue)});
 
-const params=new URLSearchParams(location.search),otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
+const params=new URLSearchParams(location.search);
+const otherId=params.get("user_id")||params.get("id")||params.get("receiver_id");
 let me=null,other=null,sending=false,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
 let chatZonePresenceChannel=null,privateRealtimeChannel=null;
 let privateRealtimeRetryTimer=null,privateRealtimeRetryCount=0,privateRealtimeStarting=false;
 const PAGE_SIZE=50;
 let loadedCount=0,hasMoreOlder=true,isLoadingOlder=false,isLoadingMessages=false,realtimeRefreshQueued=false;
 let refreshTimer=null,lastSeenUpdate=0;
+const pendingMessages=new Map();
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function goBack(){location.href="private.html"}
@@ -87,31 +102,34 @@ function replySnippet(r){let t=messageText(r).trim();if(t)return t;let type=r.me
 
 function bubbleHtml(r){
   const mine=r.sender_id===me.id,text=messageText(r),type=r.message_type||"text";
+  const pending=String(r.id).startsWith("pending-");
   let body="";
   if(r.reply_to_content)body+=`<div class="reply-quote"><b>${r.reply_to_sender_id===me.id?"You":esc(other?.name||other?.username||"User")}</b><br>${esc(r.reply_to_content)}</div>`;
   if(type==="image"&&r.media_url)body+=`<img class="image-message" src="${esc(r.media_url)}" alt="Image message">`+(text?`<div>${esc(text)}</div>`:"");
   else if(type==="voice"&&r.media_url)body+=`<audio controls preload="metadata" src="${esc(r.media_url)}" style="max-width:220px;width:100%"></audio>`;
   else body+=esc(text);
   let tick="";
-  if(mine){let seen=!!r.seen_at,delivered=!!r.delivered_at||onlineNow();tick=`<span class="ticks ${seen?"seen":""}" title="${seen?"Seen":delivered?"Delivered":"Sent"}">${seen?"✓✓":delivered?"✓✓":"✓"}</span>`}
-  return `<div class="bubble ${mine?"mine":"theirs"}" data-message-id="${esc(r.id)}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}</span>${tick}<button class="reply-msg" type="button" data-reply-id="${esc(r.id)}">↩ Reply</button>${mine&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}">Delete</button>`:""}</div></div>`;
+  if(mine){let seen=!!r.seen_at,delivered=!!r.delivered_at||(!pending&&onlineNow());tick=`<span class="ticks ${seen?"seen":""}" title="${pending?"Sending":seen?"Seen":delivered?"Delivered":"Sent"}">${pending?"◷":seen?"✓✓":delivered?"✓✓":"✓"}</span>`}
+  return `<div class="bubble ${mine?"mine":"theirs"} ${pending?"pending":""}" data-message-id="${esc(r.id)}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}</span>${tick}<button class="reply-msg" type="button" data-reply-id="${esc(r.id)}">↩ Reply</button>${mine&&!pending&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}">Delete</button>`:""}</div></div>`;
 }
 function renderMessagesInitial(rows,preserveScroll=false){
   const box=document.getElementById("messages");
   const oldTop=box.scrollTop,wasNearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<180;
-  chatRows=rows;
+  const pending=[...pendingMessages.entries()].map(([id,p])=>({...p,id,created_at:p.created_at||new Date().toISOString()}));
+  const merged=[...rows];
+  for(const p of pending){if(!merged.some(r=>String(r.id)===String(p.id)))merged.push(p)}
+  merged.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  chatRows=merged;
   const button=`<button id="loadOlder" type="button" style="display:${hasMoreOlder&&loadedCount>0?"block":"none"}">⬆️ Load older messages (${loadedCount} loaded)</button>`;
-  if(!rows.length)box.innerHTML=button+'<div class="notice">👋 Say hello and start the conversation.</div>';
-  else box.innerHTML=button+rows.map(bubbleHtml).join("");
+  if(!merged.length)box.innerHTML=button+'<div class="notice">👋 Say hello and start the conversation.</div>';
+  else box.innerHTML=button+merged.map(bubbleHtml).join("");
   if(!preserveScroll||wasNearBottom)box.scrollTop=box.scrollHeight;
   else box.scrollTop=Math.min(oldTop,Math.max(0,box.scrollHeight-box.clientHeight));
   attachLoadOlder();
 }
 function attachLoadOlder(){
-  const b=document.getElementById("loadOlder");
-  if(!b)return;
-  b.onclick=loadOlderMessages;
-  b.style.display=hasMoreOlder&&loadedCount>0?"block":"none";
+  const b=document.getElementById("loadOlder");if(!b)return;
+  b.onclick=loadOlderMessages;b.style.display=hasMoreOlder&&loadedCount>0?"block":"none";
   b.textContent=`⬆️ Load older messages (${loadedCount} loaded)`;
 }
 function prependOlderMessages(rows){
@@ -120,19 +138,37 @@ function prependOlderMessages(rows){
   const temp=document.createElement("div");temp.innerHTML=rows.map(bubbleHtml).join("");
   const first=box.querySelector(".bubble");
   if(first)Array.from(temp.children).reverse().forEach(n=>box.insertBefore(n,first));
-  else rows.forEach(r=>box.appendChild(Object.assign(document.createElement("div"),{innerHTML:bubbleHtml(r)}).firstElementChild));
+  else rows.forEach(r=>{const x=document.createElement("div");x.innerHTML=bubbleHtml(r);box.appendChild(x.firstElementChild)});
   chatRows=[...rows,...chatRows];box.scrollTop=box.scrollHeight-height+scroll;
+}
+function findPendingMatch(row){
+  for(const [key,p] of pendingMessages){
+    if(p.sender_id===row.sender_id&&p.receiver_id===row.receiver_id&&
+       (p.content||"")===(row.content||"")&&(p.message_type||"text")===(row.message_type||"text")&&
+       (p.media_url||null)===(row.media_url||null))return key;
+  }
+  return null;
 }
 function upsertLiveMessage(row){
   if(!row||!me||row.id==null)return;
-  const id=String(row.id),index=chatRows.findIndex(r=>String(r.id)===id);
+  const id=String(row.id);
+  const index=chatRows.findIndex(r=>String(r.id)===id);
   if(index>=0){
     chatRows[index]={...chatRows[index],...row};
     const old=document.querySelector(`[data-message-id="${CSS.escape(id)}"]`);
     if(old){const temp=document.createElement("div");temp.innerHTML=bubbleHtml(chatRows[index]);old.replaceWith(temp.firstElementChild)}
     return;
   }
-  chatRows.push(row);chatRows.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));loadedCount++;
+  const pendingId=findPendingMatch(row);
+  if(pendingId){
+    pendingMessages.delete(pendingId);
+    chatRows=chatRows.filter(r=>String(r.id)!==pendingId);
+    const old=document.querySelector(`[data-message-id="${CSS.escape(pendingId)}"]`);
+    if(old)old.remove();
+  }
+  chatRows.push(row);
+  chatRows.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  loadedCount++;
   const box=document.getElementById("messages"),nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<180;
   const notice=box.querySelector(".notice");if(notice)notice.remove();
   const temp=document.createElement("div");temp.innerHTML=bubbleHtml(row);
@@ -143,26 +179,34 @@ function upsertLiveMessage(row){
 }
 function removeLiveMessage(row){
   if(!row?.id)return;
-  const id=String(row.id);
-  const existed=chatRows.some(r=>String(r.id)===id);
+  const id=String(row.id),existed=chatRows.some(r=>String(r.id)===id);
   chatRows=chatRows.filter(r=>String(r.id)!==id);
-  const element=document.querySelector(`[data-message-id="${CSS.escape(id)}"]`);
-  if(element)element.remove();
+  const element=document.querySelector(`[data-message-id="${CSS.escape(id)}"]`);if(element)element.remove();
   if(existed)loadedCount=Math.max(0,loadedCount-1);
-  if(!chatRows.length){
-    const box=document.getElementById("messages");
-    if(!box.querySelector(".notice"))box.insertAdjacentHTML("beforeend",'<div class="notice">👋 Say hello and start the conversation.</div>');
-  }
+  if(!chatRows.length){const box=document.getElementById("messages");if(!box.querySelector(".notice"))box.insertAdjacentHTML("beforeend",'<div class="notice">👋 Say hello and start the conversation.</div>')}
   attachLoadOlder();
+}
+function showOptimisticMessage(payload){
+  const tempId="pending-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+  const row={...payload,id:tempId,created_at:new Date().toISOString()};
+  pendingMessages.set(tempId,row);chatRows.push(row);loadedCount++;
+  const box=document.getElementById("messages"),notice=box.querySelector(".notice");if(notice)notice.remove();
+  const el=document.createElement("div");el.innerHTML=bubbleHtml(row);box.appendChild(el.firstElementChild);
+  box.scrollTop=box.scrollHeight;return tempId;
+}
+function removeOptimisticMessage(id){
+  pendingMessages.delete(id);chatRows=chatRows.filter(r=>String(r.id)!==id);
+  const el=document.querySelector(`[data-message-id="${CSS.escape(id)}"]`);if(el)el.remove();
+  loadedCount=Math.max(0,loadedCount-1);
+  if(!chatRows.length){const box=document.getElementById("messages");box.insertAdjacentHTML("beforeend",'<div class="notice">👋 Say hello and start the conversation.</div>')}
 }
 function scheduleResync(){
   clearTimeout(refreshTimer);
-  refreshTimer=setTimeout(()=>{if(!isLoadingOlder)loadMessages(true);else realtimeRefreshQueued=true},250);
+  refreshTimer=setTimeout(()=>{if(!isLoadingOlder)loadMessages(false,true);else realtimeRefreshQueued=true},1200);
 }
 async function markIncomingSeen(){
   if(!me||!otherId||document.visibilityState!=="visible")return;
-  if(Date.now()-lastSeenUpdate<1200)return;
-  lastSeenUpdate=Date.now();
+  if(Date.now()-lastSeenUpdate<1200)return;lastSeenUpdate=Date.now();
   try{
     const {error}=await db.from("private_messages").update({seen_at:new Date().toISOString()})
       .eq("sender_id",otherId).eq("receiver_id",me.id).is("seen_at",null);
@@ -184,36 +228,17 @@ async function loadMessages(isInitial=false,preserveScroll=false){
     const query=db.from("private_messages").select("*")
       .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`)
       .order("created_at",{ascending:false}).range(0,PAGE_SIZE-1);
-    const result=await Promise.race([
-      query,
-      new Promise((_,reject)=>setTimeout(()=>reject(new Error("Chat request timed out. Check internet or Supabase API.")),20000))
-    ]);
+    const result=await Promise.race([query,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Chat request timed out. Check internet or Supabase API.")),15000))]);
     if(result.error)throw result.error;
-    const rows=result.data||[];
-    loadedCount=rows.length;hasMoreOlder=rows.length===PAGE_SIZE;
-
-    // Render messages immediately. A slow profiles query must never block chat loading.
-    renderMessagesInitial(rows.slice().reverse(),preserveScroll);
-    showStatus("");
-
-    // Profile/presence is secondary and must not delay the messages.
-    refreshOtherStatus();
-    if(isInitial)markIncomingSeen();
-  }catch(e){
-    console.error("Messages load failed:",e);
-    showStatus("Messages could not load: "+(e.message||e.details||"Check Supabase API/RLS."));
-  }finally{
-    isLoadingMessages=false;
-    if(realtimeRefreshQueued){
-      realtimeRefreshQueued=false;
-      scheduleResync();
-    }
-  }
+    const rows=result.data||[];loadedCount=rows.length;hasMoreOlder=rows.length===PAGE_SIZE;
+    renderMessagesInitial(rows.slice().reverse(),preserveScroll);showStatus("");
+    refreshOtherStatus();if(isInitial)markIncomingSeen();
+  }catch(e){console.error("Messages load failed:",e);showStatus("Messages could not load: "+(e.message||e.details||"Check Supabase API/RLS."))}
+  finally{isLoadingMessages=false;if(realtimeRefreshQueued){realtimeRefreshQueued=false;scheduleResync()}}
 }
 async function loadOlderMessages(){
   if(!me||!otherId||isLoadingOlder||isLoadingMessages||!hasMoreOlder)return;
-  isLoadingOlder=true;const b=document.getElementById("loadOlder");
-  if(b){b.disabled=true;b.textContent="Loading..."}
+  isLoadingOlder=true;const b=document.getElementById("loadOlder");if(b){b.disabled=true;b.textContent="Loading..."}
   try{
     const {data,error}=await db.from("private_messages").select("*")
       .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`)
@@ -223,22 +248,15 @@ async function loadOlderMessages(){
     else{prependOlderMessages(data.reverse());loadedCount+=data.length;hasMoreOlder=data.length===PAGE_SIZE}
     attachLoadOlder();
   }catch(e){console.error(e);showStatus("Older messages load nahi hue.")}
-  finally{
-    isLoadingOlder=false;
-    const current=document.getElementById("loadOlder");if(current)current.disabled=false;
-    if(realtimeRefreshQueued){realtimeRefreshQueued=false;scheduleResync()}
-  }
+  finally{isLoadingOlder=false;const current=document.getElementById("loadOlder");if(current)current.disabled=false;if(realtimeRefreshQueued){realtimeRefreshQueued=false;scheduleResync()}}
 }
 function schedulePrivateRealtimeRetry(channel,status,error){
-  console.warn("Private chat realtime retry:",status,error||"");
-  showStatus("Realtime reconnecting…");
+  console.warn("Private chat realtime retry:",status,error||"");showStatus("Realtime reconnecting…");
   if(privateRealtimeRetryTimer)return;
   if(channel&&privateRealtimeChannel===channel)privateRealtimeChannel=null;
-  const delay=Math.min(30000,1000*Math.pow(2,Math.min(privateRealtimeRetryCount,5)));
-  privateRealtimeRetryCount++;
+  const delay=Math.min(30000,1000*Math.pow(2,Math.min(privateRealtimeRetryCount,5)));privateRealtimeRetryCount++;
   privateRealtimeRetryTimer=setTimeout(async()=>{
-    privateRealtimeRetryTimer=null;
-    if(channel){try{await db.removeChannel(channel)}catch(e){console.warn("Old realtime channel cleanup:",e)}}
+    privateRealtimeRetryTimer=null;if(channel){try{await db.removeChannel(channel)}catch(e){}}
     if(document.visibilityState==="visible"&&navigator.onLine)startPrivateRealtime();
   },delay);
 }
@@ -249,8 +267,7 @@ function startPrivateRealtime(){
     .on("postgres_changes",{event:"INSERT",schema:"public",table:"private_messages"},payload=>{
       const row=payload.new;if(!row)return;
       const match=(row.sender_id===me.id&&row.receiver_id===otherId)||(row.sender_id===otherId&&row.receiver_id===me.id);
-      if(!match)return;
-      upsertLiveMessage(row);
+      if(!match)return;upsertLiveMessage(row);
       if(row.receiver_id===me.id&&document.visibilityState==="visible")markIncomingSeen();
     })
     .on("postgres_changes",{event:"UPDATE",schema:"public",table:"private_messages"},payload=>{
@@ -263,15 +280,11 @@ function startPrivateRealtime(){
     });
   privateRealtimeChannel=channel;
   channel.subscribe((status,error)=>{
-    console.log("Private chat realtime status:",status,error||"");
-    privateRealtimeStarting=false;
+    console.log("Private chat realtime status:",status,error||"");privateRealtimeStarting=false;
     if(status==="SUBSCRIBED"){
-      privateRealtimeRetryCount=0;
-      if(privateRealtimeRetryTimer){clearTimeout(privateRealtimeRetryTimer);privateRealtimeRetryTimer=null}
+      privateRealtimeRetryCount=0;if(privateRealtimeRetryTimer){clearTimeout(privateRealtimeRetryTimer);privateRealtimeRetryTimer=null}
       showStatus("");scheduleResync();
-    }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED"){
-      schedulePrivateRealtimeRetry(channel,status,error);
-    }
+    }else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"||status==="CLOSED")schedulePrivateRealtimeRetry(channel,status,error);
   });
 }
 async function stopPrivateRealtime(){
@@ -283,9 +296,7 @@ async function startChatZonePresence(user){
   if(!user?.id||chatZonePresenceChannel)return;
   try{
     chatZonePresenceChannel=db.channel("chatzone-online-users",{config:{presence:{key:String(user.id)}}});
-    chatZonePresenceChannel.subscribe(async status=>{
-      if(status==="SUBSCRIBED"){try{await chatZonePresenceChannel.track({user_id:String(user.id),online_at:new Date().toISOString(),page:"private"})}catch(e){console.warn("Presence track failed:",e)}}
-    });
+    chatZonePresenceChannel.subscribe(async status=>{if(status==="SUBSCRIBED"){try{await chatZonePresenceChannel.track({user_id:String(user.id),online_at:new Date().toISOString(),page:"private"})}catch(e){console.warn("Presence track failed:",e)}}});
   }catch(e){console.warn(e);chatZonePresenceChannel=null}
 }
 async function stopPresence(){
@@ -295,8 +306,7 @@ window.addEventListener("pagehide",()=>{if(chatZonePresenceChannel){try{chatZone
 async function init(){
   try{
     const {data,error}=await db.auth.getSession();if(error)throw error;
-    let session=data?.session;
-    if(!session){await new Promise(r=>setTimeout(r,500));session=(await db.auth.getSession()).data?.session}
+    let session=data?.session;if(!session){await new Promise(r=>setTimeout(r,400));session=(await db.auth.getSession()).data?.session}
     if(!session?.user){location.href="login.html";return}
     me=session.user;startChatZonePresence(me);
     if(!otherId||otherId===me.id){showStatus("Chat user ID is missing or invalid.");document.getElementById("chatName").textContent="Chat unavailable";return}
@@ -309,9 +319,8 @@ async function init(){
   }catch(e){console.error(e);showStatus("Could not open chat: "+(e.message||"Check Supabase permissions."))}
 }
 function startReply(id){
-  const row=chatRows.find(r=>String(r.id)===String(id));if(!row)return;
-  replyTarget=row;
-  document.getElementById("replyPreview").textContent=`Replying to ${row.sender_id===me.id?"yourself":(other?.name||other?.username||"message")}: ${replySnippet(row)}`;
+  const row=chatRows.find(r=>String(r.id)===String(id));if(!row||String(row.id).startsWith("pending-"))return;
+  replyTarget=row;document.getElementById("replyPreview").textContent=`Replying to ${row.sender_id===me.id?"yourself":(other?.name||other?.username||"message")}: ${replySnippet(row)}`;
   document.getElementById("replyBar").classList.add("show");document.getElementById("messageInput").focus();
 }
 function cancelReply(){replyTarget=null;document.getElementById("replyBar").classList.remove("show");document.getElementById("replyPreview").textContent=""}
@@ -322,35 +331,31 @@ document.getElementById("messages").addEventListener("click",e=>{
 async function deleteOwnMessage(id,button){
   if(!me||!id||!confirm("Delete this message for both people?"))return;
   if(button)button.disabled=true;
-  try{
-    const {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);
-    if(error)throw error;
-    removeLiveMessage({id});showStatus("");
-  }catch(e){console.error(e);showStatus("Message delete nahi hua. DELETE RLS policy check karein.");if(button)button.disabled=false}
+  try{const {error}=await db.from("private_messages").delete().eq("id",id).eq("sender_id",me.id);if(error)throw error;removeLiveMessage({id});showStatus("")}
+  catch(e){console.error(e);showStatus("Message delete nahi hua. DELETE RLS policy check karein.");if(button)button.disabled=false}
 }
 document.getElementById("clearBtn").addEventListener("click",async()=>{
   if(!me||!otherId)return;
   if(!confirm("Clear this entire conversation for BOTH users? All messages from both sides will be permanently deleted."))return;
   const btn=document.getElementById("clearBtn");btn.disabled=true;showStatus("Clearing conversation for both users…");
   try{
-    const {error}=await db.from("private_messages").delete()
-      .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`);
+    const {error}=await db.from("private_messages").delete().or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`);
     if(error)throw error;
-    chatRows=[];loadedCount=0;hasMoreOlder=true;cancelReply();
-    renderMessagesInitial([]);showStatus("");
+    chatRows=[];pendingMessages.clear();loadedCount=0;hasMoreOlder=true;cancelReply();renderMessagesInitial([]);showStatus("");
   }catch(e){console.error(e);showStatus("Chat clear nahi hui. Supabase DELETE RLS policy/SQL check karein.")}
   finally{btn.disabled=false}
 });
 document.getElementById("leaveBtn").addEventListener("click",()=>{
   if(!me||!otherId)return;
   if(!confirm("Leave this chat and return to Private Chat list? Messages will not be deleted."))return;
-  try{const key="chatzone_hidden_private_chats_"+me.id,hidden=JSON.parse(localStorage.getItem(key)||"[]");if(!hidden.includes(otherId))hidden.push(otherId);localStorage.setItem(key,JSON.stringify(hidden))}catch(e){console.warn(e)}
+  try{const key="chatzone_hidden_private_chats_"+me.id,hidden=JSON.parse(localStorage.getItem(key)||"[]");if(!hidden.includes(otherId))hidden.push(otherId);localStorage.setItem(key,JSON.stringify(hidden))}catch(e){}
   goBack();
 });
 async function insertMessage(payload){
-  const {error}=await db.from("private_messages").insert(payload);
+  const {data,error}=await db.from("private_messages").insert(payload).select("*").single();
   if(error)throw error;
-  // The INSERT Realtime event adds the row immediately to this chat.
+  if(data)upsertLiveMessage(data);
+  return data;
 }
 async function uploadAndSend(file,type){
   if(!me||!otherId||sending||!file)return;
@@ -360,32 +365,32 @@ async function uploadAndSend(file,type){
     const path=`${me.id}/${Date.now()}-${safe}`;
     const {data:up,error:ue}=await db.storage.from("chat-media").upload(path,file,{contentType:file.type||"application/octet-stream",upsert:false});
     if(ue)throw ue;
-    const pub=db.storage.from("chat-media").getPublicUrl(up.path).data?.publicUrl;
-    if(!pub)throw new Error("Could not create media URL.");
+    const pub=db.storage.from("chat-media").getPublicUrl(up.path).data?.publicUrl;if(!pub)throw new Error("Could not create media URL.");
     const payload={sender_id:me.id,receiver_id:otherId,message_type:type,content:"",media_url:pub};
     if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}
-    await insertMessage(payload);cancelReply();showStatus("");
+    const tempId=showOptimisticMessage(payload);
+    await insertMessage(payload);pendingMessages.delete(tempId);cancelReply();showStatus("");
   }catch(e){console.error(e);showStatus("Media not sent: "+(e.message||"Check chat-media bucket."))}
   finally{sending=false}
 }
 document.getElementById("sendForm").addEventListener("submit",async e=>{
   e.preventDefault();if(sending||!me||!otherId)return;
   const input=document.getElementById("messageInput"),content=input.value.trim();if(!content)return;
+  const payload={sender_id:me.id,receiver_id:otherId,message_type:"text",content};
+  if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}
+  const tempId=showOptimisticMessage(payload);
+  input.value="";input.style.height="42px";cancelReply();
   sending=true;document.getElementById("send").disabled=true;
-  try{
-    const payload={sender_id:me.id,receiver_id:otherId,message_type:"text",content};
-    if(replyTarget){payload.reply_to_content=replySnippet(replyTarget);payload.reply_to_sender_id=replyTarget.sender_id}
-    await insertMessage(payload);
-    input.value="";input.style.height="42px";cancelReply();showStatus("");
-  }catch(e){console.error(e);showStatus("Message not sent: "+(e.message||"Check permissions."))}
-  finally{sending=false;document.getElementById("send").disabled=false;input.focus()}
+  try{await insertMessage(payload);pendingMessages.delete(tempId);showStatus("")}
+  catch(error){
+    console.error(error);removeOptimisticMessage(tempId);input.value=content;
+    showStatus("Message not sent: "+(error.message||"Check permissions."));
+  }finally{sending=false;document.getElementById("send").disabled=false;input.focus()}
 });
 document.getElementById("cancelReply").addEventListener("click",cancelReply);
 document.getElementById("imageBtn").addEventListener("click",()=>document.getElementById("imageInput").click());
 document.getElementById("imageInput").addEventListener("change",async e=>{
-  const f=e.target.files?.[0];
-  if(f){if(!f.type.startsWith("image/")){showStatus("Please choose an image file.");e.target.value="";return}await uploadAndSend(f,"image")}
-  e.target.value="";
+  const f=e.target.files?.[0];if(f){if(!f.type.startsWith("image/")){showStatus("Please choose an image file.");e.target.value="";return}await uploadAndSend(f,"image")}e.target.value="";
 });
 const emojiList=["😀","😂","🥹","😍","😘","😊","😉","😭","😎","🥰","❤️","💜","💖","💕","👍","👎","🙏","👏","🔥","🎉","🤔","😴","😡","😇","🙈","💯","✅","😋","🤗","😔","🤣","😜","🌹","✨","🙌","🤝","💐","😅","😆","😃","😢","😱","🤩","🫶","💗","💞","💔","👀"];
 const emojiPanel=document.getElementById("emojiPanel");
@@ -399,8 +404,7 @@ document.getElementById("voiceBtn").addEventListener("click",async()=>{
   if(recording){mediaRecorder?.stop();return}
   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showStatus("Voice recording is not supported in this browser.");return}
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});voiceChunks=[];
-    mediaRecorder=new MediaRecorder(stream);
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});voiceChunks=[];mediaRecorder=new MediaRecorder(stream);
     mediaRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};
     mediaRecorder.onstop=async()=>{
       stream.getTracks().forEach(t=>t.stop());recording=false;document.getElementById("voiceBtn").textContent="🎤";
@@ -415,18 +419,20 @@ input.addEventListener("input",()=>{input.style.height="42px";input.style.height
 input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("sendForm").requestSubmit()}});
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me)init()});
 document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible"){if(!isLoadingOlder&&!isLoadingMessages)loadMessages(false,true);markIncomingSeen()}
+  if(document.visibilityState==="visible"){
+    if(navigator.onLine&&!privateRealtimeChannel)startPrivateRealtime();
+    if(!isLoadingOlder&&!isLoadingMessages)loadMessages(false,true);
+    markIncomingSeen();
+  }
 });
 window.addEventListener("focus",()=>{if(!isLoadingOlder&&!isLoadingMessages)loadMessages(false,true)});
 window.addEventListener("online",()=>{
   if(privateRealtimeRetryTimer){clearTimeout(privateRealtimeRetryTimer);privateRealtimeRetryTimer=null}
-  if(privateRealtimeChannel){const old=privateRealtimeChannel;privateRealtimeChannel=null;db.removeChannel(old).finally(()=>startPrivateRealtime())}
+  if(privateRealtimeChannel){const old=privateRealtimeChannel;privateRealtimeChannel=null;privateRealtimeStarting=false;db.removeChannel(old).finally(()=>startPrivateRealtime())}
   else startPrivateRealtime();
+  if(me)loadMessages(false,true);
 });
 window.addEventListener("offline",()=>showStatus("Internet disconnected. Realtime will reconnect when online."));
-document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible"&&navigator.onLine&&!privateRealtimeChannel)startPrivateRealtime();
-});
 window.addEventListener("beforeunload",()=>{stopPrivateRealtime();stopPresence()});
 init();
 </script>
