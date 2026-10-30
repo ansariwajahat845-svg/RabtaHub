@@ -1,198 +1,134 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#6d28d9">
-<title>Private Chats - ChatZone</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{box-sizing:border-box}
-:root{color-scheme:light;--purple:#6d28d9;--purple2:#7c3aed;--purple3:#a78bfa;--bg:#f7f6fc;--muted:#77738a;--line:#eeeaf8;--text:#171329;--surface:#fff;--soft:#f7f5ff;--input:#fff;--outline:#e5e0f2;--avatar:#eee9ff;--leave-bg:#f3efff;--leave-text:#5b3ed8;--leave-border:#e1d9ff;--active-row:#f0edff;--error-bg:#fff0ef;--error-text:#b42318;--hint:#86949c}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#15121f;--muted:#b4adc8;--line:#332a46;--text:#f4efff;--surface:#211b2e;--soft:#1c1728;--input:#211b2e;--outline:#403452;--avatar:#38294f;--leave-bg:#38294f;--leave-text:#e4d7ff;--leave-border:#514066;--active-row:#302440;--error-bg:#421f28;--error-text:#ffb7bd;--hint:#a79bbd}
-html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:var(--bg);color:var(--text);accent-color:var(--purple);-webkit-tap-highlight-color:#6d28d922;transition:background .18s,color .18s}
-body{padding-bottom:env(safe-area-inset-bottom)}
-header{background:#8b5cf6;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px #34208030}
-.headrow{display:flex;align-items:center;gap:12px}
-.back-btn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 12px;border:1px solid #ffffff70;border-radius:22px;background:#ffffff20;color:#fff;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
-.back-btn:active{background:#ffffff38;transform:scale(.98)}
-.brandicon{width:42px;height:42px;border-radius:50%;background:#ffffff24;display:grid;place-items:center;font-size:23px;flex-shrink:0}
-.brand{font-size:20px;font-weight:700;letter-spacing:.1px}
-.status{font-size:12px;font-weight:400;color:#e8e1ff;margin-top:4px}
-.theme-toggle{margin-left:auto;flex-shrink:0;width:40px;height:40px;border:1px solid #ffffff70;border-radius:50%;background:#ffffff20;color:#fff;font-size:20px;display:grid;place-items:center;cursor:pointer}
-.theme-toggle:active{background:#ffffff38;transform:scale(.97)}
-.tabs{display:flex;background:#8b5cf6;position:sticky;top:0;z-index:5;box-shadow:0 2px 5px #34208020}
-.tabs button{flex:1;min-height:48px;padding:13px 4px 11px;border:0;border-bottom:3px solid transparent;background:transparent;color:#e5deff;font-size:12px;font-weight:700;letter-spacing:.5px}
-.tabs button.active{color:#fff;border-bottom-color:#fff}
-.searchwrap{padding:11px 12px;background:var(--soft)}
-#search{display:block;width:100%;padding:12px 15px;border:0;border-radius:24px;background:var(--input);font-size:15px;outline:1px solid var(--outline);color:var(--text)}
-#search::placeholder{color:var(--muted)}
-#search:focus{outline:2px solid #b7a6ff}
-#error{color:var(--error-text);background:var(--error-bg);padding:12px;border-radius:10px;margin:10px 12px;font-size:13px;display:none;line-height:1.45}
-#list{padding:0 0 18px}
-.person{display:flex;align-items:center;gap:11px;background:var(--surface);padding:11px 12px;min-height:78px;border-bottom:1px solid var(--line);transition:background .15s}
-.person:active{background:var(--active-row)}
-.person-main{display:flex;align-items:center;gap:12px;flex:1;min-width:0;cursor:pointer;min-height:54px}
-.avatar{width:51px;height:51px;border-radius:50%;background:var(--avatar);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--purple3);flex-shrink:0;position:relative;overflow:hidden}
-:root:not([data-theme="dark"]) .avatar{color:var(--purple)}
-.avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.dot{position:absolute;width:13px;height:13px;background:#8b5cf6;border:2px solid var(--surface);border-radius:50%;bottom:0;right:0}
-.details{flex:1;min-width:0}
-.name{font-weight:600;font-size:16px;overflow-wrap:anywhere;color:var(--text)}
-.preview{font-size:13px;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.time{font-size:11px;color:var(--purple3);white-space:nowrap;align-self:flex-start;padding-top:3px}
-:root:not([data-theme="dark"]) .time{color:var(--purple)}
-.leave-btn{flex-shrink:0;border:1px solid var(--leave-border);background:var(--leave-bg);color:var(--leave-text);border-radius:18px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer}
-.leave-btn:active{filter:brightness(.95)}
-.leave-btn:disabled{opacity:.55}
-.empty{text-align:center;color:var(--muted);padding:48px 22px;line-height:1.5;font-size:14px}
-.emptyicon{font-size:35px;display:block;margin-bottom:12px}
-.hint{font-size:12px;color:var(--hint);margin-top:7px}
-.unread{min-width:21px;height:21px;padding:0 6px;border-radius:20px;background:#7c3aed;color:white;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-top:5px}
-@media(max-width:380px){header{padding-left:10px;padding-right:10px}.headrow{gap:8px}.back-btn{padding:8px 10px;font-size:12px}.brandicon{width:38px;height:38px}.brand{font-size:18px}.theme-toggle{width:36px;height:36px}}
-@media(min-width:700px){body{max-width:760px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 18px #0000000b}header{padding-left:22px;padding-right:22px}}
-</style>
-</head>
-<body>
-<header><div class="headrow">
-<a class="back-btn" href="index.html" aria-label="Back to Home">← Back</a>
-<div class="brandicon">💬</div><div><div class="brand">ChatZone</div><div class="status" id="status">Connecting...</div></div>
-<button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
-</div></header>
-<div class="tabs">
-<button class="active" data-tab="chats">CHATS</button><button data-tab="requests">REQUESTS</button><button data-tab="online">ONLINE</button>
-</div>
-<div class="searchwrap"><input id="search" placeholder="🔎  Search accepted chats..." autocomplete="off" aria-label="Search"></div>
-<div id="error" role="alert"></div>
-<div id="list"><div class="empty"><span class="emptyicon">⏳</span>Loading private chats...</div></div>
-<script>
-"use strict";
-const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";
-const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";
-function applyTheme(theme){
- const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;
- try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}
- const btn=document.getElementById("themeToggle");if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}
- const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6";
-}
-(function(){let saved="light";try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}applyTheme(saved)})();
-document.getElementById("themeToggle").addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));
-window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"&&e.newValue)applyTheme(e.newValue)});
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true},realtime:{params:{eventsPerSecond:10}}});
-let me=null,activeTab="chats",profiles=[],requests=[],acceptedIds=new Set(),presenceChannel=null,requestsRealtimeChannel=null,messagesRealtimeChannel=null,onlineIds=new Set(),refreshTimer=null,heartbeatTimer=null,loadingProfiles=false,loadingRequests=false,reloadQueued=false,messageRefreshTimer=null,loadingSummaries=false;
-let messageSummaries=new Map(),hiddenIds=new Set();
-const list=document.getElementById("list"),search=document.getElementById("search"),statusEl=document.getElementById("status"),errorEl=document.getElementById("error");
-function showError(m){errorEl.textContent=m;errorEl.style.display="block"}function hideError(){errorEl.style.display="none"}
-function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function displayName(p){return p.full_name||p.username||p.name||"ChatZone Member"}
-function initials(p){return displayName(p).trim().charAt(0).toUpperCase()||"?"}
-function photoUrl(p){return p.avatar_url||p.profile_pic||p.profile_picture||p.photo_url||p.avatar||p.picture||p.image_url||p.photo||""}
-function isRecentlySeen(p){if(!p.last_seen)return false;const t=new Date(p.last_seen).getTime();return Number.isFinite(t)&&Date.now()-t<90000}
-function isOnline(p){return onlineIds.has(String(p.id))||isRecentlySeen(p)}
-function getOtherId(r){const s=r.sender_id||r.from_user_id||r.requester_id||r.user_id,rc=r.receiver_id||r.to_user_id||r.recipient_id;if(String(s||"")===String(me?.id))return rc?String(rc):null;if(String(rc||"")===String(me?.id))return s?String(s):null;return null}
-function requestStatus(r){return String(r.status||r.state||"").trim().toLowerCase()}
-function isAccepted(r){return ["accepted","approved","confirmed","active"].includes(requestStatus(r))}
-function isPendingIncoming(r){return String(r.receiver_id||r.to_user_id||r.recipient_id||"")===String(me?.id)&&(!requestStatus(r)||["pending","requested","sent"].includes(requestStatus(r)))}
-function openChat(id){if(id)location.href="private-chat.html?user_id="+encodeURIComponent(id)}
-function hiddenChatIds(){try{const a=JSON.parse(localStorage.getItem("chatzone_hidden_private_chats_"+me.id)||"[]");hiddenIds=new Set((Array.isArray(a)?a:[]).map(String))}catch(e){hiddenIds=new Set()}}
-function summaryFor(id){return messageSummaries.get(String(id))||{preview:"Tap to open private chat",time:"",sort:0,unread:0}}
-function formatListTime(v){if(!v)return"";const d=new Date(v);if(!Number.isFinite(d.getTime()))return"";const now=new Date();const same=d.toDateString()===now.toDateString();return same?d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):d.toLocaleDateString([],{day:"numeric",month:"short"})}
-function render(){
- const term=search.value.trim().toLowerCase();let rows=profiles.filter(p=>String(p.id)!==String(me?.id));
- if(activeTab==="online")rows=rows.filter(isOnline);
- if(term)rows=rows.filter(p=>displayName(p).toLowerCase().includes(term)||String(p.username||"").toLowerCase().includes(term));
- if(activeTab==="chats")rows.sort((a,b)=>(summaryFor(b.id).sort||0)-(summaryFor(a.id).sort||0));
- if(!rows.length){const m={chats:["No private chats yet","Accepted invitations will appear here. People who have not accepted your invite will not be shown."],requests:["No pending requests","New private chat invitations will appear here."],online:["No accepted chats online","When an accepted contact comes online, they will appear here."]}[activeTab];list.innerHTML=`<div class="empty"><span class="emptyicon">💬</span>${escapeHtml(m[0])}<div class="hint">${escapeHtml(m[1])}</div></div>`;return}
- list.innerHTML=rows.map(p=>{
-  const online=isOnline(p),summary=summaryFor(p.id),preview=activeTab==="requests"?"Private chat invitation":activeTab==="online"?(summary.sort?summary.preview:"🟣 Online"):summary.preview;
-  const photo=photoUrl(p),av=photo?`<img src="${escapeHtml(photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:escapeHtml(initials(p));
-  const unread=activeTab==="chats"&&summary.unread>0?`<span class="unread">${summary.unread>99?"99+":summary.unread}</span>`:"";
-  const time=activeTab==="chats"?formatListTime(summary.time):(online?"online":"");
-  return `<div class="person"><div class="person-main" data-open-id="${escapeHtml(p.id)}" role="button" tabindex="0" aria-label="Open chat with ${escapeHtml(displayName(p))}"><div class="avatar">${av}${online?'<span class="dot"></span>':''}</div><div class="details"><div class="name">${escapeHtml(displayName(p))}</div><div class="preview">${escapeHtml(preview)}</div>${unread}</div></div>${activeTab==="requests"?"":`<button class="leave-btn" type="button" data-leave-id="${escapeHtml(p.id)}">Leave</button>`}<div class="time">${escapeHtml(time)}</div></div>`;
- }).join("");
- list.querySelectorAll(".person-main").forEach(el=>{const go=()=>openChat(el.dataset.openId);el.addEventListener("click",go);el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}})});
- list.querySelectorAll(".leave-btn").forEach(b=>b.addEventListener("click",async e=>{e.stopPropagation();const id=b.dataset.leaveId,p=profiles.find(x=>String(x.id)===String(id));if(!p||!confirm(`Leave private chat with ${displayName(p)}? This removes the connection for both sides.`))return;b.disabled=true;b.textContent="Leaving…";try{const {error}=await db.from("private_requests").delete().or(`and(sender_id.eq.${me.id},receiver_id.eq.${id}),and(sender_id.eq.${id},receiver_id.eq.${me.id})`);if(error)throw error;profiles=profiles.filter(x=>String(x.id)!==String(id));acceptedIds.delete(String(id));render()}catch(err){console.error(err);showError("Leave nahi ho saka. private_requests table ki DELETE RLS policy aur sender_id/receiver_id columns check karein.");b.disabled=false;b.textContent="Leave"}}));
-}
-async function loadMessageSummaries(){
- if(!me||loadingSummaries)return;loadingSummaries=true;
- try{
-  const {data,error}=await db.from("private_messages").select("id,sender_id,receiver_id,content,message_type,created_at,seen_at").or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`).order("created_at",{ascending:false}).limit(2000);
-  if(error)throw error;
-  const next=new Map();
-  for(const r of data||[]){
-   const peer=String(r.sender_id)===String(me.id)?String(r.receiver_id):String(r.sender_id);
-   if(!peer||peer===String(me.id)||!acceptedIds.has(peer)||hiddenIds.has(peer))continue;
-   let s=next.get(peer);
-   if(!s){let preview=(r.content||"").trim();if(r.message_type==="image")preview="📷 Photo";else if(r.message_type==="voice")preview="🎤 Voice message";else if(!preview)preview="Message";s={preview,time:r.created_at,sort:new Date(r.created_at).getTime()||0,unread:0};next.set(peer,s)}
-   if(String(r.receiver_id)===String(me.id)&&!r.seen_at)s.unread++;
-  }
-  messageSummaries=next;
- }catch(e){console.error("Private message summaries failed:",e);showError("Latest messages load nahi ho sake. private_messages SELECT RLS policy check karein.")}
- finally{loadingSummaries=false;render()}
-}
-function scheduleSummaryRefresh(){
- clearTimeout(messageRefreshTimer);
- messageRefreshTimer=setTimeout(()=>{loadMessageSummaries()},350);
-}
-async function loadConnections(){
- if(!me)return;if(loadingRequests){reloadQueued=true;return}loadingRequests=true;
- try{
-  const {data,error}=await db.from("private_requests").select("*").or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`).limit(500);if(error)throw error;
-  requests=data||[];acceptedIds=new Set();const pendingIds=new Set();
-  requests.forEach(r=>{const id=getOtherId(r);if(!id||id===String(me.id))return;if(isAccepted(r))acceptedIds.add(id);else if(isPendingIncoming(r))pendingIds.add(id)});
-  hiddenChatIds();
-  const wanted=activeTab==="requests"?pendingIds:new Set([...acceptedIds].filter(id=>!hiddenIds.has(id)));
-  await loadProfilesForIds(wanted);
-  if(activeTab!=="requests")await loadMessageSummaries();
- }catch(e){console.error("Private connections load failed:",e);showError("Private invites load nahi ho sake. private_requests table ke sender_id, receiver_id, status aur SELECT RLS policies check karein.");profiles=[];render()}
- finally{loadingRequests=false;if(reloadQueued){reloadQueued=false;loadProfiles()}}
-}
-async function loadProfilesForIds(ids){const arr=Array.from(ids).filter(id=>id&&String(id)!==String(me.id));if(!arr.length){profiles=[];render();return}const {data,error}=await db.from("profiles").select("*").in("id",arr).limit(500);if(error)throw error;profiles=data||[];render()}
-async function loadProfiles(){if(!me)return;if(loadingProfiles){reloadQueued=true;return}loadingProfiles=true;try{await loadConnections();hideError()}catch(e){console.error(e);showError("Private chats load nahi ho rahe. Supabase permissions aur private_requests schema check karein.")}finally{loadingProfiles=false;if(reloadQueued&&!loadingRequests){reloadQueued=false;loadProfiles()}}}
-async function updateLastSeen(){if(!me||document.visibilityState==="hidden")return;const {error}=await db.from("profiles").update({last_seen:new Date().toISOString()}).eq("id",me.id);if(error)console.warn("last_seen update failed:",error.message)}
-function syncPresence(){if(!presenceChannel)return;const state=presenceChannel.presenceState(),next=new Set();Object.entries(state).forEach(([key,entries])=>{if(entries?.length){next.add(String(key));entries.forEach(x=>{if(x.user_id)next.add(String(x.user_id))})}});onlineIds=next;render()}
-function startPresence(){if(!me||presenceChannel)return;presenceChannel=db.channel("chatzone-online-users",{config:{presence:{key:String(me.id)}}}).on("presence",{event:"sync"},syncPresence).on("presence",{event:"join"},syncPresence).on("presence",{event:"leave"},syncPresence).subscribe(async state=>{if(state==="SUBSCRIBED"){await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()});statusEl.textContent="🟣 Connected"}else if(state==="CHANNEL_ERROR"||state==="TIMED_OUT")statusEl.textContent="Connection issue"});
- if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{await updateLastSeen();if(presenceChannel&&document.visibilityState==="visible")await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()})},30000)}
-function startRequestRealtime(){
- if(!me||requestsRealtimeChannel)return;
- requestsRealtimeChannel=db.channel("chatzone-private-requests-"+me.id)
- .on("postgres_changes",{event:"*",schema:"public",table:"private_requests"},payload=>{if(document.visibilityState==="visible")loadProfiles()})
- .subscribe(state=>{if(state==="SUBSCRIBED")console.log("Private request realtime connected");else if(state==="CHANNEL_ERROR"||state==="TIMED_OUT")console.warn("Private request realtime unavailable; fallback refresh remains active")});
-}
-function startMessagesRealtime(){
- if(!me||messagesRealtimeChannel)return;
- messagesRealtimeChannel=db.channel("chatzone-private-inbox-messages-"+me.id)
- .on("postgres_changes",{event:"*",schema:"public",table:"private_messages"},payload=>{
-  const r=payload.new||payload.old;if(!r)return;
-  if(String(r.sender_id)!==String(me.id)&&String(r.receiver_id)!==String(me.id))return;
-  if(document.visibilityState==="visible")scheduleSummaryRefresh();
- })
- .subscribe(state=>{if(state==="SUBSCRIBED"){console.log("Private inbox message realtime connected");loadMessageSummaries()}else if(state==="CHANNEL_ERROR"||state==="TIMED_OUT")console.warn("Inbox message realtime reconnecting; fallback refresh remains active")});
-}
-async function boot(){
- try{
-  const {data,error}=await db.auth.getSession();if(error)throw error;
-  if(!data.session){statusEl.textContent="Please log in";list.innerHTML='<div class="empty"><span class="emptyicon">🔐</span>Login first to see your private chats.</div>';return}
-  me=data.session.user;statusEl.textContent="Loading private chats...";hiddenChatIds();await updateLastSeen();startPresence();await loadProfiles();startRequestRealtime();startMessagesRealtime();
-  if(refreshTimer)clearInterval(refreshTimer);
-  refreshTimer=setInterval(()=>{if(document.visibilityState==="visible"){loadProfiles();if(activeTab!=="requests")loadMessageSummaries()}},20000);
- }catch(e){console.error(e);statusEl.textContent="Could not connect";showError("Login/session ya Supabase connection check karein.")}
-}
-document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",async()=>{
- document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeTab=b.dataset.tab;
- search.placeholder=activeTab==="requests"?"🔎  Search requests...":"🔎  Search accepted chats...";
- await loadProfiles();
-}));
-search.addEventListener("input",render);
-document.addEventListener("visibilitychange",async()=>{
- if(document.visibilityState==="visible"&&me){await updateLastSeen();if(presenceChannel)await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()});await loadProfiles();if(activeTab!=="requests")loadMessageSummaries()}
-});
-window.addEventListener("online",()=>{if(me){loadProfiles();startMessagesRealtime();startRequestRealtime()}});
-window.addEventListener("pagehide",()=>{
- if(heartbeatTimer)clearInterval(heartbeatTimer);if(refreshTimer)clearInterval(refreshTimer);clearTimeout(messageRefreshTimer);
- if(presenceChannel)db.removeChannel(presenceChannel);if(requestsRealtimeChannel)db.removeChannel(requestsRealtimeChannel);if(messagesRealtimeChannel)db.removeChannel(messagesRealtimeChannel);
-});
-boot();
-</script>
-</body>
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">  
+<meta name="theme-color" content="#6d28d9">  
+<title>Private Chats - ChatZone</title>  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  
+<style>  
+*{box-sizing:border-box}  
+:root{color-scheme:light;--purple:#6d28d9;--purple2:#7c3aed;--purple3:#a78bfa;--bg:#f7f6fc;--muted:#77738a;--line:#eeeaf8;--text:#171329;--surface:#fff;--soft:#f7f5ff;--input:#fff;--outline:#e5e0f2;--avatar:#eee9ff;--leave-bg:#f3efff;--leave-text:#5b3ed8;--leave-border:#e1d9ff;--active-row:#f0edff;--error-bg:#fff0ef;--error-text:#b42318;--hint:#86949c}  
+:root[data-theme="dark"]{color-scheme:dark;--bg:#15121f;--muted:#b4adc8;--line:#332a46;--text:#f4efff;--surface:#211b2e;--soft:#1c1728;--input:#211b2e;--outline:#403452;--avatar:#38294f;--leave-bg:#38294f;--leave-text:#e4d7ff;--leave-border:#514066;--active-row:#302440;--error-bg:#421f28;--error-text:#ffb7bd;--hint:#a79bbd}  
+html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:var(--bg);color:var(--text);accent-color:var(--purple);-webkit-tap-highlight-color:#6d28d922;transition:background .18s,color .18s}  
+body{padding-bottom:env(safe-area-inset-bottom)}  
+header{background:#8b5cf6;color:#fff;padding:12px 16px 13px;box-shadow:0 2px 8px #34208030}  
+.headrow{display:flex;align-items:center;gap:12px}  
+.back-btn{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 12px;border:1px solid #ffffff70;border-radius:22px;background:#ffffff20;color:#fff;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}  
+.back-btn:active{background:#ffffff38;transform:scale(.98)}  
+.brandicon{width:42px;height:42px;border-radius:50%;background:#ffffff24;display:grid;place-items:center;font-size:23px;flex-shrink:0}  
+.brand{font-size:20px;font-weight:700;letter-spacing:.1px}  
+.status{font-size:12px;font-weight:400;color:#e8e1ff;margin-top:4px}  
+.theme-toggle{margin-left:auto;flex-shrink:0;width:40px;height:40px;border:1px solid #ffffff70;border-radius:50%;background:#ffffff20;color:#fff;font-size:20px;display:grid;place-items:center;cursor:pointer}  
+.theme-toggle:active{background:#ffffff38;transform:scale(.97)}  
+.tabs{display:flex;background:#8b5cf6;position:sticky;top:0;z-index:5;box-shadow:0 2px 5px #34208020}  
+.tabs button{flex:1;min-height:48px;padding:13px 4px 11px;border:0;border-bottom:3px solid transparent;background:transparent;color:#e5deff;font-size:12px;font-weight:700;letter-spacing:.5px}  
+.tabs button.active{color:#fff;border-bottom-color:#fff}  
+.searchwrap{padding:11px 12px;background:var(--soft)}  
+#search{display:block;width:100%;padding:12px 15px;border:0;border-radius:24px;background:var(--input);font-size:15px;outline:1px solid var(--outline);color:var(--text)}  
+#search::placeholder{color:var(--muted)}  
+#search:focus{outline:2px solid #b7a6ff}  
+#error{color:var(--error-text);background:var(--error-bg);padding:12px;border-radius:10px;margin:10px 12px;font-size:13px;display:none;line-height:1.45}  
+#list{padding:0 0 18px}  
+.person{display:flex;align-items:center;gap:11px;background:var(--surface);padding:11px 12px;min-height:78px;border-bottom:1px solid var(--line);transition:background .15s}  
+.person:active{background:var(--active-row)}  
+.person-main{display:flex;align-items:center;gap:12px;flex:1;min-width:0;cursor:pointer;min-height:54px}  
+.avatar{width:51px;height:51px;border-radius:50%;background:var(--avatar);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--purple3);flex-shrink:0;position:relative;overflow:hidden}  
+:root:not([data-theme="dark"]) .avatar{color:var(--purple)}  
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}  
+.dot{position:absolute;width:13px;height:13px;background:#8b5cf6;border:2px solid var(--surface);border-radius:50%;bottom:0;right:0}  
+.details{flex:1;min-width:0}  
+.name{font-weight:600;font-size:16px;overflow-wrap:anywhere;color:var(--text)}  
+.preview{font-size:13px;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}  
+.time{font-size:11px;color:var(--purple3);white-space:nowrap;align-self:flex-start;padding-top:3px}  
+:root:not([data-theme="dark"]) .time{color:var(--purple)}  
+.leave-btn{flex-shrink:0;border:1px solid var(--leave-border);background:var(--leave-bg);color:var(--leave-text);border-radius:18px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer}  
+.leave-btn:active{filter:brightness(.95)}  
+.leave-btn:disabled{opacity:.55}  
+.empty{text-align:center;color:var(--muted);padding:48px 22px;line-height:1.5;font-size:14px}  
+.emptyicon{font-size:35px;display:block;margin-bottom:12px}  
+.hint{font-size:12px;color:var(--hint);margin-top:7px}  
+@media(max-width:380px){header{padding-left:10px;padding-right:10px}.headrow{gap:8px}.back-btn{padding:8px 10px;font-size:12px}.brandicon{width:38px;height:38px}.brand{font-size:18px}.theme-toggle{width:36px;height:36px}}  
+@media(min-width:700px){body{max-width:760px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 18px #0000000b}header{padding-left:22px;padding-right:22px}}  
+</style>  
+</head>  
+<body>  
+<header><div class="headrow">  
+<a class="back-btn" href="index.html" aria-label="Back to Home">← Back</a>  
+<div class="brandicon">💬</div><div><div class="brand">ChatZone</div><div class="status" id="status">Connecting...</div></div>  
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>  
+</div></header>  
+<div class="tabs">  
+<button class="active" data-tab="chats">CHATS</button><button data-tab="requests">REQUESTS</button><button data-tab="online">ONLINE</button>  
+</div>  
+<div class="searchwrap"><input id="search" placeholder="🔎  Search accepted chats..." autocomplete="off" aria-label="Search"></div>  
+<div id="error" role="alert"></div>  
+<div id="list"><div class="empty"><span class="emptyicon">⏳</span>Loading private chats...</div></div>  
+<script>  
+"use strict";  
+const SUPABASE_URL="https://jhcpqjmxiovvqbghpxbf.supabase.co";  
+const SUPABASE_KEY="sb_publishable_88PQK2ur0Xe3uXTK2faKNQ_A7FrZlA8";  
+function applyTheme(theme){  
+ const chosen=theme==="dark"?"dark":"light";document.documentElement.dataset.theme=chosen;  
+ try{localStorage.setItem("chatzone-theme",chosen)}catch(e){}  
+ const btn=document.getElementById("themeToggle");if(btn){btn.textContent=chosen==="dark"?"☀️":"🌙";btn.title=chosen==="dark"?"Switch to light mode":"Switch to dark mode";btn.setAttribute("aria-label",btn.title)}  
+ const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=chosen==="dark"?"#171222":"#8b5cf6";  
+}  
+(function(){let saved="light";try{saved=localStorage.getItem("chatzone-theme")||"light"}catch(e){}applyTheme(saved)})();  
+document.getElementById("themeToggle").addEventListener("click",()=>applyTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"));  
+window.addEventListener("storage",e=>{if(e.key==="chatzone-theme"&&e.newValue)applyTheme(e.newValue)});  
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});  
+let me=null,activeTab="chats",profiles=[],requests=[],acceptedIds=new Set(),presenceChannel=null,requestsRealtimeChannel=null,onlineIds=new Set(),refreshTimer=null,heartbeatTimer=null,loadingProfiles=false,loadingRequests=false,reloadQueued=false;  
+const list=document.getElementById("list"),search=document.getElementById("search"),statusEl=document.getElementById("status"),errorEl=document.getElementById("error");  
+function showError(m){errorEl.textContent=m;errorEl.style.display="block"}function hideError(){errorEl.style.display="none"}  
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}  
+function displayName(p){return p.full_name||p.username||p.name||"ChatZone Member"}  
+function initials(p){return displayName(p).trim().charAt(0).toUpperCase()||"?"}  
+function photoUrl(p){return p.avatar_url||p.profile_pic||p.profile_picture||p.photo_url||p.avatar||p.picture||p.image_url||p.photo||""}  
+function isRecentlySeen(p){if(!p.last_seen)return false;const t=new Date(p.last_seen).getTime();return Number.isFinite(t)&&Date.now()-t<90000}  
+function isOnline(p){return onlineIds.has(String(p.id))||isRecentlySeen(p)}  
+function getOtherId(r){const s=r.sender_id||r.from_user_id||r.requester_id||r.user_id,rc=r.receiver_id||r.to_user_id||r.recipient_id;if(String(s||"")===String(me?.id))return rc?String(rc):null;if(String(rc||"")===String(me?.id))return s?String(s):null;return null}  
+function requestStatus(r){return String(r.status||r.state||"").trim().toLowerCase()}  
+function isAccepted(r){return ["accepted","approved","confirmed","active"].includes(requestStatus(r))}  
+function isPendingIncoming(r){return String(r.receiver_id||r.to_user_id||r.recipient_id||"")===String(me?.id)&&(!requestStatus(r)||["pending","requested","sent"].includes(requestStatus(r)))}  
+function openChat(id){if(id)location.href="private-chat.html?user_id="+encodeURIComponent(id)}  
+function render(){  
+ const term=search.value.trim().toLowerCase();let rows=profiles.filter(p=>String(p.id)!==String(me?.id));  
+ if(activeTab==="online")rows=rows.filter(isOnline);  
+ if(term)rows=rows.filter(p=>displayName(p).toLowerCase().includes(term)||String(p.username||"").toLowerCase().includes(term));  
+ if(!rows.length){const m={chats:["No private chats yet","Accepted invitations will appear here. People who have not accepted your invite will not be shown."],requests:["No pending requests","New private chat invitations will appear here."],online:["No accepted chats online","When an accepted contact comes online, they will appear here."]}[activeTab];list.innerHTML=`<div class="empty"><span class="emptyicon">💬</span>${escapeHtml(m[0])}<div class="hint">${escapeHtml(m[1])}</div></div>`;return}  
+ list.innerHTML=rows.map(p=>{const online=isOnline(p),preview=activeTab==="requests"?"Private chat invitation":online?"🟣 Online":"Tap to open private chat",photo=photoUrl(p),av=photo?`<img src="${escapeHtml(photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:escapeHtml(initials(p));return `<div class="person"><div class="person-main" data-open-id="${escapeHtml(p.id)}" role="button" tabindex="0" aria-label="Open chat with ${escapeHtml(displayName(p))}"><div class="avatar">${av}${online?'<span class="dot"></span>':''}</div><div class="details"><div class="name">${escapeHtml(displayName(p))}</div><div class="preview">${escapeHtml(preview)}</div></div></div>${activeTab==="requests"?"":`<button class="leave-btn" type="button" data-leave-id="${escapeHtml(p.id)}">Leave</button>`}<div class="time">${online?"online":""}</div></div>`}).join("");  
+ list.querySelectorAll(".person-main").forEach(el=>{const go=()=>openChat(el.dataset.openId);el.addEventListener("click",go);el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}})});  
+ list.querySelectorAll(".leave-btn").forEach(b=>b.addEventListener("click",async e=>{e.stopPropagation();const id=b.dataset.leaveId,p=profiles.find(x=>String(x.id)===String(id));if(!p||!confirm(`Leave private chat with ${displayName(p)}? This removes the connection for both sides.`))return;b.disabled=true;b.textContent="Leaving…";try{const {error}=await db.from("private_requests").delete().or(`and(sender_id.eq.${me.id},receiver_id.eq.${id}),and(sender_id.eq.${id},receiver_id.eq.${me.id})`);if(error)throw error;profiles=profiles.filter(x=>String(x.id)!==String(id));acceptedIds.delete(String(id));render()}catch(err){console.error(err);showError("Leave nahi ho saka. private_requests table ki DELETE RLS policy aur sender_id/receiver_id columns check karein.");b.disabled=false;b.textContent="Leave"}}));  
+}  
+async function loadConnections(){  
+ if(!me)return;if(loadingRequests){reloadQueued=true;return}loadingRequests=true;  
+ try{const {data,error}=await db.from("private_requests").select("*").or(`sender_id.eq.${me.id},receiver_id.eq.${me.id}`).limit(500);if(error)throw error;  
+ requests=data||[];acceptedIds=new Set();const pendingIds=new Set();  
+ requests.forEach(r=>{const id=getOtherId(r);if(!id||id===String(me.id))return;if(isAccepted(r))acceptedIds.add(id);else if(isPendingIncoming(r))pendingIds.add(id)});  
+ await loadProfilesForIds(activeTab==="requests"?pendingIds:acceptedIds);  
+ }catch(e){console.error("Private connections load failed:",e);showError("Private invites load nahi ho sake. private_requests table ke sender_id, receiver_id, status aur SELECT RLS policies check karein.");profiles=[];render()}  
+ finally{loadingRequests=false;if(reloadQueued){reloadQueued=false;loadProfiles()}}  
+}  
+async function loadProfilesForIds(ids){const arr=Array.from(ids).filter(id=>id&&String(id)!==String(me.id));if(!arr.length){profiles=[];render();return}const {data,error}=await db.from("profiles").select("*").in("id",arr).limit(500);if(error)throw error;profiles=data||[];render()}  
+async function loadProfiles(){if(!me)return;if(loadingProfiles){reloadQueued=true;return}loadingProfiles=true;try{await loadConnections();hideError()}catch(e){console.error(e);showError("Private chats load nahi ho rahe. Supabase permissions aur private_requests schema check karein.")}finally{loadingProfiles=false;if(reloadQueued&&!loadingRequests){reloadQueued=false;loadProfiles()}}}  
+async function updateLastSeen(){if(!me||document.visibilityState==="hidden")return;const {error}=await db.from("profiles").update({last_seen:new Date().toISOString()}).eq("id",me.id);if(error)console.warn("last_seen update failed:",error.message)}  
+function syncPresence(){if(!presenceChannel)return;const state=presenceChannel.presenceState(),next=new Set();Object.entries(state).forEach(([key,entries])=>{if(entries?.length){next.add(String(key));entries.forEach(x=>{if(x.user_id)next.add(String(x.user_id))})}});onlineIds=next;render()}  
+function startPresence(){if(!me||presenceChannel)return;presenceChannel=db.channel("chatzone-online-users",{config:{presence:{key:String(me.id)}}}).on("presence",{event:"sync"},syncPresence).on("presence",{event:"join"},syncPresence).on("presence",{event:"leave"},syncPresence).subscribe(async state=>{if(state==="SUBSCRIBED"){await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()});statusEl.textContent="🟣 Connected"}else if(state==="CHANNEL_ERROR"||state==="TIMED_OUT")statusEl.textContent="Connection issue"});  
+ if(heartbeatTimer)clearInterval(heartbeatTimer);heartbeatTimer=setInterval(async()=>{await updateLastSeen();if(presenceChannel&&document.visibilityState==="visible")await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()})},30000)}  
+function startRequestRealtime(){  
+ if(!me||requestsRealtimeChannel)return;  
+ requestsRealtimeChannel=db.channel("chatzone-private-requests-"+me.id)  
+ .on("postgres_changes",{event:"*",schema:"public",table:"private_requests"},payload=>{  
+   if(document.visibilityState==="visible")loadProfiles();  
+ })  
+ .subscribe(state=>{if(state==="SUBSCRIBED")console.log("Private request realtime connected");else if(state==="CHANNEL_ERROR"||state==="TIMED_OUT")console.warn("Private request realtime unavailable; 10-second refresh remains active")});  
+}  
+async function boot(){try{const {data,error}=await db.auth.getSession();if(error)throw error;if(!data.session){statusEl.textContent="Please log in";list.innerHTML='<div class="empty"><span class="emptyicon">🔐</span>Login first to see your private chats.</div>';return}me=data.session.user;statusEl.textContent="Loading private chats...";await updateLastSeen();startPresence();await loadProfiles();startRequestRealtime();if(refreshTimer)clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(document.visibilityState==="visible")loadProfiles()},10000)}catch(e){console.error(e);statusEl.textContent="Could not connect";showError("Login/session ya Supabase connection check karein.")}}  
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",async()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeTab=b.dataset.tab;search.placeholder=activeTab==="requests"?"🔎  Search requests...":"🔎  Search accepted chats...";await loadProfiles()}));  
+search.addEventListener("input",render);  
+document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&me){await updateLastSeen();if(presenceChannel)await presenceChannel.track({user_id:String(me.id),online_at:new Date().toISOString()});await loadProfiles()}});  
+window.addEventListener("pagehide",()=>{if(heartbeatTimer)clearInterval(heartbeatTimer);if(refreshTimer)clearInterval(refreshTimer);if(presenceChannel)db.removeChannel(presenceChannel);if(requestsRealtimeChannel)db.removeChannel(requestsRealtimeChannel)});  
+boot();  
+</script>  
+</body>  
 </html>
