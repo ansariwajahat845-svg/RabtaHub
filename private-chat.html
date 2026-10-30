@@ -73,7 +73,7 @@ const params=new URLSearchParams(location.search),otherId=params.get("user_id")|
 let me=null,other=null,sending=false,mediaRecorder=null,voiceChunks=[],recording=false,replyTarget=null,chatRows=[];
 let chatZonePresenceChannel=null,privateRealtimeChannel=null;
 const PAGE_SIZE=50;
-let loadedCount=0,hasMoreOlder=true,isLoadingOlder=false,realtimeRefreshQueued=false;
+let loadedCount=0,hasMoreOlder=true,isLoadingOlder=false,isLoadingMessages=false,realtimeRefreshQueued=false;
 let refreshTimer=null,lastSeenUpdate=0;
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -95,13 +95,15 @@ function bubbleHtml(r){
   if(mine){let seen=!!r.seen_at,delivered=!!r.delivered_at||onlineNow();tick=`<span class="ticks ${seen?"seen":""}" title="${seen?"Seen":delivered?"Delivered":"Sent"}">${seen?"✓✓":delivered?"✓✓":"✓"}</span>`}
   return `<div class="bubble ${mine?"mine":"theirs"}" data-message-id="${esc(r.id)}">${body}<div class="message-footer"><span class="time">${timeText(r.created_at)}</span>${tick}<button class="reply-msg" type="button" data-reply-id="${esc(r.id)}">↩ Reply</button>${mine&&r.id!=null?`<button class="delete-msg" type="button" data-delete-id="${esc(r.id)}">Delete</button>`:""}</div></div>`;
 }
-function renderMessagesInitial(rows){
-  chatRows=rows;
+function renderMessagesInitial(rows,preserveScroll=false){
   const box=document.getElementById("messages");
+  const oldTop=box.scrollTop,wasNearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<180;
+  chatRows=rows;
   const button=`<button id="loadOlder" type="button" style="display:${hasMoreOlder&&loadedCount>0?"block":"none"}">⬆️ Load older messages (${loadedCount} loaded)</button>`;
   if(!rows.length)box.innerHTML=button+'<div class="notice">👋 Say hello and start the conversation.</div>';
   else box.innerHTML=button+rows.map(bubbleHtml).join("");
-  box.scrollTop=box.scrollHeight;
+  if(!preserveScroll||wasNearBottom)box.scrollTop=box.scrollHeight;
+  else box.scrollTop=Math.min(oldTop,Math.max(0,box.scrollHeight-box.clientHeight));
   attachLoadOlder();
 }
 function attachLoadOlder(){
@@ -171,31 +173,44 @@ async function refreshOtherStatus(){
   try{
     const {data}=await db.from("profiles").select("id,username,name,avatar_url,last_seen").eq("id",otherId).maybeSingle();
     if(data){other=data;document.getElementById("chatStatus").textContent=onlineNow()?"🟢 Online":(other.username?"@"+other.username:"Private conversation")}
-  }catch(e){}
+  }catch(e){console.warn("Profile status refresh failed:",e)}
 }
-async function loadMessages(isInitial=false){
+async function loadMessages(isInitial=false,preserveScroll=false){
   if(!me||!otherId)return;
-  if(isLoadingOlder){realtimeRefreshQueued=true;return}
-  isLoadingOlder=true;
+  if(isLoadingMessages||isLoadingOlder){realtimeRefreshQueued=true;return}
+  isLoadingMessages=true;
   try{
     const query=db.from("private_messages").select("*")
       .or(`and(sender_id.eq.${me.id},receiver_id.eq.${otherId}),and(sender_id.eq.${otherId},receiver_id.eq.${me.id})`)
       .order("created_at",{ascending:false}).range(0,PAGE_SIZE-1);
-    const result=await Promise.race([query,new Promise((_,reject)=>setTimeout(()=>reject(new Error("Chat request timed out. Check internet.")),15000))]);
+    const result=await Promise.race([
+      query,
+      new Promise((_,reject)=>setTimeout(()=>reject(new Error("Chat request timed out. Check internet or Supabase API.")),20000))
+    ]);
     if(result.error)throw result.error;
     const rows=result.data||[];
     loadedCount=rows.length;hasMoreOlder=rows.length===PAGE_SIZE;
-    await refreshOtherStatus();renderMessagesInitial(rows.reverse());
-    if(isInitial)await markIncomingSeen();
+
+    // Render messages immediately. A slow profiles query must never block chat loading.
+    renderMessagesInitial(rows.slice().reverse(),preserveScroll);
     showStatus("");
-  }catch(e){console.error(e);showStatus("Messages could not load: "+(e.message||"Check Supabase permissions."))}
-  finally{
-    isLoadingOlder=false;
-    if(realtimeRefreshQueued){realtimeRefreshQueued=false;scheduleResync()}
+
+    // Profile/presence is secondary and must not delay the messages.
+    refreshOtherStatus();
+    if(isInitial)markIncomingSeen();
+  }catch(e){
+    console.error("Messages load failed:",e);
+    showStatus("Messages could not load: "+(e.message||e.details||"Check Supabase API/RLS."));
+  }finally{
+    isLoadingMessages=false;
+    if(realtimeRefreshQueued){
+      realtimeRefreshQueued=false;
+      scheduleResync();
+    }
   }
 }
 async function loadOlderMessages(){
-  if(!me||!otherId||isLoadingOlder||!hasMoreOlder)return;
+  if(!me||!otherId||isLoadingOlder||isLoadingMessages||!hasMoreOlder)return;
   isLoadingOlder=true;const b=document.getElementById("loadOlder");
   if(b){b.disabled=true;b.textContent="Loading..."}
   try{
@@ -268,7 +283,7 @@ async function init(){
     other=profile;document.getElementById("chatName").textContent=profile.name||profile.username||"ChatZone User";
     document.getElementById("chatStatus").textContent=onlineNow()?"🟢 Online":(profile.username?"@"+profile.username:"Private conversation");
     if(profile.avatar_url)document.getElementById("avatar").outerHTML=`<img id="avatar" src="${esc(profile.avatar_url)}" alt="" style="height:42px;width:42px;border-radius:50%;object-fit:cover">`;
-    await loadMessages(true);startPrivateRealtime();
+    await loadMessages(true,false);startPrivateRealtime();
   }catch(e){console.error(e);showStatus("Could not open chat: "+(e.message||"Check Supabase permissions."))}
 }
 function startReply(id){
@@ -378,9 +393,9 @@ input.addEventListener("input",()=>{input.style.height="42px";input.style.height
 input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("sendForm").requestSubmit()}});
 db.auth.onAuthStateChange((event,session)=>{if(session?.user&&!me)init()});
 document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible"){if(!isLoadingOlder)loadMessages(true);markIncomingSeen()}
+  if(document.visibilityState==="visible"){if(!isLoadingOlder&&!isLoadingMessages)loadMessages(false,true);markIncomingSeen()}
 });
-window.addEventListener("focus",()=>{if(!isLoadingOlder)loadMessages(true)});
+window.addEventListener("focus",()=>{if(!isLoadingOlder&&!isLoadingMessages)loadMessages(false,true)});
 window.addEventListener("beforeunload",()=>{stopPrivateRealtime();stopPresence()});
 init();
 </script>
